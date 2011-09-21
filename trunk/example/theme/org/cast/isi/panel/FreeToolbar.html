@@ -1,0 +1,18 @@
+<wicket:panel>
+  <form wicket:id="toolbarForm">
+    <input wicket:id="selectedText" type="hidden" id="selectedText"/>
+    <ul id="thtActions">
+      <li>
+        <span>lookup</span>
+        <ul>
+          <li><a wicket:id="dictionary" href="#" id="thtDictionary" title="Dictionary"><span>Dictionary</span></a></li>
+        </ul>
+      </li>
+    </ul>
+  </form>
+  <div wicket:id="dictionaryModal">
+  	<div wicket:id="body">
+		<div class="definitionContainer" wicket:id="definition"/>
+	</div>
+  </div>
+</wicket:panel>

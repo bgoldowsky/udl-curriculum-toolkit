@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org" lang="en" xml:lang="en">
+<head></head>
+<body>
+<wicket:panel>
+<div id="header">
+    <div id="headerLeft">
+        <div id="logo">
+            <img src="/img/logos/logo.png" width="54" height="54" alt="Product Name" title="Product Name" />
+        </div>
+        <div wicket:id="applicationTitle" id="title">
+            CAST UDL Curriculum Toolkit
+        </div>
+        <div wicket:id="applicationSubTitle" id="tagline">
+            Tagline
+        </div>
+    </div>
+    <div id="headerRight">
+        <p id="user">
+            <strong>Welcome: <span wicket:id="userName">Person's Name</span></strong>,
+            <a wicket:id="logoutLink" href="#">Logout</a>
+        </p>
+    </div>
+</div>
+
+<div id="tabBar">
+    <ul id="tabs">
+        <li><a wicket:id="homeLink" href="#"><img src="img/icons/home.png" width="15" height="15" alt="" /> Home</a></li>
+        <li><a wicket:id="contentsLink" href="#">Content</a></li>
+        <li><a wicket:id="myResponseCollectionsLink" href="#">My Models</a></li>
+        <li><a wicket:id="myQuestionsLink" href="#">My Questions</a></li>
+        <li><a wicket:id="myTagsLink" href="#">My Tags</a></li>
+    </ul>
+    <ul id="tabRight">
+        <li><a wicket:id="notebookLink" href="#" class="button jqPopup">Notebook</a></li>
+        <li><a wicket:id="whiteboardLink" href="#" class="button jqPopup">Whiteboard</a></li>
+        <li><a wicket:id="glossaryLink" href="#" class="button jqPopup">Glossary</a></li>
+    </ul>
+</div>
+
+</wicket:panel>
+</body>
+</html>

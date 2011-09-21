@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+	<title wicket:id="pageTitle"></title>
+</head>
+<body>
+
+	<div id="header">
+	    <div id="logo">
+			Compare Responses for - <span wicket:id="periodName"></span>
+		</div>
+	    <div id="close">
+	        <a href="javascript:window.print();" class="button"><img src="/img/icons/print.png" width="15" height="15" alt="" /> Print Page</a>
+	        <a href="#" wicket:id="hideNamesLink" class="button"><span wicket:id="hideNamesText">Hide Student Names</span></a>
+	        <a href="javascript:window.close();" class="button icon" title="Close Window"><img src="/img/icons/close.png" width="15" height="15" alt="" /></a>
+	    </div>
+	</div>
+	
+	<div id="maincol">
+	    <div wicket:id="rootContainer" class="content">
+	        <h4><span wicket:id="crumbTrail"></span></h4>
+	        <div class="responseIcon">
+	            <a href="#" class="button icon"><img wicket:id="icon" src="/img/icons/activity_reading.png" width="15" height="15" alt="Read" title="Read" /></a>
+	        </div>
+	        <div class="responseContent">
+	        	<div class="responseSection">
+	            	<a href="#" wicket:id="titleLink" class="sectionLink"><span wicket:id="title">Reading: Title of item goes here</span></a>
+	        	</div>
+	       		<div class="entryBox">
+		        	<div wicket:id="question" class="responseQuestion">Prompt goes here </div>	
+	 				<div wicket:id="studentRepeater">
+						<div class="responseAuthor">
+				  			<span wicket:id="studentName">Student Name</span>
+				  		</div>
+				  		<div wicket:id="studentResponseList">
+			            </div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	</div>	
+	<div id="tht" wicket:id="tht" class="thtWindow"></div>
+	
+</body>
+</html>
