@@ -1,0 +1,56 @@
+/*
+ * Copyright 2011 CAST, Inc.
+ *
+ * This file is part of the CAST Wicket Modules:
+ * see <http://code.google.com/p/cast-wicket-modules>.
+ *
+ * The CAST Wicket Modules are free software: you can redistribute and/or
+ * modify them under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * The CAST Wicket Modules are distributed in the hope that they will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.cast.isi.panel;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.cast.cwm.service.EventService;
+import org.cast.isi.page.ISIBasePage;
+
+public class AgentLink extends SidebarDialog {
+	private static final long serialVersionUID = 1L;
+	private String responseAreaId;
+
+	public AgentLink(String id, final String title, final String responseAreaId) {
+		super(id, title, null);
+		
+		this.responseAreaId = responseAreaId;
+		
+		WebMarkupContainer link = new WebMarkupContainer("link");
+		link.add(this.getClickToOpenBehavior());
+		link.setOutputMarkupId(true);
+		add(link);
+		this.setVerticalReferencePointId(link.getMarkupId()); // Make dialog come up alongside the button.
+		
+		link.add (new Label("title", title));
+	}
+
+	// FIXME needs to log event.
+//		EventService es = EventService.get();
+//						if (es != null) {
+//							es.saveEvent("agent:animate", agent + ((responseAreaId != null && !responseAreaId.equals("")) ? (" responseArea_" + responseAreaId) : ""), ((ISIStandardPage) getPage()).getPageName());
+
+	
+	@Override
+	protected void logEvent(AjaxRequestTarget target) {
+		EventService.get().saveEvent("dialog:agent", responseAreaId, ((ISIBasePage) getPage()).getPageName());
+	}
+}
