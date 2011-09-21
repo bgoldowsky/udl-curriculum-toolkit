@@ -1,0 +1,77 @@
+/*
+ * Copyright 2011 CAST, Inc.
+ *
+ * This file is part of the CAST Wicket Modules:
+ * see <http://code.google.com/p/cast-wicket-modules>.
+ *
+ * The CAST Wicket Modules are free software: you can redistribute and/or
+ * modify them under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * The CAST Wicket Modules are distributed in the hope that they will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.cast.isi.panel;
+
+import java.util.Collections;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import org.apache.wicket.ResourceReference;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.cast.cwm.data.component.DialogBorder;
+
+/**
+ * A dialog panel that is shown in the right column of the page, 
+ * aligned vertically with the button that was pressed to open it.
+ *  
+ * @author bgoldowsky
+ *
+ */
+public class SidebarDialog extends DialogBorder {
+
+	private static final long serialVersionUID = 1L;
+	
+	@Getter @Setter
+	protected String verticalReferencePointId;
+	
+	static {
+		List<ResourceReference> noStylesheets = Collections.emptyList();
+		SidebarDialog.setStyleReferences(noStylesheets);
+	}
+
+	/**
+	 * Construct.
+	 * 
+	 * @param id wicket ID
+	 * @param model model
+	 * @param verticalReferencePointId the markupId of the element to be used for vertical alignment
+	 */
+	public SidebarDialog(String id, String title, String verticalReferenceId) {
+		this(id, new Model<String>(title), verticalReferenceId);
+	}
+	
+	public SidebarDialog (String id, IModel<String> mTitle, String verticalReferenceId) {
+		super(id, mTitle);
+		this.verticalReferencePointId = verticalReferenceId;
+		this.setMasking(false);
+	}
+
+	@Override
+	protected String getPositioningString() {
+		if (verticalReferencePointId != null)
+			return "matchVerticalPosition('" + verticalReferencePointId + "', \'" + contentContainer.getMarkupId() + "\');";
+		else
+			return "";
+	}
+
+}
