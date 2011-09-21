@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+	<title wicket:id="pageTitle">TeacherNotesPopup</title>
+</head>
+<body class="themeWindow">
+
+	<div id="header">
+		<div id="logo">
+		    <span wicket:id="heading">Teacher Notes (Jane Doe)</span>
+		</div>
+	    <div id="close">
+	        <a href="javascript:window.print();" class="button"><img src="/img/icons/print.png" width="15" height="15" alt="" /> Print Page</a>
+	        <a href="javascript:window.close();" class="button icon" title="Close Window"><img src="/img/icons/close.png" width="15" height="15" alt="" /></a>
+	    </div>    
+	</div>
+	
+	<div id="maincol" class="hasnav">
+	    <div id="content">
+	
+	       	<h1>Add Entry</h1>
+	        <div class="responseBox">
+	            <div class="responseIcon"></div>
+	            <div class="responseContent">
+	                <div class="entryBox">
+	                    <div class="responseBar">
+	                        <div wicket:id="responseButtons" class="responseLeft"></div>
+	                        <div class="responseRight"></div>
+	 						<div wicket:id="nbResponseList"></div>
+	                    </div>
+	                 </div>
+	            </div>
+	        </div>
+	       	
+		</div>
+	</div>
+	
+	<div id="tht" wicket:id="tht" class="thtWindow hasnav"></div>
+</body>
+</html>

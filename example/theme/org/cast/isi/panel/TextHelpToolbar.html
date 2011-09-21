@@ -1,0 +1,21 @@
+<wicket:panel>
+    <ul id="thtActions">
+        <li>
+            <span>listen</span>
+            <ul>
+                <li><a href="#" onclick="maybePlay(); return false;" id="thtPlay" title="Play"><span>Play</span></a></li>
+                <li><a href="#" onclick="$rw_event_pause(); return false;" id="thtPause" title="Pause"><span>Pause</span></a></li>
+                <li><a href="#" onclick="$rw_stopSpeech(); return false;" id="thtStop" title="Stop"><span>Stop</span></a></li>
+            </ul>
+        </li>
+        <li>
+            <span>lookup</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_dict(); return false;" id="thtDictionary" title="Dictionary"><span>Dictionary</span></a></li>
+                <li><a href="#" onclick="$rw_event_trans(); return false;" id="thtTranslate" title="Translate"><span>Translate</span></a></li>
+            </ul>
+        </li>
+    </ul>
+    <script type="text/javascript" src="http://speechus.texthelp.com/SpeechStream/latest/texthelpMain.js"></script>
+    <script wicket:id="script" type="text/javascript"></script>
+</wicket:panel>

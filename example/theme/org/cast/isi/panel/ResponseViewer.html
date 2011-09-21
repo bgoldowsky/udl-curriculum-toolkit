@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<wicket:panel>
+  <span wicket:id="response">response</span>
+  <wicket:enclosure child="sectionLink">
+    <div class="noteIcon"> 
+      <img wicket:id="icon" src="/img/icons/reading.png" />
+      <div class="noteHeaderL">
+        <h3>Go To: <a href="#" wicket:id="sectionLink"><span wicket:id="sectionTitle">Link to the Section</span></a></h3>
+      </div>
+      <br />
+    </div>
+  </wicket:enclosure>
+  <wicket:enclosure child="responseTitle">
+  	<p wicket:id="responseTitle" class="responseTitle">Title or description</p>
+  </wicket:enclosure>
+  <p wicket:id="date" class="responseTime">Date</p>
+</wicket:panel>
+
+<wicket:fragment wicket:id="textFragment">
+  <span wicket:id="text">Text goes here</span>
+</wicket:fragment>
+
+<wicket:fragment wicket:id="audioFragment">
+  <div wicket:id="applet"></div>
+</wicket:fragment>
+
+<wicket:fragment wicket:id="drawingFragment">
+  <iframe wicket:id="drawing" width="320" height="240" scrolling="no"></iframe>
+</wicket:fragment>
+
+<wicket:fragment wicket:id="uploadFragment">
+  <!-- <p class="credits"><strong>Credits: </strong><span wicket:id="credits"></span></p> -->
+  <wicket:enclosure>
+    <img wicket:id="imageDisplay" /><br />
+  </wicket:enclosure>
+  <span wicket:id="filename">example.txt</span>: download <a href="#" wicket:id="download"><span wicket:id="filename">Download File</span></a>
+</wicket:fragment>
+
+<!-- Currently unused: -->
+<wicket:fragment wicket:id="image">
+  <div class="image" style="position:relative" wicket:id="imageThumb">
+	<a href="#" wicket:id="expandButton"><img class="imageDetailButton" src="/img/buttons/more.png" /></a>
+	<img wicket:id="image" />
+  </div>
+  <div class="imageDetail" style="display:none" wicket:id="imageDetail">
+	<a href="#" wicket:id="collapseButton"><img class="imageDetailButton" src="/img/icons/close.png" /></a>
+	<img wicket:id="image" />
+  </div>
+</wicket:fragment>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<body>
+<wicket:panel>
+
+  <div class="responseBar">
+    <div class="responseLeft">
+      <wicket:enclosure child="periodResponseLink">
+        <a href="#" wicket:id="periodResponseLink" >
+          <img src="/img/buttons/see_all_responses.png" alt="See all responses"/>
+        </a>  
+      </wicket:enclosure>
+      <a href="#" wicket:id="write" class="button response"><img wicket:id="writeImage" src="/img/icons/respond_write.png" alt="Write" title="Write"/></a>
+      <a href="#" wicket:id="draw" class="button response"><img wicket:id="drawImage" src="/img/icons/respond_draw.png" alt="Draw" title="Draw"/></a>
+      <a href="#" wicket:id="record" class="button response"><img wicket:id="recordImage" src="/img/icons/respond_record.png" alt="Record" title="Record"/></a>
+      <a href="#" wicket:id="upload" class="button response"><img wicket:id="uploadImage" src="/img/icons/respond_upload.png" alt="Upload" title="Upload"/></a>
+    </div>
+    <div class="responseRight">
+      <wicket:enclosure>
+        <a wicket:id="agentLink" href="#" class="button jqModal" target="agent">Get started</a>
+      </wicket:enclosure>
+      <wicket:enclosure>
+        <a wicket:id="checkWorkLink" href="#" class="button jqModal" target="agent">Check My Work</a>
+      </wicket:enclosure>
+    </div>
+  </div>
+  
+  <wicket:enclosure>
+    <div class="responseItem">
+      <p wicket:id="directions" class="responseDirections">
+        Select an option above or click Get Started for help
+      </p>
+    </div>
+  </wicket:enclosure>
+
+  <div wicket:id="newContent" class="newContent"></div>
+
+  <div class="data" wicket:id="listContainer">
+    <div wicket:id="list" class="responseItem">
+      <hr wicket:id="separator"/>
+      <div wicket:id="content"></div>
+      <p class="responseActions">
+        <a href="#" wicket:id="editLink" class="button editbutton">Edit</a>
+        <span wicket:id="whiteboardContainer">
+          <a href="#" wicket:id="addToWhiteboardLink" class="button jqPopup" target="whiteboardFull">Copy to Whiteboard</a>
+          <wicket:enclosure child="whiteboardLink">
+            <a href="#" wicket:id="whiteboardLink" class="jqPopup" target="whiteboardFull">View On Whiteboard</a>
+          </wicket:enclosure>
+        </span>					
+        <span wicket:id="notebookContainer">
+          <a href="#" wicket:id="addToNotebookLink" class="button jqPopup" target="notebookFull">Copy to Notebook</a>
+          <wicket:enclosure child="notebookLink">
+            <a href="#" wicket:id="notebookLink" class="jqPopup" target="notebookFull">In Notebook</a> 
+          </wicket:enclosure>
+        </span>
+      </p>
+    </div>
+  </div>
+
+</wicket:panel>
+</body>
+</html>

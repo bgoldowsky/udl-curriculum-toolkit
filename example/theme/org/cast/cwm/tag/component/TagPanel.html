@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<wicket:panel>
+
+	  <div wicket:id="current" class="tagCurrentList">
+	      <span class="tagItem">smell <a href="#" class="button tag removeLink"><img src="/img/icons/close_tag.png" width="9" height="9" alt="" /></a></span>
+	  </div>
+
+	  <div class="collapseBody">
+	      <h6 wicket:id="tagsSubHeader">Add Tags:</h6>
+          <p class="tagStarsCloud">
+          </p>
+	      <p wicket:id="taglist" class="tagCloud">
+		      <wicket:container wicket:id="tag">
+	          	<a wicket:id="link" href="#"><span wicket:id="name">Name</span></a>
+	          </wicket:container>
+	          <wicket:remove>
+	          <a href="#"><img src="../img/icons/star_3.png" width="42" height="13" alt="3 Stars" /></a>
+	          <a href="#" class="selected"><img src="../img/icons/star_2.png" width="27" height="13" alt="2 Stars" /></a>
+	          <a href="#"><img src="../img/icons/star_1.png" width="13" height="13" alt="1 Star" /></a>
+	          </wicket:remove>
+	      </p>
+	      <wicket:remove>
+	      <p class="tagCloud">
+	          <a href="#" class="s1">rules</a>
+	          <a href="#" class="s2">my_words</a>
+	          <a href="#" class="s3">big_ideas</a>
+	          <a href="#" class="s2 selected">smell</a>
+	      </p>
+	      </wicket:remove>
+	      <form wicket:id="form" method="post" action="#" name="something" id="something" class="tagAddForm">
+	          <div>
+			      <input wicket:id="term" type="text" value="" class="tagTerm" maxlength="15"/>
+		          <a wicket:id="add" href="#" class="button">Add</a>
+	          </div>
+	      </form>
+	   </div>
+
+</wicket:panel>
+</html>
