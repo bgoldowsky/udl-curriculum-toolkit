@@ -816,11 +816,30 @@ a:hover, a:focus { color: #1E2D56; }
     margin-right: 0.5em;
 }
 
+.tagCloud .s1, .tagList .s1 {
+    line-height: 1.5em;
+    font-size: 0.8em;
+}
+.tagCloud .s2, .tagList .s2 {
+    line-height: 1.2em;
+    font-size: 1.0em;
+}
+.tagCloud .s3, .tagList .s3 {
+    line-height: 1.0em;
+    font-size: 1.2em;
+}
+.tagCloud .s4, .tagList .s4 {
+    line-height: 1.0em;
+    font-size: 1.4em;
+}
+
 .tagCloud .selected, .tagList .selected, .tagStarsList .selected, .tagStarsCloud .selected {
     background: #FFFFCC;
     border: 1px solid #CDCDCD;
 }
-
+#myContentLeft .tagCloud .selected {
+    display: inline;
+}
 .tagCurrentList {
     float: left;
     padding: 0.15em 0px 0px 17px;
