@@ -32,6 +32,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.util.ModelIteratorAdapter;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.PersistedObject;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
@@ -58,6 +59,7 @@ import org.slf4j.LoggerFactory;
 public class Tags extends ISIStandardPage {
 	
 	protected Tag selected;
+	private String pageTitleEnd;
 	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(Tags.class);
@@ -73,7 +75,10 @@ public class Tags extends ISIStandardPage {
 		} else {
 			targetUser = ISISession.get().getUser();
 		}
-				
+
+		pageTitleEnd = (new StringResourceModel("Tags.pageTitle", this, null, "Collections").getString());
+		setPageTitle(pageTitleEnd);
+		
 		String tagName = parameters.getString("tag");
 		if (tagName != null) {
 			selected = TagService.get().findTag(targetUser, tagName);

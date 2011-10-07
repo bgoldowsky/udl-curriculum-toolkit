@@ -22,39 +22,19 @@ package org.cast.isi.panel;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-
-import lombok.Getter;
 
 public class TextHelpToolbar extends ISIPanel implements IHeaderContributor {
 	
 	private static final long serialVersionUID = 1L;
 
-	public enum Size {FULL, SMALL, GLOSSARY, WINDOW};
-	@Getter private Size size;
-
-	public TextHelpToolbar(String id, Size size) {
+	public TextHelpToolbar(String id) {
 		super(id);
-		this.size = size;
 		WebMarkupContainer script = new WebMarkupContainer("script");
 		add(script);
 		script.add(new SimpleAttributeModifier("src", RequestCycle.get().urlFor(new ResourceReference("/js/toolbar.js"))));
-	}
-
-	@Override
-	protected void onComponentTag(ComponentTag tag) {
-		if (size == Size.SMALL)
-			tag.put("class", "thtSmall");
-		else if (size == Size.GLOSSARY) 
-			tag.put("class", "thtGlossary");
-		else if (size == Size.WINDOW)
-			tag.put("class", "thtWindow");
-		else
-			tag.put("class", "thtFull");
-		super.onComponentTag(tag);
 	}
 
 	public void renderHead(IHeaderResponse response) {
