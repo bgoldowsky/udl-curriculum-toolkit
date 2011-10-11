@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -47,7 +48,7 @@ import org.w3c.dom.ls.LSSerializer;
 @Getter
 @Setter
 @ToString
-
+@Table(name="prompt")
 public class ISIPrompt extends Prompt implements Comparable<ISIPrompt> {
 
 	private static final long serialVersionUID = 1L;
