@@ -22,7 +22,6 @@ package org.cast.isi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -63,7 +62,6 @@ import org.cast.cwm.components.CwmPopupSettings;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
-import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
 import org.cast.cwm.dav.DavClientManager;
 import org.cast.cwm.dav.DavResource;
@@ -104,6 +102,7 @@ import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.HeaderPanel;
+import org.cast.isi.panel.TextHelpToolbar;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.QuestionService;
 import org.hibernate.Session;
@@ -372,21 +371,23 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 		log.info("Value of isi.whiteboard.isOn is  = {}", whiteboardOn);
 
-		String glossaryTypeProperty =  appProperties.getProperty("isi.glossary.type");
-		if (glossaryTypeProperty != null && 
-				(glossaryTypeProperty.equals(GLOSSARY_TYPE_INLINE) || 
-						glossaryTypeProperty.equals(GLOSSARY_TYPE_MAIN) || 
-						glossaryTypeProperty.equals(GLOSSARY_TYPE_MODAL))) {
-			glossaryLinkType = glossaryTypeProperty;
-		}
-		log.info("Type of of glossary link is  = {}", glossaryLinkType);
-		
 		String glossaryOnProperty =  appProperties.getProperty("isi.glossary.isOn");
 		if (glossaryOnProperty != null) {
 			glossaryOn = Boolean.valueOf(glossaryOnProperty.trim());
 		}
 		log.info("Value of isi.glossary.isOn is  = {}", glossaryOn);
 
+		if (glossaryOn == true) {
+			String glossaryTypeProperty =  appProperties.getProperty("isi.glossary.type");
+			if (glossaryTypeProperty != null && 
+					(glossaryTypeProperty.trim().equals(GLOSSARY_TYPE_INLINE) || 
+							glossaryTypeProperty.trim().equals(GLOSSARY_TYPE_MAIN) || 
+							glossaryTypeProperty.trim().equals(GLOSSARY_TYPE_MODAL))) {
+				glossaryLinkType = glossaryTypeProperty.trim();
+			}
+			log.info("Type of of glossary link is  = {}", glossaryLinkType);
+		}
+		
 		String highlightsPanelOnProperty =  appProperties.getProperty("isi.highlightsPanel.isOn");
 		if (highlightsPanelOnProperty != null) {
 			highlightsPanelOn = Boolean.valueOf(highlightsPanelOnProperty.trim());
@@ -434,7 +435,7 @@ public abstract class ISIApplication extends CwmApplication {
 			toolBarOn = Boolean.valueOf(toolBarOnProperty.trim());
 		}
 		log.info("Value of isi.toolBar.isOn is  = {}", toolBarOn);
-		
+
 		String authoredResponseTypeOnProperty =  appProperties.getProperty("isi.useAuthoredResponseType.isOn");
 		if (authoredResponseTypeOnProperty != null) {
 			useAuthoredResponseType = Boolean.valueOf(authoredResponseTypeOnProperty.trim());
@@ -548,8 +549,6 @@ public abstract class ISIApplication extends CwmApplication {
 		mount(new QueryStringUrlCodingStrategy("tnotebook", getTeacherNotesPageClass()));
 		mount(new QueryStringUrlCodingStrategy("manage", getManageClassesPageClass()));
 		
-		// TODO: Are these out of date and can be removed?
-		mount(new QueryStringUrlCodingStrategy("ld", org.cast.isi.page.LongDescription.class));
 	}
 	
 	
@@ -657,8 +656,6 @@ public abstract class ISIApplication extends CwmApplication {
 
 	public Component getToolbar (String id, Page page) {
 		return (new FreeToolbar("tht")).setVisible(isToolBarOn());
-		// If TextHelp license is available:
-		// return new TextHelpToolbar("tht", Size.FULL);
 	}
 	
 	/**

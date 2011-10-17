@@ -62,7 +62,6 @@ import org.cast.cwm.xml.component.XmlComponent;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.page.ISIStandardPage;
-import org.cast.isi.page.LongDescription;
 import org.cast.isi.panel.AgentLink;
 import org.cast.isi.panel.GlossaryLink;
 import org.cast.isi.panel.ImageDetailButtonPanel;
@@ -195,11 +194,6 @@ public class ISIXmlComponent extends XmlComponent {
 			return glossaryLink;
 			
 			
-		} else if (wicketId.startsWith("ld_")) {
-			return new BookmarkablePageLink<Page>(wicketId, LongDescription.class)
-			.setParameter("loc", contentPage)
-			.setParameter("img", wicketId.substring(3));
-
 		} else if (wicketId.startsWith("link_")) {
 			String href = elt.getAttribute("href");
 			// According to NIMAS, href should be in the form "filename.xml#ID"  or just "#ID" for within-file link
