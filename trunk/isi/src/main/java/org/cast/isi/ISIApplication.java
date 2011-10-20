@@ -704,15 +704,15 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 
 	public String getContentDir() {
-		return appProperties.getProperty("isi.contentDir");
+		return (appProperties.getProperty("isi.contentDir")).trim();
 	}
 	
 	public String getSkinDir() {
-		return appProperties.getProperty("isi.skinDir");
+		return (appProperties.getProperty("isi.skinDir")).trim();
 	}
 	
 	public String getCustomSkinDir() {
-		return appProperties.getProperty("isi.customSkinDir");
+		return (appProperties.getProperty("isi.customSkinDir")).trim();
 	}
 	
 	public ISIXmlSection getPageNum(int num) {
