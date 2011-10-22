@@ -31,7 +31,6 @@ import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.html.PackageResource;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
@@ -39,7 +38,6 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.file.File;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.components.DeployJava;
@@ -476,29 +474,12 @@ public class ISIXmlComponent extends XmlComponent {
 		return metadata;
 	}
 
-	protected ResourceReference getRelativeRef (String src) {
+	public ResourceReference getRelativeRef (String src) {
 		Resource xmlFile = ((XmlSection)getModel().getObject()).getXmlDocument().getXmlFile();
-		ResourceReference ref;
-		if (xmlFile instanceof IRelativeLinkSource) {
-			IRelativeLinkSource base = (IRelativeLinkSource) xmlFile;
-			ref = base.getRelativeReference(src);
-		} else if (xmlFile instanceof PackageResource) {
-			// TODO this should all get simpler in later iterations of xml/dav packages
-			String base = ((PackageResource)xmlFile).getAbsolutePath();
-			final String file = base.substring(0, base.lastIndexOf('/')+1) + src;
-			ref = new ResourceReference(XmlComponent.class, file) {
-				private static final long serialVersionUID = 1L;
-				@Override
-				protected Resource newResource() {
-					return new org.cast.cwm.xml.FileResource(new File(file));
-				}
-			};
-		} else {
-			throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
-		}
-		return ref;
+		if (xmlFile instanceof IRelativeLinkSource)
+			return ((IRelativeLinkSource)xmlFile).getRelativeReference(src);
+		throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
 	}
-
 
 	public static class AttributeRemover extends AbstractBehavior {
 		
