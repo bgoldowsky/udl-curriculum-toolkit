@@ -102,7 +102,6 @@ import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.HeaderPanel;
-import org.cast.isi.panel.TextHelpToolbar;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.QuestionService;
 import org.hibernate.Session;
@@ -712,7 +711,12 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 	
 	public String getCustomSkinDir() {
-		return (appProperties.getProperty("isi.customSkinDir")).trim();
+		String csd =  appProperties.getProperty("isi.customSkinDir");
+		if (csd != null) {
+			return (appProperties.getProperty("isi.customSkinDir")).trim();
+		}
+		return null;
+	
 	}
 	
 	public ISIXmlSection getPageNum(int num) {
