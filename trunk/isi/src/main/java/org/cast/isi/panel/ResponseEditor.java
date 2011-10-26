@@ -27,6 +27,9 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Resource;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -42,6 +45,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.cast.audioapplet.component.AbstractAudioRecorder;
+import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
@@ -49,6 +53,7 @@ import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
 import org.cast.cwm.indira.FileResourceManager;
 import org.cast.cwm.service.ResponseService;
+import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,8 +101,11 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 	 */
 	@Override
 	protected void onInitialize() {
-		if (loc != null)
-		this.setPageName(loc.getLocation());
+		Resource xmlFile = null;
+		if (loc != null) {
+			this.setPageName(loc.getLocation());
+			xmlFile = loc.getSection().getXmlDocument().getXmlFile();  
+		}
 		ResponseType thisType = getModelObject().getType();
 		if (type.equals(ResponseType.AUDIO) || type.equals(ResponseType.SVG) || type.equals(ResponseType.UPLOAD))
 			titleVisible = true;
@@ -108,7 +116,8 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 					// Drawing starters - need to convert to URLs.
 					ArrayList<String> urls = new ArrayList<String>(typeMD.getFragments().size());
 					for (String frag : typeMD.getFragments()) {
-						String url = FileResourceManager.get().getUrl(frag);
+						ResourceReference fragResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(frag);
+						String url = RequestCycle.get().urlFor(fragResourceRef).toString();
 						if (url != null)
 							urls.add(url);
 						else
@@ -121,7 +130,9 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 				}
 				// Template
 				if (typeMD.getTemplates() != null && !typeMD.getTemplates().isEmpty()) {
-					this.setTemplateURL(FileResourceManager.get().getUrl(typeMD.getTemplates().get(0)));
+					String templateRelativePath = typeMD.getTemplates().get(0);  // path from xml file
+					ResourceReference templateResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(templateRelativePath);
+					this.setTemplateURL(RequestCycle.get().urlFor(templateResourceRef).toString());
 				}
 			}
 			// Special case: use text sentence starters for audio if there are no audio-specific ones.
