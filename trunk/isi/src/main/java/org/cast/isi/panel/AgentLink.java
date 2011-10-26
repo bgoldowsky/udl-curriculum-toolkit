@@ -42,15 +42,9 @@ public class AgentLink extends SidebarDialog {
 		
 		link.add (new Label("title", title));
 	}
-
-	// FIXME needs to log event.
-//		EventService es = EventService.get();
-//						if (es != null) {
-//							es.saveEvent("agent:animate", agent + ((responseAreaId != null && !responseAreaId.equals("")) ? (" responseArea_" + responseAreaId) : ""), ((ISIStandardPage) getPage()).getPageName());
-
 	
 	@Override
-	protected void logEvent(AjaxRequestTarget target) {
+	protected void logOpenEvent(AjaxRequestTarget target) {
 		EventService.get().saveEvent("dialog:agent", responseAreaId, ((ISIBasePage) getPage()).getPageName());
 	}
 }
