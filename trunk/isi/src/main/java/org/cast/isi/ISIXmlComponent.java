@@ -397,7 +397,7 @@ public class ISIXmlComponent extends XmlComponent {
 			return new SmartImagePanel(wicketId, elt);
 
 		} else if (wicketId.startsWith("annotatedImage_")) {
-			AnnotatedImageComponent annotatedImageComponent = new AnnotatedImageComponent(wicketId, elt);
+			AnnotatedImageComponent annotatedImageComponent = new AnnotatedImageComponent(wicketId, elt, getModel());
 			annotatedImageComponent.add(new AttributeRemover("annotatedImageId"));
 			return annotatedImageComponent;
 			

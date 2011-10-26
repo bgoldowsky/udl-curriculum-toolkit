@@ -275,11 +275,10 @@
         </xsl:when>
  
         <xsl:when test="@class='annotatedImage'">
-			<!-- the annotated image id is the id of the first img in this imggroup -->
-        	<div wicket:id="annotatedImage_{@id}" annotatedImageId="{./dtb:img/@id[1]}">
+			<!-- the annotated image id is the id of the first img in this imggroup, send the src of the image for reference processing -->
+        	<div wicket:id="annotatedImage_{@id}" annotatedImageId="{./dtb:img/@id[1]}" annotatedImageSrc="{./dtb:img/@src[1]}">
 	       		<xsl:call-template name="annotatedImageProcess" />
     	        <xsl:apply-templates select="key('annokey', @id)[@class='hotspot']" mode="hotspot"/>
-<!--    	        <xsl:apply-templates select="key('annokey', @id)[@type='hotspot']" mode="hotspot"/>-->
        		</div>
         </xsl:when>
  
@@ -287,7 +286,7 @@
           <!-- featured image - floats left with no text wrap -->
           <br clear="left"/>
           <div class="imggroup">
-          <xsl:apply-templates/>
+	          <xsl:apply-templates/>
           </div>
         </xsl:otherwise>
 
@@ -300,8 +299,7 @@
     </xsl:template>
 
     <xsl:template name="annotatedImageProcess">
-    	<xsl:copy-of select="dtb:img" />
-   		<xsl:apply-templates select="./dtb:caption" mode="caption"/>   		
+   		<xsl:apply-templates/>   		
     </xsl:template>
 
    <xsl:template match="dtb:annotation" mode="hotspot">
