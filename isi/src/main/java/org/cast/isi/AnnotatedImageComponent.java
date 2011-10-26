@@ -21,11 +21,16 @@ package org.cast.isi;
 
 import lombok.Getter;
 
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.indira.FileResourceManager;
+import org.cast.cwm.xml.XmlDocument;
+import org.cast.cwm.xml.XmlSectionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -46,11 +51,14 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 	protected Element elt;
 	protected StringBuffer hotSpotString;
 	protected String annotatedImageComponentId;
+	protected XmlSectionModel xmlSectionModel;
 
-	public AnnotatedImageComponent(String id, Element elt) {
+	public AnnotatedImageComponent(String id, Element elt, XmlSectionModel xmlSectionModel) {
 		super(id);
 		this.elt = elt;
 		this.annotatedImageComponentId = elt.getAttribute("annotatedImageId");
+		this.xmlSectionModel = xmlSectionModel;
+		
 	}
 
 	public void renderHead(IHeaderResponse response) {
@@ -92,8 +100,15 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 			hotSpotDetails.append("\"text\": " + "\"" + component.title + "\"" + ", ");
 	
 			if ((component.icon).equals("true")) {
+				// find the url of the image
+				Resource xmlFile = xmlSectionModel.getObject().getXmlDocument().getXmlFile();  
+				ResourceReference imageResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(component.iconImg);
+				String imageUrl = RequestCycle.get().urlFor(imageResourceRef).toString();
+				if (imageUrl.equals(null))
+						log.warn("The URL for the hotspot image {} is not found", imageUrl);
+				
 				hotSpotDetails.append("\"icon\": " + "\"" + component.icon + "\"" + ", ");
-				hotSpotDetails.append("\"iconImg\": " + "\"" + FileResourceManager.get().getUrl(component.iconImg) + "\"" + ", ");
+				hotSpotDetails.append("\"iconImg\": " + "\"" + imageUrl + "\"" + ", ");
 				hotSpotDetails.append("\"iconClass\": " + "\"" + component.iconClass + "\"" + ", ");
 			}
 			hotSpotDetails.append("\"id\": " + "\"" + component.hotSpotId + "\"" + " }");
