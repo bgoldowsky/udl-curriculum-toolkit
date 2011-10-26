@@ -129,7 +129,7 @@ public class Login extends ISIBasePage {
 	
 	@Override
 	public void renderHead(final IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/login.less"));
+		response.renderCSSReference(new ResourceReference("/css/login.css"));
 		super.renderHead(response);
 	}
 
