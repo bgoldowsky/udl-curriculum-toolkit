@@ -95,7 +95,6 @@
     </xsl:template>
     
     <!-- TOGGLE BUTTONS -->
-
     <xsl:template match="dtb:div[@class='supplement']">
 		<div class="supportBox collapseBox">
 			<h4 wicket:id="collapseBoxControl-" class="toggleOffset">
@@ -106,6 +105,26 @@
 			</div>
 		</div>
 	</xsl:template>
+
+    <!-- Slide Show -->
+<!--     <xsl:template match="dtb:div[@class='slideshow']"> -->
+<!-- 		<div wicket:id="slideShow_" class="slideshow" id="{@id}"> -->
+<!-- 			<div class="slideshowTitle"> -->
+<!-- 				<xsl:value-of select="@title" /> -->
+<!-- 			</div> -->
+<!-- 			<ul> -->
+<!-- 	         	<xsl:apply-templates select=".//dtb:div[@class='slide']" mode="slideshowLink" /> -->
+<!-- 			</ul> -->
+<!-- 			<xsl:apply-templates /> -->
+<!-- 		</div> -->
+<!-- 	</xsl:template> -->
+
+<!--     <xsl:template match="div" mode="slideshowLink"> -->
+<!--     	<li> -->
+<!--     		<a href="#{@id}">{@title}</a> -->
+<!--     	</li> -->
+<!--     </xsl:template> -->
+    
 
     <!-- GLOSSARY - link used is determined by application parameter isi.glossary.type -->
     <xsl:template match="dtb:gl">
@@ -405,6 +424,7 @@
    		<xsl:call-template name="modalImageDetail"/>
     </xsl:template>
     
+	<!--  prodnotes inside of img groups are long descriptions -->
     <xsl:template match="dtb:prodnote" mode="prodnote">
      <div class="longDescription">
        <xsl:copy-of select="&catts;"/>

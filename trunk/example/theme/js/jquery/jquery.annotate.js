@@ -19,6 +19,7 @@
         this.useAjax = opts.useAjax;
         this.notes = opts.notes;
         this.viewAnnotations = opts.viewAnnotations;
+        this.hoverShow = opts.hoverShow;
         this.imageID = this.attr("id");
 
         // Add the canvas
@@ -37,7 +38,9 @@
         // Add the behavior: hide/show the notes when hovering the picture
         this.canvas.hover(function() {
             if ($(this).children('.image-annotate-edit').css('display') == 'none') {
-                $(this).children('.image-annotate-view').show();
+                if (image.hoverShow) {
+                    $(this).children('.image-annotate-view').show();
+                }
             }
         }, function() {
             if (!$(this).children('.image-annotate-view').hasClass('image-annotate-labels-on')) {
@@ -70,8 +73,12 @@
             this.canvas.after(this.button);
         }
 
+        // Check to see if 'view bar' exists
+        //xxx
+
+
         // Add the label toggles
-        this.toggles = $('<div class="image-annotate-toggle">' + lang['ANNOTATE_LABELS'] + ': <span class="image-annotate-label-show">' + lang['ANNOTATE_SHOW'] + '</span> | <span class="image-annotate-label-hide">' + lang['ANNOTATE_HIDE'] + '</span></div>');
+        this.toggles = $('<div class="image-annotate-toggle">' + lang['ANNOTATE_LABELS'] + ': <span class="image-annotate-label-hide">' + lang['ANNOTATE_HIDE'] + '</span> | <span class="image-annotate-label-show">' + lang['ANNOTATE_SHOW'] + '</span></div>');
         this.canvas.prepend(this.toggles);
         // Stop hover effect for toggle bar
         this.toggles.hover(function(e) {
@@ -95,7 +102,8 @@
         editable: false,
         useAjax: false,
         notes: new Array(),
-        viewAnnotations: false
+        viewAnnotations: false,
+        hoverShow: true
     };
 
     $.fn.annotateImage.clear = function(image) {
@@ -368,7 +376,7 @@
             });
         } else {
             this.area.click(function() {
-                return $.fn.annotateCallback($(this), note.id);
+                return $.fn.annotateCallback(note.id);
             });
         }
     };
@@ -506,8 +514,8 @@
     $.fn.annotateImage.labelToggle = function(image) {
         if (image.viewAnnotations) {
             // Turn labels off
-            image.toggles.children('.image-annotate-label-show').replaceWith('<span class="image-annotate-label-show">show</span>');
-            image.toggles.children('.image-annotate-label-hide').replaceWith('<a href="#" class="image-annotate-label-hide">hide</a>');
+            image.toggles.children('.image-annotate-label-show').replaceWith('<span class="image-annotate-label-show">' +  lang['ANNOTATE_SHOW'] + '</span>');
+            image.toggles.children('.image-annotate-label-hide').replaceWith('<a href="#" class="image-annotate-label-hide">' +  lang['ANNOTATE_HIDE'] + '</a>');
             image.toggles.children('.image-annotate-label-hide').click(function() {
                 return $.fn.annotateImage.labelToggle(image);
             });
@@ -517,8 +525,8 @@
             }
         } else {
             // Turn labels on
-            image.toggles.children('.image-annotate-label-show').replaceWith('<a href="#" class="image-annotate-label-show">show</a>');
-            image.toggles.children('.image-annotate-label-hide').replaceWith('<span class="image-annotate-label-hide">hide</span>');
+            image.toggles.children('.image-annotate-label-show').replaceWith('<a href="#" class="image-annotate-label-show">' +  lang['ANNOTATE_SHOW'] + '</a>');
+            image.toggles.children('.image-annotate-label-hide').replaceWith('<span class="image-annotate-label-hide">' +  lang['ANNOTATE_HIDE'] + '</span>');
             image.toggles.children('.image-annotate-label-show').click(function() {
                 image.viewAnnotations = true;
                 return $.fn.annotateImage.labelToggle(image);
@@ -528,13 +536,8 @@
         return false;
     };
 
-    $.fn.annotateCallback = function(node, id) {
-    	// show the hidden annotation near the hotspot that called it
-    	var detail = $("#" + id);
-
-    	var offset = node.offset();
-        $("#" + id).offset(offset).show();
-
+    $.fn.annotateCallback = function(id) {
+        alert('Annotation ID: ' + id);
         return false;
     }
 
