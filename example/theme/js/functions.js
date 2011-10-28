@@ -1,7 +1,5 @@
-lang = new Object();
-lang['COLLAPSE'] = "Hide";
-lang['EXPAND'] = "Show";
-
+/*=========================================================*/
+/* this js must be loaded after en.js
 /*=========================================================*/
 
 function collapseBox() {

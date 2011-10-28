@@ -60,7 +60,7 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 	
 	public void renderHead(final IHeaderResponse response) {
 		JavascriptService.get().includeJQuery(response);
-//		response.renderJavascriptReference(new ResourceReference("/js/jquery/jqModal.pack.js"));
+		response.renderJavascriptReference(new ResourceReference("/js/lang/en.js"));
 		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery.form.js"));
 		response.renderJavascriptReference(new ResourceReference("/js/functions.js"));
 	

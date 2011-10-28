@@ -57,6 +57,9 @@ import org.cast.cwm.xml.TransformResult;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
+import org.cast.isi.component.AnnotatedImageComponent;
+import org.cast.isi.component.HotSpotComponent;
+import org.cast.isi.component.SlideShowComponent;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.page.ISIStandardPage;
@@ -406,7 +409,10 @@ public class ISIXmlComponent extends XmlComponent {
 			hotSpotComponent.add(new AttributeRemover("annotatedImageId"));
 			return hotSpotComponent;
 			
-			
+		} else if (wicketId.startsWith("slideShow_")) {
+			SlideShowComponent slideShowComponent = new SlideShowComponent(wicketId, elt);
+			return slideShowComponent;
+						
 		} else if (wicketId.startsWith("collapseBoxControl-")) {
 			String boxSequence = (wicketId.substring("collapseBoxControl-".length()).equals("") ? "0" : wicketId.substring("collapseBoxControl-".length()));
 			WebMarkupContainer collapseBoxContainer = new WebMarkupContainer(wicketId);

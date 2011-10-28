@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cast.isi;
+package org.cast.isi.component;
 
 import org.apache.wicket.model.Model;
 import org.cast.cwm.data.component.DialogBorder;

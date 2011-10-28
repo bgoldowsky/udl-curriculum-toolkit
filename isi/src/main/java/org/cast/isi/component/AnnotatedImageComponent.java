@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cast.isi;
+package org.cast.isi.component;
 
 import lombok.Getter;
 
@@ -28,8 +28,6 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.cast.cwm.IRelativeLinkSource;
-import org.cast.cwm.indira.FileResourceManager;
-import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +43,6 @@ import org.w3c.dom.Element;
  */
 public class AnnotatedImageComponent extends WebMarkupContainer implements IHeaderContributor {
 	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(AnnotatedImageComponent.class);
 
 	protected Element elt;
@@ -70,6 +67,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 		response.renderOnDomReadyJavascript("{$(\"#" + annotatedImageComponentId + "\").annotateImage({" +
             "editable: false, " +
             "useAjax: false, " +
+            "hoverShow: false, " +
             "notes: [ " + hotSpotString + "] } )}");
 	}
 	
@@ -79,8 +77,6 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 	 * hotspot on the annotated image
 	 */
 	public class HotSpotVisitor implements IVisitor<HotSpotComponent> {
-		
-		private static final long serialVersionUID = 1L;
 		public StringBuffer hotSpotDetails;
 		@Getter private int count = 0;
 		
