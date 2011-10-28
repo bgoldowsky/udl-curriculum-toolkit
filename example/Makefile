@@ -9,33 +9,33 @@ PROD_SERVER = demo.cast.org
 BUILD_SNAPSHOTS = 1
 
 # Path to base of SVN tree
-BASEDIR = ../../../..
+BASEDIR = ../..
+
+# Path to base of SVN tree from Google Code
+# FIXME: is there a way to avoid having to just assume people might check it out at this location?
+GCBASEDIR = ../../../gsvn
 
 # Path to CWM modules
-CWM = $(BASEDIR)/cwm
+CWM = $(GCBASEDIR)/cast-wicket-modules/trunk
 
 # Path to ISI module
-ISIDIR = ..
+ISI = $(GCBASEDIR)/udl-curriculum-toolkit/trunk/isi
 
+## List of dependency modules to be built, in order (if not stable)
 MODULES = $(if $(BUILD_SNAPSHOTS), \
-	$(BASEDIR)/audioapplet/trunk \
-	$(CWM)/cwm-base/trunk \
-	$(CWM)/cwm-agents/trunk \
-	$(CWM)/cwm-drawtool/trunk \
-	$(CWM)/cwm-components/trunk \
-	$(CWM)/cwm-audioapplet/trunk \
-	$(CWM)/cwm-applets/trunk \
-	$(CWM)/cwm-data/trunk \
-	$(CWM)/cwm-mediaplayer/trunk \
-	$(CWM)/cwm-xml/trunk \
-	$(CWM)/cwm-glossary/trunk \
-	$(CWM)/cwm-indira/trunk \
-	$(CWM)/cwm-tag/trunk \
-	$(ISIDIR)/isi)
+	$(CWM) \
+	$(ISI))
 
+# URL for checking out CWM modules
+CWMURL = https://cast-wicket-modules.googlecode.com/svn
+
+# URL for checking out Curriculum Toolkit modules
+UCTURL = https://udl-curriculum-toolkit.googlecode.com/svn
+
+# Command line for copying WAR file to server
 RSYNC ?= rsync -a -L --log-format='%f' --exclude '.svn' --exclude '*~' 
 
-install: $(patsubst %,%-install, $(MODULES))
+install: $(patsubst %, %-install, $(MODULES))
 	mvn clean install
 
 %-install:
@@ -49,20 +49,12 @@ svnup: $(patsubst %, %-svnup, $(MODULES))
 %-svnup:
 	cd $* && svn up --set-depth=infinity
 
-checkout: checkout-parent-dirs $(patsubst %, %-checkout, $(MODULES)) svnup
-
-%-checkout:
-	svn up -N $(subst /trunk, , $*)
-	svn up -N $*
-
-checkout-parent-dirs:
-	svn up -N $(CWM)
-	svn up -N $(CWM)/audioapplet
-	svn up -N $(CWM)/audioapplet/trunk
-	svn up -N $(CWM)/nsfc
-	svn up -N $(CWM)/nsfc/trunk
-	svn up -N $(CWM)/nsfc/trunk/app
-	svn up -N $(CWM)/nsfc/trunk/app/isi
+checkout:
+	svn checkout -N $(CWMURL) $(GCBASEDIR)/cast-wicket-modules
+	svn up --set-depth=infinity $(CWM)
+	svn checkout -N $(UCTURL) $(GCBASEDIR)/udl-curriculum-toolkit
+	svn up -N $(GCBASEDIR)/udl-curriculum-toolkit/trunk
+	svn up --set-depth=infinity $(ISI)
 
 upload-qa:
 	@echo "Uploading to $(QA_SERVER)"
