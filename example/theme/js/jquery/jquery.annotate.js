@@ -376,7 +376,7 @@
             });
         } else {
             this.area.click(function() {
-                return $.fn.annotateCallback(note.id);
+                return $.fn.annotateCallback($(this), note.id);
             });
         }
     };
@@ -536,9 +536,15 @@
         return false;
     };
 
-    $.fn.annotateCallback = function(id) {
-        alert('Annotation ID: ' + id);
+    $.fn.annotateCallback = function(hotSpotNode, id) {
+    	// show the hidden annotation relative to the hotspot that called it
+    	var detail = $("#" + id);
+    	var offset = hotSpotNode.offset();
+
+		detail.css("top", offset.top);
+		detail.css("left", offset.left);
+		detail.show();
         return false;
-    }
+    };
 
 })(jQuery);
