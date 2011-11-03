@@ -20,6 +20,7 @@
 package org.cast.example.panel;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.cast.cwm.components.ClassAttributeModifier;
@@ -30,8 +31,8 @@ public class TeacherHeaderPanel extends ExampleHeaderPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public TeacherHeaderPanel(String id) {
-		super(id);
+	public TeacherHeaderPanel(String id, PageParameters parameters) {
+		super(id, parameters);
 
 		BookmarkablePageLink<Void> manageClassesLink = new BookmarkablePageLink<Void>("manageClassesLink", ISIApplication.get().getManageClassesPageClass());
 		ISIApplication.get().setLinkProperties(manageClassesLink);

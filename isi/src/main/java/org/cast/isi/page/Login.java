@@ -79,7 +79,7 @@ public class Login extends ISIBasePage {
 			}
 		}
 		add(new SignInForm("form"));
-		add(ISIApplication.get().getFooterPanel("pageFooter"));
+		add(ISIApplication.get().getFooterPanel("pageFooter", params));
 	}
 
 	

@@ -24,7 +24,6 @@ import lombok.Setter;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -40,6 +39,7 @@ import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.ResponseService;
+import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
@@ -89,7 +89,8 @@ public class ResponseList extends Panel {
 			this.mTargetUser = mUser;
 		
 		dataProvider = ResponseService.get().getResponseProviderForPrompt(promptModel, mTargetUser);
-		dataProvider.getSortState().setPropertySortOrder("createDate", ISortState.DESCENDING);
+		// response list sort order is set by application configuration
+		dataProvider.getSortState().setPropertySortOrder(ISIApplication.get().getResponseSortField(), ISIApplication.get().getResponseSortState());
 		
 		DataView<Response> dataView = new DataView<Response>("dataView", dataProvider) {
 			private static final long serialVersionUID = 1L;

@@ -69,7 +69,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	public void commonInit(PageParameters parameters) {
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
 		
-		add(ISIApplication.get().getHeaderPanel("headerPanel"));
+		add(ISIApplication.get().getHeaderPanel("headerPanel", parameters));
 		// If teacher, then add a sub header panel
 		if (ISISession.get().getUser().getRole().subsumes(Role.TEACHER)) {
 			add(new TeacherSubHeaderPanel("teacherSubHeader", parameters));
@@ -77,7 +77,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 			add(new WebMarkupContainer("teacherSubHeader").setVisible(false));			
 		}
 
-		add(ISIApplication.get().getFooterPanel("footerPanel"));
+		add(ISIApplication.get().getFooterPanel("footerPanel", parameters));
 		add(new ISISessionExpireWarningDialog("sessionWarning"));
 		
 		addToolbar("tht");

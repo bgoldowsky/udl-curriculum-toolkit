@@ -21,6 +21,7 @@ package org.cast.isi.panel;
 
 import net.databinder.auth.hib.AuthDataSession;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.User;
@@ -39,9 +40,11 @@ import org.cast.isi.ISIApplication;
 public abstract class HeaderPanel extends ISIPanel {
 
 	private static final long serialVersionUID = 1L;
+	protected PageParameters parameters;
 
-	public HeaderPanel(String id) {
+	public HeaderPanel(String id, PageParameters parameters) {
 		super(id);
+		this.parameters = parameters;
 		addCommonComponents();
 		addButtons();
 	}
