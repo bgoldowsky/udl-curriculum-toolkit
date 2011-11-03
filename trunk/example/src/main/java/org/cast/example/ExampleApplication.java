@@ -19,6 +19,7 @@
  */
 package org.cast.example;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -78,12 +79,12 @@ public class ExampleApplication extends ISIApplication {
 	}
 
 	@Override
-	public HeaderPanel getHeaderPanel(String id) {
+	public HeaderPanel getHeaderPanel(String id, PageParameters parameters) {
 //		the header panel expects the application to add buttons		
 		if (Role.TEACHER.equals(CwmSession.get().getUser().getRole()))
-			return new TeacherHeaderPanel(id);
+			return new TeacherHeaderPanel(id, parameters);
 		else
-			return new ExampleHeaderPanel(id);
+			return new ExampleHeaderPanel(id, parameters);
 	}
 
 	@Override
@@ -96,8 +97,8 @@ public class ExampleApplication extends ISIApplication {
 	}
 
 	@Override
-	public FooterPanel getFooterPanel(String id) {
-		return new FooterPanel(id);
+	public FooterPanel getFooterPanel(String id, PageParameters parameters) {
+		return new FooterPanel(id, parameters);
 	}
 
 	@SuppressWarnings("unchecked")

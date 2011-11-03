@@ -42,6 +42,7 @@ import org.apache.wicket.Resource;
 import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -156,6 +157,8 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean toolBarOn = true; // text help, dictionary
 	@Getter protected String glossaryLinkType = DEFAULT_GLOSSARY_TYPE;
 	@Getter protected boolean useAuthoredResponseType = false; // false for backwards compatibility
+	@Getter protected String responseSortField = "createDate";
+	@Getter protected int responseSortState = ISortState.DESCENDING;
 	@Getter protected ResponseMetadata responseMetadata = new ResponseMetadata();
 	@Getter protected ArrayList<ResponseType> defaultResponseTypes = new ArrayList<ResponseType>();
 	
@@ -229,6 +232,7 @@ public abstract class ISIApplication extends CwmApplication {
 		// get the configuration from the properties file
 		configureApplicationProperties();
 		configureResponseTypes();
+		configureResponseSort();
 
 		// Load XML & XSL data
 		XmlService xmls = XmlService.get();
@@ -496,7 +500,29 @@ public abstract class ISIApplication extends CwmApplication {
 			responseMetadata.addType(rt);
 		}
 	}
-	
+
+	/**
+	 * determine any custom response sorting
+	 */
+	public void configureResponseSort() {
+		String field = appProperties.getProperty("isi.response.sortField");
+		String state = appProperties.getProperty("isi.response.sort");
+
+		if (field != null) {
+			responseSortField = field.trim();
+			log.info("The Response will be sorted by: {}", responseSortField);
+		}
+		if (state != null) {
+			state = state.trim();
+			if (state.equalsIgnoreCase("ascending")) 
+				responseSortState = ISortState.ASCENDING;
+			else if (state.equalsIgnoreCase("descending")) 
+				responseSortState = ISortState.DESCENDING;
+			else if (state.equalsIgnoreCase("none")) 
+				responseSortState = ISortState.NONE;
+			log.info("The Response have a sort order: {}", state);
+		}
+	}
 	
 	public static ISIApplication get() {
 		return (ISIApplication) Application.get();
@@ -909,8 +935,8 @@ public abstract class ISIApplication extends CwmApplication {
 	 * Returns the header and footer panel to be used on pages for this application.
 	 * @return
 	 */
-	public abstract HeaderPanel getHeaderPanel(String id);
-	public abstract FooterPanel getFooterPanel(String id);
+	public abstract HeaderPanel getHeaderPanel(String id, PageParameters parameters);
+	public abstract FooterPanel getFooterPanel(String id, PageParameters parameters);
 	public abstract AbstractNavBar<?> getNavBar(String id, IModel<? extends XmlSection> sec, boolean teacher); // think I need a type here
 		
 }

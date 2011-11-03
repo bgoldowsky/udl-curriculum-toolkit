@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.cast.cwm.components.ClassAttributeModifier;
@@ -50,8 +51,8 @@ public class ExampleHeaderPanel extends HeaderPanel {
 	@Getter @Setter
 	GlossaryLink glossaryLink;
 	
-	public ExampleHeaderPanel(String id) {
-		super(id);
+	public ExampleHeaderPanel(String id, PageParameters parameters) {
+		super(id, parameters);
 	}
 
 	@Override
