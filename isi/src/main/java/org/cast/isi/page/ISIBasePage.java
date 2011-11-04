@@ -69,6 +69,14 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 		response.renderCSSReference(new ResourceReference("/css/boxes.css"));
 		response.renderCSSReference(new ResourceReference("/css/modal.css"));
 		response.renderCSSReference(new ResourceReference("/css/theme.css"));
+
+		// if MathML is configured on, then link out to the MathJax site
+		if (ISIApplication.get().isMathMLOn()) {
+			response.renderString("<script type=\"text/javascript\"" +
+					"src=\"https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\">" +
+					"</script>\n");
+		}
+	
 	}
 
 	public void setPageTitle(String pageTitle) {

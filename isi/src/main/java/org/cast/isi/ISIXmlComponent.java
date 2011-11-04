@@ -24,6 +24,7 @@ import lombok.Setter;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -223,16 +224,28 @@ public class ISIXmlComponent extends XmlComponent {
 			return thumbPanel;
 
 		} else if (wicketId.startsWith("videoplayer_")) {
-			String video = elt.getAttribute("src");
-			String preview = video.replace(".flv", "_p.png");
-			if (FileResourceManager.get().get(preview) == null)
-				preview = null;
-			String captions = video.replace(".flv", "_cap.xml");
-			if (FileResourceManager.get().get(captions) == null) {
-				captions = null;
-			}
+			String videoSrc = elt.getAttribute("src");
+			ResourceReference videoRef = getRelativeRef(videoSrc);
+			String videoUrl = RequestCycle.get().urlFor(videoRef).toString();
+
+			String previewName = videoSrc.replace(".flv", "_p.png");
+			ResourceReference previewRef = getRelativeRef(previewName);
+			String preview = RequestCycle.get().urlFor(previewRef).toString();
+
+			String captionsName = videoSrc.replace(".flv", "_cap.xml");
+			ResourceReference captionsRef = getRelativeRef(captionsName);
+			String captions = RequestCycle.get().urlFor(captionsRef).toString();
+
+			
+//			String preview = videoSrc.replace(".flv", "_p.png");
+//			if (FileResourceManager.get().get(preview) == null)
+//				preview = null;
+//			String captions = videoSrc.replace(".flv", "_cap.xml");
+//			if (FileResourceManager.get().get(captions) == null) {
+//				captions = null;
+//			}
 			// ResourceReference rr = new ResourceReference(FileResource.class, video, null, null);
-			MediaPlayerPanel comp = new MediaPlayerPanel(wicketId, FileResourceManager.get().getUrl(video), 
+			MediaPlayerPanel comp = new MediaPlayerPanel(wicketId, videoUrl, 
 					Integer.valueOf(elt.getAttribute("width")), 
 					Integer.valueOf(elt.getAttribute("height"))) {
 
@@ -247,9 +260,11 @@ public class ISIXmlComponent extends XmlComponent {
 			comp.setFullScreen(true);
 			comp.setUseOnPlay(true);
 			if (preview != null)
-				comp.setPreview(new ResourceReference(FileResource.class, preview, null, null));
+				comp.setPreview(previewRef);
+//				comp.setPreview(new ResourceReference(FileResource.class, preview, null, null));
 			if (captions != null)
-				comp.setCaptionFile(FileResourceManager.get().getResourceReference(captions));
+				comp.setCaptionFile(captionsRef);
+//				comp.setCaptionFile(FileResourceManager.get().getResourceReference(captions));
 			return comp;
 
 		} else if (wicketId.startsWith("audioplayer_")) {
