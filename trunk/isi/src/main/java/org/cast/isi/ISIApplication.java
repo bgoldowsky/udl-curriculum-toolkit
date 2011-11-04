@@ -155,6 +155,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean classMessageOn = true;
 	@Getter protected boolean pageNumbersOn = true;  // TOC page numbers
 	@Getter protected boolean toolBarOn = true; // text help, dictionary
+	@Getter protected boolean mathMLOn = false; 
 	@Getter protected String glossaryLinkType = DEFAULT_GLOSSARY_TYPE;
 	@Getter protected boolean useAuthoredResponseType = false; // false for backwards compatibility
 	@Getter protected String responseSortField = "createDate";
@@ -362,24 +363,21 @@ public abstract class ISIApplication extends CwmApplication {
 	
 	protected void configureApplicationProperties() {
 		// Set Application settings based on property file
-		String notebookOnProperty =  appProperties.getProperty("isi.notebook.isOn");
-		if (notebookOnProperty != null) {
-			notebookOn = Boolean.valueOf(notebookOnProperty.trim());
-		}
-		log.info("Value of isi.notebook.isOn is  = {}", notebookOn);
+		notebookOn = setBooleanProperty("isi.notebook.isOn");
+		whiteboardOn = setBooleanProperty("isi.whiteboard.isOn");
+		glossaryOn = setBooleanProperty("isi.glossary.isOn");
+		myQuestionsOn = setBooleanProperty("isi.myQuestion.isOn");
+		responseCollectionsOn = setBooleanProperty("isi.responseCollection.isOn");
+		tagsOn = setBooleanProperty("isi.tag.isOn");
+		highlightsPanelOn = setBooleanProperty("isi.highlightsPanel.isOn");
+		pageNotesOn = setBooleanProperty("isi.pageNotes.isOn");
+		pageNumbersOn = setBooleanProperty("isi.pageNumbers.isOn");
+		classMessageOn = setBooleanProperty("isi.classMessage.isOn");
+		toolBarOn = setBooleanProperty("isi.toolBar.isOn");
+		mathMLOn = setBooleanProperty("isi.mathML.isOn");
+		useAuthoredResponseType = setBooleanProperty("isi.useAuthoredResponseType.isOn");
 
-		String whiteboardOnProperty =  appProperties.getProperty("isi.whiteboard.isOn");
-		if (whiteboardOnProperty != null) {
-			whiteboardOn = Boolean.valueOf(whiteboardOnProperty.trim());
-		}
-		log.info("Value of isi.whiteboard.isOn is  = {}", whiteboardOn);
-
-		String glossaryOnProperty =  appProperties.getProperty("isi.glossary.isOn");
-		if (glossaryOnProperty != null) {
-			glossaryOn = Boolean.valueOf(glossaryOnProperty.trim());
-		}
-		log.info("Value of isi.glossary.isOn is  = {}", glossaryOn);
-
+		/* if the glossary is on, decide what type of glossary link is used */
 		if (glossaryOn == true) {
 			String glossaryTypeProperty =  appProperties.getProperty("isi.glossary.type");
 			if (glossaryTypeProperty != null && 
@@ -390,61 +388,6 @@ public abstract class ISIApplication extends CwmApplication {
 			}
 			log.info("Type of of glossary link is  = {}", glossaryLinkType);
 		}
-		
-		String highlightsPanelOnProperty =  appProperties.getProperty("isi.highlightsPanel.isOn");
-		if (highlightsPanelOnProperty != null) {
-			highlightsPanelOn = Boolean.valueOf(highlightsPanelOnProperty.trim());
-		}
-		log.info("Value of isi.highlightsPanel.isOn is  = {}", highlightsPanelOn);
-
-		String myQuestionsOnProperty =  appProperties.getProperty("isi.myQuestion.isOn");
-		if (myQuestionsOnProperty != null) {
-			myQuestionsOn = Boolean.valueOf(myQuestionsOnProperty.trim());
-		}
-		log.info("Value of isi.myQuestion.isOn is  = {}", myQuestionsOn);
-
-		String responseCollectionsOnProperty =  appProperties.getProperty("isi.responseCollection.isOn");
-		if (responseCollectionsOnProperty != null) {
-			responseCollectionsOn = Boolean.valueOf(responseCollectionsOnProperty.trim());
-		}
-		log.info("Value of isi.responseCollection.isOn is  = {}", responseCollectionsOn);
-
-		String tagsOnProperty =  appProperties.getProperty("isi.tag.isOn");
-		if (tagsOnProperty != null) {
-			tagsOn = Boolean.valueOf(tagsOnProperty.trim());
-		}
-		log.info("Value of isi.tag.isOn is  = {}", tagsOnProperty);
-
-		String pageNotesOnProperty =  appProperties.getProperty("isi.pageNotes.isOn");
-		if (pageNotesOnProperty != null) {
-			pageNotesOn = Boolean.valueOf(pageNotesOnProperty.trim());
-		}
-		log.info("Value of isi.pageNotes.isOn is  = {}", pageNotesOn);
-
-		String pageNumbersOnProperty =  appProperties.getProperty("isi.pageNumbers.isOn");
-		if (pageNumbersOnProperty != null) {
-			pageNumbersOn = Boolean.valueOf(pageNumbersOnProperty.trim());
-		}
-		log.info("Value of isi.pageNumbers.isOn is  = {}", pageNumbersOn);
-
-		String classMessageOnProperty =  appProperties.getProperty("isi.classMessage.isOn");
-		if (classMessageOnProperty != null) {
-			classMessageOn = Boolean.valueOf(classMessageOnProperty.trim());
-		}
-		log.info("Value of isi.classMessage.isOn is  = {}", classMessageOn);
-
-		String toolBarOnProperty =  appProperties.getProperty("isi.toolBar.isOn");
-		if (toolBarOnProperty != null) {
-			toolBarOn = Boolean.valueOf(toolBarOnProperty.trim());
-		}
-		log.info("Value of isi.toolBar.isOn is  = {}", toolBarOn);
-
-		String authoredResponseTypeOnProperty =  appProperties.getProperty("isi.useAuthoredResponseType.isOn");
-		if (authoredResponseTypeOnProperty != null) {
-			useAuthoredResponseType = Boolean.valueOf(authoredResponseTypeOnProperty.trim());
-		}
-		log.info("Value of isi.useAuthoredResponseType.isOn is  = {}", useAuthoredResponseType);
-		
 		
 		// Wordnik API key, used if available for free dictionary
 		String wordnikKey = appProperties.getProperty("isi.wordnikApiKey");
@@ -459,10 +402,20 @@ public abstract class ISIApplication extends CwmApplication {
 				log.error("Wordnik API failure");
 				e.printStackTrace();
 			}
+		} else {
+			log.info("Wordnik will not be used");
 		}
 	}
 
-
+	protected Boolean setBooleanProperty(String property) {
+		String propertyValue =  appProperties.getProperty(property);
+		if (propertyValue != null) {
+			log.info("Value of {} is  = {}", property, propertyValue);
+			return Boolean.valueOf(propertyValue.trim());
+		}
+		log.info("Value of {} is = false", property);
+		return false; 
+	}
 	/**
 	 * determine what the default response types are used
 	 */

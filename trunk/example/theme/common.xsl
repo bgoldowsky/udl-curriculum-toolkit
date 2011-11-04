@@ -182,10 +182,10 @@
          <!-- embedded movie -->
 		 <xsl:call-template name="videotag" />
          <!-- Long Description -->
-		 <xsl:if test="//dtb:prodnote[@imgref=current()/@id]">
-			<a wicket:id="ld_{@id}" onclick="return popupWin(this);" target="imgdesc"
-				href="#" title="Image description">d</a>
-		 </xsl:if>
+<!-- 		 <xsl:if test="//dtb:prodnote[@imgref=current()/@id]"> -->
+<!-- 			<a wicket:id="ld_{@id}" onclick="return popupWin(this);" target="imgdesc" -->
+<!-- 				href="#" title="Image description">d</a> -->
+<!-- 		 </xsl:if> -->
 	   </xsl:when>
             
        <xsl:when test="contains(@src, '.mp3')">
@@ -220,11 +220,11 @@
     </xsl:template>
 
     <xsl:template name="videotag">
-        <xsl:variable name="base">
-            <xsl:call-template name="basename">
-                <xsl:with-param name="path" select="@src"/>
-            </xsl:call-template>
-        </xsl:variable>
+<!--         <xsl:variable name="base"> -->
+<!--             <xsl:call-template name="basename"> -->
+<!--                 <xsl:with-param name="path" select="@src"/> -->
+<!--             </xsl:call-template> -->
+<!--         </xsl:variable> -->
         <xsl:variable name="width">
             <xsl:choose>
                 <xsl:when test="@width != ''">
@@ -244,7 +244,8 @@
 
 
         <div class="objectBox center">
-	        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{$base}"></div>
+<!-- 	        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{$base}"></div> -->
+	        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}"></div>
             <div class="objectCaption">
             	<xsl:apply-templates select="dtb:caption" />
             </div>
@@ -497,6 +498,26 @@
      </div>
    </xsl:template>
    
+   <!-- MathML  -->
+    <xsl:template match="m:math">
+      <!-- The non-standard "ignore" attribute tells TextHelp toolbar not to mark up inside the span.
+           The class "nohlpassage" tells the highlighting code not to add its spans.
+           Any added spans mess up the math display. -->
+      <span ignore="true" class="nohlpassage">
+        <math>
+          <xsl:copy-of select="@*"/>
+          <xsl:apply-templates/>
+        </math>
+      </span>
+    </xsl:template>
+    
+    <xsl:template match="m:*">
+      <!-- MathJax does not want the elements to be namespaced. -->
+      <xsl:element name="{local-name()}">
+        <xsl:copy-of select="@*"/>
+      	<xsl:apply-templates/>
+      </xsl:element>
+    </xsl:template>
 
 
     
