@@ -66,9 +66,9 @@ import wicket.contrib.tinymce.settings.TinyMCESettings.Toolbar;
 public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 	@Getter
-	private ResponseMetadata metadata;
+	protected ResponseMetadata metadata;
 	
-	private ContentLoc loc;
+	protected ContentLoc loc;
 	
 	@Getter @Setter
 	private boolean titleVisible = false;
@@ -133,10 +133,6 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 					this.setTemplateURL(RequestCycle.get().urlFor(templateResourceRef).toString());
 				}
 			}
-			// Special case: use text sentence starters for audio if there are no audio-specific ones.
-			if (thisType.equals(ResponseType.AUDIO) && (typeMD==null || typeMD.getFragments()==null || typeMD.getFragments().isEmpty()))
-				if (metadata.getType(ResponseType.HTML) != null)
-					this.setStarters(metadata.getType(ResponseType.HTML).getFragments());
 		}
 		super.onInitialize();
 	}
@@ -169,8 +165,16 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 		
 		((Form<?>)editor.get("form")).add(new TitleFragment("titleFragment", model));
 		
-		if (type.equals(ResponseType.AUDIO))
-			editor.add(new ListView<String>("starters", new PropertyModel<List<String>>(metadata, "typeMap[HTML].fragments")) {
+		if (type.equals(ResponseType.AUDIO)) {
+			String propertyString;
+			TypeMetadata typeMD = metadata.getType(ResponseType.AUDIO);
+			// Special case: use text sentence starters for audio if there are no audio-specific ones.
+			if ((typeMD==null || typeMD.getFragments()==null || typeMD.getFragments().isEmpty())) {
+				 propertyString = new String("typeMap[HTML].fragments");
+			} else {
+				 propertyString = new String("typeMap[AUDIO].fragments");
+			}
+			editor.add(new ListView<String>("starters", new PropertyModel<List<String>>(metadata, propertyString)) {
 
 				private static final long serialVersionUID = 1L;
 
@@ -185,6 +189,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 				}
 				
 			});
+		}
 		
 		return editor;
 	}
