@@ -19,6 +19,9 @@
  */
 package org.cast.isi.panel;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
@@ -35,6 +38,8 @@ import org.cast.isi.data.ContentLoc;
 
 public class ResponseButtons extends Panel {
 
+	@Getter @Setter
+	protected String context = "default";
 	private IModel<Prompt> mPrompt;
 	private ResponseMetadata metadata;
 	private ContentLoc loc;
@@ -126,6 +131,7 @@ public class ResponseButtons extends Panel {
 					target.addComponent(getListComponent());
 				}
 			};
+			editor.setContext(getContext());
 			getListComponent().putPlaceholderComponent(editor, target);
 			target.addComponent(ResponseButtons.this);
 		}

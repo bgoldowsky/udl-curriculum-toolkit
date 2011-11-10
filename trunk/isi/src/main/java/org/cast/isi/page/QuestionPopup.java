@@ -70,6 +70,7 @@ public class QuestionPopup extends ISIBasePage {
 		responseList.setAllowEdit(!isTeacher);
 		
 		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mPrompt, questionsMetadata, null);
+		responseButtons.setContext("questions");
 		add(responseButtons);
 		responseButtons.setVisible(!isTeacher);
 	}

@@ -213,6 +213,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		responseList.setAllowWhiteboard(false);
 		add(responseList);
 		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mPrompt, notebookMetadata, currentLoc);
+		responseButtons.setContext("notebook");
 		responseButtons.setVisible(!isTeacher);
 		add(responseButtons);
 	}

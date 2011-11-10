@@ -69,6 +69,7 @@ public class WordCardPanel extends ISIPanel {
 		responseList.setAllowWhiteboard(false);
 		add(responseList);
 		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mPrompt, wordCardMetadata, null);
+		responseButtons.setContext("glossary");
 		add(responseButtons.setVisible(!isTeacher));
 	}
 
