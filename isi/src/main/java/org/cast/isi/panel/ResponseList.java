@@ -110,6 +110,7 @@ public class ResponseList extends Panel {
 				viewer.setAllowEdit(allowEdit);
 				viewer.setAllowNotebook(allowNotebook);
 				viewer.setAllowWhiteboard(allowWhiteboard);
+				viewer.setContext(getContext()); // pass through the context
 				item.add(viewer);
 			}				
 		};

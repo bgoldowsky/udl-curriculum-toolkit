@@ -77,15 +77,9 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	private IModel<User> mTargetUser;
 	protected XmlSectionModel mSection;
 	protected IModel<Prompt> mNotesPrompt;
+	protected ResponseMetadata pageNotesMetadata = new ResponseMetadata();
 
-	/**
-	 * Metadata object used for all page notes response areas.
-	 */
-	protected static ResponseMetadata pageNotesMetadata = new ResponseMetadata();
-	static {
-		pageNotesMetadata.addType(ResponseType.TEXT);
-		pageNotesMetadata.addType(ResponseType.AUDIO);
-	}
+	
 	
 	
 	public Reading (PageParameters parameters) {
@@ -164,6 +158,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	}
 
 	protected void addNotesPanel () {
+		setPageNotesMetadata();
 		mNotesPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
 		WebMarkupContainer notesbox = new WebMarkupContainer("notesbox") {
 			private static final long serialVersionUID = 1L;
@@ -182,11 +177,17 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		responseList.setAllowWhiteboard(ISIApplication.get().isWhiteboardOn());
 		notesbox.add(responseList);
 		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mNotesPrompt, pageNotesMetadata, loc);
+		responseButtons.setContext("pagenote");
 		notesbox.add(responseButtons);
 		notesbox.setVisible(ISIApplication.get().isPageNotesOn());
 	}
 
 	
+	protected void setPageNotesMetadata() {
+		pageNotesMetadata.addType(ResponseType.TEXT);
+		pageNotesMetadata.addType(ResponseType.AUDIO);
+	}
+
 	public void addHighlightPanel() {	
 		add(new HighlightControlPanel("highlightControlPanel", ISIResponseService.get().getOrCreatePrompt(PromptType.HIGHLIGHTLABEL, loc), mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
 		add(new HighlightDisplayPanel("highlightDisplayPanel", ISIResponseService.get().getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc)).setVisible(ISIApplication.get().isHighlightsPanelOn()));

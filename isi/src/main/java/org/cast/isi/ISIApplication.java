@@ -111,6 +111,9 @@ import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wicket.contrib.tinymce.settings.TinyMCESettings;
+import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
+
 import com.visural.wicket.util.lesscss.LessCSSResourceStreamLocator;
 
 public abstract class ISIApplication extends CwmApplication {
@@ -162,6 +165,9 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected int responseSortState = ISortState.DESCENDING;
 	@Getter protected ResponseMetadata responseMetadata = new ResponseMetadata();
 	@Getter protected ArrayList<ResponseType> defaultResponseTypes = new ArrayList<ResponseType>();
+	protected TinyMCESettings tinyMCESettings = null;
+
+	
 	
 	// Service Classes and Plugins
 	@Getter @Setter protected Glossary glossary;
@@ -206,7 +212,7 @@ public abstract class ISIApplication extends CwmApplication {
 		
 		// Strip tags so that jQuery traversal doesn't break
 		getMarkupSettings().setStripWicketTags(true);
-		
+				
 		// Tells ResourceFinder to look in skin directory before looking in context dir.
 		if (getCustomSkinDir() != null) 
 			getResourceSettings().addResourceFolder(getCustomSkinDir());
@@ -635,7 +641,16 @@ public abstract class ISIApplication extends CwmApplication {
 	public Component getToolbar (String id, Page page) {
 		return (new FreeToolbar("tht")).setVisible(isToolBarOn());
 	}
-	
+
+	// TODO change context from type string to enum
+	public TinyMCESettings getTinyMCESettings(String context) {
+		if (tinyMCESettings == null) {
+			tinyMCESettings = new ISITinyMCESettings(Theme.advanced);
+		}
+		return tinyMCESettings;
+	}
+
+
 	/**
 	 * Get a link to this application's Table of Contents, based on the currently
 	 * logged in user.

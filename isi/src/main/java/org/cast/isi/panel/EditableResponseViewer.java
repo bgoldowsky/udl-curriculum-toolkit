@@ -49,7 +49,10 @@ public class EditableResponseViewer extends Panel {
 	private ResponseEditor editor;
 	private WebMarkupContainer responseActions;
 	private AjaxLink<Void> editLink;
-	
+
+	@Getter @Setter
+	protected String context = "default";
+
 	@Getter @Setter
 	protected boolean allowEdit = false;
 
@@ -110,6 +113,7 @@ public class EditableResponseViewer extends Panel {
 			
 		};
 		editor.setOutputMarkupPlaceholderTag(true);
+		editor.setContext(getContext()); // pass through the context
 		editContainer.add(editor);
 	}
 	

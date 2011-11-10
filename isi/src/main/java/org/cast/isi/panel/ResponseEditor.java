@@ -20,8 +20,6 @@
 package org.cast.isi.panel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
@@ -52,22 +50,21 @@ import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
 import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.service.ResponseService;
+import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wicket.contrib.tinymce.settings.Button;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
-import wicket.contrib.tinymce.settings.TinyMCESettings.Align;
-import wicket.contrib.tinymce.settings.TinyMCESettings.Location;
-import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
-import wicket.contrib.tinymce.settings.TinyMCESettings.Toolbar;
 
 public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 	@Getter
 	protected ResponseMetadata metadata;
 	
+	@Getter @Setter
+	protected String context = "default";
+
 	protected ContentLoc loc;
 	
 	@Getter @Setter
@@ -225,20 +222,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 	@Override
 	public TinyMCESettings getTinyMCESettings() {
-		synchronized(ResponseEditor.class) {
-			if (tinyMCESettings == null) {
-				tinyMCESettings = new TinyMCESettings(Theme.advanced);
-				tinyMCESettings.setToolbarLocation(Location.top);
-				tinyMCESettings.setToolbarAlign(Align.left);
-				tinyMCESettings.setToolbarButtons(Toolbar.first, 
-						Arrays.asList(Button.fontsizeselect, Button.forecolor, Button.bold, Button.italic, Button.separator,
-								Button.bullist, Button.numlist, Button.separator, Button.undo, Button.redo));
-				List<Button> noButtons = Collections.emptyList();
-				tinyMCESettings.setToolbarButtons(Toolbar.second, noButtons);
-				tinyMCESettings.setToolbarButtons(Toolbar.third, noButtons);
-				tinyMCESettings.setAutoResize(true);
-			}
-		}	
+		tinyMCESettings = ISIApplication.get().getTinyMCESettings(getContext());
 		return tinyMCESettings;
 	}
 	

@@ -89,6 +89,7 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		responseList.setAllowNotebook(false);
 		responseList.setAllowWhiteboard(false);
 		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mPrompt, notebookMetadata, null);
+		responseButtons.setContext("TeacherNotes");
 		add(responseButtons);
 		add(ISIApplication.get().getToolbar("tht", this));
 	}
