@@ -93,9 +93,13 @@
     border: 0px;
 }
 
-.rightBox .responseEdit textarea {
+.rightBox .responseEdit textarea  {
     width: 203px;
     height: 100px;
+}
+
+.rightBox .responseEdit input[type="text"] {
+    width: 203px;
 }
 
 .responseEdit input[type="text"] {
