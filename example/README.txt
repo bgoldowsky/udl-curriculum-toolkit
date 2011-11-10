@@ -2,7 +2,8 @@ This is an example application for using the UDL Curriculum Toolkit,
 developed as part of a National Science Foundation collaborative grant
 to CAST, Educational Development Corporation, and the University of Michigan,
 in which we explored the application of Universal Design for Learning to 
-online inquiry science curricula.
+online inquiry science curricula.  Further development was done by SRI and CAST
+under another NSF grant.  For more details see http://udl-toolkit.cast.org .
 
 QUICK INSTALLATION INSTRUCTIONS
 
