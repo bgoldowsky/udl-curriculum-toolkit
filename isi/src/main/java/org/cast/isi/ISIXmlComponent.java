@@ -268,17 +268,19 @@ public class ISIXmlComponent extends XmlComponent {
 			return comp;
 
 		} else if (wicketId.startsWith("audioplayer_")) {
-			ResourceReference rr = FileResourceManager.get().getResourceReference(elt.getAttribute("src"));
+			String audioSrc = elt.getAttribute("src");
+			ResourceReference audioRef = getRelativeRef(audioSrc);
+			String audioUrl = RequestCycle.get().urlFor(audioRef).toString();
 			int width = 400;
 			if (!elt.getAttribute("width").equals("")) {
 				try {
 					width = Integer.parseInt(elt.getAttribute("width").trim());
 				} catch (Exception e) {
-					log.debug("Can't get width for {}: {}", rr, e);
+					log.debug("Can't get width for {}: {}", audioUrl, e);
 					width = 400;
 				}
 			}
-			AudioPlayerPanel player = new AudioPlayerPanel(wicketId, rr, width, 20);
+			AudioPlayerPanel player = new AudioPlayerPanel(wicketId, audioUrl, width, 20);
 			player.setShowDownloadLink(false);
 			player.setRenderBodyOnly(true);
 			return player;
