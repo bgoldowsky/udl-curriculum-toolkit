@@ -326,7 +326,7 @@
 		<!-- the annotated image id is the id of the img in the first sibling imggroup  -->
 	     <span wicket:id="hotSpot_" style="display:none" annotatedImageId="{../dtb:imggroup/dtb:img/@id[1]}"
 	     	title="{@title}" top="{@top}" left="{@left}" width="{@width}" height="{@height}"
-	     	icon="{@icon}" iconImg="{@iconImg}" iconClass="{@iconClass}">
+	     	imgSrc="{@imgSrc}" imgClass="{@imgClass}">
 		       <xsl:apply-templates/>
 	     </span>
    </xsl:template>

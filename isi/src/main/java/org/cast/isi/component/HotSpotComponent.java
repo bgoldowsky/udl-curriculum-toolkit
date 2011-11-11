@@ -44,9 +44,8 @@ public class HotSpotComponent extends DialogBorder {
 	protected String left = "";
 	protected String width = "";
 	protected String height = "";
-	protected String icon = "false";
-	protected String iconImg = "";
-	protected String iconClass = "";
+	protected String imgSrc = "";
+	protected String imgClass = "";
 	protected String title = ""; 
 
 	/**
@@ -63,9 +62,8 @@ public class HotSpotComponent extends DialogBorder {
 		this.height = elt.getAttribute("height");
 		this.title = elt.getAttribute("title");
 
-		this.icon = elt.getAttribute("icon");
-		this.iconImg = elt.getAttribute("iconImg");
-		this.iconClass = elt.getAttribute("iconClass");		
+		this.imgSrc = elt.getAttribute("imgSrc");
+		this.imgClass = elt.getAttribute("imgClass");		
 	}
 
 	@Override

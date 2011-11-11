@@ -65,6 +65,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 		// The js call that will set up the annotated image.  The hotSpotString contains all the information
 		// needed for the annotated image.
 		response.renderOnDomReadyJavascript("{$(\"#" + annotatedImageComponentId + "\").annotateImage({" +
+	        "viewAnnotations: true, " +
             "editable: false, " +
             "useAjax: false, " +
             "hoverShow: false, " +
@@ -95,17 +96,17 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 			hotSpotDetails.append("\"height\": " + component.height + ", ");
 			hotSpotDetails.append("\"text\": " + "\"" + component.title + "\"" + ", ");
 	
-			if ((component.icon).equals("true")) {
+			if (component.imgSrc != null && !component.imgSrc.trim().equals("")) {
 				// find the url of the image
 				Resource xmlFile = xmlSectionModel.getObject().getXmlDocument().getXmlFile();  
-				ResourceReference imageResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(component.iconImg);
+				ResourceReference imageResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(component.imgSrc);
 				String imageUrl = RequestCycle.get().urlFor(imageResourceRef).toString();
 				if (imageUrl.equals(null))
 						log.warn("The URL for the hotspot image {} is not found", imageUrl);
 				
-				hotSpotDetails.append("\"icon\": " + "\"" + component.icon + "\"" + ", ");
-				hotSpotDetails.append("\"iconImg\": " + "\"" + imageUrl + "\"" + ", ");
-				hotSpotDetails.append("\"iconClass\": " + "\"" + component.iconClass + "\"" + ", ");
+				hotSpotDetails.append("\"useImg\": " + "\"true" + "\"" + ", ");
+				hotSpotDetails.append("\"imgSrc\": " + "\"" + imageUrl + "\"" + ", ");
+				hotSpotDetails.append("\"imgClass\": " + "\"" + component.imgClass + "\"" + ", ");
 			}
 			hotSpotDetails.append("\"id\": " + "\"" + component.hotSpotId + "\"" + " }");
 			
