@@ -121,3 +121,8 @@
     margin: 0px;
     font-size: 0.85em;
 }
+
+.modalBody .imgBox .center {
+	margin: 0 auto 1em;
+}
+	
