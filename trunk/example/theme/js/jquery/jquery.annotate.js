@@ -248,9 +248,9 @@
             newNote.width = 30;
             newNote.height = 30;
             newNote.text = "";
-            newNote.icon = false;
-            newNote.iconImg = "";
-            newNote.iconClass = "button annotate";
+            newNote.useImg = false;
+            newNote.imgSrc = "";
+            newNote.imgClass = "button annotate";
             this.note = newNote;
         }
 
@@ -341,8 +341,8 @@
         this.editable = image.editable;
 
         // Add the area
-        if (note.icon) {
-            this.area = $('<a href="#" class="image-annotate-area' + (this.editable ? ' image-annotate-area-editable' : '') + '"><div class="image-annotate-area-inner"><div class="' + note.iconClass + '"><img src="' + note.iconImg + '" alt="" /><span class="image-annotate-text">' + note.text + '</span></div></div></a>');
+        if (note.useImg) {
+            this.area = $('<a href="#" class="image-annotate-area' + (this.editable ? ' image-annotate-area-editable' : '') + '"><div class="image-annotate-area-inner"><div class="' + note.imgClass + '"><img src="' + note.imgSrc + '" alt="" /><span class="image-annotate-text">' + note.text + '</span></div></div></a>');
         } else {
             this.area = $('<a href="#" class="image-annotate-area' + (this.editable ? ' image-annotate-area-editable' : '') + '"><div class="image-annotate-area-inner"><span class="image-annotate-text">' + note.text + '</span></div></a>');
         }
