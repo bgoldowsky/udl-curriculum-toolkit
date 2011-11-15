@@ -56,7 +56,7 @@
    </xsl:template>
 
     <xsl:template match="dtb:p">
-        <p class="hlpassage">
+        <p class="hlpassage {@class}">
             <xsl:copy-of select="&cncatts;"/>
             <xsl:apply-templates/>
         </p>
