@@ -76,6 +76,9 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 					"src=\"https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\">" +
 					"</script>\n");
 		}
+		
+		// custom css/js can be loaded by overriding this method
+		ISIApplication.get().getCustomRenderHead(response);
 	
 	}
 
