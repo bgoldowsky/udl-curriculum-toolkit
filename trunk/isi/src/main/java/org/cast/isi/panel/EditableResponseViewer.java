@@ -62,6 +62,9 @@ public class EditableResponseViewer extends Panel {
 	@Getter @Setter
 	protected boolean allowWhiteboard = false;
 
+	protected IModel<Response> model;
+	protected ResponseMetadata metadata;
+	protected ContentLoc loc;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -71,8 +74,15 @@ public class EditableResponseViewer extends Panel {
 
 	public EditableResponseViewer (String wicketId, IModel<Response> model, ResponseMetadata metadata, ContentLoc loc) {
 		super(wicketId, model);
+		this.model = model;
+		this.metadata = metadata;
+		this.loc = loc;
 		setOutputMarkupId(true);
-		
+	}
+	
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
 		add (viewContainer = new WebMarkupContainer("viewContainer"));
 		add (editContainer = new WebMarkupContainer("editContainer"));
 		
@@ -86,7 +96,6 @@ public class EditableResponseViewer extends Panel {
 		addResponseViewActions(responseActions);
 
 		editor = new ResponseEditor("editor", model, metadata, loc) {
-
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -110,13 +119,12 @@ public class EditableResponseViewer extends Panel {
 				setVisibility(target);
 				EditableResponseViewer.this.onSave(target);
 			}
-			
 		};
 		editor.setOutputMarkupPlaceholderTag(true);
-		editor.setContext(getContext()); // pass through the context
+		editor.setContext(context);
 		editContainer.add(editor);
 	}
-	
+
 	@Override
 	protected void onConfigure() {
 		super.onConfigure();

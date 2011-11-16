@@ -222,7 +222,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 	@Override
 	public TinyMCESettings getTinyMCESettings() {
-		tinyMCESettings = ISIApplication.get().getTinyMCESettings(getContext());
+		tinyMCESettings = ISIApplication.get().getTinyMCESettings(context);
 		return tinyMCESettings;
 	}
 	
