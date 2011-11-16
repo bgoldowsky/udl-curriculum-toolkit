@@ -43,6 +43,7 @@ import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -648,6 +649,10 @@ public abstract class ISIApplication extends CwmApplication {
 			tinyMCESettings = new ISITinyMCESettings(Theme.advanced);
 		}
 		return tinyMCESettings;
+	}
+
+	// over ride this class to add custom js, css that is needed by the entire application
+	public void getCustomRenderHead(IHeaderResponse response) {
 	}
 
 
