@@ -76,6 +76,9 @@ public class ResponseList extends Panel {
 	
 	@Getter @Setter
 	protected boolean allowWhiteboard = true;
+	
+	protected ResponseMetadata metadata;
+	protected ContentLoc loc;
 
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ResponseList.class);
@@ -85,9 +88,16 @@ public class ResponseList extends Panel {
 		super(wicketId);
 		setOutputMarkupId(true);
 		this.promptModel = mPrompt;
+		this.metadata = metadata;
+		this.loc = loc;
 		if (mUser != null) 
 			this.mTargetUser = mUser;
 		
+	}
+	
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
 		dataProvider = ResponseService.get().getResponseProviderForPrompt(promptModel, mTargetUser);
 		// response list sort order is set by application configuration
 		dataProvider.getSortState().setPropertySortOrder(ISIApplication.get().getResponseSortField(), ISIApplication.get().getResponseSortState());
@@ -110,15 +120,14 @@ public class ResponseList extends Panel {
 				viewer.setAllowEdit(allowEdit);
 				viewer.setAllowNotebook(allowNotebook);
 				viewer.setAllowWhiteboard(allowWhiteboard);
-				viewer.setContext(getContext()); // pass through the context
+				viewer.setContext(context); // pass through the context
 				item.add(viewer);
 			}				
 		};
 		add(dataView);
-
 		add (new EmptyPanel("placeholder").setOutputMarkupId(true));
-		
 		add (new Directions("directions"));
+
 	}
 	
 	@Override
