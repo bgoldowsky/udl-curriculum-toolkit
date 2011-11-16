@@ -62,13 +62,20 @@
     font-size: 1.1em;
     font-weight: bold;
     padding: 0px;
-    margin: 0px 2em 0px 0px;
+    margin: 0px 3em 0px 0px;
 }
 
 .modalClose {
     position: absolute;
     top: 2px;
     right: 5px;
+}
+
+.modalMove {
+    position: absolute;
+    top: 2px;
+    right: 2.5em;
+    cursor: move !important;
 }
 
 .modalClose.button:active {
@@ -122,7 +129,7 @@
     font-size: 0.85em;
 }
 
-.modalBody .imgBox .center {
+.modalBody .imgBox.center {
 	margin: 0 auto 1em;
 }
 	
