@@ -107,23 +107,25 @@
 	</xsl:template>
 
     <!-- Slide Show -->
-<!--     <xsl:template match="dtb:div[@class='slideshow']"> -->
-<!-- 		<div wicket:id="slideShow_" class="slideshow" id="{@id}"> -->
-<!-- 			<div class="slideshowTitle"> -->
-<!-- 				<xsl:value-of select="@title" /> -->
-<!-- 			</div> -->
-<!-- 			<ul> -->
-<!-- 	         	<xsl:apply-templates select=".//dtb:div[@class='slide']" mode="slideshowLink" /> -->
-<!-- 			</ul> -->
-<!-- 			<xsl:apply-templates /> -->
-<!-- 		</div> -->
-<!-- 	</xsl:template> -->
+    <xsl:template match="dtb:div[@class='slideshow']">
+		<div wicket:id="slideShow_" class="slideshow" id="{@id}">
+			<div class="slideshowTitle">
+				<xsl:value-of select="@title" />
+			</div>
+			<ul>
+	         	<xsl:apply-templates select="dtb:div[@class='slide']" mode="slideshowLink" />
+			</ul>
+			<xsl:apply-templates />
+		</div>
+	</xsl:template>
 
-<!--     <xsl:template match="div" mode="slideshowLink"> -->
-<!--     	<li> -->
-<!--     		<a href="#{@id}">{@title}</a> -->
-<!--     	</li> -->
-<!--     </xsl:template> -->
+	<!-- these turn into buttons for the slide show  -->
+    <xsl:template match="dtb:div" mode="slideshowLink">
+    	<li>
+    		<a href="#{@id}"><xsl:value-of select="@title" /></a>
+    	</li>
+   		<xsl:text> </xsl:text>
+    </xsl:template>
     
 
     <!-- GLOSSARY - link used is determined by application parameter isi.glossary.type -->
