@@ -245,7 +245,7 @@ public abstract class ISIApplication extends CwmApplication {
 		// Load XML & XSL data
 		XmlService xmls = XmlService.get();
 
-		String davServer  = appProperties.getProperty("isi.davServer");
+		String davServer  = getDavServer();
 		String glossaryFileName = appProperties.getProperty("isi.glossaryFile");
 		if (davServer != null) {
 			final String davUser = appProperties.getProperty("isi.davUser");
@@ -705,6 +705,7 @@ public abstract class ISIApplication extends CwmApplication {
 		return (appProperties.getProperty("isi.contentDir")).trim();
 	}
 	
+	
 	public String getSkinDir() {
 		return (appProperties.getProperty("isi.skinDir")).trim();
 	}
@@ -716,6 +717,14 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 		return null;
 	
+	}
+	
+	public String getDavServer() {
+		String davServer = appProperties.getProperty("isi.davServer");
+		if (davServer != null) {
+			return (appProperties.getProperty("isi.davServer")).trim();
+		}
+		return null;
 	}
 	
 	public ISIXmlSection getPageNum(int num) {
