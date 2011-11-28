@@ -389,6 +389,8 @@
         	<img wicket:id="image_{@id}" src="{@src}" class="captionSizer">
 	       		<xsl:copy-of select="&cncatts;" />
 	        	<xsl:copy-of select="@alt" />
+	        	<xsl:copy-of select="@height" />
+	        	<xsl:copy-of select="@width" />
 	        	<xsl:apply-templates/>
 	       	</img>
        		<xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][1]" mode="caption"/>
