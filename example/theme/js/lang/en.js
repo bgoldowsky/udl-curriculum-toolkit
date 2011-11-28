@@ -5,8 +5,8 @@ lang = {
     'COLLAPSE'              : 'Hide',
 
     'ANNOTATE_LABELS'       : 'View',
-    'ANNOTATE_SHOW'         : 'image with hotspots',
-    'ANNOTATE_HIDE'         : 'image',
+    'ANNOTATE_SHOW'         : 'Interactive',
+    'ANNOTATE_HIDE'         : 'Image Only',
     'ANNOTATE_ADD_NOTE'     : 'Add Note',
     'ANNOTATE_OK'           : 'Ok',
     'ANNOTATE_CANCEL'       : 'Cancel',
@@ -15,8 +15,8 @@ lang = {
     'ANNOTATE_ERROR_DELETE' : 'An error occured deleting that note.',
 
     'IMGVIEW_VIEW'          : 'View',
-    'IMGVIEW_IMAGE'         : 'image',
-    'IMGVIEW_HOTSPOT'       : 'image with hotspots',
+    'IMGVIEW_IMAGE'         : 'Image Only',
+    'IMGVIEW_HOTSPOT'       : 'Interactive',
     'IMGVIEW_MYDRAWING'     : 'my version',
 
     'DSLIDE_PREV'           : '&lt; Prev',

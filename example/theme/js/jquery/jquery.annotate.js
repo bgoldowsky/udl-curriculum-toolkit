@@ -78,7 +78,7 @@
 
 
         // Add the label toggles
-        this.toggles = $('<div class="image-annotate-toggle">' + lang['ANNOTATE_LABELS'] + ': <span class="image-annotate-label-hide">' + lang['ANNOTATE_HIDE'] + '</span> | <span class="image-annotate-label-show">' + lang['ANNOTATE_SHOW'] + '</span></div>');
+        this.toggles = $('<div class="image-annotate-toggle">' + lang['ANNOTATE_LABELS'] + ': <span class="image-annotate-label-show">' + lang['ANNOTATE_SHOW'] + '</span> | <span class="image-annotate-label-hide">' + lang['ANNOTATE_HIDE'] + '</span></div>');
         this.canvas.prepend(this.toggles);
         // Stop hover effect for toggle bar
         this.toggles.hover(function(e) {
@@ -537,6 +537,8 @@
     };
 
     $.fn.annotateCallback = function(hotSpotNode, id) {
+    	// determine if you are a graphic home page image
+
     	// show the hidden annotation relative to the hotspot that called it
     	var detail = $("#" + id);
     	var offset = hotSpotNode.offset();
@@ -545,6 +547,6 @@
 		detail.css("left", offset.left);
 		detail.show();
         return false;
-    };
+    }
 
 })(jQuery);
