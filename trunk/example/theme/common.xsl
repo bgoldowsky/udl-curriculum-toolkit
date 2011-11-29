@@ -113,19 +113,24 @@
 				<xsl:value-of select="@title" />
 			</div>
 			<ul>
-	         	<xsl:apply-templates select="dtb:div[@class='slide']" mode="slideshowLink" />
+	         	<xsl:apply-templates select="dtb:div" mode="slideshowLink" />
 			</ul>
-			<xsl:apply-templates />
+			<xsl:apply-templates select="dtb:div" />
 		</div>
 	</xsl:template>
 
 	<!-- these turn into buttons for the slide show  -->
     <xsl:template match="dtb:div" mode="slideshowLink">
     	<li>
-    		<a href="#{@id}"><xsl:value-of select="@title" /></a>
+    		<a href="#{@id}" title="{dtb:bridgehead/@title}"><xsl:value-of select="dtb:bridgehead" /></a>
     	</li>
    		<xsl:text> </xsl:text>
     </xsl:template>
+
+	<!--  ignore all bridgheads inside the slideshow -->
+    <xsl:template match="dtb:div[@class='slideshow']//dtb:bridgehead">
+    </xsl:template>
+    
     
 
     <!-- GLOSSARY - link used is determined by application parameter isi.glossary.type -->
