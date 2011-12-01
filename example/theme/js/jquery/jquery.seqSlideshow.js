@@ -17,6 +17,10 @@
         });
         $tabs.width(currWidth + "px");
 
+        // Add carent placeholders
+        this.caretHolder = $('<span class="caret"></span>');
+        $tabs.find(".ui-tabs-nav li").append(this.caretHolder);
+
         // Add previous/next buttons
         this.navbtns = $('<li class="slideshowNav" style="float: right;"><a href="#" class="slideshowPrev">' + lang['DSLIDE_PREV'] + '</a> <a href="#" class="slideshowNext">' + lang['DSLIDE_NEXT'] + '</a></li>');
         $tabs.find(".ui-tabs-nav").append(this.navbtns);
