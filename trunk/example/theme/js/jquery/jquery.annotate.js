@@ -79,7 +79,8 @@
 
         // Add the label toggles
         this.toggles = $('<div class="image-annotate-toggle">' + lang['ANNOTATE_LABELS'] + ': <span class="image-annotate-label-show">' + lang['ANNOTATE_SHOW'] + '</span> | <span class="image-annotate-label-hide">' + lang['ANNOTATE_HIDE'] + '</span></div>');
-        this.canvas.prepend(this.toggles);
+        this.canvas.before(this.toggles);
+        this.toggles.width(this.width() - parseInt(this.toggles.css('padding-left')) - parseInt(this.toggles.css('padding-left')));
         // Stop hover effect for toggle bar
         this.toggles.hover(function(e) {
             e.stopPropagation();
