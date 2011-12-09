@@ -55,7 +55,7 @@ public class GlossaryPanel extends BaseGlossaryPanel {
 
 	private static final Logger log = LoggerFactory.getLogger(GlossaryPanel.class);
 	protected boolean readOnly;
-	protected transient Map<Character,List<IModel<WordCard>>> wordCardMap = null;
+	protected Map<Character,List<IModel<WordCard>>> wordCardMap = null;
 	protected IModel<List<WordCard>> wordCardList = null;
 
 	public GlossaryPanel(String id, IModel<? extends IGlossaryEntry> entry) {

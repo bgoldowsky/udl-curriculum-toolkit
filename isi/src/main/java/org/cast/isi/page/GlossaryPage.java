@@ -53,7 +53,6 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 	private static final Logger log = LoggerFactory.getLogger(GlossaryPage.class);
 	protected Map<String, IGlossaryEntry> listUserEntries;
 	protected IModel<List<WordCard>> wordCardList;
-	protected transient Map<Character,List<WordCard>> wordCardMap = null;
 	
 	/**
 	 * The glossary page is used to wrap the glossary panel.  It adds the header/footer
