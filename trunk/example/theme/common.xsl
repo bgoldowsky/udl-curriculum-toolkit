@@ -214,7 +214,9 @@
        
  	   <xsl:otherwise>
  	     <!-- unknown object type -->
-         <div wicket:id="object_{count(preceding::dtb:object)}" src="{@src}" width="{@width}" height="{@height}">
+ 	     <p>This is the src = <xsl:value-of select="@src" /> </p>
+ 	     
+         <div wicket:id="object_" src="{@src}" width="{@width}" height="{@height}">
            <xsl:apply-templates/>
          </div>
 		 <xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />

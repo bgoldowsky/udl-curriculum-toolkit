@@ -41,6 +41,12 @@ public class TeacherHeaderPanel extends ExampleHeaderPanel {
 		if (ISISession.get().getStudentModel() == null) {
 			setTeacherLinks();
 		}
+		
+		// enable the whiteboard if there is a period
+		if (ISISession.get().getCurrentPeriodModel() == null) {
+			super.whiteboardLink.setEnabled(false);
+			super.whiteboardLink.add(new ClassAttributeModifier("off")); 
+		}
 	}
 	
 	@Override
@@ -56,14 +62,12 @@ public class TeacherHeaderPanel extends ExampleHeaderPanel {
 	}
 	
 	public void setTeacherLinks() {
-		// teacher links for notebook whiteboard and glossary should be turned off and disabled if there is no student selected
+		// teacher links for notebook and glossary should be turned off and disabled if there is no student selected
 		super.glossaryLink.setEnabled(false);
 		super.notebookLink.setEnabled(false);
-		super.whiteboardLink.setEnabled(false);
 		
 		super.glossaryLink.add(new ClassAttributeModifier("off")); 
 		super.notebookLink.add(new ClassAttributeModifier("off")); 
-		super.whiteboardLink.add(new ClassAttributeModifier("off")); 
 	}
 
 }
