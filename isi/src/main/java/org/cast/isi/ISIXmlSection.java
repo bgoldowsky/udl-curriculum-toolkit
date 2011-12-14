@@ -44,9 +44,34 @@ public class ISIXmlSection extends XmlSection {
 
 	@Getter @Setter protected String subtitle = "";
 	
-	@Getter @Setter protected boolean section = false;
+	// The following four structural flags tell the application how to treat this XML element.
+	// They are set by XmlDocumentObserver when the file is read.
+	// One or more may be set.
 	
+	/**
+	 * True if this is an XML element that will be displayed as a single page in the app.
+	 */
 	@Getter @Setter protected boolean page = false;
+
+	/**
+	 * True if this is considered a "section".
+	 * This is expected to be one level above pages in general, although
+	 * you can have one-page sections where there is no child element
+	 * for the page, so page and section would both be true.
+	 */
+	@Getter @Setter protected boolean section = false;
+
+	/**
+	 * True if this is one level above the "section" level.
+	 */
+	@Getter @Setter protected boolean superSection = false;
+	
+	/**
+	 * True if this XML element is considered the "chapter" level.
+	 * This is, for example, the extent of what is presented in the top navigation bar.
+	 */
+	@Getter @Setter protected boolean chapter = false;
+	
 	
 	@Setter protected boolean hasResponseGroup = false; // True if a page, or a section that contains such a page, has a response group
 	

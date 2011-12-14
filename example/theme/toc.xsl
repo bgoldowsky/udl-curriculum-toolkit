@@ -13,6 +13,8 @@
 
 <!-- parameter "current" should be the ID of the section to be highlighted -->
 <xsl:param name="current"/>
+<!-- parameter "sectionLevel" should name the element type of sections (level2 or level3) -->
+<xsl:param name="sectionLevel"/>
 
 <xsl:template match="dtb:level1">
     <div class="collapseBody">
@@ -36,15 +38,15 @@
 
 <xsl:template match="dtb:level2">
   <xsl:choose>
-    <xsl:when test="dtb:level3">
-      <!-- has children, so display header and dig deeper -->
+    <xsl:when test="$sectionLevel='level3' and ./dtb:level3">
+      <!-- this node has children that are sections, so display header and dig deeper -->
       <xsl:apply-templates select="dtb:h2"/>
       <ul>
         <xsl:apply-templates select="dtb:level3"/>
       </ul>
     </xsl:when>
     <xsl:otherwise>
-      <!-- no children, link to content (needs ul/li for styling) -->
+      <!-- this node is a section, link to content (needs ul/li for styling) -->
       <ul>
         <li>
           <xsl:call-template name="makelink"/>

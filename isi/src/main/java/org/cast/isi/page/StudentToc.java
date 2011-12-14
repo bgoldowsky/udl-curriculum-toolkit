@@ -81,6 +81,8 @@ public class StudentToc extends ISIStandardPage {
 		currentPage = (loc == null ? null : loc.getSection());
 		if (currentPage != null)
 			currentRootSection = ISIXmlSection.getRootSection(currentPage); // "level1"
+		
+		String sectionLevel = ISIApplication.get().getSectionElement();
 
 		// Jump to a certain page
 		add(new QuickFlipForm("quickFlipForm", true));
@@ -111,8 +113,10 @@ public class StudentToc extends ISIStandardPage {
 	   	add(chapterRepeater);
 	   	
 	   	for (XmlDocument doc : ISIApplication.get().getStudentContent()) { // For each XML document
-	   		// I have no idea what this fixme is for - ldm??
-	   		doc.getLastModified(); // update! (FIXME)
+	   		// FIXME: Calling getLastModified here has the side effect of checking whether the XML
+	   		// has been modified, and if so, updating it.  This is mysterious and should be 
+	   		// replaced with a more transparent mechanism or at least a better name for the method.
+	   		doc.getLastModified();
 	   		for (XmlSection rs : doc.getTocSection().getChildren()) { // For each chapter in the document
 	   			ISIXmlSection rootSection = (ISIXmlSection) rs;
 	   			WebMarkupContainer rootSectionContainer = new WebMarkupContainer(chapterRepeater.newChildId());
@@ -122,6 +126,7 @@ public class StudentToc extends ISIStandardPage {
 	   				rootSectionContainer.add(new ClassAttributeModifier("open"));
 	   			rootSectionContainer.add(new Label("chapterTitle", rootSection.getTitle()));
 	   			ISIXmlComponent xml = new ISIXmlComponent("chapterContent", new XmlSectionModel(rootSection), "toc");
+	   			xml.setTransformParameter("sectionLevel", sectionLevel);
 	   			if (currentPage != null)
 	   				xml.setTransformParameter("current", currentPage.getSectionAncestor().getId());
 				rootSectionContainer.add(xml);				
