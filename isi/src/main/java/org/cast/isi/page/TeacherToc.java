@@ -35,6 +35,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
@@ -123,16 +124,17 @@ public class TeacherToc extends ISIStandardPage {
 				RepeatingView superSectionRepeater = new RepeatingView("superSectionRepeater");
 				for (XmlSection rc : rootSection.getChildren()) {
 					ISIXmlSection rootChild = (ISIXmlSection) rc;
-					if (!ISIApplication.get().getSectionElement().equals(rootChild.getType())) {
-						WebMarkupContainer superSectionContainer = new WebMarkupContainer(superSectionRepeater.newChildId());
-						superSectionRepeater.add(superSectionContainer);
+					WebMarkupContainer superSectionContainer = new WebMarkupContainer(superSectionRepeater.newChildId());
+					superSectionRepeater.add(superSectionContainer);
+					if (rootChild.isSuperSection()) {
 						superSectionContainer.add(new Label("superSectionTitle", rootChild.getTitle()));
 						if (rootChild.getChildren().size() > 1) {
 							superSectionContainer.add(new SimpleAttributeModifier("colspan", String.valueOf(rootChild.getChildren().size())));
 						}
+					} else {
+						superSectionContainer.add(new EmptyPanel("superSectionTitle"));
 					}
 				}
-
 				table.add(superSectionRepeater);
 				
 				// List Sections across the top of the table.
