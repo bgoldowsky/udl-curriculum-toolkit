@@ -34,9 +34,10 @@ import org.slf4j.LoggerFactory;
  */
 public class XmlDocumentObserver implements IDocumentObserver {
 
+	String sectionElementName = ISIApplication.get().getSectionElement();
+	String pageElementName = ISIApplication.get().getPageElement();
+	
 	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(XmlDocumentObserver.class);
 
 	public void xmlUpdated(XmlDocument doc) {
 		identifySections(doc);
@@ -45,6 +46,7 @@ public class XmlDocumentObserver implements IDocumentObserver {
 	/** Determine which ISIXmlSections should be marked as 'section' and 'page' and whether this section contains a response group */
 	protected void identifySections (final XmlDocument doc) {
 		for (XmlSection chapter : doc.getTocSection().getChildren()) {
+			((ISIXmlSection)chapter).setChapter(true);
 			for (XmlSection sec : chapter.getChildren()) {
 				ISIXmlSection xs = ((ISIXmlSection)sec);
 				recurseSections(xs);
@@ -53,11 +55,14 @@ public class XmlDocumentObserver implements IDocumentObserver {
 	}
 	
 	private void recurseSections(ISIXmlSection xs) {
+		// Are you a supersection?
+		if (xs.hasChildren() && atSectionLevel((ISIXmlSection) xs.getChild(0)))
+			xs.setSuperSection(true);
 		// Are you a one-page section?  If so, you're a section and a page...
-		if (xs.getSectionAncestor() == null && (!xs.hasChildren() || xs.getElement().getLocalName().equals(ISIApplication.get().getSectionElement())))
+		if (xs.getSectionAncestor() == null && (!xs.hasChildren() || atSectionLevel(xs)))
 			xs.setSection(true);
 		if (xs.hasChildren()) {
-			if (xs.getElement().getLocalName().equals(ISIApplication.get().getPageElement()))
+			if (atPageLevel(xs))
 				xs.setPage(true);
 			for (XmlSection child : xs.getChildren()) {
 				recurseSections((ISIXmlSection) child);
@@ -69,6 +74,14 @@ public class XmlDocumentObserver implements IDocumentObserver {
 		} else if (xs.getPageAncestor() == null) {
 			xs.setPage(true);
 		}
+	}
+
+	private boolean atSectionLevel (ISIXmlSection xs) {
+		return xs.getElement().getLocalName().equals(sectionElementName);
+	}
+
+	private boolean atPageLevel (ISIXmlSection xs) {
+		return xs.getElement().getLocalName().equals(pageElementName);
 	}
 
 }
