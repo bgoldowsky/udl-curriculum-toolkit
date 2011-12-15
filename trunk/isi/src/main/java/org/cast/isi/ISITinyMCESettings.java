@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import wicket.contrib.tinymce.settings.AutoResizePlugin;
 import wicket.contrib.tinymce.settings.Button;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 
@@ -37,7 +38,6 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
 public class ISITinyMCESettings extends TinyMCESettings {
 	private static final long serialVersionUID = 1L;
 	
-	@SuppressWarnings("deprecation")
 	public ISITinyMCESettings (Theme theme) {
 		super(theme);
 		this.setToolbarLocation(Location.top);
@@ -48,7 +48,7 @@ public class ISITinyMCESettings extends TinyMCESettings {
 		List<Button> noButtons = Collections.emptyList();
 		this.setToolbarButtons(Toolbar.second, noButtons);
 		this.setToolbarButtons(Toolbar.third, noButtons);
-		this.setAutoResize(true);
+		this.register(new AutoResizePlugin());
 	}
 
 }
