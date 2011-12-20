@@ -214,9 +214,7 @@
        
  	   <xsl:otherwise>
  	     <!-- unknown object type -->
- 	     <p>This is the src = <xsl:value-of select="@src" /> </p>
- 	     
-         <div wicket:id="object_" src="{@src}" width="{@width}" height="{@height}">
+         <div   wicket:id="object_" appletname="{@src}"  width="{@width}" height="{@height}" id="{@id}">
            <xsl:apply-templates/>
          </div>
 		 <xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />
