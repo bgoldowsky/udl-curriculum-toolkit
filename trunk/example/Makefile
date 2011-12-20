@@ -32,16 +32,19 @@ svnup: $(patsubst %, %-svnup, $(MODULES))
 %-svnup:
 	cd $* && svn up --set-depth=infinity
 
-CONF_FILES = example.config example-hibernate.xml example-logback.xml 
+CONF_FILES = example.xml example.config example-hibernate.xml example-logback.xml 
 
 ## Make a distribution bundle (for posting on Google Code site)
-toolkit-bundle.zip: $(CONF_FILES) theme/.svn/entries target/$(APP)-$(VERSION).war
-	if [ -e toolkit-bundle ]; then rm -r toolkit-bundle; fi
+toolkit-bundle.zip:
+	if [ -e toolkit-bundle ]; then rm -rf toolkit-bundle; fi
 	mkdir toolkit-bundle
 	rsync -Ca theme toolkit-bundle
+	rsync -ta xxe.cast.org:/var/xdr/udlct-demo/ toolkit-bundle/content
 	cp $(CONF_FILES) toolkit-bundle
 	cp target/$(APP)-$(VERSION).war toolkit-bundle/$(APP).war
+	chmod -R u+rwX toolkit-bundle
 	zip -r toolkit-bundle.zip toolkit-bundle
+.PHONY: toolkit-bundle.zip
 
 ## Command line for copying WAR file to server
 RSYNC ?= rsync -a -L --log-format='%f' --exclude '.svn' --exclude '*~' 
