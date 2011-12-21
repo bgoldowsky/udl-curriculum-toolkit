@@ -86,7 +86,13 @@ public enum PromptType {
 	/**
 	 * For a given rating panel this is the affect rating prompt (bored, happy, etc.)
 	 */
-	RATING_AFFECT
+	RATING_AFFECT,
+
+	/**
+	 * Applet Prompt type.
+	 */
+	APPLET
+
 
 
 }
