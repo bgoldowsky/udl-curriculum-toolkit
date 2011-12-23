@@ -214,7 +214,7 @@
        
  	   <xsl:otherwise>
  	     <!-- unknown object type -->
-         <div   wicket:id="object_" appletname="{@src}"  width="{@width}" height="{@height}" id="{@id}">
+         <div wicket:id="object_" appletname="{@src}"  width="{@width}" height="{@height}" id="{@id}">
            <xsl:apply-templates/>
          </div>
 		 <xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />
@@ -223,8 +223,14 @@
 
 	 <!-- caption for multimedia element -->
 <!--	 <xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />-->
-
     </xsl:template>
+    
+    <xsl:template match="dtb:param">
+	  	<param>
+	  		<xsl:copy-of select="@name|@value"/>
+	  	</param>
+    </xsl:template>
+    
 
     <xsl:template name="videotag">
 <!--         <xsl:variable name="base"> -->
