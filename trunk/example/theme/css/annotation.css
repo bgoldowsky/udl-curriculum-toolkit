@@ -17,11 +17,10 @@
     background-color: #eee;
 }
 .image-annotate-canvas {
-    border: solid 1px #ccc;
     background-position: left top;
     background-repeat: no-repeat;
     display: block;
-    margin: 1.7em 0 0 0;
+    margin: 0;
     position: relative;
 }
 .image-annotate-view {
@@ -238,18 +237,12 @@
 /*=========================================*/
 
 .image-annotate-toggle {
-    position: absolute;
-    top: -1.7em;
-    right: 10px;
     background-color: #000000;
-    /*
-    filter:alpha(opacity=65);
-    opacity:0.65;
-    */
     color: #FFFFFF;
     display: block;
     font-size: 0.9em;
-    padding: 0.1em 0.4em;
+    font-weight: bold;
+    padding: 0.25em 0.4em;
     white-space: nowrap;
 }
 
@@ -259,6 +252,7 @@
 
 .image-annotate-toggle a {
     color: #FFFFFF;
+    font-weight: normal;
     text-decoration: underline;
 }
 .image-annotate-toggle a:hover, .image-annotate-toggle a:focus {

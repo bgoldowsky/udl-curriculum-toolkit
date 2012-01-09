@@ -63,6 +63,7 @@
     font-weight: bold;
     padding: 0px;
     margin: 0px 3em 0px 0px;
+    min-height: 1.3em;
 }
 
 .modalClose {
@@ -80,7 +81,11 @@
 
 .modalClose.button:active {
 	position: absolute;
-	top: 3px;
+	top: 2px;
+}
+.modalMove.button:active {
+    position: absolute;
+    top: 2px;
 }
 
 /*================================================================*/
