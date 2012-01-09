@@ -63,6 +63,7 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 		response.renderJavascriptReference(new ResourceReference("/js/lang/en.js"));
 		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery.form.js"));
 		response.renderJavascriptReference(new ResourceReference("/js/functions.js"));
+		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery-ui-1.8.16.custom.min.js"));
 	
 		response.renderCSSReference(new ResourceReference("/css/toolbar.css"));
 		response.renderCSSReference(new ResourceReference("/css/buttons.css"));
