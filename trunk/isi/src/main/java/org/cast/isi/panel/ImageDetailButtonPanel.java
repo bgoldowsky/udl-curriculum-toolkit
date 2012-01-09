@@ -19,15 +19,21 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.model.Model;
-import org.cast.cwm.indira.IndiraImage;
-import org.cast.cwm.indira.IndiraImageComponent;
+import org.apache.wicket.markup.html.image.Image;
 import org.cast.cwm.service.EventService;
 import org.cast.isi.page.ISIBasePage;
 
+/**
+ * Displays a magnifier button when a larger image is present for a thumbnail. Creates js
+ * for image detail modal to display.
+ * 
+ * @author lynnmccormack
+ *
+ */
 public class ImageDetailButtonPanel extends ISIPanel{
 
 	private static final long serialVersionUID = 1L;
@@ -66,9 +72,9 @@ public class ImageDetailButtonPanel extends ISIPanel{
 		};
 		
 		if (expand)
-			link.add(new IndiraImageComponent("image", new Model<IndiraImage>(IndiraImage.get("/img/icons/plus.png"))));
-		else
-			link.add(new IndiraImageComponent("image", new Model<IndiraImage>(IndiraImage.get("/img/icons/info.png"))));
+			link.add(new Image("image", new ResourceReference("/img/icons/expand_image.png")));
+		else  // this is no longer used as long description is now put into a toggle area below image.
+			link.add(new Image("image", new ResourceReference("/img/icons/info.png")));
 		add(link);
 	}
 
