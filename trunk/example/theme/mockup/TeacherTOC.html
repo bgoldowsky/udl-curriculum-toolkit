@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Product Name</title>
+<wicket:link>
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/main.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/buttons.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/boxes.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/toolbar.css" />
+
+<link type="text/css" rel="stylesheet" media="screen" href="../css/theme.css" />
+
+<script type="text/javascript" src="../../../example/theme/js/jquery/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/lang/en.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/functions.js"></script>
+<!--
+<script type="text/javascript" src="http://portal.texthelp.com/EmbeddedBrowsealoud/v163/obfBATH.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/toolbar.js"></script>
+-->
+</wicket:link>
+</head>
+<body>
+
+<div id="header">
+    <div id="headerLeft">
+        <div id="logo">
+            <img src="../img/1x1.gif" width="50" height="50" alt="Product Name" title="Product Name" style="background: #FFFFFF;" />
+        </div>
+        <div id="title">
+            CAST UDL Curriculum Toolkit
+        </div>
+        <div id="tagline">
+            Tagline
+        </div>
+    </div>
+    <div id="headerRight">
+        <p id="user">
+            <strong wicket:id="welcome">Welcome: Person's Name</strong>,
+            <a wicket:id="logout" href="#">Logout</a>
+        </p>
+    </div>
+</div>
+
+<div id="tabBar">
+    <ul id="tabs">
+        <li><span class="current"><img src="../img/icons/home.png" width="15" height="15" alt="" /> Home</span></li>
+        <li><a href="#">Student Work</a></li>
+        <li><a href="#">Models</a></li>
+        <li><a href="#">Questions</a></li>
+        <li><a href="#">Tags</a></li>
+        <li><a href="#">Manage Classes</a></li>
+    </ul>
+    <ul id="tabRight">
+        <li><a href="#" class="button">Notebook</a></li>
+        <li><a href="#" class="button off">Whiteboard</a></li>
+        <li><a href="#" class="button">Glossary</a></li>
+    </ul>
+</div>
+
+<div id="wrapper">
+    <div id="teacherNavBar">
+        <div class="teacherBar">
+            <div class="teacherBarLeft">
+                <label for="class">Class:</label>
+                <select>
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                </select>
+                <a href="#" class="button">Go</a>
+
+            </div>
+            <div class="teacherBarRight">
+            </div>
+        </div>
+    </div>
+    <div id="topnav">
+    </div>
+
+    <div id="mainWrapperWide">
+        <div id="mainContent">
+            <div id="mainContentLeft">
+                <!-- BEGIN - Main Content -->
+                <div class="leftContainer">
+
+                    <p>
+                        <a href="javascript:expandAll('.tocList');">Expand All</a> | <a href="javascript:collapseAll('.tocList');">Collapse All</a>
+                    </p>
+
+                    <ul class="tocList">
+                        <li class="collapseBox">
+                            <h2>Lesson 1: Something</h2>
+                            <div class="collapseBody">
+                                <table class="tocTable">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" class="big">Period A</th>
+                                            <th>Overview</th>
+                                            <th>Consider</th>
+                                            <th>Investigate</th>
+                                            <th>Process</th>
+                                            <th>Review &amp; Extend</th>
+                                            <th rowspan="2"><span class="hidden">Teacher Notes</span></th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_overview.png" width="15" height="15" alt="Overview" title="Overview" /></a>
+                                            </th>
+                                            <th>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_activity.png" width="15" height="15" alt="Activity" title="Activity" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_brainstorm.png" width="15" height="15" alt="Brainstorm" title="Brainstorm" /></a>
+                                            </th>
+                                            <th>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_question.png" width="15" height="15" alt="Question" title="Question" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_assess.png" width="15" height="15" alt="Assess" title="Assess" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_reading.png" width="15" height="15" alt="Read" title="Read" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_share.png" width="15" height="15" alt="Share" title="Share" /></a>
+                                            </th>
+                                            <th>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_activity.png" width="15" height="15" alt="Activity" title="Activity" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_brainstorm.png" width="15" height="15" alt="Brainstorm" title="Brainstorm" /></a>
+                                            </th>
+                                            <th>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_reading.png" width="15" height="15" alt="Read" title="Read" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/activity_share.png" width="15" height="15" alt="Share" title="Share" /></a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <img src="../img/icons/flag_on.png" width=15" height="15" alt="On" title="On" />
+                                                Lastname, Firstname
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/check_done.png" width="15" height="15" alt="Done" title="Done" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/attention.png" width="15" height="15" alt="Attention" title="Attention" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#">Teacher Notes</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <img src="../img/icons/flag_off.png" width=15" height="15" alt="Off" title="Off" />
+                                                Lastname, Firstname
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="New Message" title="New Message" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="New Message" title="New Message" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                                <a href="#" class="button icon"><img src="../img/icons/incomplete.png" width="15" height="15" alt="Incomplete" title="Incomplete" /></a>
+                                            </td>
+                                            <td>
+                                                <a href="#">Teacher Notes</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                        <li class="collapseBox">
+                            <h2>Lesson 2: Something</h2>
+                            <div class="collapseBody">
+                            </div>
+                        </li>
+                        <li class="collapseBox">
+                            <h2>Lesson 3: Something</h2>
+                            <div class="collapseBody">
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+               <!-- END - Main Content -->
+            </div>
+        </div>
+        <div id="mainContentRight">
+            <!-- BEGIN - Support Content -->
+            <!-- END - Support Content -->
+        </div>
+    </div>
+</div>
+
+<div id="footer" wicket:id="pageFooter">
+    <div id="copyright">
+        <p>
+            <strong>&copy; Copyright 2011</strong>, footer text
+        </p>
+    </div>
+    <div id="build">
+        <p>
+            Built with [product name/image]
+        </p>
+    </div>
+</div>
+
+<div id="tht" class="thtFull">
+    <ul id="thtActions">
+        <li>
+            <span>listen</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_play(); return false;" id="thtPlay" title="Play"><span>Play</span></a></li>
+                <li><a href="#" onclick="$rw_event_pause(); return false;" id="thtPause" title="Pause"><span>Pause</span></a></li>
+                <li><a href="#" onclick="$rw_stopSpeech(); return false;" id="thtStop" title="Stop"><span>Stop</span></a></li>
+            </ul>
+        </li>
+        <li>
+            <span>lookup</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_dict(); return false;" id="thtDictionary" title="Dictionary"><span>Dictionary</span></a></li>
+                <li><a href="#" onclick="$rw_event_trans(); return false;" id="thtTranslate" title="Translate"><span>Translate</span></a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
