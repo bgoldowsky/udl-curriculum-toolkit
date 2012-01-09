@@ -59,7 +59,6 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 	}
 
 	public void renderHead(IHeaderResponse response) {
-		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery-ui-1.8.13.custom.min.js"));
 		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery.annotate.js"));
 		response.renderCSSReference(new ResourceReference("/css/annotation.css"));
 		// The js call that will set up the annotated image.  The hotSpotString contains all the information
