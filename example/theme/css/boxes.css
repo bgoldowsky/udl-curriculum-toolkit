@@ -264,6 +264,14 @@
     left: 5px;
 }
 
+.imgActions {
+    display: inline-block;
+    float: right;
+    width: 1.75em;
+    text-align: right;
+}
+
+
 /*================================================================*/
 /* Image Group */
 
@@ -484,47 +492,4 @@
     margin: 0;
     padding: 4px;
     word-wrap: break-word;
-}
-
-/*================================================================*/
-/* Slideshow (jQuery UI Tabs) Items */
-
-.slideshow {
-    background: #FFF7E8;
-    border: 1px solid #A29A8C;
-    margin: 0px 0px 1em 0px;
-    min-width: 600px;
-    width: 600px;
-}
-
-.slideshow .slideshowTitle {
-    display: block;
-    padding: 3px 5px;
-}
-
-.slideshow .slideshowNav {
-    float: right;
-}
-
-.slideshow .ui-tabs-nav {
-    padding: 0px;
-    margin: 0px;
-    list-style: none;
-    padding: 3px 5px;
-}
-
-.slideshow .ui-tabs-nav li {
-    display: inline-block
-}
-
-.slideshow .ui-tabs-hide {
-    display: none;
-}
-
-.slideshow .imgBox, .slideshow .objectBox {
-    margin-bottom: 0px;
-}
-
-.slideshow .imgBox, .slideshow .objectBox {
-    border: 0
 }
