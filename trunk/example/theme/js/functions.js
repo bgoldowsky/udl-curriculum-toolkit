@@ -152,6 +152,68 @@ function showImageDetail(id, show) {
 function fadeOutIn(id) {
 	$(id).fadeOut('slow').fadeIn('slow');
 }
+/*=========================================================*/
+/* Draggable Modal Handler                                 */
+/*=========================================================*/
+
+var moveStepSize = 3;
+var moveZIndex = 10;
+
+function modalMove() {
+    $(".modalBody").delegate(".modalMove", "mouseover", function() {
+        if (!$(this).data("initMouse")) {
+            $(this).data("initMouse", true);
+            var boxElm = $(this).closest('.modalBody');
+            $(boxElm).draggable({
+                handle: ".modalMove",
+                start: function() { $(boxElm).css('z-index', ++moveZIndex); }
+            });
+        }
+    });
+    $(".modalBody").delegate(".modalMove", "keydown", function(event) {
+        event.stopPropagation();
+        var boxElm = $(this).closest('.modalBody');
+        switch("" + event.keyCode) {
+            case '37': {
+                // Left
+                moveModalBy(boxElm, -moveStepSize, 0);
+                return false;
+                break;
+            }
+            case '38': {
+                // Up
+                moveModalBy(boxElm, 0, -moveStepSize);
+                return false;
+                break;
+            }
+            case '39': {
+                // Right
+                moveModalBy(boxElm, moveStepSize, 0);
+                return false;
+                break;
+            }
+            case '40': {
+                // Down
+                moveModalBy(boxElm, 0, moveStepSize);
+                return false;
+                break;
+            }
+            default: {
+                // Do nothing if not understood
+                break;
+            }
+        }
+    });
+}
+
+function moveModalBy(n, h, v) {
+    var newTop = parseInt($(n).css('top')) + v;
+    var newLeft = parseInt($(n).css('left')) + h;
+    //$(n).offset({ top: newTop, left: newLeft });
+    $(n).css('top', newTop + "px");
+    $(n).css('left', newLeft + "px");
+    $(n).css('z-index', ++moveZIndex);
+}
 
 /*=========================================================*/
 
@@ -272,7 +334,7 @@ $(window).ready(function() {
     collapseBox();
     resizeCaptions();
     thtInit();
-    // moveModals();
+    modalMove();
 });
 
 $(window).resize(function() {
