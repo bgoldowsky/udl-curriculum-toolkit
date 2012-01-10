@@ -25,29 +25,26 @@
      </a>
    </xsl:template>     
 
-   <!-- link to external site -->
+   <!-- link to a file or an external URL -->
    <xsl:template match="dtb:a[@external='true']" priority="1">
-     <xsl:variable name="base">
-       <xsl:call-template name="basename">
-         <xsl:with-param name="path" select="@href"/>
-       </xsl:call-template>
-     </xsl:variable>
-     <a target="_blank">
-       <xsl:copy-of select="&catts;"/>
-       <xsl:choose>
-         <xsl:when test="starts-with(@href,'http:')">
-           <xsl:copy-of select="@href"/>
-         </xsl:when>
-         <xsl:otherwise>
-           <xsl:attribute name="href">
-             <xsl:value-of select="concat('resources/img/',$base)"/>
-           </xsl:attribute>
-         </xsl:otherwise>
+       	<xsl:choose>
+       		<xsl:when test="starts-with(@href,'http:')">
+		    <a target="_blank">
+		       	<xsl:copy-of select="&catts;"/>
+	           	<xsl:copy-of select="@href"/>
+	           	<xsl:apply-templates/>
+     		</a>
+      		</xsl:when>
+      		<xsl:otherwise>
+			<a wicket:id="fileLink_">
+		       	<xsl:copy-of select="&catts;"/>
+	           	<xsl:copy-of select="@href"/>
+	           	<xsl:apply-templates/>
+	        </a>
+           </xsl:otherwise>
        </xsl:choose>
-       <xsl:apply-templates/>
-     </a>
    </xsl:template>
-
+  
    <xsl:template match="dtb:sidebar[@class='warning']">
      <div class="hlpassage safety">
        <xsl:copy-of select="&cncatts;"/>
@@ -62,7 +59,6 @@
    </xsl:template>
 
    <!-- AGENTS -->
-   
    <xsl:template match="dtb:annotation">
      <!-- show annotation in place unless it's followed by a responsegroup in which case it gets moved into there -->
      <!-- also exclude the hotspot class - these are associated with image annotations -->

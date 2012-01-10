@@ -33,7 +33,7 @@
       </span>
     </xsl:template>
 
-   <xsl:template match="dtb:list[@type='ol']">
+   	<xsl:template match="dtb:list[@type='ol']">
        <xsl:variable name="listtype">
            <xsl:choose>
                <xsl:when test="@enum='1'">decimal</xsl:when>
@@ -53,7 +53,7 @@
            </xsl:if>
            <xsl:apply-templates/>
        </ol>
-   </xsl:template>
+   	</xsl:template>
 
     <xsl:template match="dtb:p">
         <p class="hlpassage {@class}">
@@ -77,9 +77,8 @@
 	       <xsl:copy-of select="&catts;"/>
 	       <xsl:apply-templates/>
      </div>
-   </xsl:template>
+   	</xsl:template>
 
-    
     <xsl:template name="basename">
         <xsl:param name="path"/>
         <xsl:choose>
@@ -132,7 +131,6 @@
     </xsl:template>
     
     
-
     <!-- GLOSSARY - link used is determined by application parameter isi.glossary.type -->
     <xsl:template match="dtb:gl">
     	<!--  this is for inline glossary terms -->
@@ -155,7 +153,6 @@
   		<a wicket:id="glossaryMainLink_" class="vocabulary" word="{@entryId}">
 	    	<xsl:apply-templates/>
   		</a>  		
-  		
 	</xsl:template>
 
 
@@ -233,11 +230,6 @@
     
 
     <xsl:template name="videotag">
-<!--         <xsl:variable name="base"> -->
-<!--             <xsl:call-template name="basename"> -->
-<!--                 <xsl:with-param name="path" select="@src"/> -->
-<!--             </xsl:call-template> -->
-<!--         </xsl:variable> -->
         <xsl:variable name="width">
             <xsl:choose>
                 <xsl:when test="@width != ''">
@@ -254,10 +246,7 @@
                 <xsl:otherwise>170</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-
-
         <div class="objectBox center">
-<!-- 	        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{$base}"></div> -->
 	        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}"></div>
             <div class="objectCaption">
             	<xsl:apply-templates select="dtb:caption" />
@@ -265,6 +254,7 @@
         </div>
     </xsl:template>
 
+	<!-- thumb ratings -->
 	<xsl:template match="dtb:responsegroup[@class='thumbrating']">
  		<p>
      		<strong>Rate this:</strong>    
@@ -275,7 +265,6 @@
 
 
     <!-- IMAGES -->
-
 	<xsl:template match="dtb:imggroup">
       <xsl:choose>
   		<xsl:when test="count(./dtb:img) > 1 and @class!='smartImage'">
@@ -284,45 +273,38 @@
 	          <xsl:apply-templates/>
 			</div>
 		</xsl:when>
- 
         <xsl:when test="@class='right'">
           <!-- image float to the right side with text wrap -->
             <xsl:apply-templates/>
         </xsl:when>
-
         <xsl:when test="@class='left'">
           <!-- image on the left side with text wrap -->
             <xsl:apply-templates/>
         </xsl:when>
-
         <xsl:when test="@class='center'">
           <!-- image in the center with no text wrap -->
             <xsl:apply-templates/>
         </xsl:when>
- 
         <xsl:when test="@class='smartImage'">
         	<div wicket:id="smartImage-{@id}" class="smartImage">
         		<xsl:copy-of select="&catts;" />
         		<xsl:call-template name="smartImageProcess" />
         	</div>
         </xsl:when>
- 
         <xsl:when test="@class='annotatedImage'">
 			<!-- the annotated image id is the id of the first img in this imggroup, send the src of the image for reference processing -->
-        	<div wicket:id="annotatedImage_{@id}" annotatedImageId="{./dtb:img/@id[1]}" annotatedImageSrc="{./dtb:img/@src[1]}">
-	       		<xsl:call-template name="annotatedImageProcess" />
-    	        <xsl:apply-templates select="key('annokey', @id)[@class='hotspot']" mode="hotspot"/>
-       		</div>
+	        <div wicket:id="annotatedImage_{@id}" annotatedImageId="{./dtb:img/@id[1]}" annotatedImageSrc="{./dtb:img/@src[1]}">
+		    	<xsl:call-template name="annotatedImageProcess" />
+	    	    <xsl:apply-templates select="key('annokey', @id)[@class='hotspot']" mode="hotspot"/>
+	       	</div>
         </xsl:when>
- 
         <xsl:otherwise>
-          <!-- featured image - floats left with no text wrap -->
-          <br clear="left"/>
-          <div class="imggroup">
-	          <xsl:apply-templates/>
-          </div>
+	        <!-- featured image - floats left with no text wrap -->
+	        <br clear="left"/>
+	        <div class="imggroup">
+		        <xsl:apply-templates/>
+	        </div>
         </xsl:otherwise>
-
       </xsl:choose>
     </xsl:template>
     
@@ -335,42 +317,78 @@
    		<xsl:apply-templates/>   		
     </xsl:template>
 
-   <xsl:template match="dtb:annotation" mode="hotspot">
+   	<xsl:template match="dtb:annotation" mode="hotspot">
 		<!-- the annotated image id is the id of the img in the first sibling imggroup  -->
 	     <span wicket:id="hotSpot_" style="display:none" annotatedImageId="{../dtb:imggroup/dtb:img/@id[1]}"
 	     	title="{@title}" top="{@top}" left="{@left}" width="{@width}" height="{@height}"
 	     	imgSrc="{@imgSrc}" imgClass="{@imgClass}">
 		       <xsl:apply-templates/>
 	     </span>
-   </xsl:template>
-
+   	</xsl:template>
 
 	<xsl:template name="modalImageDetail">
+   		<xsl:variable name="addImageToggle">
+         	<xsl:choose>
+        		<xsl:when test="count(../dtb:caption) > 1 or ../dtb:prodnote">
+	            		<xsl:value-of select="'true'" />
+        		</xsl:when>
+        		<xsl:otherwise>
+	            		<xsl:value-of select="'false'" />
+	            </xsl:otherwise>
+	        </xsl:choose>
+	    </xsl:variable>
    		<div class="modalBody" id="imageDetail_{@id}" style="display:none">
-	     	<div class="imgBox">
-	      		<a href="#" class="closeIcon button icon" onclick="showImageDetail('{@id}', false); return false">
+		    <div class="modalHeader" role="banner">
+		        <div class="modalTitle"></div>
+		        <a href="#" class="modalMove button icon"><img src="/img/icons/move.png" width="16" height="16" alt="Move" title="Move" /></a>
+	      		<a href="#" class="modalClose button icon" onclick="showImageDetail('{@id}', false); return false">
 	        		<img class="imageDetailButton" src="/img/icons/close.png"></img>
 	        	</a>	
-	     		<img wicket:id="image_{@id}" src="{@src}" class="captionSizer">
-	       			<xsl:copy-of select="&cncatts;" />
-	           		<xsl:copy-of select="@alt" />
-	           		<xsl:apply-templates/>
-	       		</img>
-	       		<div class="imgCaption">
-	       			<!--  TODO check the order of these -->
-		       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>
-		       		<xsl:apply-templates select="../dtb:caption[@imgref=current()/@id]" mode="caption"/>
-	       		</div>
-	        </div>
+	    	</div>
+		    <div class="modalMainCol">
+		     	<div class="imgBox">
+		     		<img wicket:id="image_{@id}" src="{@src}" class="captionSizer">
+		       			<xsl:copy-of select="&cncatts;" />
+		           		<xsl:copy-of select="@alt" />
+		           		<xsl:apply-templates/>
+		       		</img>
+		       		<div class="imgCaption">
+				       	<div class="imgText">
+				       		<xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][1]" mode="caption"/>
+						    <!-- want this toggle when the image hasCaptions (more than one caption or a prodnote) -->
+					       	<xsl:if test="$addImageToggle = 'true'">
+			                    <div class="collapseBox">
+			                        <h5 wicket:id="imgToggleHeader_">More Information</h5>
+			                        <div class="collapseBody">
+			                        <xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][position()&gt;1]" mode="caption"/>
+						       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>
+						       		</div>
+						       	</div>
+						    </xsl:if>
+						</div>
+		       		</div>
+		        </div>
+			</div>
 		</div>
 	</xsl:template>
 	
 	<xsl:template match="dtb:img">
-		<!--  determine if the image detail modal should be added, it must have either
+		<!--  determine if the image detail toggle should be added, it must have either
 			  more than one caption or a long description -->
-   		<xsl:variable name="addImageModal">
+   		<xsl:variable name="addImageToggle">
          	<xsl:choose>
         		<xsl:when test="count(../dtb:caption) > 1 or ../dtb:prodnote">
+	            		<xsl:value-of select="'true'" />
+        		</xsl:when>
+        		<xsl:otherwise>
+	            		<xsl:value-of select="'false'" />
+	            </xsl:otherwise>
+	        </xsl:choose>
+	    </xsl:variable>
+		<!--  determine if the larger image modal should be added, img must have class = thumb -->
+   		<xsl:variable name="thumbImage">
+         	<xsl:choose>
+        		<xsl:when test="@class='thumb'">
 	            		<xsl:value-of select="'true'" />
         		</xsl:when>
         		<xsl:otherwise>
@@ -390,55 +408,47 @@
         	    	<xsl:attribute name="class">imgBox center</xsl:attribute>
          		</xsl:when>
         	</xsl:choose>
-        	<!-- Only add the image detail if there are more than 1 caption or long descriptions -->
-	       	<xsl:if test="$addImageModal = 'true'">
-	       			<!-- moreInfo is used to tell the imageDetailButton which icon to choose -->
-			        <span wicket:id="imageDetailButton_{@id}" target="{@src}" moreInfo="true">
-	            		<xsl:attribute name="hasCaptions">true</xsl:attribute>
-   		     		</span>
+		  	<xsl:if test="$thumbImage = 'false'">
+	        	<img wicket:id="image_{@id}" src="{@src}" class="captionSizer">
+		       		<xsl:copy-of select="&cncatts;" />
+		        	<xsl:copy-of select="@alt" />
+		        	<xsl:copy-of select="@height" />
+		        	<xsl:copy-of select="@width" />
+		        	<xsl:apply-templates/>
+		       	</img>
 	       	</xsl:if>
-        	<img wicket:id="image_{@id}" src="{@src}" class="captionSizer">
-	       		<xsl:copy-of select="&cncatts;" />
-	        	<xsl:copy-of select="@alt" />
-	        	<xsl:copy-of select="@height" />
-	        	<xsl:copy-of select="@width" />
-	        	<xsl:apply-templates/>
-	       	</img>
-       		<xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][1]" mode="caption"/>
+		  	<xsl:if test="$thumbImage = 'true'">
+	        	<img wicket:id="imageThumb_{@id}" src="{@src}" class="thumb captionSizer">
+	            	<xsl:copy-of select="&cncatts;" />
+	            	<xsl:copy-of select="@alt" />
+	        	</img>
+        	</xsl:if>
+	        <div class="imgCaption">
+			  	<xsl:if test="$thumbImage = 'true'">
+		        	  <div class="imgActions">
+			            <span wicket:id="imageDetailButton_{@id}" target="{@src}"></span>
+			         </div>
+			    </xsl:if>
+		       	<div class="imgText">
+		       		<xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][1]" mode="caption"/>
+				    <!-- want this toggle when the image hasCaptions (more than one caption or a prodnote) -->
+			       	<xsl:if test="$addImageToggle = 'true'">
+	                    <div class="collapseBox">
+			                <h5 wicket:id="imgToggleHeader_">More Information</h5>
+	                        <div class="collapseBody">
+	                        <xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][position()&gt;1]" mode="caption"/>
+				       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>
+				       		</div>
+				       	</div>
+				    </xsl:if>
+				</div>
+			</div>
 	    </div>
-
-	    <!-- want this when the image hasCaptions (more than one caption or a prodnote) -->
-       	<xsl:if test="$addImageModal = 'true'">
-       		<xsl:call-template name="modalImageDetail"/>
-       	</xsl:if>
+	    <!-- add the hidden modal with the larger image -->
+	  	<xsl:if test="$thumbImage = 'true'">
+	  		<xsl:call-template name="modalImageDetail"/>
+	  	</xsl:if>	
 	</xsl:template>
-
-    <xsl:template match="dtb:img[@class='thumb']">
-      	<div class="imgBox" id="image_{@id}">
-	    	<xsl:choose>
-    	    	<xsl:when test="ancestor::dtb:imggroup and ancestor::dtb:imggroup[@class='right']">
-        	    	<xsl:attribute name="class">imgBox right</xsl:attribute>
-         		</xsl:when>
-    	    	<xsl:when test="ancestor::dtb:imggroup and ancestor::dtb:imggroup[@class='left']">
-        	    	<xsl:attribute name="class">imgBox left</xsl:attribute>
-         		</xsl:when>
-    	    	<xsl:when test="ancestor::dtb:imggroup and ancestor::dtb:imggroup[@class='center']">
-        	    	<xsl:attribute name="class">imgBox center</xsl:attribute>
-         		</xsl:when>
-            </xsl:choose>
-            <span wicket:id="imageDetailButton_{@id}" target="{@src}">
-            	<xsl:if test="count(../dtb:caption) > 1 or ../dtb:prodnote">
-            		<xsl:attribute name="hasCaptions">true</xsl:attribute>
-            	</xsl:if>
-         	</span>
-        	<img wicket:id="imageThumb_{@id}" src="{@src}" class="thumb captionSizer">
-            	<xsl:copy-of select="&cncatts;" />
-            	<xsl:copy-of select="@alt" />
-        	</img>
-         	<xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][1]" mode="caption"/>
-      	</div>
-   		<xsl:call-template name="modalImageDetail"/>
-    </xsl:template>
     
 	<!--  prodnotes inside of img groups are long descriptions -->
     <xsl:template match="dtb:prodnote" mode="prodnote">
@@ -447,32 +457,8 @@
        <xsl:apply-templates/>
      </div>
    </xsl:template>
-
-   <!-- link to external site -->
-   <xsl:template match="dtb:a[@external='true']" priority="1">
-     <xsl:variable name="base">
-       <xsl:call-template name="basename">
-         <xsl:with-param name="path" select="@href"/>
-       </xsl:call-template>
-     </xsl:variable>
-     <a target="_blank">
-       <xsl:copy-of select="&catts;"/>
-       <xsl:choose>
-         <xsl:when test="starts-with(@href,'http:')">
-           <xsl:copy-of select="@href"/>
-         </xsl:when>
-         <xsl:otherwise>
-           <xsl:attribute name="href">
-             <xsl:value-of select="concat('resources/img/',$base)"/>
-           </xsl:attribute>
-         </xsl:otherwise>
-       </xsl:choose>
-       <xsl:apply-templates/>
-     </a>
-   </xsl:template>
-    
+  
    <!-- response groups -->
-
    <xsl:template match="dtb:responsegroup">
      <div class="entryBox nohlpassage">
      	<div class="teacherBar" wicket:id="teacherBar_">
@@ -533,7 +519,5 @@
       	<xsl:apply-templates/>
       </xsl:element>
     </xsl:template>
-
-
     
 </xsl:stylesheet>

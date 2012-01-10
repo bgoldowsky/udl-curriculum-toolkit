@@ -34,10 +34,13 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.IRelativeLinkSource;
@@ -76,7 +79,6 @@ import org.cast.isi.panel.ResponseFeedbackButtonPanel;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.SectionCompleteToggleComponent;
-import org.cast.isi.panel.SmartImagePanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.ISIResponseService;
 import org.slf4j.Logger;
@@ -87,7 +89,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * A component to display XML content in ISI.
- * 
  *
  */
 public class ISIXmlComponent extends XmlComponent {
@@ -99,7 +100,7 @@ public class ISIXmlComponent extends XmlComponent {
 	@Getter @Setter private MiniGlossaryModal miniGlossaryModal;
 	@Getter @Setter private ResponseFeedbackPanel responseFeedbackPanel;
 	@Setter private boolean inGlossary = false;
-	private boolean isTeacher = false;
+	protected boolean isTeacher = false;
 
 	public ISIXmlComponent(String id, ICacheableModel<? extends IXmlPointer> rootEntry, String transformName) {
 		super(id, rootEntry, transformName);
@@ -161,7 +162,6 @@ public class ISIXmlComponent extends XmlComponent {
 			WebMarkupContainer glossaryWord = new WebMarkupContainer(wicketId);
 			glossaryWord.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_INLINE));
 			return glossaryWord;
-
 			
 		} else if (wicketId.startsWith("glossdef")) {
 			// Span element, to be filled in with the glossary short def.
@@ -185,7 +185,6 @@ public class ISIXmlComponent extends XmlComponent {
 			ISIApplication.get().setLinkProperties(glossaryLink);
 			glossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_INLINE));
 			return glossaryLink;
-
 		
 		// glossaryMainLinks are linked directly to the glossary popup page
 		} else if (wicketId.startsWith("glossaryMainLink_")) {
@@ -194,8 +193,7 @@ public class ISIXmlComponent extends XmlComponent {
 			ISIApplication.get().setLinkProperties(glossaryLink);
 			glossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MAIN));
 			return glossaryLink;
-			
-			
+						
 		} else if (wicketId.startsWith("link_")) {
 			String href = elt.getAttribute("href");
 			// According to NIMAS, href should be in the form "filename.xml#ID"  or just "#ID" for within-file link
@@ -211,7 +209,14 @@ public class ISIXmlComponent extends XmlComponent {
 			log.debug("Link to {} # {}", file, id);
 			return ISIStandardPage.linkTo(wicketId, file, id);
 			
-		} else if (wicketId.startsWith("sectionIcon_")) {
+		} else if (wicketId.startsWith("fileLink_")) {
+			// link to file in content directory
+			String href = elt.getAttribute("href");
+			ResourceReference hrefResourceRef = getRelativeRef(href);
+			String url = RequestCycle.get().urlFor(hrefResourceRef).toString();
+			return new ExternalLink(wicketId, url);
+			
+		} else if (wicketId.startsWith("sectionIcon_")) {		
 			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttribute("class"));
 			icon.add(new AttributeRemover("class"));
 			return icon;
@@ -235,16 +240,6 @@ public class ISIXmlComponent extends XmlComponent {
 			String captionsName = videoSrc.replace(".flv", "_cap.xml");
 			ResourceReference captionsRef = getRelativeRef(captionsName);
 			String captions = RequestCycle.get().urlFor(captionsRef).toString();
-
-			
-//			String preview = videoSrc.replace(".flv", "_p.png");
-//			if (FileResourceManager.get().get(preview) == null)
-//				preview = null;
-//			String captions = videoSrc.replace(".flv", "_cap.xml");
-//			if (FileResourceManager.get().get(captions) == null) {
-//				captions = null;
-//			}
-			// ResourceReference rr = new ResourceReference(FileResource.class, video, null, null);
 			MediaPlayerPanel comp = new MediaPlayerPanel(wicketId, videoUrl, 
 					Integer.valueOf(elt.getAttribute("width")), 
 					Integer.valueOf(elt.getAttribute("height"))) {
@@ -261,10 +256,8 @@ public class ISIXmlComponent extends XmlComponent {
 			comp.setUseOnPlay(true);
 			if (preview != null)
 				comp.setPreview(previewRef);
-//				comp.setPreview(new ResourceReference(FileResource.class, preview, null, null));
 			if (captions != null)
 				comp.setCaptionFile(captionsRef);
-//				comp.setCaptionFile(FileResourceManager.get().getResourceReference(captions));
 			return comp;
 
 		} else if (wicketId.startsWith("audioplayer_")) {
@@ -302,7 +295,6 @@ public class ISIXmlComponent extends XmlComponent {
 			component.setVisibilityAllowed(usesTeacherButton ? forRole.equals("teacher") : forRole.equals("student"));
 			component.add(new AttributeRemover("rgid", "for"));
 			return component;
-
 			
 		} else if (wicketId.startsWith("responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
@@ -391,37 +383,29 @@ public class ISIXmlComponent extends XmlComponent {
 			ResourceReference imgRef = getRelativeRef(src);
 			Image img = new Image(wicketId, imgRef);
 			// FIXME these attributes were removed because indira was adding height and width of the detail image
-			// not the thumbnail image
+			// not the thumbnail image - remove when indira gets removed
 			img.add(new AttributeRemover("width", "height"));
 			return img;
 			
 		} else if (wicketId.startsWith("imageDetailButton_")) {
-			// return the info imageDetailButton
-			if (!elt.getAttribute("moreInfo").isEmpty()) {
-				ImageDetailButtonPanel imageDetailButtonPanel = new ImageDetailButtonPanel(wicketId, wicketId.substring("imageDetailButton_".length()), false);
-				imageDetailButtonPanel.add(new AttributeRemover("moreInfo"));
-				return imageDetailButtonPanel;
-			}
-			// return the plus imageDetailButton (normally on thumb images only)
+			// for thumbnail images only - no longer for more info
 			return new ImageDetailButtonPanel(wicketId, wicketId.substring("imageDetailButton_".length()), true);
-//  We may want to put some of this back, but for now assuming that any time XSLT requests an image detail button we'll put one in.
-//			IndiraImage ii = IndiraImage.get(elt.getAttribute("target"));
+//  		We may want to put some of this back, but for now assuming that any time XSLT requests an image detail button we'll put one in.
 //			if (contentPage == null && !inGlossary) // Don't do imageDetails on non-content pages (e.g. the Table of Contents)
 //				return new WebMarkupContainer(wicketId).setVisible(false);
-//			else if ((ii != null && ii.hasThumb()) || elt.hasAttribute("hasCaptions")) // Thumbnail or captions exist, insert panel
-//				return new ImageDetailButtonPanel(wicketId, wicketId.substring("imageDetailButton_".length()), ii != null ? ii.hasThumb() : false);
-//			else // No Thumbnail, no additional info
-//				return new WebMarkupContainer(wicketId).setVisible(false);
-			
-		} else if (wicketId.startsWith("smartImage-")) {
-			return new SmartImagePanel(wicketId, elt);
 
+		} else if (wicketId.startsWith("imgToggleHeader_")) {
+			// long description header for toggle area
+			return new Label(wicketId, new ResourceModel("longDescription.toggleHeading", "More Info"));
+			
 		} else if (wicketId.startsWith("annotatedImage_")) {
+			// image with hotspots
 			AnnotatedImageComponent annotatedImageComponent = new AnnotatedImageComponent(wicketId, elt, getModel());
 			annotatedImageComponent.add(new AttributeRemover("annotatedImageId"));
 			return annotatedImageComponent;
 			
 		} else if (wicketId.startsWith("hotSpot_")) {
+			// clickable areas on annotated images
 			HotSpotComponent hotSpotComponent = new HotSpotComponent(wicketId, elt);
 			hotSpotComponent.add(new AttributeRemover("annotatedImageId"));
 			return hotSpotComponent;
@@ -435,20 +419,16 @@ public class ISIXmlComponent extends XmlComponent {
 			WebMarkupContainer collapseBoxContainer = new WebMarkupContainer(wicketId);
 			collapseBoxContainer.add(new CollapseBoxBehavior("onclick", "support:" + boxSequence, ((ISIStandardPage) getPage()).getPageName()));
 			return collapseBoxContainer;
-//			return new WebMarkupContainer(wicketId).add(new CollapseBoxBehavior("onclick", "support:" + wicketId.substring("collapseBoxControl-".length()), ((ISIStandardPage) getPage()).getPageName()));
 
 		} else if (wicketId.startsWith("iScienceLink-")) {			
 			return new AjaxFallbackLink<Object>(wicketId) {
-
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void onClick(AjaxRequestTarget target) {
 					target.prependJavascript("$('#iScienceVideo-" + wicketId.substring("iScienceLink-".length()) + "').jqmShow();");
 					EventService.get().saveEvent("iscience:view", "Video #" + wicketId.substring("iScienceLink-".length()), ((ISIStandardPage) getPage()).getPageName());
-					
 				}
-				
 			};
 
 		} else if (wicketId.startsWith("youtube_")) {
@@ -475,8 +455,7 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			SectionCompleteToggleComponent sectionStatusIcon = new SectionCompleteToggleComponent(wicketId, currentSectionModel); 
 			return sectionStatusIcon;
-				
-			
+							
 		} else {
 			return super.getDynamicComponent(wicketId, elt);
 		}
@@ -497,6 +476,7 @@ public class ISIXmlComponent extends XmlComponent {
 		return metadata;
 	}
 
+	
 	public ResourceReference getRelativeRef (String src) {
 		Resource xmlFile = ((XmlSection)getModel().getObject()).getXmlDocument().getXmlFile();
 		if (xmlFile instanceof IRelativeLinkSource)
@@ -504,6 +484,7 @@ public class ISIXmlComponent extends XmlComponent {
 		throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
 	}
 
+	
 	public static class AttributeRemover extends AbstractBehavior {
 		
 		private String[] atts;
