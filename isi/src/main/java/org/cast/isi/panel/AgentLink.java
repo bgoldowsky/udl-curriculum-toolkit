@@ -28,11 +28,13 @@ import org.cast.isi.page.ISIBasePage;
 public class AgentLink extends SidebarDialog {
 	private static final long serialVersionUID = 1L;
 	private String responseAreaId;
+	private String title;
 
 	public AgentLink(String id, final String title, final String responseAreaId) {
 		super(id, title, null);
 		
 		this.responseAreaId = responseAreaId;
+		this.title = title;
 		
 		WebMarkupContainer link = new WebMarkupContainer("link");
 		link.add(this.getClickToOpenBehavior());
@@ -45,6 +47,6 @@ public class AgentLink extends SidebarDialog {
 	
 	@Override
 	protected void logOpenEvent(AjaxRequestTarget target) {
-		EventService.get().saveEvent("dialog:agent", responseAreaId, ((ISIBasePage) getPage()).getPageName());
+		EventService.get().saveEvent("dialog:agent", title + ":" + responseAreaId, ((ISIBasePage) getPage()).getPageName());
 	}
 }
