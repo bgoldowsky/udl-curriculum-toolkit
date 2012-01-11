@@ -996,6 +996,44 @@ a:hover, a:focus { color: #1E2D56; }
 }
 
 /*================================================================*/
+/* Data Table */
+
+.dataTable {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #BDBDBD;
+    border-collapse: collapse;
+    margin: 0 0 1em;
+    width: 100%;
+}
+.dataTable caption {
+    font-family: "Trebuchet MS",Helvetica,Arial,sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0 0 0.5em;
+    text-align: left;
+}
+.dataTable thead {
+    background: none repeat scroll 0 0 #D7D7D7;
+}
+.dataTable th {
+    border-left: 1px solid #BDBDBD;
+    border-right: 1px solid #BDBDBD;
+    color: #333333;
+    font-family: "Trebuchet MS",Helvetica,Arial,sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 3px;
+    text-align: left;
+    vertical-align: top;
+}
+.dataTable td {
+    border: 1px solid #BDBDBD;
+    padding: 3px;
+    text-align: left;
+    vertical-align: top;
+}
+
+/*================================================================*/
 /* Content Items */
 
 h1 {
