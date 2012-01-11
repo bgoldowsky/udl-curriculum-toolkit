@@ -10,6 +10,7 @@
 <link type="text/css" rel="stylesheet" media="screen" href="../css/theme.css" />
 
 <script type="text/javascript" src="../../../example/theme/js/jquery/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/lang/en.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/functions.js"></script>
 
@@ -144,6 +145,7 @@ body { background: #FFFFFF; }
 <div class="modalBody modalNarrow">
     <div class="modalHeader" role="banner">
         <div class="modalTitle">GlossaryItem</div>
+        <a href="#" class="modalMove button icon"><img src="../img/icons/move.png" width="16" height="16" alt="Move" title="Move" /></a>
         <a href="#" class="modalClose button icon" title="Close Window"><img src="../img/icons/close.png" width="15" height="15" alt="" /></a>
     </div>
     <div class="modalMainCol">
@@ -163,12 +165,30 @@ body { background: #FFFFFF; }
 <br />
 
 <div class="modalBody">
-    <div class="imgBox">
-        <a href="#" class="closeIcon button icon" title="Close Window"><img src="../img/icons/close.png" width="15" height="15" alt="" /></a>
-        <img src="../img/1x1.gif" width="640" height="480" alt="test image" title="test image" style="background: #CCCCCC;" class="thumb captionSizer" />
-        <div class="imgCaption">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <p class="source"><strong>Source:</strong> http://www.example.com/url_path/image_name.ext</p>
+    <div class="modalHeader" role="banner">
+        <div class="modalTitle"></div>
+        <a href="#" class="modalMove button icon"><img src="../img/icons/move.png" width="16" height="16" alt="Move" title="Move" /></a>
+        <a href="#" class="modalClose button icon" title="Close Window"><img src="../img/icons/close.png" width="15" height="15" alt="" /></a>
+    </div>
+    <div class="modalMainCol">
+        <div class="imgBox">
+            <img src="../img/1x1.gif" width="640" height="480" alt="test image" title="test image" style="background: #CCCCCC;" class="thumb captionSizer" />
+            <div class="imgCaption">
+                <div class="imgActions">
+                    <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
+                    <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
+                </div>
+                <div class="imgText">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <div class="collapseBox">
+                        <h5>More Information</h5>
+                        <div class="collapseBody">
+                            <p>Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.</p>
+                            <p class="source"><strong>Source:</strong> http://www.example.com/url_path/image_name.ext</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
