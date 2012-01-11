@@ -37,7 +37,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.link.ExternalLink;
+import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -99,7 +99,7 @@ public class ISIXmlComponent extends XmlComponent {
 	@Getter @Setter private String contentPage;
 	@Getter @Setter private MiniGlossaryModal miniGlossaryModal;
 	@Getter @Setter private ResponseFeedbackPanel responseFeedbackPanel;
-	@Setter private boolean inGlossary = false;
+	@Getter @Setter protected boolean inGlossary = false;
 	protected boolean isTeacher = false;
 
 	public ISIXmlComponent(String id, ICacheableModel<? extends IXmlPointer> rootEntry, String transformName) {
@@ -211,10 +211,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("fileLink_")) {
 			// link to file in content directory
-			String href = elt.getAttribute("href");
-			ResourceReference hrefResourceRef = getRelativeRef(href);
-			String url = RequestCycle.get().urlFor(hrefResourceRef).toString();
-			return new ExternalLink(wicketId, url);
+			return new ResourceLink<Object> (wicketId, getRelativeRef(elt.getAttribute("href")));
 			
 		} else if (wicketId.startsWith("sectionIcon_")) {		
 			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttribute("class"));
