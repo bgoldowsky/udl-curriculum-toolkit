@@ -195,4 +195,13 @@ public class ResponseList extends Panel {
 			setVisible(dataProvider.size()==0 && getPlaceholderComponent() instanceof EmptyPanel);
 		}
 	}	
+	
+	@Override
+	protected void onDetach() {		
+		if (mTargetUser != null)
+			mTargetUser.detach();
+		if (promptModel != null)
+			promptModel.detach();
+		super.onDetach();
+	}
 }
