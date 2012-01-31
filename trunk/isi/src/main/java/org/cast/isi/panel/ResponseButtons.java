@@ -132,6 +132,7 @@ public class ResponseButtons extends Panel {
 				}
 			};
 			editor.setContext(getContext());
+			editor.setNewResponse(true);
 			getListComponent().putPlaceholderComponent(editor, target);
 			target.addComponent(ResponseButtons.this);
 		}
