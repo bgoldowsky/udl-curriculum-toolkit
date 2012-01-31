@@ -539,6 +539,7 @@
 
     $.fn.annotateCallback = function(hotSpotNode, id) {
     	// determine if you are a graphic home page image
+    	// TODO get Matt to help me with this - ldm
 
     	// show the hidden annotation relative to the hotspot that called it
     	var detail = $("#" + id);
