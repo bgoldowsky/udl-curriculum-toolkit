@@ -24,9 +24,9 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.CwmApplication;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISISession;
@@ -74,7 +74,8 @@ public class ThumbPanel extends Panel {
 		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RATING_THUMB, contentLoc, xmlId);
 		IModel<Response> mResponse = ISIResponseService.get().getResponseForPrompt(mPrompt, mUser);
 		if (mResponse == null || mResponse.getObject() == null && !readOnly)
-			mResponse = ISIResponseService.get().newResponse(mUser, ResponseType.TEXT, mPrompt);
+			// TODO: this isn't really the correct ResponseType, but it's what we've used in the past.
+			mResponse = ISIResponseService.get().newResponse(mUser, CwmApplication.get().getResponseType("TEXT"), mPrompt);
 		setDefaultModel(mResponse);		
 	}
 

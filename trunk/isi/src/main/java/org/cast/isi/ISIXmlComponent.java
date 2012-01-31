@@ -45,9 +45,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.components.DeployJava;
+import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.ResponseMetadata;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.indira.FileResource;
 import org.cast.cwm.indira.FileResourceManager;
@@ -467,7 +467,7 @@ public class ISIXmlComponent extends XmlComponent {
 	
 	protected ResponseMetadata addMetadata (ResponseMetadata metadata) {
 		// Set the response types to be allowed for this application configuration
-		for (ResponseType responseType : ISIApplication.get().defaultResponseTypes) {
+		for (IResponseType responseType : ISIApplication.get().defaultResponseTypes) {
 			metadata.addType(responseType);
 		}
 		return metadata;

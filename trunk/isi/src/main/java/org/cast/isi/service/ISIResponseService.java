@@ -30,10 +30,10 @@ import net.databinder.models.hib.HibernateObjectModel;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.CwmApplication;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
@@ -204,7 +204,7 @@ public class ISIResponseService extends ResponseService {
 	}
 
 	public IModel<Response> newPageHighlightsLabel(IModel<User> user, IModel<ISIPrompt> prompt) {
-		return super.newResponse(user, ResponseType.TEXT, prompt);
+		return super.newResponse(user, CwmApplication.get().getResponseType("TEXT"), prompt);
 	}
 
 	/**

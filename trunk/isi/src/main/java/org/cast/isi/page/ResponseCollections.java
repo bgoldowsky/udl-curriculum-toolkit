@@ -32,7 +32,6 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.ResponseMetadata;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
@@ -63,10 +62,10 @@ public class ResponseCollections extends ISIStandardPage {
 	private static final Logger log = LoggerFactory.getLogger(ResponseCollections.class);
 	protected static ResponseMetadata responseMetadata = new ResponseMetadata();
 	static {
-		responseMetadata.addType(ResponseType.HTML);
-		responseMetadata.addType(ResponseType.AUDIO);
-		responseMetadata.addType(ResponseType.SVG);
-		responseMetadata.addType(ResponseType.UPLOAD);
+		responseMetadata.addType("HTML");
+		responseMetadata.addType("AUDIO");
+		responseMetadata.addType("SVG");
+		responseMetadata.addType("UPLOAD");
 	}
 	
 	public ResponseCollections(final PageParameters parameters) {

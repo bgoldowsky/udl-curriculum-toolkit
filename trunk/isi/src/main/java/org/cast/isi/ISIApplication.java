@@ -61,6 +61,7 @@ import org.apache.wicket.util.time.Time;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.CwmPopupSettings;
+import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
@@ -165,7 +166,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected String responseSortField = "createDate";
 	@Getter protected int responseSortState = ISortState.DESCENDING;
 	@Getter protected ResponseMetadata responseMetadata = new ResponseMetadata();
-	@Getter protected ArrayList<ResponseType> defaultResponseTypes = new ArrayList<ResponseType>();
+	@Getter protected ArrayList<IResponseType> defaultResponseTypes = new ArrayList<IResponseType>();
 	protected TinyMCESettings tinyMCESettings = null;
 
 	
@@ -433,24 +434,24 @@ public abstract class ISIApplication extends CwmApplication {
 		if (responseTypeList != null) {
 			responseTypes = responseTypeList.split("\\s*,\\s*");	
 		}
-		// if it isn't set up in the config file then default to these
+		CwmApplication app = CwmApplication.get();
 		if (responseTypes == null) {
 			log.info("No Response Types Set - using the Defaults: text, image, audio, file");
-			defaultResponseTypes.add(ResponseType.HTML);
-			defaultResponseTypes.add(ResponseType.AUDIO);
-			defaultResponseTypes.add(ResponseType.SVG);
-			defaultResponseTypes.add(ResponseType.UPLOAD);
+			defaultResponseTypes.add(app.getResponseType("HTML"));
+			defaultResponseTypes.add(app.getResponseType("AUDIO"));
+			defaultResponseTypes.add(app.getResponseType("SVG"));
+			defaultResponseTypes.add(app.getResponseType("UPLOAD"));
 		} else {
 			for (String responseType : responseTypes) {
 				log.info("Adding the application Response type {}", responseType);
 				if (responseType.toLowerCase().trim().equals("text"))
-					defaultResponseTypes.add(ResponseType.HTML);				
+					defaultResponseTypes.add(app.getResponseType("HTML"));				
 				else if (responseType.toLowerCase().trim().equals("image"))
-					defaultResponseTypes.add(ResponseType.SVG);
+					defaultResponseTypes.add(app.getResponseType("SVG"));
 				else if (responseType.toLowerCase().trim().equals("audio"))
-					defaultResponseTypes.add(ResponseType.AUDIO);
+					defaultResponseTypes.add(app.getResponseType("AUDIO"));
 				else if (responseType.toLowerCase().trim().equals("file"))
-					defaultResponseTypes.add(ResponseType.UPLOAD);
+					defaultResponseTypes.add(app.getResponseType("UPLOAD"));
 				else log.error("This Response Type {} is NOT valid and will NOT be added", responseType);
 			}
 		}
@@ -458,7 +459,7 @@ public abstract class ISIApplication extends CwmApplication {
 			log.error("There are no valid response types defined");
 		
 		// I think this should be commented out? - ldm
-		for (ResponseType rt : defaultResponseTypes) {
+		for (IResponseType rt : defaultResponseTypes) {
 			responseMetadata.addType(rt);
 		}
 	}

@@ -31,9 +31,9 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.cast.cwm.CwmApplication;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.behavior.AjaxAutoSavingBehavior;
@@ -91,7 +91,8 @@ public class RatePanel extends Panel {
 		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RATING_AFFECT, contentLoc, xmlId);
 		mResponseAffect = ISIResponseService.get().getResponseForPrompt(mPrompt, mUser);
 		if (mResponseAffect == null || mResponseAffect.getObject() == null && !readOnly)
-			mResponseAffect = ISIResponseService.get().newResponse(mUser, ResponseType.TEXT, mPrompt);
+			// TODO: should probably be one of the other response types
+			mResponseAffect = ISIResponseService.get().newResponse(mUser, CwmApplication.get().getResponseType("TEXT"), mPrompt);
 		setDefaultModel(mResponseAffect);	
 		
 		addCommentForm("commentForm");
@@ -173,7 +174,7 @@ public class RatePanel extends Panel {
 			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RATING_COMMENT, contentLoc, xmlId);
 			IModel<Response> mResponseComment = ISIResponseService.get().getResponseForPrompt(mPrompt, mUser);
 			if ((mResponseComment == null || mResponseComment.getObject() == null) && !readOnly)
-				mResponseComment = ISIResponseService.get().newResponse(mUser, ResponseType.TEXT, mPrompt);
+				mResponseComment = ISIResponseService.get().newResponse(mUser, CwmApplication.get().getResponseType("TEXT"), mPrompt);
 			setDefaultModel(mResponseComment);
 			
 			// set the text area to either what was in the db or a new string if nothing has been entered

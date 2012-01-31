@@ -38,7 +38,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.ResponseMetadata;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.builders.UserCriteriaBuilder;
@@ -69,10 +68,10 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 	protected String pageTitleEnd = null;
 	protected static ResponseMetadata responseMetadata = new ResponseMetadata();
 	static {
-		responseMetadata.addType(ResponseType.HTML);
-		responseMetadata.addType(ResponseType.AUDIO);
-		responseMetadata.addType(ResponseType.SVG);
-		responseMetadata.addType(ResponseType.UPLOAD);
+		responseMetadata.addType("HTML");
+		responseMetadata.addType("AUDIO");
+		responseMetadata.addType("SVG");
+		responseMetadata.addType("UPLOAD");
 	}
 
 	public PeriodResponsePage(final PageParameters parameters) {

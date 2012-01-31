@@ -39,7 +39,6 @@ import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.ResponseMetadata;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
@@ -184,8 +183,8 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 
 	
 	protected void setPageNotesMetadata() {
-		pageNotesMetadata.addType(ResponseType.TEXT);
-		pageNotesMetadata.addType(ResponseType.AUDIO);
+		pageNotesMetadata.addType("TEXT");
+		pageNotesMetadata.addType("AUDIO");
 	}
 
 	public void addHighlightPanel() {	

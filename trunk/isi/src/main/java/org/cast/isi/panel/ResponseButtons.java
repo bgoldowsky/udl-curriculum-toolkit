@@ -28,11 +28,12 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
+import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.service.ResponseService;
 import org.cast.isi.data.ContentLoc;
 
@@ -45,7 +46,7 @@ public class ResponseButtons extends Panel {
 	private ContentLoc loc;
 	private ResponseList listComponent;
 	
-	private ResponseType openEditor = null;
+	private IResponseType openEditor = null;
 
 	private static final long serialVersionUID = 1L;
 
@@ -56,11 +57,12 @@ public class ResponseButtons extends Panel {
 		this.loc = loc;
 		setOutputMarkupId(true);
 
-		add (new ButtonLink("write", ResponseType.HTML)); // write for wysiwyg text
-		add (new ButtonLink("text", ResponseType.TEXT));  // plain text box
-		add (new ButtonLink("draw", ResponseType.SVG));	
-		add (new ButtonLink("record", ResponseType.AUDIO));
-		add (new ButtonLink("upload", ResponseType.UPLOAD));
+		CwmApplication app = CwmApplication.get();
+		add (new ButtonLink("write", app.getResponseType("HTML"))); // write for wysiwyg text
+		add (new ButtonLink("text", app.getResponseType("TEXT")));  // plain text box
+		add (new ButtonLink("draw", app.getResponseType("SVG")));	
+		add (new ButtonLink("record", app.getResponseType("AUDIO")));
+		add (new ButtonLink("upload", app.getResponseType("UPLOAD")));
 	}
 
 	/**
@@ -70,9 +72,9 @@ public class ResponseButtons extends Panel {
 	private class ButtonLink extends AjaxLink<Void> {
 		
 		private static final long serialVersionUID = 1L;
-		private ResponseType type;
+		private IResponseType type;
 
-		private ButtonLink (String wicketId, final ResponseType type) {
+		private ButtonLink (String wicketId, final IResponseType type) {
 			super(wicketId);
 			this.type = type;
 			WebMarkupContainer preferredImage = new WebMarkupContainer("preferredImage") {
