@@ -44,11 +44,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.cast.audioapplet.component.AbstractAudioRecorder;
 import org.cast.cwm.IRelativeLinkSource;
+import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.service.ResponseService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
@@ -83,7 +83,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 		this.loc = loc;
 	}
 
-	public ResponseEditor (String wicketId, IModel<Prompt> prompt, ResponseType type, ResponseMetadata metadata, ContentLoc loc) {
+	public ResponseEditor (String wicketId, IModel<Prompt> prompt, IResponseType type, ResponseMetadata metadata, ContentLoc loc) {
 		super (wicketId, prompt, type);
 		this.metadata = metadata;
 		this.loc = loc;
@@ -101,13 +101,14 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 			this.setPageName(loc.getLocation());
 			xmlFile = loc.getSection().getXmlDocument().getXmlFile();  
 		}
-		ResponseType thisType = getModelObject().getType();
-		if (type.equals(ResponseType.AUDIO) || type.equals(ResponseType.SVG) || type.equals(ResponseType.UPLOAD))
+		IResponseType thisType = getModelObject().getType();
+		String typeName = type.getName();
+		if (typeName.equals("AUDIO") || typeName.equals("SVG") || typeName.equals("UPLOAD"))
 			titleVisible = true;
 		if (metadata != null) {
 			TypeMetadata typeMD = metadata.getType(thisType);
 			if (typeMD != null) {
-				if (thisType.equals(ResponseType.SVG) && typeMD.getFragments() != null) {
+				if (thisType.getName().equals("SVG") && typeMD.getFragments() != null) {
 					// Drawing starters - need to convert to URLs.
 					ArrayList<String> urls = new ArrayList<String>(typeMD.getFragments().size());
 					for (String frag : typeMD.getFragments()) {
@@ -135,10 +136,10 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 	}
 
 	@Override
-	protected WebMarkupContainer getEditorFragment(String id, final IModel<Response> model, ResponseType type) {
+	protected WebMarkupContainer getEditorFragment(String id, final IModel<Response> model, IResponseType type) {
 		final WebMarkupContainer editor = super.getEditorFragment(id, model, type);
 		
-		if (type.equals(ResponseType.AUDIO)) {
+		if (type.getName().equals("AUDIO")) {
 			// Audio fragment does not by default include a form so title can be saved.
 			Form<Response> form = new Form<Response>("form", model);
 			editor.add(form);
@@ -162,9 +163,9 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 		
 		((Form<?>)editor.get("form")).add(new TitleFragment("titleFragment", model));
 		
-		if (type.equals(ResponseType.AUDIO)) {
+		if (type.getName().equals("AUDIO")) {
 			String propertyString;
-			TypeMetadata typeMD = metadata.getType(ResponseType.AUDIO);
+			TypeMetadata typeMD = metadata.getType("AUDIO");
 			// Special case: use text sentence starters for audio if there are no audio-specific ones.
 			if ((typeMD==null || typeMD.getFragments()==null || typeMD.getFragments().isEmpty())) {
 				 propertyString = new String("typeMap[HTML].fragments");
@@ -199,7 +200,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 			super(id, "titleFragment", ResponseEditor.this, model);
 			setRenderBodyOnly(true);
 			// resource keys are, for example, "response.title.prompt.audio"
-			add(new Label("titleInstructions", new ResourceModel("response.title.prompt."+model.getObject().getType().name().toLowerCase(), "Add a title")));
+			add(new Label("titleInstructions", new ResourceModel("response.title.prompt."+model.getObject().getType().getName().toLowerCase(), "Add a title")));
 			add(new TextField<String>("title", new PropertyModel<String>(model, "title")).add(new SimpleAttributeModifier("maxlength", "250")));
 		}
 		
