@@ -157,7 +157,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean tagsOn = true;		
 	@Getter protected boolean pageNotesOn = true;	// margin notes
 	@Getter protected boolean classMessageOn = true;
-	@Getter protected boolean pageNumbersOn = true;  // TOC page numbers
+	@Getter protected boolean pageNumbersOn = true;  // ALL page numbers FIXME need one for TOC only-ldm
 	@Getter protected boolean toolBarOn = true; // text help, dictionary
 	@Getter protected boolean mathMLOn = false; 
 	@Getter protected String glossaryLinkType = DEFAULT_GLOSSARY_TYPE;
@@ -278,15 +278,15 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 
 		// Transformers
-		File baseXslFile = new File(getSkinDir(), "dtbook2xhtml.xsl");
-		File commonXslFile = new File(getSkinDir(), "common.xsl");
-		File glossaryXSLFile = new File(getSkinDir(), "glossary.xsl");
+		File baseXslFile = new File(getTransformationDir(), "dtbook2xhtml.xsl");
+		File commonXslFile = new File(getTransformationDir(), "common.xsl");
+		File glossaryXSLFile = new File(getTransformationDir(), "glossary.xsl");
 		xmls.loadXSLTransformer("glossary", glossaryXSLFile, true, baseXslFile, commonXslFile);
-		
-		File tocXslFile = new File(getSkinDir(), "toc.xsl");
+				
+		File tocXslFile = new File(getTransformationDir(), "toc.xsl");
 		xmls.loadXSLTransformer("toc", tocXslFile, true, baseXslFile, commonXslFile);
 		
-		File studentXslFile = new File(getSkinDir(), "student.xsl");
+		File studentXslFile = new File(getTransformationDir(), "student.xsl");
 		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
 		TransformChain transformchain = new TransformChain(
 				new GlossaryTransformer(glossary),
@@ -370,19 +370,19 @@ public abstract class ISIApplication extends CwmApplication {
 	
 	protected void configureApplicationProperties() {
 		// Set Application settings based on property file
-		notebookOn = setBooleanProperty("isi.notebook.isOn");
-		whiteboardOn = setBooleanProperty("isi.whiteboard.isOn");
-		glossaryOn = setBooleanProperty("isi.glossary.isOn");
-		myQuestionsOn = setBooleanProperty("isi.myQuestion.isOn");
-		responseCollectionsOn = setBooleanProperty("isi.responseCollection.isOn");
-		tagsOn = setBooleanProperty("isi.tag.isOn");
-		highlightsPanelOn = setBooleanProperty("isi.highlightsPanel.isOn");
-		pageNotesOn = setBooleanProperty("isi.pageNotes.isOn");
-		pageNumbersOn = setBooleanProperty("isi.pageNumbers.isOn");
-		classMessageOn = setBooleanProperty("isi.classMessage.isOn");
-		toolBarOn = setBooleanProperty("isi.toolBar.isOn");
-		mathMLOn = setBooleanProperty("isi.mathML.isOn");
-		useAuthoredResponseType = setBooleanProperty("isi.useAuthoredResponseType.isOn");
+		notebookOn = setBooleanProperty("isi.notebook.isOn", notebookOn);
+		whiteboardOn = setBooleanProperty("isi.whiteboard.isOn", whiteboardOn);
+		glossaryOn = setBooleanProperty("isi.glossary.isOn", glossaryOn);
+		myQuestionsOn = setBooleanProperty("isi.myQuestion.isOn", myQuestionsOn);
+		responseCollectionsOn = setBooleanProperty("isi.responseCollection.isOn", responseCollectionsOn);
+		tagsOn = setBooleanProperty("isi.tag.isOn", tagsOn);
+		highlightsPanelOn = setBooleanProperty("isi.highlightsPanel.isOn", highlightsPanelOn);
+		pageNotesOn = setBooleanProperty("isi.pageNotes.isOn", pageNotesOn);
+		pageNumbersOn = setBooleanProperty("isi.pageNumbers.isOn", pageNumbersOn);
+		classMessageOn = setBooleanProperty("isi.classMessage.isOn", classMessageOn);
+		toolBarOn = setBooleanProperty("isi.toolBar.isOn", toolBarOn);
+		mathMLOn = setBooleanProperty("isi.mathML.isOn", mathMLOn);
+		useAuthoredResponseType = setBooleanProperty("isi.useAuthoredResponseType.isOn", useAuthoredResponseType);	
 
 		/* if the glossary is on, decide what type of glossary link is used */
 		if (glossaryOn == true) {
@@ -414,14 +414,14 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 	}
 
-	protected Boolean setBooleanProperty(String property) {
+	protected Boolean setBooleanProperty(String property, boolean defaultPropertyValue) {
 		String propertyValue =  appProperties.getProperty(property);
 		if (propertyValue != null) {
 			log.info("Value of {} is  = {}", property, propertyValue);
 			return Boolean.valueOf(propertyValue.trim());
 		}
-		log.info("Value of {} is = false", property);
-		return false; 
+		log.info("Value of {} is = {}", property, defaultPropertyValue);
+		return defaultPropertyValue; 
 	}
 	/**
 	 * determine what the default response types are used
@@ -456,6 +456,8 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 		if (defaultResponseTypes.isEmpty())
 			log.error("There are no valid response types defined");
+		
+		// I think this should be commented out? - ldm
 		for (ResponseType rt : defaultResponseTypes) {
 			responseMetadata.addType(rt);
 		}
@@ -708,6 +710,15 @@ public abstract class ISIApplication extends CwmApplication {
 	
 	public String getSkinDir() {
 		return (appProperties.getProperty("isi.skinDir")).trim();
+	}
+	
+
+	public String getTransformationDir() {
+		String td =  appProperties.getProperty("isi.transformationDir");
+		if (td != null) {
+			return (appProperties.getProperty("isi.transformationDir")).trim();
+		}
+		return getSkinDir();
 	}
 	
 	public String getCustomSkinDir() {
