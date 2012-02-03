@@ -91,8 +91,12 @@ public enum PromptType {
 	/**
 	 * Applet Prompt type.
 	 */
-	APPLET
+	APPLET,
 
+	/**
+	 * TASK Prompt type - this is temporary till we implement extensible enums for prompt - ldm.
+	 */
+	TASK
 
 
 }
