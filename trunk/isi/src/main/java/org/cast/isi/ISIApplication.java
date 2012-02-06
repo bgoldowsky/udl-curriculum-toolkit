@@ -63,7 +63,6 @@ import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.CwmPopupSettings;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.ResponseMetadata;
-import org.cast.cwm.data.ResponseType;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
 import org.cast.cwm.dav.DavClientManager;
@@ -136,12 +135,12 @@ public abstract class ISIApplication extends CwmApplication {
 	protected static final int POPUP_HEIGHT = 600;
 	protected static final int POPUP_FLAGS = PopupSettings.RESIZABLE+PopupSettings.SCROLLBARS;
 	
-	protected static final PopupSettings glossaryPopupSettings = new CwmPopupSettings ("glossary", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
-	protected static final PopupSettings whiteboardPopupSettings = new CwmPopupSettings ("whiteboard", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
-	protected static final PopupSettings notebookPopupSettings = new CwmPopupSettings ("notebook", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
-	protected static final PopupSettings periodResponsePopupSettings = new CwmPopupSettings ("compare", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
-	public static final PopupSettings teacherNotesPopupSettings = new CwmPopupSettings ("tnotebook", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
-	public static final PopupSettings questionPopupSettings = new CwmPopupSettings ("questionp", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
+	@Getter protected static final PopupSettings glossaryPopupSettings = new CwmPopupSettings ("glossary", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
+	@Getter protected static final PopupSettings whiteboardPopupSettings = new CwmPopupSettings ("whiteboard", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
+	@Getter protected static final PopupSettings notebookPopupSettings = new CwmPopupSettings ("notebook", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
+	@Getter protected static final PopupSettings periodResponsePopupSettings = new CwmPopupSettings ("compare", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
+	@Getter public static final PopupSettings teacherNotesPopupSettings = new CwmPopupSettings ("tnotebook", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
+	@Getter public static final PopupSettings questionPopupSettings = new CwmPopupSettings ("questionp", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
 	
 	// These settings are generally overridden by applications in the configuration file
 	@Getter @Setter protected String sectionElement = "level3"; // XML element that is one section, usually
