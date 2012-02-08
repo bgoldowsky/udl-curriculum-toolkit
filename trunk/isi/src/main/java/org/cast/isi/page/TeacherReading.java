@@ -52,6 +52,7 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	// Differs from superclass version in that it creates a READ-ONLY page notes area with no edit buttons
 	// view the student's notes
 	protected void addNotesPanel () {
+		setPageNotesMetadata();
 		mNotesPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
 		WebMarkupContainer notesbox = new WebMarkupContainer("notesbox") {
 			private static final long serialVersionUID = 1L;
