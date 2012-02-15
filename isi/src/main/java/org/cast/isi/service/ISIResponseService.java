@@ -207,10 +207,25 @@ public class ISIResponseService extends ResponseService {
 		return super.newResponse(user, CwmApplication.get().getResponseType("TEXT"), prompt);
 	}
 
+	
+	/**
+	 * Save the response for a multiple choice response
+	 * 
+	 * @param response
+	 * @param text
+	 * @param correct
+	 */
+	public void saveSingleSelectResponse(IModel<Response> response, String text, boolean correct/*, String pageName*/) {
+		super.genericSaveResponse(response, text, correct ? 1 : 0, 1, 1, null, null /*pageName*/);
+	}
+
+	public IModel<Response> newSingleSelectResponse(IModel<User> user, IModel<Prompt> model) {
+		return super.newResponse(user, CwmApplication.get().getResponseType("SINGLE_SELECT"), model);
+	}
+
 	/**
 	 * A set of methods for saving a response object with the appropriate type for these custom responses.
-	 */
-	
+	 */	
 	public void saveHighlighterLabel(IModel<Response> response, String label) {
 		super.saveTextResponse(response, label, null);
 	}

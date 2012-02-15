@@ -457,34 +457,88 @@
        <xsl:apply-templates/>
      </div>
    </xsl:template>
-  
-   <!-- response groups -->
+
+  <!-- response groups -->
    <xsl:template match="dtb:responsegroup">
      <div class="entryBox nohlpassage">
      	<div class="teacherBar" wicket:id="teacherBar_">
      		<div class="teacherBarLeft">
      	    </div>
       	    <div class="teacherBarRight">
+      	    	<!-- ADD the teacher specific annotation WHAT TO LOOK FOR here -->
         		<a wicket:id="compareResponses_" href="#" class="button" rgid="{ancestor-or-self::dtb:responsegroup/@id}">Compare Responses</a>
             	<span wicket:id="feedbackButton_" for="teacher" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
        	 	</div>
        </div>
        <xsl:apply-templates select="dtb:prompt"/>
-       <div class="responseBar">
-           <div wicket:id="responseButtons_" rgid="{@id}" class="responseLeft">
-           </div>
-           <div class="responseRight">
-             <!-- helper links -->
-             <xsl:apply-templates select="key('annokey', @id)" mode="showannotations"/>
-             <span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
-           </div>
-       </div>
- 
-       <!-- list of responses -->
-       <div wicket:id="responseList_" rgid="{@id}" group="{@group}">
-       </div>
+       <xsl:call-template name="responseArea"/>
      </div>
    </xsl:template>
+
+	<xsl:template name="responseArea">
+		<xsl:choose>
+			<xsl:when test="dtb:select1">
+				<form wicket:id="select1_{ancestor-or-self::dtb:responsegroup/@id}"
+					class="subactivity" title="{ancestor-or-self::dtb:responsegroup/@title}"
+					group="{ancestor-or-self::dtb:responsegroup/@group}">
+					<xsl:apply-templates select="dtb:select1" />
+				</form>
+			</xsl:when>
+			<xsl:otherwise>
+				<div class="responseBar">
+					<div wicket:id="responseButtons_" rgid="{@id}" class="responseLeft">
+					</div>
+					<div class="responseRight">
+						<!-- helper links -->
+						<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
+						<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+					</div>
+				</div>
+				<!-- list of responses -->
+				<div wicket:id="responseList_" rgid="{@id}" group="{@group}">
+				</div>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
+	<!-- Multiple Choice -->
+	<xsl:template match="dtb:select1">
+		<ul>
+			<li wicket:id="radioGroup">
+				<xsl:apply-templates select="dtb:item//dtb:label" />
+			</li>
+		</ul>
+		<xsl:apply-templates select="dtb:item//dtb:message" />
+		<div wicket:id="selectNone" class="stResult incorrect">
+			<p wicket:id="noMultChoiceSelected">Select an answer to the question above then click the "check"
+				button to see feedback on your answer.
+			</p>
+		</div>
+		<a href="#" wicket:id="submitLink" class="button">Check My Answer	
+		</a>
+		<br />
+	</xsl:template>
+
+	<xsl:template match="dtb:item//dtb:label">
+		<li>
+			<input type="radio"
+				id="selectItem_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}"
+				wicket:id="selectItem_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}">
+				<xsl:copy-of select="&catts;" />
+				<xsl:copy-of select="ancestor-or-self::dtb:item/@correct" />
+			</input>
+			<label
+				wicket:id="selectItemLabel_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}">
+				<xsl:apply-templates />
+			</label>
+		</li>
+	</xsl:template>
+
+    <xsl:template match="dtb:item//dtb:message">
+		<div wicket:id="selectMessage_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}">
+			<xsl:apply-templates />
+		</div>
+    </xsl:template>
 
    <!-- ratings  -->
 	<xsl:template match="dtb:responsegroup[@class='rating']">

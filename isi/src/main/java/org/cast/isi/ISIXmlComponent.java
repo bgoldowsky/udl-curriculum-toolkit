@@ -35,6 +35,7 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.ResourceLink;
@@ -63,6 +64,8 @@ import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
 import org.cast.isi.component.AnnotatedImageComponent;
 import org.cast.isi.component.HotSpotComponent;
+import org.cast.isi.component.SingleSelectForm;
+import org.cast.isi.component.SingleSelectItem;
 import org.cast.isi.component.SlideShowComponent;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
@@ -292,6 +295,47 @@ public class ISIXmlComponent extends XmlComponent {
 			component.setVisibilityAllowed(usesTeacherButton ? forRole.equals("teacher") : forRole.equals("student"));
 			component.add(new AttributeRemover("rgid", "for"));
 			return component;
+			
+		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
+		// child of this form.  
+		// This form includes a submit link and will be disabled when the correct answer is submitted - not right now - ldm
+		} else if (wicketId.startsWith("select1_")) {
+			IModel<Prompt> mcPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.SINGLE_SELECT, wicketId.substring("select1_".length()));
+			SingleSelectForm selectForm = new SingleSelectForm(wicketId, mcPrompt);
+			//selectForm.setDisabledOnCorrect(true);			
+			return selectForm;
+
+		// A generic RadioGroup that checks its parent for the model. Radio objects will be added to it.
+		// This is unique within a SingleSelectForm and should not change its wicket:id
+		} else if (wicketId.equals("radioGroup")) {
+			RadioGroup<String> rg = new RadioGroup<String>(wicketId, new Model<String>(null));
+			return rg;
+			
+		// A multiple choice radio button. Stores a "correct" value. This is
+		// added to a generic RadioGroup in a SingleSelectForm.
+		} else if (wicketId.startsWith("selectItem_")) {
+			SingleSelectItem mcItem = new SingleSelectItem(wicketId,
+					new Model<String>(wicketId.substring("selectItem_".length())),
+					Boolean.valueOf(elt.getAttribute("correct")));
+			mcItem.add(new AttributeRemover("correct"));
+			return mcItem;
+
+		// A message associated with a wicketId.startsWith("selectItem_").
+		// Visibility based on whether the corresponding radio button is selected in the enclosing form.
+		} else if (wicketId.startsWith("selectMessage_")) {
+			return new WebMarkupContainer(wicketId).setOutputMarkupPlaceholderTag(true).setVisible(false);
+
+			
+		// A label for a multiple choice radio button.  This has additional logic to determine
+		// the radio's markup id to work with <label for=".." /> and will set the SingleSelectItem's model object.
+		} else if (wicketId.startsWith("selectItemLabel_")) {
+			String label = elt.getTextContent().trim();
+			return new SingleSelectItem.SingleSelectItemLabel(wicketId, label);
+
+		} else if (wicketId.startsWith("noMultChoiceSelected")) {
+			// long description header for toggle area
+			return new Label(wicketId, new ResourceModel("isi.noMultChoiceSelected", "Make a selection"));
+
 			
 		} else if (wicketId.startsWith("responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());

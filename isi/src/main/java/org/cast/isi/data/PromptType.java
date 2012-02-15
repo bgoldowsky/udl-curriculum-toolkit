@@ -89,6 +89,11 @@ public enum PromptType {
 	RATING_AFFECT,
 
 	/**
+	 * Single Select multiple choice
+	 */
+	SINGLE_SELECT,
+
+	/**
 	 * Applet Prompt type.
 	 */
 	APPLET,
