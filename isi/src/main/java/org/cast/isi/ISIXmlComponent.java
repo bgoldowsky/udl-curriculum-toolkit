@@ -315,8 +315,10 @@ public class ISIXmlComponent extends XmlComponent {
 				public void onBeforeRender() {
 
 					SingleSelectForm parent = findParent(SingleSelectForm.class);
-					// Set answer to last answer selected
-					if (parent.getMResponse().getObject() != null && !parent.getMResponse().getObject().getText().isEmpty()) {
+					// Set answer to last answer selected					
+					if (parent.getMResponse() != null && parent.getMResponse().getObject() != null 
+							&& parent.getMResponse().getObject().getText() != null
+							&& !parent.getMResponse().getObject().getText().isEmpty()) {
 						setModelObject(parent.getMResponse().getObject().getText());
 					}
 					super.onBeforeRender();
