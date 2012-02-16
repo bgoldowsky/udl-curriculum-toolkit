@@ -308,7 +308,21 @@ public class ISIXmlComponent extends XmlComponent {
 		// A generic RadioGroup that checks its parent for the model. Radio objects will be added to it.
 		// This is unique within a SingleSelectForm and should not change its wicket:id
 		} else if (wicketId.equals("radioGroup")) {
-			RadioGroup<String> rg = new RadioGroup<String>(wicketId, new Model<String>(null));
+			RadioGroup<String> rg = new RadioGroup<String>(wicketId, new Model<String>(null)) {
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void onBeforeRender() {
+
+					SingleSelectForm parent = findParent(SingleSelectForm.class);
+					// Set answer to last answer selected
+					if (parent.getMResponse().getObject() != null && !parent.getMResponse().getObject().getText().isEmpty()) {
+						setModelObject(parent.getMResponse().getObject().getText());
+					}
+					super.onBeforeRender();
+				}				
+
+			};
 			return rg;
 			
 		// A multiple choice radio button. Stores a "correct" value. This is
