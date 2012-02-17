@@ -106,6 +106,54 @@
     width: 400px;
 }
 
+.responseFeedback {
+    display: inline-block;
+    background: #FFFF99;
+    font: bold 12px/115% Arial,Helvetica,sans-serif;
+    padding: 0.2em 0.45em;
+    margin: -1px 0px 0px 0px;
+    vertical-align: middle;
+}
+.responseFeedback img {
+    vertical-align: middle;
+    width: 1.25em;
+    height: 1.25em;
+}
+
+/*================================================================*/
+/* Response - Multiple Choice  */
+
+.responseMCItem {
+    padding: 0px 0px 0.4em 0px;
+}
+.responseMCItem:after {
+    content: ".";
+    height: 0px;
+    display: block;
+    clear: both;
+    overflow: hidden;
+    visibility: hidden;
+}
+*:first-child+html .responseMCItem { height: 100%; } /* IE7 */
+
+.responseMCItem input[type="radio"], .responseMCItem input[type="checkbox"] {
+    float: left;
+}
+.responseMCItem label {
+    display: block;
+    margin-left: 1.75em;
+}
+
+.responseMCActions {
+    padding: 0.3em 0px 0px 0px;
+}
+
+.responseMCFeedback {
+    border-top: 1px dotted #BDBDBD;
+    padding: 0.3em 0px 0px 0px;
+    margin: 0.7em 0px 0px 0px;
+}
+
 /*================================================================*/
 /* Sentence Starters List  */
 
