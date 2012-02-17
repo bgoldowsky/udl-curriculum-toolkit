@@ -113,6 +113,22 @@
     font-size: 0.9em;
 }
 
+.modalContent h5 {
+    font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
+    font-size: 1.1em;
+    color: #000000;
+    padding: 0px 0px 0.3em 0px;
+    margin: 0px;
+}
+
+.modalContent h6 {
+    font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
+    font-size: 1.0em;
+    color: #000000;
+    padding: 0px 0px 0.3em 0px;
+    margin: 0px;
+}
+
 /*================================================================*/
 /* Edit Box */
 
@@ -137,4 +153,3 @@
 .modalBody .imgBox.center {
 	margin: 0 auto 1em;
 }
-	
