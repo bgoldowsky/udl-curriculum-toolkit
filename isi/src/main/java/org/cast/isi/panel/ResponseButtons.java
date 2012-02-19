@@ -63,6 +63,7 @@ public class ResponseButtons extends Panel {
 		add (new ButtonLink("draw", app.getResponseType("SVG")));	
 		add (new ButtonLink("record", app.getResponseType("AUDIO")));
 		add (new ButtonLink("upload", app.getResponseType("UPLOAD")));
+		add (new ButtonLink("table", app.getResponseType("TABLE")));
 	}
 
 	/**
