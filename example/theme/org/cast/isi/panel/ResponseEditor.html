@@ -24,6 +24,28 @@
 			<a href="javascript:void(0)" wicket:id="delete" class="button deletebutton">Delete</a>
 		</p>
 	</wicket:fragment>
+
+	<wicket:fragment wicket:id="tableFragment">
+		<p>here is the table grid</p>
+<!-- 		<table id="gridTable"> -->
+<!-- 		</table> -->
+		
+	
+		<table wicket:id="gridTable" class="gridTable">
+		</table>
+		<form wicket:id="form" class="autosave">
+			<textarea wicket:id="tableContent"></textarea>
+			<!-- TODO change from textarea to hidden input once working - ldm -->
+<!-- 			<input type="hidden" wicket:id="tableContent"></input> -->
+			<div wicket:id="titleFragment"></div>
+		</form>
+		<p class="autosave_info responseTime">Not Saved</p>
+		<p class="responseActions">
+			<a href="javascript:void(0)" wicket:id="save" class="button">Save</a>
+			<a href="javascript:void(0)" wicket:id="cancel" class="button">Cancel</a>
+			<a href="javascript:void(0)" wicket:id="delete" class="button deletebutton">Delete</a>
+		</p>
+	</wicket:fragment>
 	
 	<wicket:fragment wicket:id="drawingFragment">
 		<iframe wicket:id="svgeditor" width="550" height="400" scrolling="no"></iframe>
