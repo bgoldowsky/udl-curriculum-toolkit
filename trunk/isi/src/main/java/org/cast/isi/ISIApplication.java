@@ -435,11 +435,12 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 		CwmApplication app = CwmApplication.get();
 		if (responseTypes == null) {
-			log.info("No Response Types Set - using the Defaults: text, image, audio, file");
+			log.info("No Response Types Set - using the Defaults: text, image, audio, file and table");
 			defaultResponseTypes.add(app.getResponseType("HTML"));
 			defaultResponseTypes.add(app.getResponseType("AUDIO"));
 			defaultResponseTypes.add(app.getResponseType("SVG"));
 			defaultResponseTypes.add(app.getResponseType("UPLOAD"));
+			defaultResponseTypes.add(app.getResponseType("TABLE"));
 		} else {
 			for (String responseType : responseTypes) {
 				log.info("Adding the application Response type {}", responseType);
@@ -451,6 +452,8 @@ public abstract class ISIApplication extends CwmApplication {
 					defaultResponseTypes.add(app.getResponseType("AUDIO"));
 				else if (responseType.toLowerCase().trim().equals("file"))
 					defaultResponseTypes.add(app.getResponseType("UPLOAD"));
+				else if (responseType.toLowerCase().trim().equals("table"))
+					defaultResponseTypes.add(app.getResponseType("TABLE"));
 				else log.error("This Response Type {} is NOT valid and will NOT be added", responseType);
 			}
 		}
