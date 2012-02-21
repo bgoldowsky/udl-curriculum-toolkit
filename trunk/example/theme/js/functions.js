@@ -119,22 +119,22 @@ function resizeCaptions(scope) {
             }
     });
 }
-    
+
 /*=========================================================*/
-/* if you have a thumb image showing, this will show/hide the 
+/* if you have a thumb image showing, this will show/hide the
  * detailed image and long description
 /*=========================================================*/
 
 function showImageDetail(id, show) {
-	
+
 	var image = $("#image_" + id);
 	var detail = $("#imageDetail_" + id);
-	
+
 	if (show) {
-		
+
 		// get the position of the original thumbnail
 		var position = image.position();
-		image.children('a').hide();		
+		image.children('a').hide();
 		detail.css("top", position.top);
 		detail.css("left", position.left);
 		detail.css("position", "absolute");
@@ -286,7 +286,7 @@ function getSelectedText() {
 
 /*=========================================================*/
 
-// Given the IDs of two objects, find the vertical position of the first, 
+// Given the IDs of two objects, find the vertical position of the first,
 // and move the second object to the matching vertical position.
 function matchVerticalPosition(fromId, toId) {
     var offset = $('#'+toId).offset();
@@ -304,10 +304,10 @@ function matchVerticalPosition(fromId, toId) {
  */
 
 function bindSectionOpenerLinks() {
-	$('.sectionLink').each(function() { 
+	$('.sectionLink').each(function() {
 		if (jQuery.data($(this), "ParsedSectionLink") != true) {
-			$(this).bind('click', function(event) { 
-				window.opener.location = this.href; 
+			$(this).bind('click', function(event) {
+				window.opener.location = this.href;
 				return false;
 			});
             // Set parsed flag
@@ -332,9 +332,12 @@ function togglespan(elt) {
 
 $(window).ready(function() {
     collapseBox();
-    resizeCaptions();
     thtInit();
     modalMove();
+});
+
+$(window).load(function() {
+    resizeCaptions();
 });
 
 $(window).resize(function() {
