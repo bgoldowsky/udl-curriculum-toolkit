@@ -54,6 +54,13 @@
            <xsl:apply-templates/>
        </ol>
    	</xsl:template>
+   	
+   	<xsl:template match="dtb:table">
+		<table class="dataTable {@class}">
+			<xsl:copy-of select="&cncatts;"/>
+			<xsl:apply-templates/>
+		</table>
+   </xsl:template>
 
     <xsl:template match="dtb:p">
         <p class="hlpassage {@class}">
@@ -481,6 +488,15 @@
 				<form wicket:id="select1_{ancestor-or-self::dtb:responsegroup/@id}"
 					class="subactivity" title="{ancestor-or-self::dtb:responsegroup/@title}"
 					group="{ancestor-or-self::dtb:responsegroup/@group}">
+					<div class="responseBar">
+						<div class="responseLeft"><!-- empty --></div>
+						<div class="responseRight">
+							<!-- helper links -->
+							<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
+							<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+							<span wicket:id="mcScore"></span>
+						</div>
+					</div>
 					<xsl:apply-templates select="dtb:select1" />
 				</form>
 			</xsl:when>
@@ -503,24 +519,24 @@
 
 	<!-- Multiple Choice -->
 	<xsl:template match="dtb:select1">
-		<ul>
-			<li wicket:id="radioGroup">
+		<div class="responseItem">
+        	<div class="responseMCItem" wicket:id="radioGroup">
 				<xsl:apply-templates select="dtb:item//dtb:label" />
-			</li>
-		</ul>
-		<xsl:apply-templates select="dtb:item//dtb:message" />
-		<div wicket:id="selectNone" class="stResult incorrect">
-			<p wicket:id="noMultChoiceSelected">Select an answer to the question above then click the "check"
-				button to see feedback on your answer.
+			</div>
+			<p class="responseMCActions">
+				<a href="#" wicket:id="submitLink" class="button">Check My Answer</a>	
 			</p>
+			<div class="responseMCFeedback">
+				<xsl:apply-templates select="dtb:item//dtb:message" />
+				<div wicket:id="selectNone" class="stResult incorrect">
+					<p wicket:id="noMultChoiceSelected">Select an answer to the question above then click the "check" button to see feedback on your answer.</p>
+				</div>
+			</div>
 		</div>
-		<a href="#" wicket:id="submitLink" class="button">Check My Answer	
-		</a>
-		<br />
 	</xsl:template>
 
 	<xsl:template match="dtb:item//dtb:label">
-		<li>
+		<div class="responseMCItem">
 			<input type="radio"
 				id="selectItem_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}"
 				wicket:id="selectItem_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}">
@@ -531,7 +547,7 @@
 				wicket:id="selectItemLabel_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}">
 				<xsl:apply-templates />
 			</label>
-		</li>
+		</div>
 	</xsl:template>
 
     <xsl:template match="dtb:item//dtb:message">
