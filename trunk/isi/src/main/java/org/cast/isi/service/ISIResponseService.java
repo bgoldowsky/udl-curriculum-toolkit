@@ -22,6 +22,7 @@ package org.cast.isi.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateListModel;
@@ -34,6 +35,7 @@ import org.cast.cwm.CwmApplication;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
+import org.cast.cwm.data.ResponseData;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
@@ -211,12 +213,24 @@ public class ISIResponseService extends ResponseService {
 	/**
 	 * Save the response for a multiple choice response
 	 * 
-	 * @param response
+	 * @param mResponse
 	 * @param text
 	 * @param correct
 	 */
-	public void saveSingleSelectResponse(IModel<Response> response, String text, boolean correct/*, String pageName*/) {
-		super.genericSaveResponse(response, text, correct ? 1 : 0, 1, 1, null, null /*pageName*/);
+	public void saveSingleSelectResponse(IModel<Response> mResponse, String text, boolean correct, String pageName) {
+		Response r = mResponse.getObject();
+		int score = correct ? 1 : 0;
+		// Number of tries counts up until a correct response is recorded, then stops.
+		if (!r.isCorrect()) {
+			Set<ResponseData> previousResponses = r.getAllResponseData();
+			r.setTries(previousResponses==null ? 1 : previousResponses.size()+1);
+		}
+		// New score is recorded if it is better than previous tries
+		if (r.getScore()==null || score > r.getScore())
+			r.setScore(score);
+		// Multiple choice always has total points = 1
+		r.setTotal(1);
+		super.genericSaveResponse(mResponse, text, score, 1, 1, null, pageName);
 	}
 
 	public IModel<Response> newSingleSelectResponse(IModel<User> user, IModel<Prompt> model) {

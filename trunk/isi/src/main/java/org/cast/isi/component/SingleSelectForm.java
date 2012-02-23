@@ -32,8 +32,11 @@ import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
+import org.cast.cwm.data.User;
 import org.cast.cwm.service.ResponseService;
 import org.cast.isi.ISISession;
+import org.cast.isi.page.ISIBasePage;
+import org.cast.isi.panel.SingleSelectScoreIndicator;
 import org.cast.isi.service.ISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +58,7 @@ public class SingleSelectForm extends Form<Prompt> {
 	
 	@Getter @Setter
 	private boolean disabledOnCorrect = false;
-
+	
 	private SingleSelectItem selectedItem = null;
 
 
@@ -63,10 +66,15 @@ public class SingleSelectForm extends Form<Prompt> {
 	public SingleSelectForm(String id, IModel<Prompt> mcPrompt) {
 		super(id, mcPrompt);
 
-		mResponse = ResponseService.get().getResponseForPrompt(getModel(), ISISession.get().getTargetUserModel());
+		IModel<User> mTargetUser = ISISession.get().getTargetUserModel();
+		if (!mTargetUser.getObject().equals(ISISession.get().getUser()))
+			setEnabled(false);
 		
+		mResponse = ResponseService.get().getResponseForPrompt(getModel(), mTargetUser);
 		if (mResponse.getObject() == null)
-			mResponse = ISIResponseService.get().newSingleSelectResponse(ISISession.get().getTargetUserModel(), getModel());
+			mResponse = ISIResponseService.get().newSingleSelectResponse(mTargetUser, getModel());
+		
+		add(new SingleSelectScoreIndicator("mcScore", mResponse));
 
 		AjaxSubmitLink link = new AjaxSubmitLink("submitLink") {
 			private static final long serialVersionUID = 1L;
@@ -120,21 +128,21 @@ public class SingleSelectForm extends Form<Prompt> {
 		}
 
 		// Save Response
-		ISIResponseService.get().saveSingleSelectResponse(mResponse, rg.getModelObject(), selectedItem.isCorrect());
+		ISIResponseService.get().saveSingleSelectResponse(mResponse, rg.getModelObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
 	}
 	
+	@Override
+	protected void onBeforeRender() {
+		if (disabledOnCorrect && mResponse.getObject().isCorrect())
+			setEnabled(false);
+		super.onBeforeRender();
+	}
+
 	@Override
 	protected void onDetach() {
 		if (mResponse != null)
 			mResponse.detach();
 		super.onDetach();
 	}
-	
-	@Override
-	public boolean isEnabled() {
-		// TODO - not sure if this is being implemented for toolkit?? - ldm
-		if (disabledOnCorrect)
-			return mResponse.getObject().getScore() < mResponse.getObject().getTotal();
-		return true;
-	}
+
 }
