@@ -519,8 +519,8 @@
 
 	<!-- Multiple Choice -->
 	<xsl:template match="dtb:select1">
-		<div class="responseItem">
-        	<div class="responseMCItem" wicket:id="radioGroup">
+		<div class="responseItem" wicket:id="radioGroup">
+        	<div class="responseMCItem">
 				<xsl:apply-templates select="dtb:item//dtb:label" />
 			</div>
 			<p class="responseMCActions">
@@ -528,30 +528,39 @@
 			</p>
 			<div class="responseMCFeedback">
 				<xsl:apply-templates select="dtb:item//dtb:message" />
-				<div wicket:id="selectNone" class="stResult incorrect">
-					<p wicket:id="noMultChoiceSelected">Select an answer to the question above then click the "check" button to see feedback on your answer.</p>
-				</div>
+				<wicket:enclosure child="selectNone">
+					<div class="stResult incorrect">
+						<p wicket:id="selectNone" >Select an answer...</p>
+					</div>
+				</wicket:enclosure>
 			</div>
 		</div>
 	</xsl:template>
 
 	<xsl:template match="dtb:item//dtb:label">
-		<div class="responseMCItem">
-			<input type="radio"
-				id="selectItem_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}"
-				wicket:id="selectItem_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}">
+		<xsl:variable name="itemid" select="concat('selectItem_', ancestor::dtb:responsegroup/@id, '_', ancestor::dtb:item/@id)"/>
+		<xsl:variable name="labelid" select="concat('selectItemLabel_', ancestor::dtb:responsegroup/@id, '_', ancestor::dtb:item/@id)"/>
+		<div wicket:id="{$itemid}" class="responseMCItem">
+			<xsl:copy-of select="ancestor::dtb:item/@correct" />
+			<input wicket:id="radio" type="radio">
 				<xsl:copy-of select="&catts;" />
-				<xsl:copy-of select="ancestor-or-self::dtb:item/@correct" />
 			</input>
-			<label
-				wicket:id="selectItemLabel_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}">
+			<label wicket:id="label">
 				<xsl:apply-templates />
 			</label>
 		</div>
 	</xsl:template>
 
     <xsl:template match="dtb:item//dtb:message">
-		<div wicket:id="selectMessage_{ancestor-or-self::dtb:responsegroup/@id}_{ancestor-or-self::dtb:item/@id}">
+		<xsl:variable name="itemid" select="concat('selectItem_', ancestor::dtb:responsegroup/@id, '_', ancestor::dtb:item/@id)"/>
+		<xsl:variable name="messageid" select="concat('selectMessage_', ancestor::dtb:responsegroup/@id, '_', ancestor::dtb:item/@id)"/>
+		<div wicket:id="{$messageid}" for="{$itemid}">
+			<xsl:attribute name="class">
+				<xsl:choose>
+					<xsl:when test="ancestor::dtb:item/@correct='true'">stResult correct</xsl:when>
+					<xsl:otherwise>stResult incorrect</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
 			<xsl:apply-templates />
 		</div>
     </xsl:template>
@@ -564,7 +573,7 @@
 	</xsl:template>
       
    <xsl:template match="dtb:prompt">
-     <div class="prompt" id="prompt_{ancestor-or-self::dtb:responsegroup/@id}">
+     <div class="prompt" id="prompt_{ancestor::dtb:responsegroup/@id}">
        <xsl:apply-templates/>
      </div>
    </xsl:template>
