@@ -21,15 +21,17 @@ package org.cast.isi.component;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
@@ -38,8 +40,6 @@ import org.cast.isi.ISISession;
 import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.panel.SingleSelectScoreIndicator;
 import org.cast.isi.service.ISIResponseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A multiple choice form.  This will have a {@link RadioGroup}&lt;String&gt; child with
@@ -48,21 +48,17 @@ import org.slf4j.LoggerFactory;
  * @author jbrookover
  *
  */
+@Slf4j
 public class SingleSelectForm extends Form<Prompt> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = LoggerFactory.getLogger(SingleSelectForm.class);
 	
 	@Getter
 	private IModel<Response> mResponse;
 	
 	@Getter @Setter
 	private boolean disabledOnCorrect = false;
-	
-	private SingleSelectItem selectedItem = null;
 
-
-	@SuppressWarnings("deprecation")
 	public SingleSelectForm(String id, IModel<Prompt> mcPrompt) {
 		super(id, mcPrompt);
 
@@ -75,6 +71,9 @@ public class SingleSelectForm extends Form<Prompt> {
 			mResponse = ISIResponseService.get().newSingleSelectResponse(mTargetUser, getModel());
 		
 		add(new SingleSelectScoreIndicator("mcScore", mResponse));
+		
+		RadioGroup<String> radioGroup = new RadioGroup<String>("radioGroup", new Model<String>(mResponse.getObject().getText()));
+		add(radioGroup);
 
 		AjaxSubmitLink link = new AjaxSubmitLink("submitLink") {
 			private static final long serialVersionUID = 1L;
@@ -92,43 +91,43 @@ public class SingleSelectForm extends Form<Prompt> {
 			}
 		};
 		link.setOutputMarkupId(true);
-		add(link);
+		radioGroup.add(link);
 
-		add(new WebMarkupContainer("selectNone").setVisible(false));
-		add(new Label("message", "").setOutputMarkupPlaceholderTag(true).setVisible(false));
+		// Message displayed if no multiple choice item has been chosen
+		radioGroup.add(new Label("selectNone", new ResourceModel("isi.noMultChoiceSelected", "Make a selection")).setVisible(false));
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onSubmit() {
-
-		final RadioGroup<String> rg = (RadioGroup<String>) get("radioGroup");
-		
-		visitChildren(SingleSelectItem.class, new IVisitor<SingleSelectItem>() {
-			public Object component(SingleSelectItem component) {
-				String messageId = component.getId().replaceFirst("selectItem", "selectMessage");
-				get(messageId).setVisible(false);
-				if (component.getModelObject() != null && !component.getModelObject().equals("") && component.getModelObject().equals(rg.getModelObject()))
-					selectedItem = component;
-				return CONTINUE_TRAVERSAL;
-			}
-		});
+		SingleSelectItem selectedItem = getSelectedItem();
 
 		if (selectedItem == null) {
-			get("selectNone").setVisible(true);
-			return;
+			get("radioGroup:selectNone").setVisible(true);
 		} else {
-			get("selectNone").setVisible(false);
-			// Display the component's corresponding "selectMessage" with appropriate style
-			String className = selectedItem.isCorrect() ? "stResult correct" : "stResult incorrect";
-			String messageId = selectedItem.getId().replaceFirst("selectItem", "selectMessage");
-			get(messageId).setVisible(true).add(new SimpleAttributeModifier("class", className));
-			log.debug("Single Select Option Submitted: {}", selectedItem.getModelObject());
+			log.debug("Single Select Option Submitted: {}", selectedItem.getDefaultModelObject());
+			get("radioGroup:selectNone").setVisible(false);
+			// Save Response
+			ISIResponseService.get().saveSingleSelectResponse(mResponse, selectedItem.getModel().getObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
 		}
-
-		// Save Response
-		ISIResponseService.get().saveSingleSelectResponse(mResponse, rg.getModelObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
+	}
+	
+	/**
+	 * Find the currently selected SingleSelectItem
+	 * @return the selected item, or null if there is none.
+	 */
+	protected SingleSelectItem getSelectedItem() {
+		return (SingleSelectItem) visitChildren(SingleSelectItem.class, new IVisitor<SingleSelectItem>() {
+			public Object component(SingleSelectItem component) {
+				if (component.isSelected()) {
+					// Halt traversal by returning this component
+					return component;
+				} else {
+					return CONTINUE_TRAVERSAL;
+				}
+			}
+		});
+		
 	}
 	
 	@Override
