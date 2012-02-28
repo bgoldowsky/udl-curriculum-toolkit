@@ -1,7 +1,6 @@
 var myObject;
 
 function cwmImportGrid(divId, url, readonly) {
-	
     editableGrid = new EditableGrid("DemoGrid");     
 	editableGrid.tableLoaded = function() { 
 		if(readonly=="true") {
@@ -15,19 +14,16 @@ function cwmImportGrid(divId, url, readonly) {
 	editableGrid.loadJSON(url);
 	this.initializeGrid();
 
-	var data;
-	var dataGetter = $.get(url, function() {
-		data = dataGetter.responseText;
-	  });
+	//pull text down from URL
+	var data = $.ajax({type: "GET", url: url, async: false}).responseText;;
 
 	//parse string into object
 	myObject = JSON.parse(data);
+
 }
 
 function cwmExportGrid(textAreaId) {
-	alert(JSON.stringify(myObject));
 	jQuery('#'+textAreaId).text(JSON.stringify(myObject));  
-	
 }
 
 function initializeGrid() 
@@ -35,6 +31,7 @@ function initializeGrid()
 	with (this.editableGrid) {
 		modelChanged = function(rowIndex, columnIndex, oldValue, newValue, row) { 
 			myObject.data[rowIndex].values[myObject.metadata[columnIndex].name] = newValue;
+
 		};				
 	}
 }
