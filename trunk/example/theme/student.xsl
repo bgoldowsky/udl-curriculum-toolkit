@@ -28,7 +28,7 @@
    <!-- link to a file or an external URL -->
    <xsl:template match="dtb:a[@external='true']" priority="1">
        	<xsl:choose>
-       		<xsl:when test="starts-with(@href,'http:')">
+       		<xsl:when test="starts-with(@href,'http:') or starts-with(@href, 'https:') or starts-with(@href, 'mailto:')">
 		    <a target="_blank">
 		       	<xsl:copy-of select="&catts;"/>
 	           	<xsl:copy-of select="@href"/>
