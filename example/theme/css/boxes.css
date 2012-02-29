@@ -313,10 +313,12 @@
 }
 
 .imgActions {
+    position: relative;
     display: inline-block;
     float: right;
     width: 1.75em;
     text-align: right;
+    z-index: 1;
 }
 
 .imgCaption h5 {
