@@ -428,6 +428,7 @@ public class ManageClasses extends ISIStandardPage {
 
 			// Add additional information if the user is new.
 			if (isNewStudent) {
+				student.setValid(true);
 				student.setPeriods(new TreeSet<Period>(Arrays.asList(ISISession.get().getCurrentPeriodModel().getObject())));
 				student.setSubjectId(student.getUsername());
 				student.setRole(Role.STUDENT);
