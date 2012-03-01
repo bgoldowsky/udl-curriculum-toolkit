@@ -170,21 +170,34 @@
         	<div style="border:5px inset red">Content error: Object with no src attribute set</div>
        </xsl:when>
        
-       <xsl:when test="contains(@src, 'youtube.com')">
-	        <xsl:variable name="width">
+       <xsl:when test="contains(@src, 'youtube.com') or contains(@src, 'youtu.be')">
+			<xsl:variable name="width">
 	           <xsl:choose>
 	             <xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when>
-	             <xsl:otherwise>576</xsl:otherwise>
+	             <xsl:otherwise>640</xsl:otherwise>
 	           </xsl:choose>
 	         </xsl:variable>
 	        <xsl:variable name="height">
 	           <xsl:choose>
 	             <xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when>
-	             <xsl:otherwise>351</xsl:otherwise>
+	             <xsl:otherwise>360</xsl:otherwise>
 	           </xsl:choose>
-	         </xsl:variable>
+	        </xsl:variable>
+	        <xsl:variable name="src">
+	          <xsl:choose>
+	            <xsl:when test="contains(@src, '/watch?v=')">
+	              <xsl:value-of select="concat('http://www.youtube-nocookie.com/embed/', substring-after(@src, 'watch?v='))"/>
+				</xsl:when>
+				<xsl:when test="contains(@src, 'youtu.be/')">
+	              <xsl:value-of select="concat('http://www.youtube-nocookie.com/embed/', substring-after(@src, 'youtu.be/'))"/>
+				</xsl:when>
+				<xsl:otherwise><xsl:value-of select="@src"/></xsl:otherwise>
+			  </xsl:choose>
+			</xsl:variable>
 			<div class="objectBox">
-	        	<div wicket:id="youtube_" src="{@src}" width="{$width}" height="{$height}"></div>
+				<div class="mediaPlaceholder" style="width:{$width}px; height:{$height}px;">
+					<iframe width="{$width}" height="{$height}" src="{$src}" frameborder="0" class="captionSizer">must have content</iframe>
+				</div>
     		 	<xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />
     		</div>
        </xsl:when>
@@ -253,8 +266,21 @@
                 <xsl:otherwise>170</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        <xsl:variable name="poster" select="dtb:param[@name='poster']/@value"/>
+		<xsl:variable name="captions" select="dtb:param[@name='captions']/@value"/>
+		<xsl:variable name="audiodescription" select="dtb:param[@name='audiodescription']/@value"/>
         <div class="objectBox center">
-	        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}"></div>
+	        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}">
+	        	<xsl:if test="$poster">
+	        		<xsl:attribute name="poster"><xsl:value-of select="$poster"/></xsl:attribute>
+	        	</xsl:if>
+	        	<xsl:if test="$captions">
+	        		<xsl:attribute name="captions"><xsl:value-of select="$captions"/></xsl:attribute>
+	        	</xsl:if>
+	        	<xsl:if test="$audiodescription">
+	        		<xsl:attribute name="audiodescription"><xsl:value-of select="$audiodescription"/></xsl:attribute>
+	        	</xsl:if>
+	        </div>
             <div class="objectCaption">
             	<xsl:apply-templates select="dtb:caption" />
             </div>

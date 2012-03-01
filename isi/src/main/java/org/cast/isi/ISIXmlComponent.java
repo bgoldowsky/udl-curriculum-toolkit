@@ -35,7 +35,6 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.ResourceLink;
@@ -44,12 +43,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
-import org.cast.cwm.CwmSession;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.components.DeployJava;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
-import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.indira.FileResource;
@@ -58,7 +55,6 @@ import org.cast.cwm.mediaplayer.AudioPlayerPanel;
 import org.cast.cwm.mediaplayer.FlashAppletPanel;
 import org.cast.cwm.mediaplayer.MediaPlayerPanel;
 import org.cast.cwm.service.EventService;
-import org.cast.cwm.service.ResponseService;
 import org.cast.cwm.xml.ICacheableModel;
 import org.cast.cwm.xml.IXmlPointer;
 import org.cast.cwm.xml.TransformResult;
@@ -234,34 +230,37 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("videoplayer_")) {
 			String videoSrc = elt.getAttribute("src");
+			Integer width = Integer.valueOf(elt.getAttribute("width"));
+			Integer height = Integer.valueOf(elt.getAttribute("height"));
+			String preview = elt.getAttribute("poster");
+			String captions = elt.getAttribute("captions");
+			String audioDescription = elt.getAttribute("audiodescription");
+			
 			ResourceReference videoRef = getRelativeRef(videoSrc);
 			String videoUrl = RequestCycle.get().urlFor(videoRef).toString();
 
-			String previewName = videoSrc.replace(".flv", "_p.png");
-			ResourceReference previewRef = getRelativeRef(previewName);
-			String preview = RequestCycle.get().urlFor(previewRef).toString();
-
-			String captionsName = videoSrc.replace(".flv", "_cap.xml");
-			ResourceReference captionsRef = getRelativeRef(captionsName);
-			String captions = RequestCycle.get().urlFor(captionsRef).toString();
-			MediaPlayerPanel comp = new MediaPlayerPanel(wicketId, videoUrl, 
-					Integer.valueOf(elt.getAttribute("width")), 
-					Integer.valueOf(elt.getAttribute("height"))) {
-
-						private static final long serialVersionUID = 1L;
-						
-						@Override
-						public void onPlay (String status) {
-							EventService.get().saveEvent("video:view", wicketId.substring("videoplayer_".length()) + " - " + status, contentPage);
-						}
+			MediaPlayerPanel comp = new MediaPlayerPanel(wicketId, videoUrl, width, height) {
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void onPlay (String status) {
+					EventService.get().saveEvent("video:view", wicketId.substring("videoplayer_".length()) + " - " + status, contentPage);
+				}
 			};
-			
+
 			comp.setFullScreen(true);
 			comp.setUseOnPlay(true);
-			if (preview != null)
-				comp.setPreview(previewRef);
-			if (captions != null)
-				comp.setCaptionFile(captionsRef);
+
+			if (!Strings.isEmpty(preview))
+				comp.setPreview(getRelativeRef(preview));
+			
+			if (!Strings.isEmpty(captions))
+				comp.setCaptionFile(getRelativeRef(captions));
+			
+			if (!Strings.isEmpty(audioDescription))
+				comp.setAudioDescriptionFile(getRelativeRef(audioDescription));
+			
+			comp.add(new AttributeRemover("src", "width", "height", "poster", "captions", "audiodescription"));
+			
 			return comp;
 
 		} else if (wicketId.startsWith("audioplayer_")) {
