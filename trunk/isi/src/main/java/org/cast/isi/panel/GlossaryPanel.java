@@ -33,6 +33,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
@@ -150,8 +151,8 @@ public class GlossaryPanel extends BaseGlossaryPanel {
 			}
 		} else {  
 			// there is no word
-			wmc.add(new WebMarkupContainer("name"));
-			wmc.add(new WebMarkupContainer("definition"));
+			wmc.add(new EmptyPanel("name"));
+			wmc.add(new EmptyPanel("definition"));
 		}
 		return wmc;
 	}
