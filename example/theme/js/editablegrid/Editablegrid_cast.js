@@ -11,7 +11,7 @@ function cwmImportGrid(divId, url, readonly) {
 			}			
 		}
 
-		this.renderGrid(divId, "dataTable"); 
+		this.renderGrid(divId, "dataTable dataTableResponse"); 
 	}; //testgrid is class of table
 	editableGrid.loadJSON(url);
 	this.initializeGrid();
@@ -42,7 +42,7 @@ function initializeGrid()
 }
 
 function cwmAddRow() {	
-	var objectValue = {"id":myObject.data.length, "values":{"c1":"","c2":"","c3":"","c4":"","c5":""}};
+	var objectValue = {"id":myObject.data.length+1, "values":{"c1":"","c2":"","c3":"","c4":"","c5":""}};
 	myObject.data.push(objectValue);
 	editableGrid.append("Row" + myObject.data.length, objectValue, objectValue, true);
 	synchronizeDataToMedataDimension();
@@ -74,16 +74,15 @@ function generateColumnNameByIndex(indexOfColumn) {
 
 function synchronizeDataToMedataDimension() {
 	for (i=0; i<myObject.data.length; i++) {
+		//remove excess data cells
+		for (k=0; k < Object.keys(myObject.data[i].values).length - myObject.metadata.length; k++) {
+			delete myObject.data[i].values[generateColumnNameByIndex(k+1+myObject.metadata.length)];
+		}
 		//add missing data entries with empty string as default value
 		for (j=0; j < myObject.metadata.length; j++) {				
 			if (typeof myObject.data[i].values[generateColumnNameByIndex(j+1)] == 'undefined') {
 				myObject.data[i].values[generateColumnNameByIndex(j+1)] = "";
 			}
 		}
-		//remove excess data cells
-		for (k=0; k < Object.keys(myObject.data[i].values).length - myObject.metadata.length; k++) {
-			delete myObject.data[i].values[generateColumnNameByIndex(k+1+myObject.metadata.length)];
-		}
-
 	}	
 }

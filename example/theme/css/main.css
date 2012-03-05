@@ -1007,19 +1007,14 @@ ul li, ol li {
 /*================================================================*/
 /* Data Table */
 
-.dataTableNoHeader {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border: 1px solid #BDBDBD;
-    border-collapse: collapse;
-    margin: 0 0 1em;
-    width: 100%;
-    heigth: 20px;
+.dataTableResponse {
+	
 }
-.dataTableNoHeader thead {
-    visible: false;
+.dataTableResponse thead {
+    display: none;
 }
-.dataTable th {
-    visible: false;
+.dataTableResponse th {
+    display: none;
 }
 .dataTable {
     background: none repeat scroll 0 0 #FFFFFF;
