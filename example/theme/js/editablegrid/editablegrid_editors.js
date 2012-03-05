@@ -46,6 +46,9 @@ CellEditor.prototype.edit = function(rowIndex, columnIndex, element, value)
 		if (event.keyCode == 27) { 
 			this.onblur = null; 
 			this.celleditor.cancelEditing(this.element); 
+			/* BEGIN::CAST - reset focus */
+			this.element.focus();
+			/* END::CAST - reset focus */
 			return false; 
 		}
 	};

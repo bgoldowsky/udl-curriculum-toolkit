@@ -2,6 +2,42 @@ if (typeof _$ == 'undefined') {
 	function _$(elementId) { return document.getElementById(elementId); }
 }
 
+/* BEGIN::CAST - keyboard/arrow movement */
+function keyboardMove(e, thisGrid) {
+    e = e || window.event;
+
+    var target = e.target || e.srcElement;
+
+    switch(e.keyCode) {
+        // left arrow
+        case 37: {
+            $(target).prev().focus();
+            break;
+        }
+        // right arrow
+        case 39: {
+            $(target).next().focus();
+            break;
+        }
+        // up arrow
+        case 38: {
+            $(target).closest('tr').prev().find('td').eq($(target).index()).focus();
+            break;
+        }
+        // down arrow
+        case 40: {
+            $(target).closest('tr').next().find('td').eq($(target).index()).focus();
+            break;
+        }
+        // enter
+        case 13: {
+            thisGrid.editablegrid.mouseClicked(e);
+            break;
+        }
+    }
+}
+/* END::CAST - keyboard/arrow movement */
+
 /**
  * Creates a new column
  * @constructor
@@ -738,6 +774,35 @@ EditableGrid.prototype.getColumnCount = function()
 };
 
 /**
+ * Returns the number of columns
+ */
+EditableGrid.prototype.deleteColumn = function()
+{
+	this.columns.splice(this.columns.length-1, 1);
+	this.refreshGrid();
+};
+
+EditableGrid.prototype.addColumn = function()
+{
+	var nextColumnNumber = this.columns.length + 1;
+	var nextColumnLabel = "Column " + nextColumnNumber;
+	var nextColumnName = "c" + nextColumnNumber;
+		
+	this.columns.push(new Column({
+		name: nextColumnName,
+		label: nextColumnLabel,
+		datatype:  "string",
+		editable: true,
+		bar: false,
+		optionValues: null
+	}));	
+	this.table = null; 
+	this.processColumns();
+	this.refreshGrid();
+};
+
+
+/**
  * Returns true if the column exists
  * @param {Object} columnIndexOrName index or name of the column
  */
@@ -1054,8 +1119,10 @@ EditableGrid.prototype._insert = function(rowIndex, offset, rowId, cellValues, r
 
 	// build data for new row
 	var rowData = { visible: true, originalIndex: originalIndex, id: rowId };
-	if (rowAttributes) for (var attributeName in rowAttributes) rowData[attributeName] = rowAttributes[attrName]; 
+	if (rowAttributes) for (var attributeName in rowAttributes) rowData[attributeName] = rowAttributes[attributeName]; 
 	rowData.columns = [];
+
+
 	for (var c = 0; c < this.columns.length; c++) {
 		var cellValue = this.columns[c].name in cellValues ? cellValues[this.columns[c].name] : "";
 		rowData.columns.push(this.getTypedValue(c, cellValue));
@@ -1423,6 +1490,13 @@ EditableGrid.prototype._rendergrid = function(containerid, className, tableid)
 
 					// create cell and render its content
 					var td = tr.insertCell(j);
+					/* BEGIN::CAST - add tabindex navigation */
+					td.setAttribute("tabindex", 0);
+					//td.onfocus = function(e) { _$(containerid).editablegrid.mouseClicked(e); };
+					td.onkeydown = function(e) {
+					    keyboardMove(e, _$(containerid));
+					}
+					/* END::CAST - add tabindex navigation */
 					columns[j].cellRenderer._render(i, j, td, getValueAt(i,j));
 				}
 			}

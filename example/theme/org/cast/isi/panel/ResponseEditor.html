@@ -25,15 +25,29 @@
 		</p>
 	</wicket:fragment>
 
-	<wicket:fragment wicket:id="tableFragment">
-		<p>here is the table grid</p>
+	<wicket:fragment wicket:id="tableFragment">	
 	
-		<div wicket:id="gridDiv" class="gridDiv">
-		</div>
+		<table>
+		<tr>
+			<td></td>
+			<td align="right"><a href="javascript:void(0)" wicket:id="removeColumn"  onclick="cwmRemoveColumn();" class="button">-</a></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td valign="bottom"><a href="javascript:void(0)" wicket:id="removeRow" onclick="cwmRemoveRow();" class="button">-</a></td>
+			<td><div wicket:id="gridDiv" class="gridDiv"></div></td>
+			<td valign="top"><a href="javascript:void(0)" wicket:id="addColumn" onclick="cwmAddColumn();" class="button">+</a></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td align="left"><a href="javascript:void(0)" wicket:id="addRow" onclick="cwmAddRow();" class="button">+</a></td>		
+			<td></td>
+		</tr>
+		</table>
+
 		<form wicket:id="form" class="autosave">
-			<textarea wicket:id="tableContent"></textarea>
 			<!-- TODO change from textarea to hidden input once working - ldm -->
-<!-- 			<input type="hidden" wicket:id="tableContent"></input> -->
+ 			<input type="hidden" wicket:id="tableContent"></input>
 			<div wicket:id="titleFragment"></div>
 		</form>
 		<p class="autosave_info responseTime">Not Saved</p>
