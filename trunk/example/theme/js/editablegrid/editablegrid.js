@@ -796,10 +796,23 @@ EditableGrid.prototype.addColumn = function()
 		bar: false,
 		optionValues: null
 	}));	
+	
+	for (i=0; i<this.data.length; i++) {
+		this.data[i].columns[nextColumnNumber-1] = "";
+	}
+	
 	this.table = null; 
-	this.processColumns();
+	this.processColumns();	
 	this.refreshGrid();
 };
+
+EditableGrid.prototype.addMissingRows = function(columnIndex) {	
+	// set new value in model
+	for (i=0; i< EditableGrid.prototype.getRowCount(); i++) {
+		var rowData = this.data[i]['columns'];
+		if (rowData) rowData[columnIndex] = this.getTypedValue(columnIndex, "");		
+	}
+}
 
 
 /**
