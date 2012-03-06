@@ -167,8 +167,6 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected ResponseMetadata responseMetadata = new ResponseMetadata();
 	@Getter protected ArrayList<IResponseType> defaultResponseTypes = new ArrayList<IResponseType>();
 	protected TinyMCESettings tinyMCESettings = null;
-
-	
 	
 	// Service Classes and Plugins
 	@Getter @Setter protected Glossary glossary;
@@ -241,80 +239,11 @@ public abstract class ISIApplication extends CwmApplication {
 		configureApplicationProperties();
 		configureResponseTypes();
 		configureResponseSort();
-
-		// Load XML & XSL data
-		XmlService xmls = XmlService.get();
-
-		String davServer  = getDavServer();
-		String glossaryFileName = appProperties.getProperty("isi.glossaryFile");
-		if (davServer != null) {
-			final String davUser = appProperties.getProperty("isi.davUser");
-			final String davPassword = appProperties.getProperty("isi.davPassword");
-			
-			DavClientManager manager = DavClientManager.get();
-			manager.setDefaultAuthentication (davUser, davPassword);
-			manager.createClient (davServer, davServer, getContentDir());
-		}
 		
-		// if there is not glossary then assume that the system should have the glossary turned off
-		if (glossaryOn == false) {
-				log.debug("Glossary is turned off");
-		} else { // when the glossary is on
-			Resource glossaryResource;
-			if (davServer != null) {
-				glossaryResource = new DavResource(davServer, getContentDir() + "/" + glossaryFileName);
-			} else {
-				glossaryResource = new FileResource(new File(getContentDir(), glossaryFileName));
-			}
-			final XmlDocument glossaryDoc = xmls.loadXmlDocument("glossary", glossaryResource, new DtbookParser(), null);
-			
-			// Set up Glossary
-			Databinder.ensureSession(new SessionUnit() {
-				public Object run(Session sess) {
-					glossary = GlossaryService.get().parseXmlGlossaryDocument(glossaryDoc);
-					return null;
-				}
-			});
-		}
-
-		// Transformers
-		File baseXslFile = new File(getTransformationDir(), "dtbook2xhtml.xsl");
-		File commonXslFile = new File(getTransformationDir(), "common.xsl");
-		File glossaryXSLFile = new File(getTransformationDir(), "glossary.xsl");
-		xmls.loadXSLTransformer("glossary", glossaryXSLFile, true, baseXslFile, commonXslFile);
-				
-		File tocXslFile = new File(getTransformationDir(), "toc.xsl");
-		xmls.loadXSLTransformer("toc", tocXslFile, true, baseXslFile, commonXslFile);
+		// load the xml documents and xsl transformers
+		loadXmlFiles();
+		loadXslFiles();
 		
-		File studentXslFile = new File(getTransformationDir(), "student.xsl");
-		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
-		TransformChain transformchain = new TransformChain(
-				new GlossaryTransformer(glossary),
-				new FilterElements(),
-				new XslTransformer(new FileResource(studentXslFile))
-					.addDependentResources(new FileResource(baseXslFile), new FileResource(commonXslFile)),
-				new EnsureUniqueWicketIds());
-		xmls.registerTransformer("student", transformchain);
-		
-		// Load student content files
-		String fileList = appProperties.getProperty("isi.studentContentFiles", DEFAULT_STUDENT_CONTENT_FILE_NAMES).trim();
-		studentContentFiles = fileList.split("\\s*,\\s*");		
-		documentObservers.add(new XmlDocumentObserver()); // Use set so sub-classed applications can add to it as well
-		for (String file : studentContentFiles) {
-			Resource resource;
-			if (davServer != null) {
-				log.debug("attempting to load DavResource file = {}", getContentDir() + "/" + file);
-				log.debug("loading the DavResource on the Server = {}", davServer);
-				resource = new DavResource(davServer, getContentDir() + "/" + file);
-			} else {
-				log.debug("attempting to load Resource file = {}", getContentDir() + "/" + file);
-				resource = new FileResource(new File(getContentDir(), file));
-			}
-			XmlDocument doc = xmls.loadXmlDocument(file, resource, new DtbookParser(), documentObservers);
-			studentContent.add(doc);
-		}
-		
-
 		// Generally helpful log statement.
 		if (!DEVELOPMENT.equalsIgnoreCase(getConfigurationType())) {
 			log.warn("********************** Wicket is running in Deployment Mode **********************");
@@ -328,15 +257,15 @@ public abstract class ISIApplication extends CwmApplication {
 		HighlightService.get().addHighlighter('B', null, false);
 		HighlightService.get().addHighlighter('G', null, true);		
 	}
+
 	
 	/**
 	 * Method to call with any BookmarkablePageLink that will set appropriate PopupSettings
 	 * (or it can be extended to do other link configuration if necessary).
 	 * 
 	 * @param the BookmarkablePageLink
-	 */
-	
-		public void setLinkProperties (BookmarkablePageLink<?> link) {
+	 */	
+	public void setLinkProperties (BookmarkablePageLink<?> link) {
 		if (GlossaryPage.class.isAssignableFrom(link.getPageClass())) {
 			link.setPopupSettings(glossaryPopupSettings);
 		} else if (Notebook.class.isAssignableFrom(link.getPageClass())) {
@@ -423,6 +352,7 @@ public abstract class ISIApplication extends CwmApplication {
 		log.info("Value of {} is = {}", property, defaultPropertyValue);
 		return defaultPropertyValue; 
 	}
+
 	/**
 	 * determine what the default response types are used
 	 */
@@ -488,6 +418,97 @@ public abstract class ISIApplication extends CwmApplication {
 			log.info("The Response have a sort order: {}", state);
 		}
 	}
+	
+	/**
+	 * Load XML documents
+	 */
+	protected void loadXmlFiles() {
+		
+		String davServer  = getDavServer();
+		XmlService xmls = XmlService.get();
+
+		String glossaryFileName = appProperties.getProperty("isi.glossaryFile");
+		if (davServer != null) {
+			final String davUser = appProperties.getProperty("isi.davUser");
+			final String davPassword = appProperties.getProperty("isi.davPassword");
+			
+			DavClientManager manager = DavClientManager.get();
+			manager.setDefaultAuthentication (davUser, davPassword);
+			manager.createClient (davServer, davServer, getContentDir());
+		}
+		
+		// if there is no glossary then assume that the system should have the glossary turned off
+		if (glossaryOn == false) {
+				log.debug("Glossary is turned off");
+		} else { // when the glossary is on
+			Resource glossaryResource;
+			if (davServer != null) {
+				glossaryResource = new DavResource(davServer, getContentDir() + "/" + glossaryFileName);
+			} else {
+				glossaryResource = new FileResource(new File(getContentDir(), glossaryFileName));
+			}
+			final XmlDocument glossaryDoc = xmls.loadXmlDocument("glossary", glossaryResource, new DtbookParser(), null);
+			
+			// Set up Glossary
+			Databinder.ensureSession(new SessionUnit() {
+				public Object run(Session sess) {
+					glossary = GlossaryService.get().parseXmlGlossaryDocument(glossaryDoc);
+					return null;
+				}
+			});
+		}
+				
+		// Load student content files
+		String fileList = appProperties.getProperty("isi.studentContentFiles", DEFAULT_STUDENT_CONTENT_FILE_NAMES).trim();
+		studentContentFiles = fileList.split("\\s*,\\s*");		
+		documentObservers.add(new XmlDocumentObserver()); // Use set so sub-classed applications can add to it as well
+		for (String file : studentContentFiles) {
+			Resource resource;
+			if (davServer != null) {
+				log.debug("attempting to load DavResource file = {}", getContentDir() + "/" + file);
+				log.debug("loading the DavResource on the Server = {}", davServer);
+				resource = new DavResource(davServer, getContentDir() + "/" + file);
+			} else {
+				log.debug("attempting to load Resource file = {}", getContentDir() + "/" + file);
+				resource = new FileResource(new File(getContentDir(), file));
+			}
+			XmlDocument doc = xmls.loadXmlDocument(file, resource, new DtbookParser(), documentObservers);
+			studentContent.add(doc);
+		}
+	}
+
+	/**
+	 * Load XSL transformer files
+	 */
+	protected void loadXslFiles() {
+		XmlService xmls = XmlService.get();
+
+		// load the transformation directories into the list managed by XmlService
+		// load the custom directory first, then the base directory (if they are different)
+		List<String> xslTransformerDirectories = new ArrayList<String>();
+		xslTransformerDirectories.add(getCustomTransformationDir());
+		if (!getCustomTransformationDir().equals(getTransformationDir()))
+			xslTransformerDirectories.add(getTransformationDir());
+		xmls.setTransformerDirectories(xslTransformerDirectories);
+
+		// Transformers
+		xmls.loadXSLTransformer("glossary", getGlossaryTransformationFile(), true);
+		xmls.loadXSLTransformer("toc", getTocTransformationFile(), true);
+		
+		// check for the student transformation file in the custom dir first then base dir
+		File studentXslFile = new File(getCustomTransformationDir(), getStudentTransformationFile());
+		if (!studentXslFile.exists())
+			studentXslFile = new File(getTransformationDir(), getStudentTransformationFile());
+		
+		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
+		TransformChain transformchain = new TransformChain(
+				new GlossaryTransformer(glossary),
+				new FilterElements(),
+				new XslTransformer(new FileResource(studentXslFile)),
+				new EnsureUniqueWicketIds());
+		xmls.registerTransformer("student", transformchain);			
+	}
+
 	
 	public static ISIApplication get() {
 		return (ISIApplication) Application.get();
@@ -709,13 +730,19 @@ public abstract class ISIApplication extends CwmApplication {
 	public String getContentDir() {
 		return (appProperties.getProperty("isi.contentDir")).trim();
 	}
-	
-	
+		
 	public String getSkinDir() {
 		return (appProperties.getProperty("isi.skinDir")).trim();
 	}
-	
 
+	public String getCustomSkinDir() {
+		String csd =  appProperties.getProperty("isi.customSkinDir");
+		if (csd != null) {
+			return (appProperties.getProperty("isi.customSkinDir")).trim();
+		}
+		return null;	
+	}
+	
 	public String getTransformationDir() {
 		String td =  appProperties.getProperty("isi.transformationDir");
 		if (td != null) {
@@ -723,14 +750,38 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 		return getSkinDir();
 	}
-	
-	public String getCustomSkinDir() {
-		String csd =  appProperties.getProperty("isi.customSkinDir");
-		if (csd != null) {
-			return (appProperties.getProperty("isi.customSkinDir")).trim();
+
+	public String getGlossaryTransformationFile() {
+		String tf =  appProperties.getProperty("isi.xslGlossaryFile");
+		if (tf != null) {
+			return (appProperties.getProperty("isi.xslGlossaryFile")).trim();
 		}
-		return null;
-	
+		return "glossary.xsl";
+	}
+
+	public String getStudentTransformationFile() {
+		String tf =  appProperties.getProperty("isi.xslStudentFile");
+		if (tf != null) {
+			return (appProperties.getProperty("isi.xslStudentFile")).trim();
+		}
+		return "student.xsl";
+	}
+
+	public String getTocTransformationFile() {
+		String tf =  appProperties.getProperty("isi.xslTocFile");
+		if (tf != null) {
+			return (appProperties.getProperty("isi.xslTocFile")).trim();
+		}
+		return "toc.xsl";
+	}
+
+	public String getCustomTransformationDir() {
+		// if there isn't any custom directory then use the default directory
+		String ctd =  appProperties.getProperty("isi.customTransformationDir");
+		if (ctd != null) {
+			return (appProperties.getProperty("isi.customTransformationDir")).trim();
+		}
+		return getTransformationDir();
 	}
 	
 	public String getDavServer() {
@@ -775,21 +826,7 @@ public abstract class ISIApplication extends CwmApplication {
 	public String getPageTitleBase() {
 		return "ISI";
 	}
-	
-	/*
-	public void addFeature(String s) {
-		if (!enabledFeatures.contains(s))
-			enabledFeatures.add(s);
-	}
-
-	public boolean isEnabled(String s) {
-		if (enabledFeatures.contains(s))
-			return true;
-		else 
-			return false;
-	}
-	 */
-	
+		
 	/**
 	 * Return an icon to use for a given XmlSection.
 	 * This will be based on the class attribute of the section, e.g. "reading" or "activity" or "overview".
