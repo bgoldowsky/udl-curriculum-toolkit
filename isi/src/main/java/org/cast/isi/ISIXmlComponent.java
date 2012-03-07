@@ -422,7 +422,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("imgToggleHeader_")) {
 			// long description header for toggle area
-			return new Label(wicketId, new ResourceModel("longDescription.toggleHeading", "More Info"));
+			return new Label(wicketId, new ResourceModel("longDescription.toggleHeading", "image information"));
 			
 		} else if (wicketId.startsWith("annotatedImage_")) {
 			// image with hotspots
