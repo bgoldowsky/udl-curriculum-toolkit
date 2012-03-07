@@ -19,6 +19,10 @@
  */
 package org.cast.isi.component;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.Model;
 import org.cast.cwm.data.component.DialogBorder;
 import org.slf4j.Logger;
@@ -29,7 +33,7 @@ import org.w3c.dom.Element;
  * A hotSpotComponent is added to an image.  It is a rectangle with defined shape and position.
  * Clicking this hotSpot will pop up a modal with additional detail related to the larger image 
  * that is being annotated (child html is found in the <annotated> tag).  This Component works 
- * in conjuction with @AnnotatedImageComponent@.
+ * in conjunction with @AnnotatedImageComponent@.
  * 
  * @author lynnmccormack
  *
@@ -47,12 +51,17 @@ public class HotSpotComponent extends DialogBorder {
 	protected String imgSrc = "";
 	protected String title = ""; 
 
+
 	/**
 	 * @param id
 	 * @param elt
 	 */
 	public HotSpotComponent(String id, Element elt) {
-		super(id, new Model<String>(elt.getAttribute("title"))); 
+		super(id, new Model<String>(elt.getAttribute("title")));
+
+		// don't use the stylesheet from dialogBorder
+		List<ResourceReference> noStylesheets = Collections.emptyList();
+		setStyleReferences(noStylesheets);
 
 		this.hotSpotId = getContentContainer().getMarkupId();
 		this.top = (elt.getAttribute("top").trim().equals("") ? "0" : elt.getAttribute("top"));
