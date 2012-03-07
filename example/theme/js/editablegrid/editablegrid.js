@@ -801,7 +801,9 @@ EditableGrid.prototype.addColumn = function()
 		this.data[i].columns[nextColumnNumber-1] = "";
 	}
 	
+	//Triggers a full grid render as there is no table attached to the grid
 	this.table = null; 
+	
 	this.processColumns();	
 	this.refreshGrid();
 };
