@@ -538,17 +538,22 @@
     };
 
     $.fn.annotateCallback = function(hotSpotNode, id) {
-    	// determine if you are a graphic home page image
-    	// TODO get Matt to help me with this - ldm
 
-    	// show the hidden annotation relative to the hotspot that called it
     	var detail = $("#" + id);
     	var offset = hotSpotNode.offset();
 
+    	// determine if you are on the home page
+    	if ($('body').hasClass("themeHome")) {
+    		// top and left are determined in css
+ 			detail.show();
+ 	        return false;
+    	}
+
+    	// show the hidden annotation relative to the hotspot that called it
 		detail.css("top", offset.top);
 		detail.css("left", offset.left);
 		detail.show();
         return false;
-    }
+    };
 
 })(jQuery);
