@@ -1,8 +1,6 @@
 var myObject;
 var editableGrid = new EditableGrid("DemoGrid");     
 
- 
-
 function cwmImportGrid(divId, url, readonly) {
 	editableGrid.tableLoaded = function() { 
 		if(readonly=="true") {
@@ -47,11 +45,13 @@ function cwmAddRow() {
 	editableGrid.append("Row" + myObject.data.length, objectValue, objectValue, true);
 	synchronizeDataToMedataDimension();
 }
+
 function cwmRemoveRow() {
 	editableGrid.remove(myObject.data.length - 1);
 	myObject.data.splice(myObject.data.length - 1,1);
 	synchronizeDataToMedataDimension();
 }
+
 function cwmAddColumn() {
 	var nextColumnNumber = myObject.metadata.length + 1;
 	var nextColumnLabel = "Column " + nextColumnNumber;
