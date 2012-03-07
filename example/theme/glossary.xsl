@@ -70,14 +70,6 @@
     <xsl:template match="dtb:list">
     </xsl:template>
     
-    <!-- all images in glossary float to the right side -->
-
-    <xsl:template match="dtb:imggroup">
-      <div class="imgBox right">
-	<xsl:apply-templates/>
-      </div>
-    </xsl:template>
-
     <xsl:template match="dtb:source">
       <p class="source">
       	<strong>Source: </strong>
