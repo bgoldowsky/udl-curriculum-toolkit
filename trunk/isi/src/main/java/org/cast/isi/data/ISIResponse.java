@@ -37,7 +37,7 @@ import org.hibernate.annotations.NamedQuery;
 			query="select r from ISIResponse r where r.inWhiteboard=TRUE order by r.whiteboardInsertTime desc"),
 	@NamedQuery(
 			name="ISIResponse.getPeriodWhiteboardResponses",
-			query="select r from ISIResponse r join r.user.periods per where per=:period and r.inWhiteboard=TRUE order by r.whiteboardInsertTime desc")
+			query="select r from ISIResponse r join r.user.periods per where per=:period and r.inWhiteboard=TRUE and r.valid=TRUE order by r.whiteboardInsertTime desc")
 })
 
 /**
