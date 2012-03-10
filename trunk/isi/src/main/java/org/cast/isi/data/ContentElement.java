@@ -36,6 +36,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * A datastore representation of a location in the content for this application.  This
@@ -111,6 +112,12 @@ public class ContentElement extends PersistedObject implements Comparable<Conten
 			return -1;
 		if (other.getElement() == null)
 			return 1;
-		return getElement().compareDocumentPosition(other.getElement());
+		// CompareDocumentPosition returns the sum of a set of bit flags: DOCUMENT_POSITION_PRECEDING, DOCUMENT_POSITION_CONTAINED_BY, etc.
+		short cdp = getElement().compareDocumentPosition(other.getElement());
+		if ((cdp & Node.DOCUMENT_POSITION_PRECEDING) != 0)
+			return 1;
+		if ((cdp & Node.DOCUMENT_POSITION_FOLLOWING) != 0)
+			return -1;
+		throw new RuntimeException ("Could not determine ordering of content elements");
 	}
 }
