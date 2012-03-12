@@ -61,6 +61,7 @@ import org.apache.wicket.util.time.Time;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.CwmPopupSettings;
+import org.cast.cwm.components.service.JavascriptService;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
@@ -427,7 +428,6 @@ public abstract class ISIApplication extends CwmApplication {
 		String davServer  = getDavServer();
 		XmlService xmls = XmlService.get();
 
-		String glossaryFileName = appProperties.getProperty("isi.glossaryFile");
 		if (davServer != null) {
 			final String davUser = appProperties.getProperty("isi.davUser");
 			final String davPassword = appProperties.getProperty("isi.davPassword");
@@ -437,9 +437,12 @@ public abstract class ISIApplication extends CwmApplication {
 			manager.createClient (davServer, davServer, getContentDir());
 		}
 		
-		// if there is no glossary then assume that the system should have the glossary turned off
+		// Load glossary if there is one
+		String glossaryFileName = appProperties.getProperty("isi.glossaryFile");
 		if (glossaryOn == false) {
-				log.debug("Glossary is turned off");
+			log.debug("Glossary is turned off");
+		} else if (Strings.isEmpty(glossaryFileName)) {
+			log.debug("No glossary file");
 		} else { // when the glossary is on
 			Resource glossaryResource;
 			if (davServer != null) {
@@ -499,6 +502,14 @@ public abstract class ISIApplication extends CwmApplication {
 		File studentXslFile = new File(getCustomTransformationDir(), getStudentTransformationFile());
 		if (!studentXslFile.exists())
 			studentXslFile = new File(getTransformationDir(), getStudentTransformationFile());
+		
+		// For comparing responses, need to filter down to a single response area and invoke custom XSL
+		TransformChain compareChain = new TransformChain(
+				new FilterElements(),
+				new XslTransformer(xmls.findXslResource("compare-responses.xsl")),
+				new EnsureUniqueWicketIds());
+		xmls.registerTransformer("compare-responses", compareChain);
+
 		
 		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
 		TransformChain transformchain = new TransformChain(

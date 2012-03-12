@@ -36,9 +36,13 @@ public class SingleSelectScoreIndicator extends Panel {
 	private static final long serialVersionUID = 1L;
 
 	public SingleSelectScoreIndicator(String id, IModel<Response> model) {
+		this(id, model, true);
+	}
+	
+	public SingleSelectScoreIndicator(String id, IModel<Response> model, boolean showTryCount) {
 		super(id, model);
 		add(new ScoreIcon("icon", model));
-		add(new Label("text", new PropertyModel<String>(model, "triesOrdinal")));
+		add(new Label("text", new PropertyModel<String>(model, "triesOrdinal")).setVisibilityAllowed(showTryCount));
 	}
 	
 	@Override

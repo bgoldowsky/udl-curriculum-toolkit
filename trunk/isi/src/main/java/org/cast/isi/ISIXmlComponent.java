@@ -19,6 +19,11 @@
  */
 package org.cast.isi;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,15 +43,18 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
+import org.cast.cwm.CwmSession;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.components.DeployJava;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
+import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.indira.FileResource;
@@ -61,6 +69,7 @@ import org.cast.cwm.xml.TransformResult;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
+import org.cast.cwm.xml.service.XmlService;
 import org.cast.isi.component.AnnotatedImageComponent;
 import org.cast.isi.component.HotSpotComponent;
 import org.cast.isi.component.SingleSelectForm;
@@ -82,6 +91,7 @@ import org.cast.isi.panel.ResponseFeedbackButtonPanel;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.SectionCompleteToggleComponent;
+import org.cast.isi.panel.SingleSelectSummaryPanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.ISIResponseService;
 import org.slf4j.Logger;
@@ -302,9 +312,9 @@ public class ISIXmlComponent extends XmlComponent {
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_")) {
-			IModel<Prompt> mcPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.SINGLE_SELECT, wicketId.substring("select1_".length()));
-			SingleSelectForm selectForm = new SingleSelectForm(wicketId, mcPrompt);
-			//selectForm.setDisabledOnCorrect(true);			
+			SingleSelectForm selectForm = new SingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
+			//selectForm.setDisabledOnCorrect(true);
+			selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 			return selectForm;
 			
 		// A multiple choice radio button. Stores a "correct" value. This is
@@ -377,16 +387,12 @@ public class ISIXmlComponent extends XmlComponent {
 			return teacherBar;
 
 		} else if (wicketId.startsWith("compareResponses_")) {
-			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttribute("rgid");
-			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
-			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
-			// create a link to the periodResponse page passing in the prompt id
+			IModel<Prompt> mPrompt = getPrompt(elt);
 			BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>(wicketId, ISIApplication.get().getPeriodResponsePageClass());
 			bpl.setParameter("promptId", mPrompt.getObject().getId());
 			ISIApplication.get().setLinkProperties(bpl);
 			bpl.setVisible(isTeacher);
-			bpl.add(new AttributeRemover("rgid", "for"));
+			bpl.add(new AttributeRemover("rgid", "for", "type"));
 			return bpl;
 
 		} else if(wicketId.startsWith("agent_")) {
@@ -481,10 +487,74 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			SectionCompleteToggleComponent sectionStatusIcon = new SectionCompleteToggleComponent(wicketId, currentSectionModel); 
 			return sectionStatusIcon;
+			
+		} else if (wicketId.startsWith("itemSummary_")) {
+			// Summary of responses to a singleselect question.
+			// TODO: consider moving this and other summarizing components to a subclass like UDL Studio's AnalyticsXmlComponent
+			
+			// Find the prompt
+			ContentLoc loc = new ContentLoc(getModel().getObject());
+			String responseGroupId = elt.getAttribute("rgid");
+			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.SINGLE_SELECT, loc, responseGroupId);
+			
+			// Find responses and categorize by number of tries used (0 if never correct)
+			// TODO restrict query by current Period and use a better method
+			// List<Response> responses = ISIResponseService.get().getResponsesForPrompt(mPrompt).getObject();
+			List<Response> responses = ISIResponseService.get().getResponsesForPeriod(mPrompt, CwmSession.get().getCurrentPeriodModel()).getObject();
+			Map<Integer, List<Response>> sorted = new HashMap<Integer, List<Response>>();
+			if (responses != null) {
+				for (Response r : responses) {
+					Integer tries = r.getScore()==0 ? 0 : r.getTries();
+					if (sorted.get(tries) == null)
+						sorted.put(tries, new LinkedList<Response>());
+					sorted.get(tries).add(r);
+				}
+			}
+
+			// Create container
+			WebMarkupContainer container = new WebMarkupContainer(wicketId);
+			container.add(new AttributeRemover("type", "rgid"));
+			
+			// Find all wicket nodes and add appropriate label components
+			// NOTE: These could be added via XmlComponent.getDynamicComponent(), but that would mean repeating the same queries
+			// over and over again for each item.  This method requires just one database query.
+			NodeList wicketNodes = XmlService.get().getWicketNodes((Element) elt, false);
+			for (int i = 0; i < wicketNodes.getLength(); i++) {
+				Element itemElt = (Element) wicketNodes.item(i);
+				String itemWicketId = itemElt.getAttributeNS(XmlService.get().getNamespaceContext().getNamespaceURI("wicket"), "id");
+				
+				// String itemXmlId = itemElt.getAttribute("xmlId");
+				boolean correct = Boolean.valueOf(itemElt.getAttribute("correct"));
+				
+				if (correct) {
+					container.add (new SingleSelectSummaryPanel(itemWicketId, sorted));
+				} else {
+					container.add(new EmptyPanel(itemWicketId)); // TODO: show information about incorrect guesses
+				}
+				container.add(new AttributeRemover("xmlId", "correct"));
+			}
+			
+			return container;
 							
 		} else {
 			return super.getDynamicComponent(wicketId, elt);
 		}
+	}
+
+	protected IModel<Prompt> getPrompt(Element elt) {
+		String type = elt.getAttribute("type");
+		if (type.equals("select1"))
+			return getPrompt(elt, PromptType.SINGLE_SELECT);
+		if (type.equals("responsearea"))
+			return getPrompt(elt, PromptType.RESPONSEAREA);
+		throw new IllegalArgumentException("Unknown prompt type " + type + " requested");
+	}
+	
+	protected IModel<Prompt> getPrompt(Element elt, PromptType type) {
+		ContentLoc loc = new ContentLoc(getModel().getObject());
+		String responseGroupId = elt.getAttribute("rgid");
+		String collectionName = elt.getAttribute("group").trim();
+		return ISIResponseService.get().getOrCreatePrompt(type, loc, responseGroupId, collectionName);
 	}
 	
 	protected ResponseMetadata getResponseMetadata (String responseGroupId) {
