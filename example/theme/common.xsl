@@ -493,13 +493,19 @@
 
   <!-- response groups -->
    <xsl:template match="dtb:responsegroup">
+   	 <xsl:variable name="type">
+		<xsl:choose>
+			<xsl:when test="dtb:select1">select1</xsl:when>
+			<xsl:otherwise>responsearea</xsl:otherwise>
+		</xsl:choose>
+	 </xsl:variable>
      <div class="entryBox nohlpassage">
      	<div class="teacherBar" wicket:id="teacherBar_">
      		<div class="teacherBarLeft">
      	    </div>
       	    <div class="teacherBarRight">
       	    	<!-- ADD the teacher specific annotation WHAT TO LOOK FOR here -->
-        		<a wicket:id="compareResponses_" href="#" class="button" rgid="{ancestor-or-self::dtb:responsegroup/@id}">Compare Responses</a>
+        		<a wicket:id="compareResponses_" href="#" class="button" rgid="{ancestor-or-self::dtb:responsegroup/@id}" type="{$type}">Compare Responses</a>
             	<span wicket:id="feedbackButton_" for="teacher" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
        	 	</div>
        </div>
@@ -511,9 +517,11 @@
 	<xsl:template name="responseArea">
 		<xsl:choose>
 			<xsl:when test="dtb:select1">
-				<form wicket:id="select1_{ancestor-or-self::dtb:responsegroup/@id}"
-					class="subactivity" title="{ancestor-or-self::dtb:responsegroup/@title}"
-					group="{ancestor-or-self::dtb:responsegroup/@group}">
+				<form wicket:id="select1_"
+					rgid="{ancestor-or-self::dtb:responsegroup/@id}"
+					title="{ancestor-or-self::dtb:responsegroup/@title}"
+					group="{ancestor-or-self::dtb:responsegroup/@group}"
+					class="subactivity">					
 					<div class="responseBar">
 						<div class="responseLeft"><!-- empty --></div>
 						<div class="responseRight">

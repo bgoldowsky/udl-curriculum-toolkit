@@ -19,7 +19,7 @@
  */
 package org.cast.isi.page;
 
-import java.util.List;
+import lombok.Getter;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ResourceReference;
@@ -31,25 +31,25 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.components.ClassAttributeModifier;
-import org.cast.cwm.data.ResponseMetadata;
-import org.cast.cwm.data.Role;
-import org.cast.cwm.data.User;
-import org.cast.cwm.data.builders.UserCriteriaBuilder;
-import org.cast.cwm.data.models.PromptModel;
-import org.cast.cwm.data.models.UserListModel;
-import org.cast.cwm.data.models.UserModel;
+import org.cast.cwm.data.Prompt;
 import org.cast.cwm.service.ResponseService;
+import org.cast.cwm.xml.XmlSectionModel;
+import org.cast.cwm.xml.transform.FilterElements;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
+import org.cast.isi.ISIXmlComponent;
+import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
-import org.cast.isi.panel.ResponseList;
+import org.cast.isi.data.PromptType;
+import org.cast.isi.panel.PeriodResponseListPanel;
+import org.cast.isi.panel.SingleSelectSummaryPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,17 +62,12 @@ import org.slf4j.LoggerFactory;
 @AuthorizeInstantiation("TEACHER")
 public class PeriodResponsePage extends ISIBasePage implements IHeaderContributor {
 
-	protected static final Logger log = LoggerFactory.getLogger(PeriodResponsePage.class);
 	private long promptId;
-	protected boolean showNames = false;
 	protected String pageTitleEnd = null;
-	protected static ResponseMetadata responseMetadata = new ResponseMetadata();
-	static {
-		responseMetadata.addType("HTML");
-		responseMetadata.addType("AUDIO");
-		responseMetadata.addType("SVG");
-		responseMetadata.addType("UPLOAD");
-	}
+
+	@Getter protected boolean showNames = false;
+
+	protected static final Logger log = LoggerFactory.getLogger(PeriodResponsePage.class);
 
 	public PeriodResponsePage(final PageParameters parameters) {
 		super(parameters);
@@ -83,6 +78,7 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		add(new Label("periodName", ISISession.get().getCurrentPeriodModel().getObject().getName()));
 
 		add(ISIApplication.get().getToolbar("tht", this));
+		
 		add(new NameDisplayToggleLink("hideNamesLink").add(new Label("hideNamesText", new AbstractReadOnlyModel<String>() {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -95,84 +91,51 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 			}			
 		})).setOutputMarkupId(true));
 
-		WebMarkupContainer rootContainer = new WebMarkupContainer("rootContainer");
-		rootContainer.setOutputMarkupId(true);
-		add(rootContainer);
-
 		// prompt id is sent in via parameters, get the prompt for this id
 		if (parameters.containsKey("promptId")) {
 			promptId = (parameters.getLong("promptId"));
 		} 
 
 		// get the prompt for this id
-		ISIPrompt prompt = (ISIPrompt) (ResponseService.get().getPromptById(promptId)).getObject();
+		IModel<Prompt> mPrompt = ResponseService.get().getPromptById(promptId);
+		ISIPrompt prompt = (ISIPrompt) mPrompt.getObject();
 
 		// Add the crumb trail, link and icon link to the page where this response is located
 		String crumbTrail = prompt.getContentElement().getContentLocObject().getSection().getCrumbTrailAsString(1, 1);
-		rootContainer.add(new Label("crumbTrail", crumbTrail));
+		add(new Label("crumbTrail", crumbTrail));
+		// TODO: should target link to main window, not in popup
 		BookmarkablePageLink<ISIStandardPage> link = ISIStandardPage.linkTo("titleLink", prompt.getContentElement().getContentLocObject().getSection());
 		link.add(new Label("title", prompt.getContentElement().getContentLocObject().getSection().getTitle()));
 		link.add(new ClassAttributeModifier("sectionLink"));
-		rootContainer.add(link);
-		rootContainer.add(ISIApplication.get().iconFor(prompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(), ""));		
-
-		ContentLoc location = prompt.getContentElement().getContentLocObject();
+		add(link);
+		add(ISIApplication.get().iconFor(prompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(), ""));		
 
 		// Add the text associated with Prompt
 		String question =  prompt.getQuestionHTML();			
-		rootContainer.add(new Label("question", question).setEscapeModelStrings(false));
-
-		// get the list of all users in this period
-		List<User> studentList = getUserListModel().getObject();
-
-		// iterate over all the users to get the responses for the prompt
-		RepeatingView rv1 = new RepeatingView("studentRepeater");
-		rootContainer.add(rv1);
-		for (User student : studentList) {
-
-			// get the student name and display
-			WebMarkupContainer studentContainer = new WebMarkupContainer(rv1.newChildId());
-			studentContainer.add(new Label("studentName", student.getFullName()) {
-				private static final long serialVersionUID = 1L;
-				@Override
-				public boolean isVisible() {
-					return showNames;
-				}
-			});
-
-			rv1.add(studentContainer);
-			
-			// list all of the responses for this student
-			ResponseList studentResponseList = new ResponseList("studentResponseList", new PromptModel(prompt), responseMetadata, location, new UserModel(student));
-			studentResponseList.setAllowEdit(false);
-			studentResponseList.setAllowNotebook(false);
-			studentContainer.add(studentResponseList);			
-		}		
+		add(new Label("question", question).setEscapeModelStrings(false));
+		
+		addDetailsPanel(mPrompt);
 	}
 	
-	private class NameDisplayToggleLink extends AjaxFallbackLink<Object> {
-		private static final long serialVersionUID = 1L;
-
-		public NameDisplayToggleLink(String id) {
-			super(id);
+	protected void addDetailsPanel(IModel<Prompt> mPrompt) {		
+		ISIPrompt prompt = ((ISIPrompt)mPrompt.getObject()); 
+		if (prompt.getType().equals(PromptType.SINGLE_SELECT)) {
+			ContentLoc location = prompt.getContentElement().getContentLocObject();
+			ISIXmlSection section = location.getSection();
+			String xmlId = prompt.getContentElement().getXmlId();
+			ISIXmlComponent xml = new ISIXmlComponent("details", new XmlSectionModel(section), "compare-responses");
+			xml.setTransformParameter(FilterElements.XPATH, String.format("//dtb:responsegroup[@id='%s']", xmlId));
+			xml.setOutputMarkupId(true);
+			add (xml);
+		} else {
+			add (new PeriodResponseListPanel("details", mPrompt));
 		}
-
-		@Override
-		public void onClick(AjaxRequestTarget target) {
-			showNames = !showNames;
-			target.addComponent(PeriodResponsePage.this.get("rootContainer")); // Root Repeating View
-			target.addComponent(PeriodResponsePage.this.get("hideNamesLink"));			
-		}				
 	}
-
-	protected UserListModel getUserListModel() {
-		UserCriteriaBuilder c = new UserCriteriaBuilder();
-		c.setGetAllUsers(false);
-		c.setRole(Role.STUDENT);
-		c.setPeriod(ISISession.get().getCurrentPeriodModel());
-		return new UserListModel(c);
-	}	
-
+	
+	protected WebMarkupContainer getDetailsPanel() {
+		return (WebMarkupContainer) get("details");
+	}
+	
 	@Override
 	public String getPageName() {
 		return null;
@@ -193,4 +156,25 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		response.renderCSSReference(new ResourceReference("/css/window.css"));
 		response.renderCSSReference(new ResourceReference("/css/window_print.css"), "print");
 	}
+	
+
+	private class NameDisplayToggleLink extends AjaxFallbackLink<Object> {
+		private static final long serialVersionUID = 1L;
+
+		public NameDisplayToggleLink(String id) {
+			super(id);
+		}
+
+		@Override
+		public void onClick(AjaxRequestTarget target) {
+			showNames = !showNames;
+			WebMarkupContainer details = getDetailsPanel();
+			if (details instanceof PeriodResponseListPanel)
+				((PeriodResponseListPanel) details).setShowNames(showNames);
+			target.addComponent(getDetailsPanel());
+			target.addComponent(this);;			
+		}				
+	}
+
+
 }
