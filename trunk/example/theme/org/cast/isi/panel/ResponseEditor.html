@@ -115,5 +115,16 @@
 		</p>
 	</wicket:fragment>
 
+	<wicket:fragment wicket:id="svgNotSupportedFragment">
+		<div class="warning" role="alert">
+			<p>
+				Internet Explorer does not support the SVG-based images that are used by this drawing tool.  If you would like to use this feature, please install
+				the <a href="http://www.google.com/chromeframe/eula.html">Google Chrome Frame Plugin</a>.  Once it is installed, restart your browser and you will be 
+				able to use the tool.
+			</p>
+			<a href="javascript:void(0);" wicket:id="close" class="button standard">Close</a>
+		</div>
+	</wicket:fragment>
+
 </body>
 </html>
