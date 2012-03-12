@@ -293,12 +293,12 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 
 		@Override
 		protected String getDialogTitle() {
-			return new StringResourceModel("Whiteboard.removeDialogTitle", this, null, "Remove from Whiteboard?").getString();
+			return new ResourceModel("Whiteboard.removeDialogTitle", "Remove from Whiteboard?").getObject();
 		}
 
 		@Override
 		protected String getDialogText() {
-			return new StringResourceModel("Whiteboard.removeDialogText", this, null, "Are you sure you want to remove this response from the Whiteboard?").getString();
+			return new ResourceModel("Whiteboard.removeDialogText", "Are you sure you want to remove this response from the Whiteboard?").getObject();
 		}
 	}
 
@@ -318,12 +318,12 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 
 		@Override
 		protected String getDialogTitle() {
-			return new StringResourceModel("Whiteboard.clearDialogTitle", this, null, "Clear Whiteboard?").getString();
+			return new ResourceModel("Whiteboard.clearDialogTitle", "Clear Whiteboard?").getObject();
 		}
 
 		@Override
 		protected String getDialogText() {
-			return new StringResourceModel("Whiteboard.clearDialogText", this, null, "Are you sure you want to remove ALL items from the whiteboard?").getString();
+			return new ResourceModel("Whiteboard.clearDialogText", "Are you sure you want to remove ALL items from the whiteboard?").getObject();
 		}
 	}
 }
