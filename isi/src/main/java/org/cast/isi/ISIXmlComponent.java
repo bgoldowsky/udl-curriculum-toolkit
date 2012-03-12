@@ -147,17 +147,17 @@ public class ISIXmlComponent extends XmlComponent {
 				Node nextNode = nodes.item(i);
 				if(nextNode instanceof Element) {
 					Element next = (Element)nodes.item(i);
-					if(next.getAttribute("name").equals("archive")) {
-						archive = next.getAttribute("value");
-					} else if(next.getAttribute("name").equals("dataFile")) {
-						dataFile = next.getAttribute("value");
+					if(next.getAttributeNS(null, "name").equals("archive")) {
+						archive = next.getAttributeNS(null, "value");
+					} else if(next.getAttributeNS(null, "name").equals("dataFile")) {
+						dataFile = next.getAttributeNS(null, "value");
 					} 
 				}
 			}
 			if(archive != null) {
 				DeployJava dj = new DeployJava(wicketId);
 				dj.setArchive(FileResourceManager.get().getUrl(archive+".jar"));
-				dj.setCode(elt.getAttribute("src"));
+				dj.setCode(elt.getAttributeNS(null, "src"));
 				dj.addParameter("dataFile", FileResourceManager.get().getUrl(dataFile));
 				return dj;
 			}
@@ -166,7 +166,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		// glossaryLink is associated with a short glossary definition modal
 		} else if (wicketId.startsWith("glossaryLink_")) {
-			MiniGlossaryLink miniGlossaryLink = new MiniGlossaryLink(wicketId, new Model<String>(elt.getAttribute("word")), miniGlossaryModal);
+			MiniGlossaryLink miniGlossaryLink = new MiniGlossaryLink(wicketId, new Model<String>(elt.getAttributeNS(null, "word")), miniGlossaryModal);
 			miniGlossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MODAL));
 			return miniGlossaryLink;
 
@@ -178,7 +178,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("glossdef")) {
 			// Span element, to be filled in with the glossary short def.
-			String word = elt.getAttribute("word");
+			String word = elt.getAttributeNS(null, "word");
 			final String def = ISIApplication.get().getGlossary().getShortDefById(word);
 			WebMarkupContainer container;
 			container = new WebMarkupContainer(wicketId) {
@@ -193,7 +193,7 @@ public class ISIXmlComponent extends XmlComponent {
 			return container;
 					
 		} else if (wicketId.startsWith("glosslink")) {
-			IModel<String> wordModel = new Model<String>(elt.getAttribute("word"));
+			IModel<String> wordModel = new Model<String>(elt.getAttributeNS(null, "word"));
 			GlossaryLink glossaryLink = new GlossaryLink(wicketId, wordModel);
 			ISIApplication.get().setLinkProperties(glossaryLink);
 			glossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_INLINE));
@@ -201,14 +201,14 @@ public class ISIXmlComponent extends XmlComponent {
 		
 		// glossaryMainLinks are linked directly to the glossary popup page
 		} else if (wicketId.startsWith("glossaryMainLink_")) {
-			IModel<String> wordModel = new Model<String>(elt.getAttribute("word"));
+			IModel<String> wordModel = new Model<String>(elt.getAttributeNS(null, "word"));
 			GlossaryLink glossaryLink = new GlossaryLink(wicketId, wordModel);
 			ISIApplication.get().setLinkProperties(glossaryLink);
 			glossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MAIN));
 			return glossaryLink;
 						
 		} else if (wicketId.startsWith("link_")) {
-			String href = elt.getAttribute("href");
+			String href = elt.getAttributeNS(null, "href");
 			// According to NIMAS, href should be in the form "filename.xml#ID"  or just "#ID" for within-file link
 			// For authors' convenience, we accept simple "ID" as well.
 			int hashLocation = href.indexOf('#');
@@ -224,27 +224,27 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("fileLink_")) {
 			// link to file in content directory
-			return new ResourceLink<Object> (wicketId, getRelativeRef(elt.getAttribute("href")));
+			return new ResourceLink<Object> (wicketId, getRelativeRef(elt.getAttributeNS(null, "href")));
 			
 		} else if (wicketId.startsWith("sectionIcon_")) {		
-			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttribute("class"));
+			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttributeNS(null, "class"));
 			icon.add(new AttributeRemover("class"));
 			return icon;
 	
 		} else if (wicketId.startsWith("thumbRating_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String thumbId = elt.getAttribute("id");
+			String thumbId = elt.getAttributeNS(null, "id");
 			ThumbPanel thumbPanel = new ThumbPanel(wicketId, loc, thumbId);
 			thumbPanel.add(new AttributeRemover("id"));
 			return thumbPanel;
 
 		} else if (wicketId.startsWith("videoplayer_")) {
-			String videoSrc = elt.getAttribute("src");
-			Integer width = Integer.valueOf(elt.getAttribute("width"));
-			Integer height = Integer.valueOf(elt.getAttribute("height"));
-			String preview = elt.getAttribute("poster");
-			String captions = elt.getAttribute("captions");
-			String audioDescription = elt.getAttribute("audiodescription");
+			String videoSrc = elt.getAttributeNS(null, "src");
+			Integer width = Integer.valueOf(elt.getAttributeNS(null, "width"));
+			Integer height = Integer.valueOf(elt.getAttributeNS(null, "height"));
+			String preview = elt.getAttributeNS(null, "poster");
+			String captions = elt.getAttributeNS(null, "captions");
+			String audioDescription = elt.getAttributeNS(null, "audiodescription");
 			
 			ResourceReference videoRef = getRelativeRef(videoSrc);
 			String videoUrl = RequestCycle.get().urlFor(videoRef).toString();
@@ -274,13 +274,13 @@ public class ISIXmlComponent extends XmlComponent {
 			return comp;
 
 		} else if (wicketId.startsWith("audioplayer_")) {
-			String audioSrc = elt.getAttribute("src");
+			String audioSrc = elt.getAttributeNS(null, "src");
 			ResourceReference audioRef = getRelativeRef(audioSrc);
 			String audioUrl = RequestCycle.get().urlFor(audioRef).toString();
 			int width = 400;
-			if (!elt.getAttribute("width").equals("")) {
+			if (!elt.getAttributeNS(null, "width").equals("")) {
 				try {
-					width = Integer.parseInt(elt.getAttribute("width").trim());
+					width = Integer.parseInt(elt.getAttributeNS(null, "width").trim());
 				} catch (Exception e) {
 					log.debug("Can't get width for {}: {}", audioUrl, e);
 					width = 400;
@@ -293,17 +293,17 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("swf_")) {
 			return new FlashAppletPanel(wicketId,
-					new ResourceReference(FileResource.class, elt.getAttribute("src"), null, null),
-					Integer.valueOf(elt.getAttribute("width")),
-					Integer.valueOf(elt.getAttribute("height")),
+					new ResourceReference(FileResource.class, elt.getAttributeNS(null, "src"), null, null),
+					Integer.valueOf(elt.getAttributeNS(null, "width")),
+					Integer.valueOf(elt.getAttributeNS(null, "height")),
 					"");
 
 		} else if (wicketId.startsWith("feedbackButton_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttribute("rgid");
+			String responseGroupId = elt.getAttributeNS(null, "rgid");
 			IModel<Prompt> pm = ISIResponseService.get().getOrCreatePrompt(PromptType.FEEDBACK, loc, responseGroupId);
 			ResponseFeedbackButtonPanel component = new ResponseFeedbackButtonPanel(wicketId, pm, responseFeedbackPanel);
-			String forRole = elt.getAttribute("for");
+			String forRole = elt.getAttributeNS(null, "for");
 			boolean usesTeacherButton = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
 			component.setVisibilityAllowed(usesTeacherButton ? forRole.equals("teacher") : forRole.equals("student"));
 			component.add(new AttributeRemover("rgid", "for"));
@@ -322,7 +322,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("selectItem_")) {
 			SingleSelectItem mcItem = new SingleSelectItem(wicketId,
 					new Model<String>(wicketId.substring("selectItem_".length())),
-					Boolean.valueOf(elt.getAttribute("correct")));
+					Boolean.valueOf(elt.getAttributeNS(null, "correct")));
 			mcItem.add(new AttributeRemover("correct"));
 			return mcItem;
 
@@ -330,11 +330,11 @@ public class ISIXmlComponent extends XmlComponent {
 		// The wicketId of the associated SingleSelectItem should be provided as a "for" attribute.
 		// Visibility based on whether the corresponding radio button is selected in the enclosing form.
 		} else if (wicketId.startsWith("selectMessage_")) {
-			return new SingleSelectMessage(wicketId, elt.getAttribute("for")).add(new AttributeRemover("for"));
+			return new SingleSelectMessage(wicketId, elt.getAttributeNS(null, "for")).add(new AttributeRemover("for"));
 
 		} else if (wicketId.startsWith("responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttribute("rgid");
+			String responseGroupId = elt.getAttributeNS(null, "rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc, null);
@@ -347,7 +347,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("responseButtons_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttribute("rgid");
+			String responseGroupId = elt.getAttributeNS(null, "rgid");
 			Element xmlElement = getModel().getObject().getElement().getOwnerDocument().getElementById(responseGroupId);
 			ResponseMetadata metadata = new ResponseMetadata(xmlElement);
 			if (!ISIApplication.get().isUseAuthoredResponseType()) {
@@ -362,7 +362,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("ratePanel_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String promptText = null;
-			String ratingId = elt.getAttribute("id");
+			String ratingId = elt.getAttributeNS(null, "id");
 			NodeList nodes = elt.getChildNodes();
 			// extract the prompt text authored - we might want to consider re-writing this
 			// to use xsl instead of this - but this works for now - ldm
@@ -370,7 +370,7 @@ public class ISIXmlComponent extends XmlComponent {
 				Node nextNode = nodes.item(i);
 				if (nextNode instanceof Element) {
 					Element next = (Element)nodes.item(i);
-					if (next.getAttribute("class").equals("prompt")) {
+					if (next.getAttributeNS(null, "class").equals("prompt")) {
 						//get all the html under the prompt element
 						promptText = new TransformResult(next).getString();
 					} 
@@ -396,20 +396,20 @@ public class ISIXmlComponent extends XmlComponent {
 			return bpl;
 
 		} else if(wicketId.startsWith("agent_")) {
-			String title = elt.getAttribute("title");
+			String title = elt.getAttributeNS(null, "title");
 			if (Strings.isEmpty(title))
 				title = new StringResourceModel("isi.defaultAgentButtonText", this, null, "Help").getObject();
-			AgentLink link = new AgentLink(wicketId, title, elt.getAttribute("responseAreaId"));
+			AgentLink link = new AgentLink(wicketId, title, elt.getAttributeNS(null, "responseAreaId"));
 			link.add(new AttributeRemover("title", "responseAreaId"));
 			return link;
 			
 		} else if (wicketId.startsWith("image_")) {
-			String src = elt.getAttribute("src");
+			String src = elt.getAttributeNS(null, "src");
 			ResourceReference imgRef = getRelativeRef(src);
 			return new Image(wicketId, imgRef);
 
 		} else if (wicketId.startsWith("imageThumb_")) {			
-			String src = elt.getAttribute("src");
+			String src = elt.getAttributeNS(null, "src");
 			int ext = src.lastIndexOf('.');
 			src = src.substring(0, ext) + "_t" + src.substring(ext);
 			ResourceReference imgRef = getRelativeRef(src);
@@ -466,7 +466,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("youtube_")) {
 			int width = getWidth(elt, 640);
 			int height = getHeight(elt, 385);
-			String src = elt.getAttribute("src");
+			String src = elt.getAttributeNS(null, "src");
 			src = src.replace("youtube.com/watch?v=", "youtube.com/v/");
 
 			FlashAppletPanel panel = new FlashAppletPanel(wicketId, width, height);
@@ -476,14 +476,14 @@ public class ISIXmlComponent extends XmlComponent {
 			return panel;	
 			
 		} else if (wicketId.startsWith("pageLinkPanel_")) {
-			String id = elt.getAttribute("id");
+			String id = elt.getAttributeNS(null, "id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			PageLinkPanel panel = new PageLinkPanel(wicketId, currentSectionModel, null);
 			panel.add(new AttributeRemover("id"));
 			return panel;
 
 		} else if (wicketId.startsWith("sectionStatusIcon_")) {
-			String id = elt.getAttribute("id");
+			String id = elt.getAttributeNS(null, "id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			SectionCompleteToggleComponent sectionStatusIcon = new SectionCompleteToggleComponent(wicketId, currentSectionModel); 
 			return sectionStatusIcon;
@@ -494,7 +494,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 			// Find the prompt
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttribute("rgid");
+			String responseGroupId = elt.getAttributeNS(null, "rgid");
 			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.SINGLE_SELECT, loc, responseGroupId);
 			
 			// Find responses and categorize by number of tries used (0 if never correct)
@@ -523,8 +523,8 @@ public class ISIXmlComponent extends XmlComponent {
 				Element itemElt = (Element) wicketNodes.item(i);
 				String itemWicketId = itemElt.getAttributeNS(XmlService.get().getNamespaceContext().getNamespaceURI("wicket"), "id");
 				
-				// String itemXmlId = itemElt.getAttribute("xmlId");
-				boolean correct = Boolean.valueOf(itemElt.getAttribute("correct"));
+				// String itemXmlId = itemElt.getAttributeNS(null, "xmlId");
+				boolean correct = Boolean.valueOf(itemElt.getAttributeNS(null, "correct"));
 				
 				if (correct) {
 					container.add (new SingleSelectSummaryPanel(itemWicketId, sorted));
@@ -542,7 +542,7 @@ public class ISIXmlComponent extends XmlComponent {
 	}
 
 	protected IModel<Prompt> getPrompt(Element elt) {
-		String type = elt.getAttribute("type");
+		String type = elt.getAttributeNS(null, "type");
 		if (type.equals("select1"))
 			return getPrompt(elt, PromptType.SINGLE_SELECT);
 		if (type.equals("responsearea"))
@@ -552,8 +552,8 @@ public class ISIXmlComponent extends XmlComponent {
 	
 	protected IModel<Prompt> getPrompt(Element elt, PromptType type) {
 		ContentLoc loc = new ContentLoc(getModel().getObject());
-		String responseGroupId = elt.getAttribute("rgid");
-		String collectionName = elt.getAttribute("group").trim();
+		String responseGroupId = elt.getAttributeNS(null, "rgid");
+		String collectionName = elt.getAttributeNS(null, "group").trim();
 		return ISIResponseService.get().getOrCreatePrompt(type, loc, responseGroupId, collectionName);
 	}
 	
