@@ -98,7 +98,7 @@ public class ISIPrompt extends Prompt implements Comparable<ISIPrompt> {
 			NodeList elements = html.getElement().getOwnerDocument().getElementsByTagName("div");
 			Element prompt = null;
 			for (int i = 0; i < elements.getLength(); i++) {
-				if (((Element) elements.item(i)).getAttribute("id").equals(divId))
+				if (((Element) elements.item(i)).getAttributeNS(null,"id").equals(divId))
 					prompt = (Element) elements.item(i);
 			}
 

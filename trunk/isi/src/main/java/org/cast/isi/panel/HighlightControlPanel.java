@@ -94,7 +94,7 @@ public class HighlightControlPanel extends Panel {
 				boolean hintFound = false;
 				NodeList elements = mSection.getObject().getElement().getElementsByTagName("span");
 				for (int i = 0; i < elements.getLength(); i++) {
-					if (((Element) elements.item(i)).getAttribute("class").equals("key")) {
+					if (((Element) elements.item(i)).getAttributeNS(null,"class").equals("key")) {
 						hintFound = true;
 						break;
 					}
