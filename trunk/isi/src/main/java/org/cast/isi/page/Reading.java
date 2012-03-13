@@ -198,7 +198,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		add(tagsBox);
 		tagsBox.setVisible(ISIApplication.get().isTagsOn());
 		tagsBox.add(new WebMarkupContainer("tagCollapseToggle").add(new CollapseBoxBehavior("onclick", "tagpanel:reading", getPageName())));
-		tagsBox.add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()));
+		tagsBox.add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()).setOutputMarkupId(false));
 	}
 	
 	@SuppressWarnings("static-access")
