@@ -53,7 +53,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 	public AnnotatedImageComponent(String id, Element elt, XmlSectionModel xmlSectionModel) {
 		super(id);
 		this.elt = elt;
-		this.annotatedImageComponentId = elt.getAttribute("annotatedImageId");
+		this.annotatedImageComponentId = elt.getAttributeNS(null,"annotatedImageId");
 		this.xmlSectionModel = xmlSectionModel;
 		
 	}

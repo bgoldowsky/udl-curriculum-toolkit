@@ -57,19 +57,19 @@ public class HotSpotComponent extends DialogBorder {
 	 * @param elt
 	 */
 	public HotSpotComponent(String id, Element elt) {
-		super(id, new Model<String>(elt.getAttribute("title")));
+		super(id, new Model<String>(elt.getAttributeNS(null,"title")));
 
 		// don't use the stylesheet from dialogBorder
 		List<ResourceReference> noStylesheets = Collections.emptyList();
 		setStyleReferences(noStylesheets);
 
 		this.hotSpotId = getContentContainer().getMarkupId();
-		this.top = (elt.getAttribute("top").trim().equals("") ? "0" : elt.getAttribute("top"));
-		this.left = elt.getAttribute("left");
-		this.width = elt.getAttribute("width");
-		this.height = elt.getAttribute("height");
-		this.title = elt.getAttribute("title");
-		this.imgSrc = elt.getAttribute("imgSrc");
+		this.top = (elt.getAttributeNS(null,"top").trim().equals("") ? "0" : elt.getAttributeNS(null,"top"));
+		this.left = elt.getAttributeNS(null,"left");
+		this.width = elt.getAttributeNS(null,"width");
+		this.height = elt.getAttributeNS(null,"height");
+		this.title = elt.getAttributeNS(null,"title");
+		this.imgSrc = elt.getAttributeNS(null,"imgSrc");
 	}
 
 	@Override

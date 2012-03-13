@@ -47,7 +47,7 @@ public class SlideShowComponent extends WebMarkupContainer implements IHeaderCon
 
 	public SlideShowComponent(String id, Element elt) {
 		super(id);
-		this.slideShowId = elt.getAttribute("id");
+		this.slideShowId = elt.getAttributeNS(null,"id");
 	}
 
 	public void renderHead(IHeaderResponse response) {
