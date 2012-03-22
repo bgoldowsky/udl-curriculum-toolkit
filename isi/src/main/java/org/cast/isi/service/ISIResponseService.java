@@ -120,6 +120,10 @@ public class ISIResponseService extends ResponseService {
 		return genericGetOrCreatePrompt(type, loc, xmlId, null, null, collectionName);
 	}
 
+	public IModel<Prompt> getOrCreateHighlightPrompt(PromptType highlightlabel, ContentLoc loc, String color) {
+		return genericGetOrCreatePrompt(highlightlabel, loc, null, null, color, null);
+	}
+
 	
 	public synchronized IModel<Prompt> genericGetOrCreatePrompt(PromptType type, ContentLoc loc, String xmlId, IModel<User> targetUser, String identifier, String collectionName) {
 		
@@ -574,7 +578,6 @@ public class ISIResponseService extends ResponseService {
 			.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return promptCriteria.list();
 	}
-
 
 
 	/*

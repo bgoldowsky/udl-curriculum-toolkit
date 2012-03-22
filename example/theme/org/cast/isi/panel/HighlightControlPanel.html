@@ -22,9 +22,20 @@
                 <div class="hlRow" wicket:id="controlY" >
                     <div class="hlGradient">
                         <div class="hlIcon">
-                            <div class="hlRowInner">
-                                <span class="action">Main Ideas</span>
-                            </div>
+			                <wicket:enclosure child="yHighlighterName">
+	                            <div wicket:child class="hlRowInner">
+	                                <span wicket:id="yHighlighterName" class="action">Main Ideas</span>
+	                            </div>
+	                        </wicket:enclosure>
+                        	<form wicket:id="yEditHighlightNameForm">
+	                            <div wicket:id="editableColor" class="hlRowInner">
+										<span wicket:id="label" class="action">Label</span>
+                                        <input wicket:id="labelEdit" type="text" value="For the test" />
+                                    	<a wicket:id="edit" href="#" class="button">Edit</a>
+                                        <a wicket:id="save" href="#" class="button">Save</a>
+	                            </div>
+								<div wicket:id="feedback" class="feedback"></div> 
+							</form>
                         </div>
                     </div>
 
@@ -64,16 +75,32 @@
                 <div class="hlRow" wicket:id="controlB">
                     <div class="hlGradient">
                         <div class="hlIcon">
-                            <div class="hlRowInner">
-                                <span class="action">Evidence</span>
-                            </div>
+			                <wicket:enclosure child="bHighlighterName">
+	                            <div class="hlRowInner">
+	                                <span wicket:id="bHighlighterName" class="action">Evidence</span>
+	                            </div>
+	                        </wicket:enclosure>
+                        	<form wicket:id="bEditHighlightNameForm">
+	                            <div wicket:id="editableColor" class="hlRowInner">
+										<span wicket:id="label" class="action">Label</span>
+                                        <input wicket:id="labelEdit" type="text" value="For the test" />
+                                    	<a wicket:id="edit" href="#" class="button">Edit</a>
+                                        <a wicket:id="save" href="#" class="button">Save</a>
+	                            </div>
+								<div wicket:id="feedback" class="feedback"></div> 
+							</form>
                         </div>
                     </div>
                 </div>
                 <div class="hlRow" wicket:id="controlG">
                     <div class="hlGradient">
                         <div class="hlIcon">
-                        	<form wicket:id="editHighlightLabelForm">
+			                <wicket:enclosure child="gHighlighterName">
+	                            <div class="hlRowInner">
+	                                <span wicket:id="gHighlighterName" class="action">My Highlighter</span>
+	                            </div>
+	                        </wicket:enclosure>
+                        	<form wicket:id="gEditHighlightNameForm">
 	                            <div wicket:id="editableColor" class="hlRowInner">
 										<span wicket:id="label" class="action">Label</span>
                                         <input wicket:id="labelEdit" type="text" value="For the test" />

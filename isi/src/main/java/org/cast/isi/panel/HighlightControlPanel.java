@@ -46,9 +46,12 @@ import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.HighlightService.HighlightType;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.transform.FilterElements;
+import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlComponent;
+import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
+import org.cast.isi.data.PromptType;
 import org.cast.isi.service.ISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,12 +70,14 @@ public class HighlightControlPanel extends Panel {
 	protected static final Logger log = LoggerFactory.getLogger(HighlightControlPanel.class);
 	private static final long serialVersionUID = 1L;
 	protected boolean isTeacher;
+	protected ContentLoc loc;
 	
 	// Target user to display (current user or student that teacher is viewing)
 	private IModel<User> targetUser = ISISession.get().getTargetUserModel();
 
-	public HighlightControlPanel(String id, IModel<? extends Prompt > mHighlightPrompt, XmlSectionModel mSection) {
-		super(id, mHighlightPrompt);
+	public HighlightControlPanel(String id, ContentLoc loc, XmlSectionModel mSection) {
+		super(id);
+		this.loc = loc;
 
 		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
 
@@ -80,8 +85,15 @@ public class HighlightControlPanel extends Panel {
 			WebMarkupContainer controlContainer = new WebMarkupContainer("control" + type.getColor());
 			controlContainer.add(new ActivateHighlighterBehavior(type));
 			add(controlContainer);
-			
+					
 			if (type.getColor().equals('Y')) {
+				
+				// setup the yellow highlighter, hide/show based on the application configuration
+				setupHighlighterLabel(controlContainer, type.getColor().toString().toLowerCase(), 
+						ISIApplication.get().isYHighlighterEditable());
+				controlContainer.setVisible(ISIApplication.get().isYHighlighterOn());
+				
+				// the yellow highlighter may have both authored highlights and hints associated with it
 				WebMarkupContainer hintContainer = new WebMarkupContainer("hintContainer");
 				controlContainer.add(hintContainer);
 				
@@ -114,17 +126,52 @@ public class HighlightControlPanel extends Panel {
 				
 				// if there aren't any hints then hide the hintcontainer
 				hintContainer.setVisible(!highlighterComponent.isEmpty() || hintFound);
-		
-			} else if (type.getColor().equals('G')) {
-				controlContainer.add(new EditHighlightLabelForm("editHighlightLabelForm", 
-						ISIResponseService.get().getResponseForPrompt(mHighlightPrompt, targetUser), 
-						mHighlightPrompt)).setEnabled(!isTeacher);
+
+
+			} else if (type.getColor().equals('B')) { // setup the blue highlighter
+				setupHighlighterLabel(controlContainer, type.getColor().toString().toLowerCase(), 
+						ISIApplication.get().isBHighlighterEditable());
+				controlContainer.setVisible(ISIApplication.get().isBHighlighterOn());				
+				
+			} else if (type.getColor().equals('G')) { // setup the green highlighter
+				setupHighlighterLabel(controlContainer, type.getColor().toString().toLowerCase(), 
+						ISIApplication.get().isGHighlighterEditable());
+				controlContainer.setVisible(ISIApplication.get().isGHighlighterOn());
 			}
 		}
 		
 		setOutputMarkupId(true);
 		setMarkupId(HighlightService.GLOBAL_CONTROL_ID);
 	}
+	
+	/**
+	 * The highlighter has either an editable or non-editable label.  The non-editable label is found in the properties file.
+	 * The editability of this label is set at the application level in the configuration file.
+	 *
+	 * @param controlContainer
+	 * @param color
+	 * @param editable
+	 * @param visible 
+	 */
+	private void setupHighlighterLabel(WebMarkupContainer controlContainer, String color, Boolean editable) {
+		String labelName = color + "HighlighterName";
+		String formName = color + "EditHighlightNameForm";
+
+		// The yellow highlighter name in the properties file is highlightsPanel.yHighlighterName
+		Label label = new Label(labelName, new StringResourceModel("highlightsPanel." + labelName, null));
+		controlContainer.add(label);
+		label.setVisible(!editable);
+
+		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, loc, color);
+
+		EditHighlightLabelForm editHighlightLabelForm = new EditHighlightLabelForm(formName, 
+				ISIResponseService.get().getResponseForPrompt(mPrompt, targetUser), 
+				mPrompt);
+		controlContainer.add(editHighlightLabelForm);
+		editHighlightLabelForm.setEnabled(!isTeacher);
+		editHighlightLabelForm.setVisible(editable);		
+	}
+
 	
 	@Override
 	protected void onBeforeRender() {
@@ -142,7 +189,7 @@ public class HighlightControlPanel extends Panel {
 		super.onBeforeRender();
 	}
 	
-		
+	
 	/**
 	 * A form that includes controls for highlighting.  This is a Form because it also allows
 	 * the user to specify and save a highlighter label. 
