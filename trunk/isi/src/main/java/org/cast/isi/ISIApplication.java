@@ -165,9 +165,18 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean useAuthoredResponseType = false; // false for backwards compatibility
 	@Getter protected String responseSortField = "createDate";
 	@Getter protected int responseSortState = ISortState.DESCENDING;
-	@Getter protected ResponseMetadata responseMetadata = new ResponseMetadata();
+	@Getter protected ResponseMetadata responseMetadata = new ResponseMetadata(); // the default type of responses
 	@Getter protected ArrayList<IResponseType> defaultResponseTypes = new ArrayList<IResponseType>();
 	protected TinyMCESettings tinyMCESettings = null;
+
+	// highlighter settings from the config file
+	@Getter protected boolean yHighlighterOn = true;
+	@Getter protected boolean bHighlighterOn = true;
+	@Getter protected boolean gHighlighterOn = true;
+	@Getter protected boolean yHighlighterEditable = false;
+	@Getter protected boolean bHighlighterEditable = false;
+	@Getter protected boolean gHighlighterEditable = true;
+
 	
 	// Service Classes and Plugins
 	@Getter @Setter protected Glossary glossary;
@@ -254,9 +263,18 @@ public abstract class ISIApplication extends CwmApplication {
 	protected void registerHighlighters() {
 		// These letters are the same as used in the markup.  Don't change one without changing the other
 		// or just change the css and leave these alone.
-		HighlightService.get().addHighlighter('Y', null, false);
-		HighlightService.get().addHighlighter('B', null, false);
-		HighlightService.get().addHighlighter('G', null, true);		
+		yHighlighterOn = setBooleanProperty("isi.highlighter.yellow.isOn", yHighlighterOn );
+		yHighlighterEditable = setBooleanProperty("isi.highlighter.yellow.nameEditable", yHighlighterEditable );
+
+		bHighlighterOn = setBooleanProperty("isi.highlighter.blue.isOn", bHighlighterOn );
+		bHighlighterEditable = setBooleanProperty("isi.highlighter.blue.nameEditable", bHighlighterEditable );
+
+		gHighlighterOn = setBooleanProperty("isi.highlighter.green.isOn", gHighlighterOn );
+		gHighlighterEditable = setBooleanProperty("isi.highlighter.green.nameEditable", gHighlighterEditable );
+
+		HighlightService.get().addHighlighter('Y', null, yHighlighterEditable);
+		HighlightService.get().addHighlighter('B', null, bHighlighterEditable);
+		HighlightService.get().addHighlighter('G', null, gHighlighterEditable);		
 	}
 
 	
@@ -391,7 +409,6 @@ public abstract class ISIApplication extends CwmApplication {
 		if (defaultResponseTypes.isEmpty())
 			log.error("There are no valid response types defined");
 		
-		// I think this should be commented out? - ldm
 		for (IResponseType rt : defaultResponseTypes) {
 			responseMetadata.addType(rt);
 		}

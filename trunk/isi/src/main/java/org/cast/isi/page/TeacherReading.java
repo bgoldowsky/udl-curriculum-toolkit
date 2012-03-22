@@ -102,10 +102,10 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	@Override
 	public void addHighlightPanel() {	
 		if (showXmlContent) {
-			add(new HighlightControlPanel("highlightControlPanel", ISIResponseService.get().getOrCreatePrompt(PromptType.HIGHLIGHTLABEL, loc), mSection)
-											.setVisible(ISIApplication.get().isHighlightsPanelOn()));
-			HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", ISIResponseService.get().getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
-																ISISession.get().getStudentModel());
+			add(new HighlightControlPanel("highlightControlPanel", loc, mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
+			HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", 
+					ISIResponseService.get().getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
+					ISISession.get().getStudentModel());
 			add(highlightDisplayPanel);
 			highlightDisplayPanel.setVisible(ISIApplication.get().isHighlightsPanelOn());
 			highlightDisplayPanel.setReadOnly(true);

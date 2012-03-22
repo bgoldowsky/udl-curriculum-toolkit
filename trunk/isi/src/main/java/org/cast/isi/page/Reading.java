@@ -188,7 +188,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	}
 
 	public void addHighlightPanel() {	
-		add(new HighlightControlPanel("highlightControlPanel", ISIResponseService.get().getOrCreatePrompt(PromptType.HIGHLIGHTLABEL, loc), mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
+		add(new HighlightControlPanel("highlightControlPanel", loc, mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
 		add(new HighlightDisplayPanel("highlightDisplayPanel", ISIResponseService.get().getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc)).setVisible(ISIApplication.get().isHighlightsPanelOn()));
 	}
 	
