@@ -23,9 +23,9 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import net.jeremybrooks.knicker.Knicker.SourceDictionary;
 import net.jeremybrooks.knicker.KnickerException;
 import net.jeremybrooks.knicker.WordApi;
-import net.jeremybrooks.knicker.Knicker.SourceDictionary;
 import net.jeremybrooks.knicker.dto.Definition;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -36,6 +36,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -55,10 +56,13 @@ public class FreeToolbar extends Panel {
 	protected HiddenField<String> selectedText;
 	protected SidebarDialog dictionaryModal;
 	protected Label definition;
+	protected ExternalLink link;
 	protected IModel<String> mDefinition = new Model<String>("");
 	
 	protected int MAX_DICT_DEFS = 3; // how many definitions are shown in the dictionary sidebar.
 	
+	private static final String WORDNIK_BASE_URL = "http://www.wordnik.com/word/";
+
 	/**
 	 * Which dictionaries to look in for definitions.
 	 */
@@ -79,11 +83,16 @@ public class FreeToolbar extends Panel {
 		// only be ajax-updated once, after which it loses its markupId.
 		WebMarkupContainer body = new WebMarkupContainer("body");
 		dictionaryModal.getBodyContainer().add(body);
+
 		definition = new Label("definition", mDefinition);
 		definition.setOutputMarkupId(true);
 		definition.setEscapeModelStrings(false);
 		body.add(definition);
-		
+
+		link = new ExternalLink("wordnikLink", new Model<String>(""));
+		link.setOutputMarkupId(true);
+		body.add(link);
+
 		Form<Void> toolbarForm = new Form<Void>("toolbarForm");
 		add(toolbarForm);
 		
@@ -95,8 +104,17 @@ public class FreeToolbar extends Panel {
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				String word = selectedText.getModelObject();
-				mDefinition.setObject(getDefinition(word));
+				List<Definition> defs = getDefinition(word);
+				mDefinition.setObject(formatDefinition(word, defs));
+				if (defs!=null && !defs.isEmpty()) {
+					String canonicalWord = defs.get(0).getWord();
+					link.setDefaultModelObject(WORDNIK_BASE_URL+canonicalWord);
+					link.setVisibilityAllowed(true);
+				} else {
+					link.setVisibilityAllowed(false);
+				} 
 				target.addComponent(definition);
+				target.addComponent(link);
 			}
 
 			@Override
@@ -127,29 +145,36 @@ public class FreeToolbar extends Panel {
 		toolbarForm.add (dictionary);
 	}
 	
-	protected String getDefinition (String word) {
+	protected List<Definition> getDefinition(String word) {
 		if (Strings.isEmpty(word))
-			return "No word selected";
+			return null;
 		try {
-			List<Definition> definitions = WordApi.definitions(word.toLowerCase(), MAX_DICT_DEFS, null, false, wordnikDictionaries, true, false);
-			if (definitions.isEmpty())
-				return "<strong>" + word + ":</strong> not found";
-			StringBuilder deftext = new StringBuilder();
-			for (Definition def : definitions) {
-				deftext.append("<p>");
-				deftext.append("<strong>" + def.getWord() + "</strong> ");
-				deftext.append("<em>" + def.getPartOfSpeech() + ":</em> ");
-				deftext.append(def.getText());
-				deftext.append(" [" + def.getSourceDictionary() + "]");
-				deftext.append("</p>\n");
-			}
-			// FIXME Somehow clean or convert to UTF-8 ?  Defs sometimes have odd chars: try looking up "wonderful".
-			log.debug("Received definition from Wordnik: {}", deftext);
-			return  deftext.toString();
+			return WordApi.definitions(word.toLowerCase(), MAX_DICT_DEFS, null, false, wordnikDictionaries, true, false);
 		} catch (KnickerException e) {
 			e.printStackTrace();
-			return "<p>Error while looking up word</p>";
+			return null;
 		}
+	}
+	
+	protected String formatDefinition (String word, List<Definition> definitions) {
+		if (Strings.isEmpty(word))
+			return "No word selected";
+		if (definitions == null)
+			return "Error while looking up word";
+		if (definitions.isEmpty())
+			return "<strong>" + word + ":</strong> not found";
+		StringBuilder deftext = new StringBuilder();
+		for (Definition def : definitions) {
+			deftext.append("<p>");
+			deftext.append("<strong>" + def.getWord() + "</strong> ");
+			deftext.append("<em>" + def.getPartOfSpeech() + ":</em> ");
+			deftext.append(def.getText());
+			deftext.append(" [" + def.getAttributionText() + "]");
+			deftext.append("</p>\n");
+		}
+		// FIXME Somehow clean or convert to UTF-8 ?  Defs sometimes have odd chars: try looking up "wonderful".
+		log.debug("Received definition from Wordnik: {}", deftext);
+		return  deftext.toString();
 	}
 
 }
