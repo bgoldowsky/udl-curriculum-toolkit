@@ -152,7 +152,6 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean notebookOn = true;
 	@Getter protected boolean whiteboardOn = true;
 	@Getter protected boolean glossaryOn = true;
-	@Getter protected boolean highlightsPanelOn = true;
 	@Getter protected boolean myQuestionsOn = true;
 	@Getter protected boolean responseCollectionsOn = true;
 	@Getter protected boolean tagsOn = true;		
@@ -170,6 +169,7 @@ public abstract class ISIApplication extends CwmApplication {
 	protected TinyMCESettings tinyMCESettings = null;
 
 	// highlighter settings from the config file
+	@Getter protected boolean highlightsPanelOn = true;
 	@Getter protected boolean yHighlighterOn = true;
 	@Getter protected boolean bHighlighterOn = true;
 	@Getter protected boolean gHighlighterOn = true;
@@ -177,6 +177,10 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean bHighlighterEditable = false;
 	@Getter protected boolean gHighlighterEditable = true;
 
+	// rss feed info from the config file
+	@Getter protected boolean rssFeedOn = false; 
+	@Getter protected String rssFeedUrl;
+	@Getter protected int maxRssFeedItems;
 	
 	// Service Classes and Plugins
 	@Getter @Setter protected Glossary glossary;
@@ -206,7 +210,6 @@ public abstract class ISIApplication extends CwmApplication {
 		ISIResponseService.get().setResponseClass(getResponseClass());
 		XmlService.get().setXmlSectionClass(getXmlSectionClass());
 		
-		registerHighlighters();		
 		
 		// Gather Extended Browser Information - Uses a wicket-administered redirect.
 		// May not be necessary.
@@ -249,6 +252,8 @@ public abstract class ISIApplication extends CwmApplication {
 		configureApplicationProperties();
 		configureResponseTypes();
 		configureResponseSort();
+		if (highlightsPanelOn) 
+			registerHighlighters();		
 		
 		// load the xml documents and xsl transformers
 		loadXmlFiles();
@@ -331,6 +336,7 @@ public abstract class ISIApplication extends CwmApplication {
 		toolBarOn = setBooleanProperty("isi.toolBar.isOn", toolBarOn);
 		mathMLOn = setBooleanProperty("isi.mathML.isOn", mathMLOn);
 		useAuthoredResponseType = setBooleanProperty("isi.useAuthoredResponseType.isOn", useAuthoredResponseType);	
+		rssFeedOn = setBooleanProperty("isi.rssFeed.isOn", rssFeedOn);
 
 		/* if the glossary is on, decide what type of glossary link is used */
 		if (glossaryOn == true) {
@@ -343,7 +349,7 @@ public abstract class ISIApplication extends CwmApplication {
 			}
 			log.info("Type of of glossary link is  = {}", glossaryLinkType);
 		}
-		
+
 		// Wordnik API key, used if available for free dictionary
 		String wordnikKey = appProperties.getProperty("isi.wordnikApiKey");
 		if (wordnikKey != null) {
@@ -360,6 +366,15 @@ public abstract class ISIApplication extends CwmApplication {
 		} else {
 			log.info("Wordnik will not be used");
 		}
+
+		if (rssFeedOn == true) {
+			rssFeedUrl =  appProperties.getProperty("isi.rssFeed.url").trim();
+			log.info("Using this URL for the RSS feed: {}", rssFeedUrl);
+			maxRssFeedItems =  Integer.parseInt(appProperties.getProperty("isi.rssFeed.maxItems").trim());
+			log.info("The RSS feed will have at most {} items displayed.", maxRssFeedItems);
+		}
+
+	
 	}
 
 	protected Boolean setBooleanProperty(String property, boolean defaultPropertyValue) {
