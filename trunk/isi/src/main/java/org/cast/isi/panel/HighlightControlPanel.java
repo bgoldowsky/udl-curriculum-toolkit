@@ -158,7 +158,7 @@ public class HighlightControlPanel extends Panel {
 		String formName = color + "EditHighlightNameForm";
 
 		// The yellow highlighter name in the properties file is highlightsPanel.yHighlighterName
-		Label label = new Label(labelName, new StringResourceModel("highlightsPanel." + labelName, null));
+		Label label = new Label(labelName, new StringResourceModel("highlightsPanel." + labelName, this, null, "Highlighter"));
 		controlContainer.add(label);
 		label.setVisible(!editable);
 
