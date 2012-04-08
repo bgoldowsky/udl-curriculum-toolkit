@@ -8,8 +8,9 @@ VERSION = 1.0-SNAPSHOT
 
 ISI_DIR = ../isi
 CWM_DIR = ../../../cast-wicket-modules/trunk
+DRAW_DIR = ../../../cwm-drawtool/trunk
 
-MODULES = $(CWM_DIR) $(ISI_DIR)
+MODULES = $(DRAW_DIR) $(CWM_DIR) $(ISI_DIR)
 
 ## Compile Example app
 build:
@@ -17,7 +18,7 @@ build:
 .PHONY: build
 
 ## Compile Example app and its dependencies
-install: $(CWM_DIR)-install $(ISI_DIR)-install build
+install: $(patsubst %, %-install, $(MODULES)) build
 .PHONY: install
 
 %-install:
