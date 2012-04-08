@@ -66,22 +66,22 @@
 		<dependency>
 			<groupId>org.cast.cwm</groupId>
 			<artifactId>cwm-tag</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<version>${cwm.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cast.cwm</groupId>
 			<artifactId>cwm-glossary</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<version>${cwm.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cast.cwm</groupId>
 			<artifactId>cwm-mediaplayer</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<version>${cwm.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cast.cwm</groupId>
 			<artifactId>cwm-dav</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<version>${cwm.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cast.cwm</groupId>
@@ -207,6 +207,7 @@
 	</build>
 
   <properties>
+      <cwm.version>1.1</cwm.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
   </properties>
