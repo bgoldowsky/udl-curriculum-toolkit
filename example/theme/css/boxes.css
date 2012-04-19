@@ -390,6 +390,14 @@
     font-size: 0.9em;
 }
 
+.objectCaption h5 {
+    font-size: 1em;
+    font-style: italic;
+    font-weight: normal;
+    margin: 0;
+}
+
+
 /*================================================================*/
 /* Response Box */
 
