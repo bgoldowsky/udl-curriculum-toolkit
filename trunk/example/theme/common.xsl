@@ -86,6 +86,12 @@
      </div>
    	</xsl:template>
 
+    <xsl:template match="dtb:caption" mode="mediaCaption">
+       <xsl:copy-of select="&catts;"/>
+       <xsl:apply-templates/>
+   	</xsl:template>
+
+
     <xsl:template name="basename">
         <xsl:param name="path"/>
         <xsl:choose>
@@ -166,6 +172,8 @@
     <!-- VIDEOS, AUDIO -->
     <xsl:template match="dtb:object">
       <xsl:choose>
+      
+      <!-- if there is no source then there is an error -->
        <xsl:when test="@src=''">
         	<div style="border:5px inset red">Content error: Object with no src attribute set</div>
        </xsl:when>
@@ -194,53 +202,53 @@
 				<xsl:otherwise><xsl:value-of select="@src"/></xsl:otherwise>
 			  </xsl:choose>
 			</xsl:variable>
-			<div class="objectBox">
+			<div class="objectBox center">
 				<div class="mediaPlaceholder" style="width:{$width}px; height:{$height}px;">
 					<iframe width="{$width}" height="{$height}" src="{$src}" frameborder="0" class="captionSizer">must have content</iframe>
 				</div>
-    		 	<xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />
+				<xsl:call-template name="objectCaption" />
     		</div>
        </xsl:when>
       
- 	   <xsl:when test="contains(@src, '.flv')">
+ 	   <xsl:when test="contains(@src, '.flv') or contains(@src, '.mp4') or contains(@src, '.mp3')">
          <!-- embedded movie -->
 		 <xsl:call-template name="videotag" />
-         <!-- Long Description -->
-<!-- 		 <xsl:if test="//dtb:prodnote[@imgref=current()/@id]"> -->
-<!-- 			<a wicket:id="ld_{@id}" onclick="return popupWin(this);" target="imgdesc" -->
-<!-- 				href="#" title="Image description">d</a> -->
-<!-- 		 </xsl:if> -->
 	   </xsl:when>
-            
-       <xsl:when test="contains(@src, '.mp3')">
-         <!-- embedded audio file -->
-         <xsl:variable name="width">
-           <xsl:choose>
-             <xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when>
-             <xsl:when test="ancestor::dtb:annotation">200</xsl:when> <!-- default to something that works in sidebar. -->
-             <xsl:otherwise>400</xsl:otherwise>
-           </xsl:choose>
-         </xsl:variable>
-         <div wicket:id="audioplayer_{count(preceding::dtb:object)}" src="{@src}" width="{$width}"/>
-         <!-- Long Description -->
-         <xsl:if test="//dtb:prodnote[@imgref=current()/@id]">
-           <a wicket:id="ld_{@id}" onclick="return popupWin(this);" target="imgdesc" href="#" title="Image description">d</a>
-       	 </xsl:if>
-		 <xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />
-       </xsl:when>
-       
+                   
  	   <xsl:otherwise>
  	     <!-- unknown object type -->
          <div wicket:id="object_" appletname="{@src}"  width="{@width}" height="{@height}" id="{@id}">
            <xsl:apply-templates/>
          </div>
-		 <xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />
+		 <xsl:call-template name="objectCaption" />
        </xsl:otherwise>
    	 </xsl:choose>
 
-	 <!-- caption for multimedia element -->
-<!--	 <xsl:apply-templates select="./dtb:caption|../dtb:caption[@imgref=current()/@id]" mode="caption" />-->
     </xsl:template>
+
+	<xsl:template name="objectCaption">
+		<div class="objectCaption">
+	       	<div class="objectText">
+	       		<xsl:if test="count(child::dtb:caption) > 0">
+		       		<xsl:apply-templates select="child::dtb:caption[1]" mode="mediaCaption"/>
+	       		</xsl:if>
+				<!-- add the toggle if there is more than one caption or a prodnote - long description -->
+				<xsl:if test="count(child::dtb:caption) > 1 or count(child::dtb:prodnote) > 0">
+					<div class="collapseBox">
+						<h5 wicket:id="objectToggleHeader_" src="{@src}">More Information</h5>
+						<div class="collapseBody">
+							<xsl:apply-templates
+								select="child::dtb:caption[position()&gt;1]"
+								mode="caption" />
+							<xsl:apply-templates select="child::dtb:prodnote"
+								mode="prodnote" />
+						</div>
+					</div>
+				</xsl:if>
+			</div>
+		</div>
+	</xsl:template>  
+    
     
     <xsl:template match="dtb:param">
 	  	<param>
@@ -255,7 +263,7 @@
                 <xsl:when test="@width != ''">
                     <xsl:value-of select="@width" />
                 </xsl:when>
-                <xsl:otherwise>200</xsl:otherwise>
+                <xsl:otherwise>400</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="height">
@@ -263,6 +271,10 @@
 				<xsl:when test="@height != ''">
                     <xsl:value-of select="@height" />
                 </xsl:when>
+                <!-- if there is no height for an mp3 just display the control bar -->
+       			<xsl:when test="contains(@src, '.mp3')">
+                    <xsl:text>25</xsl:text>
+	            </xsl:when>
                 <xsl:otherwise>170</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -270,20 +282,20 @@
 		<xsl:variable name="captions" select="dtb:param[@name='captions']/@value"/>
 		<xsl:variable name="audiodescription" select="dtb:param[@name='audiodescription']/@value"/>
         <div class="objectBox center">
-	        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}">
-	        	<xsl:if test="$poster">
-	        		<xsl:attribute name="poster"><xsl:value-of select="$poster"/></xsl:attribute>
-	        	</xsl:if>
-	        	<xsl:if test="$captions">
-	        		<xsl:attribute name="captions"><xsl:value-of select="$captions"/></xsl:attribute>
-	        	</xsl:if>
-	        	<xsl:if test="$audiodescription">
-	        		<xsl:attribute name="audiodescription"><xsl:value-of select="$audiodescription"/></xsl:attribute>
-	        	</xsl:if>
+			<div class="mediaPlaceholder" style="width:{$width}px; height:{$height}px;">
+		        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}">
+		        	<xsl:if test="$poster">
+		        		<xsl:attribute name="poster"><xsl:value-of select="$poster"/></xsl:attribute>
+		        	</xsl:if>
+		        	<xsl:if test="$captions">
+		        		<xsl:attribute name="captions"><xsl:value-of select="$captions"/></xsl:attribute>
+		        	</xsl:if>
+		        	<xsl:if test="$audiodescription">
+		        		<xsl:attribute name="audiodescription"><xsl:value-of select="$audiodescription"/></xsl:attribute>
+		        	</xsl:if>
+		        </div>
 	        </div>
-            <div class="objectCaption">
-            	<xsl:apply-templates select="dtb:caption" />
-            </div>
+		 	<xsl:call-template name="objectCaption" />
         </div>
     </xsl:template>
 
@@ -577,7 +589,7 @@
 		<div wicket:id="{$itemid}" class="responseMCItem">
 			<xsl:copy-of select="ancestor::dtb:item/@correct" />
 			<input wicket:id="radio" type="radio">
-				<xsl:copy-of select="&catts;" />
+   				<xsl:copy-of select="&catts;" />
 			</input>
 			<label wicket:id="label">
 				<xsl:apply-templates />

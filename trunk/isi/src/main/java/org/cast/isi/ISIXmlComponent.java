@@ -239,16 +239,16 @@ public class ISIXmlComponent extends XmlComponent {
 			return thumbPanel;
 
 		} else if (wicketId.startsWith("videoplayer_")) {
-			String videoSrc = elt.getAttributeNS(null, "src");
+			final String videoSrc = elt.getAttributeNS(null, "src");
+			ResourceReference videoRef = getRelativeRef(videoSrc);
+			String videoUrl = RequestCycle.get().urlFor(videoRef).toString();
+
 			Integer width = Integer.valueOf(elt.getAttributeNS(null, "width"));
 			Integer height = Integer.valueOf(elt.getAttributeNS(null, "height"));
 			String preview = elt.getAttributeNS(null, "poster");
 			String captions = elt.getAttributeNS(null, "captions");
 			String audioDescription = elt.getAttributeNS(null, "audiodescription");
 			
-			ResourceReference videoRef = getRelativeRef(videoSrc);
-			String videoUrl = RequestCycle.get().urlFor(videoRef).toString();
-
 			MediaPlayerPanel comp = new MediaPlayerPanel(wicketId, videoUrl, width, height) {
 				private static final long serialVersionUID = 1L;
 				@Override
@@ -277,6 +277,7 @@ public class ISIXmlComponent extends XmlComponent {
 			String audioSrc = elt.getAttributeNS(null, "src");
 			ResourceReference audioRef = getRelativeRef(audioSrc);
 			String audioUrl = RequestCycle.get().urlFor(audioRef).toString();
+
 			int width = 400;
 			if (!elt.getAttributeNS(null, "width").equals("")) {
 				try {
@@ -289,6 +290,11 @@ public class ISIXmlComponent extends XmlComponent {
 			AudioPlayerPanel player = new AudioPlayerPanel(wicketId, audioUrl, width, 20);
 			player.setShowDownloadLink(false);
 			player.setRenderBodyOnly(true);
+
+			String preview = elt.getAttributeNS(null, "poster");
+			if (!Strings.isEmpty(preview))
+				player.setPreview(getRelativeRef(preview));
+			
 			return player;
 
 		} else if (wicketId.startsWith("swf_")) {
@@ -428,7 +434,15 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("imgToggleHeader_")) {
 			// long description header for toggle area
-			return new Label(wicketId, new ResourceModel("longDescription.toggleHeading", "image information"));
+			return new Label(wicketId, new ResourceModel("imageLongDescription.toggleHeading", "image information"));
+
+		} else if (wicketId.startsWith("objectToggleHeader_")) {
+			// long description header for toggle area
+			String src = elt.getAttributeNS(null, "src");
+			add(new AttributeRemover("src"));
+			if (src.contains(".mp3"))
+				return new Label(wicketId, new ResourceModel("audioLongDescription.toggleHeading", "more audio information"));
+			return new Label(wicketId, new ResourceModel("videoLongDescription.toggleHeading", "more video information"));
 			
 		} else if (wicketId.startsWith("annotatedImage_")) {
 			// image with hotspots
