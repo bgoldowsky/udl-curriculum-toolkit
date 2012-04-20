@@ -19,10 +19,6 @@
  */
 package org.cast.isi.panel;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,11 +29,6 @@ import org.cast.cwm.data.component.DialogBorder;
 
 public abstract class RemoveDialog extends Panel {
 	
-	static {
-		List<ResourceReference> noStylesheets = Collections.emptyList();
-		DialogBorder.setStyleReferences(noStylesheets);
-	}
-
 	protected final DialogBorder db;
 	
 	private static final long serialVersionUID = 1L;

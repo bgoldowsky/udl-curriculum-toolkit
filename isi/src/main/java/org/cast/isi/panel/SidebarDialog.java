@@ -19,13 +19,9 @@
  */
 package org.cast.isi.panel;
 
-import java.util.Collections;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.cast.cwm.data.component.DialogBorder;
@@ -44,11 +40,6 @@ public class SidebarDialog extends DialogBorder {
 	@Getter @Setter
 	protected String verticalReferencePointId;
 	
-	static {
-		List<ResourceReference> noStylesheets = Collections.emptyList();
-		SidebarDialog.setStyleReferences(noStylesheets);
-	}
-
 	/**
 	 * Construct.
 	 * 
