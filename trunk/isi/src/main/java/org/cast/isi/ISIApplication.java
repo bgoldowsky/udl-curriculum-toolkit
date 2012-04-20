@@ -21,6 +21,7 @@ package org.cast.isi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
@@ -39,6 +40,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Resource;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -65,6 +67,7 @@ import org.cast.cwm.components.service.JavascriptService;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
+import org.cast.cwm.data.component.DialogBorder;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
 import org.cast.cwm.dav.DavClientManager;
 import org.cast.cwm.dav.DavResource;
@@ -258,7 +261,11 @@ public abstract class ISIApplication extends CwmApplication {
 		// load the xml documents and xsl transformers
 		loadXmlFiles();
 		loadXslFiles();
-		
+
+		// Tell dialog border to not use it's css
+		List<ResourceReference> noStylesheets = Collections.emptyList();
+		DialogBorder.setStyleReferences(noStylesheets);
+
 		// Generally helpful log statement.
 		if (!DEVELOPMENT.equalsIgnoreCase(getConfigurationType())) {
 			log.warn("********************** Wicket is running in Deployment Mode **********************");

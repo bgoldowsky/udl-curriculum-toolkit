@@ -19,10 +19,6 @@
  */
 package org.cast.isi.component;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.Model;
 import org.cast.cwm.data.component.DialogBorder;
 import org.slf4j.Logger;
@@ -51,17 +47,12 @@ public class HotSpotComponent extends DialogBorder {
 	protected String imgSrc = "";
 	protected String title = ""; 
 
-
 	/**
 	 * @param id
 	 * @param elt
 	 */
 	public HotSpotComponent(String id, Element elt) {
 		super(id, new Model<String>(elt.getAttributeNS(null,"title")));
-
-		// don't use the stylesheet from dialogBorder
-		List<ResourceReference> noStylesheets = Collections.emptyList();
-		setStyleReferences(noStylesheets);
 
 		this.hotSpotId = getContentContainer().getMarkupId();
 		this.top = (elt.getAttributeNS(null,"top").trim().equals("") ? "0" : elt.getAttributeNS(null,"top"));
