@@ -227,26 +227,28 @@
     </xsl:template>
 
 	<xsl:template name="objectCaption">
-		<div class="objectCaption">
-	       	<div class="objectText">
-	       		<xsl:if test="count(child::dtb:caption) > 0">
-		       		<xsl:apply-templates select="child::dtb:caption[1]" mode="mediaCaption"/>
-	       		</xsl:if>
-				<!-- add the toggle if there is more than one caption or a prodnote - long description -->
-				<xsl:if test="count(child::dtb:caption) > 1 or count(child::dtb:prodnote) > 0">
-					<div class="collapseBox">
-						<h5 wicket:id="objectToggleHeader_" src="{@src}">More Information</h5>
-						<div class="collapseBody">
-							<xsl:apply-templates
-								select="child::dtb:caption[position()&gt;1]"
-								mode="caption" />
-							<xsl:apply-templates select="child::dtb:prodnote"
-								mode="prodnote" />
+		<xsl:if test="count(child::dtb:caption) > 0 or count(child::dtb:prodnote) > 0">
+			<div class="objectCaption">
+		       	<div class="objectText">
+		       		<xsl:if test="count(child::dtb:caption) > 0">
+			       		<xsl:apply-templates select="child::dtb:caption[1]" mode="mediaCaption"/>
+		       		</xsl:if>
+					<!-- add the toggle if there is more than one caption or a prodnote - long description -->
+					<xsl:if test="count(child::dtb:caption) > 1 or count(child::dtb:prodnote) > 0">
+						<div class="collapseBox">
+							<h5 wicket:id="objectToggleHeader_" src="{@src}">More Information</h5>
+							<div class="collapseBody">
+								<xsl:apply-templates
+									select="child::dtb:caption[position()&gt;1]"
+									mode="caption" />
+								<xsl:apply-templates select="child::dtb:prodnote"
+									mode="prodnote" />
+							</div>
 						</div>
-					</div>
-				</xsl:if>
+					</xsl:if>
+				</div>
 			</div>
-		</div>
+		</xsl:if>
 	</xsl:template>  
     
     
@@ -275,7 +277,9 @@
        			<xsl:when test="contains(@src, '.mp3')">
                     <xsl:text>25</xsl:text>
 	            </xsl:when>
-                <xsl:otherwise>170</xsl:otherwise>
+                <xsl:otherwise>
+                    <xsl:text>170</xsl:text>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="poster" select="dtb:param[@name='poster']/@value"/>
