@@ -26,27 +26,14 @@
 	</wicket:fragment>
 
 	<wicket:fragment wicket:id="tableFragment">	
-	
-		<table>
-		<tr>
-			<td></td>
-			<td align="right"><a href="javascript:void(0)" wicket:id="removeColumn"  onclick="cwmRemoveColumn();" class="button"><img src="img/icons/delete.png" width="12" height="12" alt="remove column" /></a></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td valign="bottom"><a href="javascript:void(0)" wicket:id="removeRow" onclick="cwmRemoveRow();" class="button"><img src="img/icons/delete.png" width="12" height="12" alt="remove row" /></a></td>
-			<td><div wicket:id="gridDiv" class="gridDiv"></div></td>
-			<td valign="top"><a href="javascript:void(0)" wicket:id="addColumn" onclick="cwmAddColumn();" class="button"><img src="img/icons/add.png" width="12" height="12" alt="add column" /></a></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td align="left"><a href="javascript:void(0)" wicket:id="addRow" onclick="cwmAddRow();" class="button"><img src="img/icons/add.png" width="12" height="12" alt="add row" /></a></td>		
-			<td></td>
-		</tr>
-		</table>
-
+        <div class="dataTableEdit">
+			<div wicket:id="gridDiv" class="gridDiv"></div>
+			<a href="javascript:void(0)" wicket:id="addColumn" class="button addColumn"><img src="img/icons/add.png" width="12" height="12" alt="add column" /></a>
+			<a href="javascript:void(0)" wicket:id="removeColumn" class="button delColumn"><img src="img/icons/delete.png" width="12" height="12" alt="remove column" /></a>
+			<a href="javascript:void(0)" wicket:id="addRow" class="button addRow"><img src="img/icons/add.png" width="12" height="12" alt="add row" /></a>		
+			<a href="javascript:void(0)" wicket:id="removeRow" class="button delRow"><img src="img/icons/delete.png" width="12" height="12" alt="remove row" /></a>
+		</div>		
 		<form wicket:id="form" class="autosave">
-			<!-- TODO change from textarea to hidden input once working - ldm -->
  			<input type="hidden" wicket:id="tableContent"></input>
 			<div wicket:id="titleFragment"></div>
 		</form>
