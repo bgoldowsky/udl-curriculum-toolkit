@@ -1044,69 +1044,6 @@ ul li, ol li {
 }
 
 /*================================================================*/
-/* Data Table Response (Editable Table) */
-
-.dataTableResponse {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border: 1px solid #BDBDBD;
-    border-collapse: collapse;
-    margin: 0 0 1em;
-    width: 100%;
-}
-.dataTableResponse thead {
-    display: none;
-}
-.dataTableResponse th {
-    display: none;
-}
-.dataTableResponse td {
-    border: 1px solid #BDBDBD;
-    padding: 3px;
-    text-align: left;
-    vertical-align: top;
-    height: 1.75em;
-    min-width: 5em;
-}
-.dataTableResponse caption {
-	display: none;
-}
-
-/*================================================================*/
-/* Editable Table Controls */
-
-.dataTableEdit {
-    position: relative;
-    padding: 1.9em 2.5em;
-    margin: 0px 0px 1em 0px;
-}
-
-.dataTableEdit table {
-    margin-bottom: 0;
-}
-
-.dataTableEdit .addColumn {
-    position: absolute;
-    top: 2.1em;
-    right: 0;
-}
-.dataTableEdit .delColumn {
-    position: absolute;
-    top: 0;
-    right: 2.75em;
-}
-.dataTableEdit .addRow {
-    position: absolute;
-    bottom: 0;
-    left: 2.75em;
-}
-.dataTableEdit .delRow {
-    position: absolute;
-    bottom: 2.1em;
-    left: 0;
-}
-
-
-/*================================================================*/
 /* Content Items */
 
 h1 {
