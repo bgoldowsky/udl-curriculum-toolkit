@@ -1007,22 +1007,6 @@ ul li, ol li {
 /*================================================================*/
 /* Data Table */
 
-.dataTableResponse {
-	
-}
-.dataTableResponse thead {
-    display: none;
-}
-.dataTableResponse th {
-    display: none;
-}
-.dataTableResponse td {
-    min-width: 5em;
-}
-.dataTableResponse caption {
-	display: none;
-}
-
 .dataTable {
     background: none repeat scroll 0 0 #FFFFFF;
     border: 1px solid #BDBDBD;
