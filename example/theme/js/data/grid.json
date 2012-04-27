@@ -1,9 +1,0 @@
-{"metadata":[
-	{"name":"c1","label":"Column 1","datatype":"string","editable":true},
-	{"name":"c2","label":"Column 2","datatype":"string","editable":true},
-],
-
-"data":[
-	{"id":1, "values":{"c1":"uk","c2":33}},
-	{"id":2, "values":{"c1":"uk","c2":33}},
-]}
