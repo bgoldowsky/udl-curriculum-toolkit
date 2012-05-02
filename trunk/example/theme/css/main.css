@@ -27,6 +27,20 @@ input {
     font-size: 1.0em;
 }
 
+.formRow {
+    clear: both;
+    margin: 0 0 0.5em;
+}
+.formRow:after {
+    content: ".";
+    height: 0px;
+    display: block;
+    clear: both;
+    overflow: hidden;
+    visibility: hidden;
+}
+*:first-child+html .formRow { height: 100%; } /* IE7 */
+
 a { color: #686868; }
 a:hover, a:focus { color: #1E2D56; }
 
@@ -1116,4 +1130,52 @@ hr {
 .incorrect {
     font-weight: bold;
     color: #790C00;
+}
+
+/*================================================================*/
+/* Account Pages */
+
+.themeAccount #wrapper {
+    margin-top: 15px;
+}
+
+.themeAccount #mainWrapper {
+    background-image: none;
+    border: 0;
+}
+
+.themeAccount label {
+    float: left;
+    font-weight: bold;
+    width: 120px;
+    text-align: right;
+    margin-top: 0.15em;
+}
+.themeAccount label.labelRight {
+    display: block;
+    width: 400px;
+    margin-left: 10px;
+    text-align: left;
+    vertical-align: top;
+    font-weight: normal;
+}
+.themeAccount .inputRight {
+    margin-left: 130px;
+}
+
+.themeAccount input[type=text], .themeAccount input[type=password] {
+    float: left;
+    margin-left: 10px;
+    width: 243px;
+}
+.themeAccount .inputLeft {
+    display: block;
+    float: left;
+    width: 120px;
+    text-align: right;
+    margin-top: 0.15em;
+}
+
+.themeAccount .errorMsg {
+    color: #FF0000;
 }
