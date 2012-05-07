@@ -72,7 +72,6 @@ public class AddPeriodPanel extends Panel {
 			periodName.add(new SimpleAttributeModifier("maxlength", "32"));
 			periodName.setRequired(true);
 			periodName.setOutputMarkupId(true);
-			final String periodNameMarkupId = periodName.getMarkupId();
 
 			final FeedbackPanel feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(this));
 			feedback.setMaxMessages(1);
@@ -93,13 +92,18 @@ public class AddPeriodPanel extends Panel {
 
 				@Override
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-					newPeriodForm.setDefaultModel(new HibernateObjectModel<Period>(SiteService.get().newPeriod()));
 					if (target != null) {
 						// update the period dropdown
 						target.addChildren(getPage(), PeriodStudentSelectPanel.class);
+						
+						// replace the form
+						NewPeriodForm tempNewPeriodForm =  new NewPeriodForm("newPeriodForm");
+						tempNewPeriodForm.setOutputMarkupId(true);
+						newPeriodForm.replaceWith(tempNewPeriodForm);
+						newPeriodForm = tempNewPeriodForm;
 						target.addComponent(newPeriodForm);
-						//TODO fix this so that the name field is empty for multiple new classes
-						target.appendJavascript("$('#" + periodNameMarkupId +"').val('');");
+						
+						// hide the form
 						target.appendJavascript("$('#" + addPeriodPanelMarkupId + "').hide();");
 					}	
 				}
@@ -109,6 +113,7 @@ public class AddPeriodPanel extends Panel {
 					if (target != null)
 						target.addComponent(feedback);
 				}
+				
 			});
 			
 		}
