@@ -33,7 +33,6 @@
 							<!--<h2>Secondary Header?</h2> -->
 
 							<p wicket:id="feedback" class="errorMsg"></p>
-
 							<form wicket:id="registerForm" name="signUp" id="signUp"
 								action="#">
 								<div class="formRow">
@@ -106,13 +105,15 @@
 											value="Create a Free Account" />
 									</div>
 								</div>
+							</form>
 								<div class="formRow">
 									<div class="inputRight">
-										<a wicket:id="login" href="#">Sign in with an existing account.</a> | 
-										<a wicket:id="forgot" href="#">Forgot your password?</a>
+										<a wicket:id="login" href="#">Sign in with an existing account.</a>
+										<wicket:enclosure> | 
+											<a wicket:id="forgot" href="#">Forgot your password?</a>
+										</wicket:enclosure>
 									</div>
 								</div>
-							</form>
 						</div>
 					</div>
 				</div>

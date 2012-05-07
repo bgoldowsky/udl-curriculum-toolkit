@@ -64,8 +64,10 @@ import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.CwmPopupSettings;
 import org.cast.cwm.data.IResponseType;
+import org.cast.cwm.data.Period;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
+import org.cast.cwm.data.Site;
 import org.cast.cwm.data.component.DialogBorder;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
 import org.cast.cwm.dav.DavClientManager;
@@ -79,6 +81,7 @@ import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.indira.IndiraMarkupParserFactory;
 import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.HighlightService;
+import org.cast.cwm.service.SiteService;
 import org.cast.cwm.tag.TagService;
 import org.cast.cwm.xml.FileResource;
 import org.cast.cwm.xml.IDocumentObserver;
@@ -197,10 +200,10 @@ public abstract class ISIApplication extends CwmApplication {
 	//email related
 	@Getter protected String EMAIL_FILE_NAME = "email.xml";
 	@Getter protected String EMAIL_TRANSFORMER = "email";
-	// Application URL - needed for emailing links
+
+	// Application URL - needed for email links
 	@Getter protected String url;
 	@Getter protected XmlDocument emailContent;
-
 	
 	protected List<IDocumentObserver> documentObservers = new ArrayList<IDocumentObserver>();
 	protected static Time lastFileCheck;
@@ -900,6 +903,40 @@ public abstract class ISIApplication extends CwmApplication {
 	public ISIXmlSection getPageNum(int num) {
 		return (ISIXmlSection) studentContent.getByLabel(ISIXmlSection.SectionType.PAGE, num);
 	}
+
+	
+	/**
+	 * Configure the default period
+	 */
+	public IModel<? extends Period> getMDefaultPeriod() {
+		// Set the default Period
+		String periodName =  appProperties.getProperty("app.defaultPeriod");
+		if (periodName != null) {
+			periodName = periodName.trim();
+			return SiteService.get().getPeriodByName(periodName);		
+		} else {
+			// error if this period doesn't exist
+			log.error("No default period was found");
+		}		
+		return null;
+	}
+
+	/**
+	 * Configure the default site
+	 */
+	public IModel<? extends Site> getMDefaultSite() {
+	// Set the default Site
+		String siteName =  appProperties.getProperty("app.defaultSite");
+		if (siteName != null) {
+			siteName = siteName.trim();
+			return SiteService.get().getSiteByName(siteName);		
+		} else {
+			// error if this site doesn't exist
+			log.error("No default site was found");
+		}
+		return null;
+	}
+
 
 	/**
 	 * Return the ContentLoc of the most recent page the user visited.

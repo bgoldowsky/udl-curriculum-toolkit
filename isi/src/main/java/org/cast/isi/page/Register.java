@@ -1,10 +1,13 @@
 package org.cast.isi.page;
 
 import java.util.Date;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.databinder.auth.components.RSAPasswordTextField;
 import net.databinder.auth.valid.EqualPasswordConvertedInputValidator;
 import net.databinder.components.hib.DataForm;
+import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.PageParameters;
@@ -24,12 +27,15 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.PatternValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Role;
+import org.cast.cwm.data.Site;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.FeedbackBorder;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator.Field;
 import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.SiteService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
@@ -74,13 +80,15 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 				return;
 			}
 		}
-		
 		add (new FeedbackPanel("feedback") {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public boolean isVisible() { return anyMessage(); }
 		});
 		add (new RegisterForm("registerForm"));
+
+		add (new BookmarkablePageLink<Void>("forgot", ForgotPassword.class).setVisible(!success));
+		add (new BookmarkablePageLink<Void>("login", Login.class));
 		add(ISIApplication.get().getFooterPanel("pageFooter", params));
 		
 	}
@@ -101,12 +109,11 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			TextField<String> email;
 			TextField<String> verifyEmail;
 
-			radioGroup = new RadioGroup<Role>("userType", new Model<Role>());
+			radioGroup = new RadioGroup<Role>("userType", new Model<Role>(Role.STUDENT));
 			add(radioGroup);
 			radioGroup.add(new Radio<Role>("teacher", new Model<Role>(Role.TEACHER), radioGroup));
 			radioGroup.add(new Radio<Role>("student", new Model<Role>(Role.STUDENT), radioGroup));
 			radioGroup.setRequired(true);
-			radioGroup.setLabel(Model.of("Type of User"));
 			
 			
 			add(new FeedbackBorder("usernameBorder")
@@ -151,8 +158,6 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			add(new EqualPasswordConvertedInputValidator(password, verifyPassword));
 			add(new EqualInputValidator(email, verifyEmail));
 			
-			add (new BookmarkablePageLink<Void>("forgot", ForgotPassword.class));
-			add (new BookmarkablePageLink<Void>("login", Login.class));
 		}
 
 		@Override
@@ -163,20 +168,60 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 		@Override
 		protected void onBeforeSave(HibernateObjectModel<User> model) {
 			User user = model.getObject();
-			user.setRole((Role) radioGroup.getDefaultModelObject());
+			Role userRole = (Role) radioGroup.getDefaultModelObject();
+			user.setRole(userRole);
 			user.setCreateDate(new Date());
 			user.setValid(false);
 			user.generateSecurityToken();
 			user.setPassword(password.getConvertedInput());
+			if (userRole.equals(Role.STUDENT)) {
+				// add user to the default period
+				user.getPeriods().clear();
+				user.getPeriods().add(ISIApplication.get().getMDefaultPeriod().getObject());				
+			} else {
+				createDefaultTeacher(user);
+			}
+			
 			String url = "/register?username=" + user.getUsername() + "&key=" + user.getSecurityToken();
 			ISIEmailService.get().sendXmlEmail(model, ISIEmailService.EMAIL_CONFIRM, url);
-
-			// TODO: put user in the default class
 			
 			String confirmation = new StringResourceModel("Registration.confirmation", this, null,
-					"Thank you! In a few minutes you should get an email.  You will need to click on the link in that email in order to confirm your account.").getString();
+					"Thank you! In a few minutes you should get an email.  You will need to click on the link in " +
+					"that email in order to confirm your account.").getString();
 			info(confirmation);
 			success = true;
+		}
+
+		// TODO: consider moving this into a service class - LDM
+		protected void createDefaultTeacher(User user) {
+			// teachers need a default period created in the default site
+			Site site = ISIApplication.get().getMDefaultSite().getObject();
+			
+			SortedSet<User> userSet = new TreeSet<User>();
+			userSet.add(user);
+
+			Period newPeriod = SiteService.get().newPeriod();
+			newPeriod.setSite(site);
+			newPeriod.setName("Class_" + user.getUsername()); // make this unique
+			
+			SortedSet<Period> periodSet = new TreeSet<Period>();
+			periodSet.add(newPeriod);
+			user.getPeriods().add(newPeriod);
+			
+			// a default student must be added to the new period
+			User studentUser = UserService.get().newUser();
+			studentUser.setRole(Role.STUDENT);
+			studentUser.setFirstName("GuestStudent");
+			studentUser.setLastName(newPeriod.getName());
+			studentUser.setUsername(newPeriod.getName());
+			studentUser.getPeriods().add(newPeriod);
+			
+			// add the teacher and the default student to the new default class
+			userSet.add(studentUser);
+			newPeriod.setUsers(userSet);
+			
+			Databinder.getHibernateSession().save(newPeriod);
+			Databinder.getHibernateSession().save(studentUser);				
 		}
 	
 	}
