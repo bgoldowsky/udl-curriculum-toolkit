@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
+import lombok.Setter;
 import net.databinder.hib.Databinder;
 
 import org.apache.wicket.PageParameters;
@@ -32,6 +33,7 @@ import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -50,6 +52,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator.MaximumLengthValidator;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Role;
@@ -59,14 +62,16 @@ import org.cast.cwm.data.component.DeletePersistedObjectDialog;
 import org.cast.cwm.data.component.PeriodChoice;
 import org.cast.cwm.data.validator.UniqueDataFieldValidator;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator;
-import org.cast.cwm.data.validator.UniqueUserInPeriodValidator;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator.Field;
+import org.cast.cwm.data.validator.UniqueUserInPeriodValidator;
 import org.cast.cwm.service.CwmService;
 import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISISession;
+import org.cast.isi.component.AddPeriodPanel;
 import org.cast.isi.data.ClassMessage;
 import org.cast.isi.data.StudentFlag;
+import org.cast.isi.panel.PeriodStudentSelectPanel;
 import org.cast.isi.panel.StudentFlagPanel;
 import org.cast.isi.service.ISIResponseService;
 import org.slf4j.Logger;
@@ -84,9 +89,13 @@ public class ManageClasses extends ISIStandardPage {
 	private static final Logger log = LoggerFactory.getLogger(ManageClasses.class);
 	private final HashMap<Long, Boolean> flagMap;
 	private WebMarkupContainer periodTitle;
-	private EditPeriodForm editPeriodForm;
+	private EditStudentForm editStudentForm;
+	private EditPeriodForm editPeriodForm; 
+	private AddPeriodPanel addPeriodPanel;
 	private FeedbackPanel feedback;
 	private MoveForm moveForm;
+	private ISortableDataProvider<User> studentListProvider;
+	
 	
 	public ManageClasses(final PageParameters param) {
 		super(param);
@@ -110,28 +119,50 @@ public class ManageClasses extends ISIStandardPage {
 					target.addComponent(editPeriodForm);
 				}
 			}
-		});		
-		
+		});	
 		// Edit Period Form
 		editPeriodForm = new EditPeriodForm("editPeriodForm", ISISession.get().getCurrentPeriodModel());
 		add(editPeriodForm);
 		editPeriodForm.setOutputMarkupPlaceholderTag(true);
 		editPeriodForm.setVisible(false);
 		
-		final EditStudentForm form = new EditStudentForm("editStudentForm");
-		add(form);
-		
+		// New Period
+		addPeriodPanel = new AddPeriodPanel("addPeriodPanel");
+		add(addPeriodPanel);
+		addPeriodPanel.setOutputMarkupPlaceholderTag(true);
+		addPeriodPanel.setVisible(false);
+		AjaxFallbackLink<Object> addPeriodButton = new AjaxFallbackLink<Object>("addPeriodButton") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				addPeriodPanel.setVisible(true);
+				if (target != null) {
+					target.addComponent(addPeriodPanel);
+				}				
+			}			
+		};
+		add(addPeriodButton);
+
+
+		// Load flags for this period and this teacher
+		// Do just once so we're not querying for every single flag.
+		flagMap = new HashMap<Long, Boolean>();
+		List<StudentFlag> l = ISIResponseService.get().getAllFlags();
+		for (StudentFlag f : l) {
+			flagMap.put(f.getFlagee().getId(), true);
+		}
+				
 		// "Add Student" button
 		add(new EditLink<Void>("addStudentButton") {
-			
 			private static final long serialVersionUID = 1L;
 			
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				IModel<User> user = new CompoundPropertyModel<User>(UserService.get().newUser());
 				FormRowFragment newFragment = new FormRowFragment("newStudent", user);
-				form.setModel(user);
-				form.replace(newFragment);
+				editStudentForm.setModel(user);
+				editStudentForm.replace(newFragment);
 				ManageClasses.this.visitChildren(EditLink.class, EditLink.getVisitor(target, false));
 				
 				if (target != null) {
@@ -141,26 +172,25 @@ public class ManageClasses extends ISIStandardPage {
 			}
 		});
 		
-		// Load flags for this period and this teacher
-		// Do just once so we're not querying for every single flag.
-		flagMap = new HashMap<Long, Boolean>();
-		List<StudentFlag> l = ISIResponseService.get().getAllFlags();
-		for (StudentFlag f : l) {
-			flagMap.put(f.getFlagee().getId(), true);
-		}
+		// Form for editing student
+		editStudentForm = new EditStudentForm("editStudentForm");
+		add(editStudentForm);
 		
 		// A row for creating a new student; hidden by default.
-		form.add(new WebMarkupContainer("newStudent").setVisible(false).setOutputMarkupPlaceholderTag(true));
+		editStudentForm.add(new WebMarkupContainer("newStudent").setVisible(false).setOutputMarkupPlaceholderTag(true));
+
+		studentListProvider = UserService.get().getUncachedUserListProvider(ISISession.get().getCurrentPeriodModel());
 
 		// A list of students
-		form.add(new DataView<User>("studentList", UserService.get().getUserListProvider(ISISession.get().getCurrentPeriodModel())) {
+		editStudentForm.add(new DataView<User>("studentList", studentListProvider) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void populateItem(Item<User> item) {
-				item.add(new DisplayRowFragment("fragment", item.getModel()));
+				item.add(new DisplayRowFragment("studentFragment", item.getModel()));
 			}
 		});
+		editStudentForm.setOutputMarkupId(true);
 		
 		// Feedback panel
 		feedback = new FeedbackPanel("feedback");
@@ -182,47 +212,84 @@ public class ManageClasses extends ISIStandardPage {
 	 */
 	protected class MoveForm extends Form<User> {
 		private static final long serialVersionUID = 1L;
-		private PeriodChoice periodChoice2;
+		private PeriodChoice periodChoiceMove;
+		@Setter private User user = null;
 
 		public MoveForm(String id) {
 			super(id);
-			add(new Label("lastName"));
-			add(new Label("firstName"));
+			
+			add(new Label("lastName",  new Model<String>() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public String getObject() {
+					if (getDefaultModelObject() == null)
+						return "";
+					else {
+						return user.getLastName();
+					}
+				}
+			}));
+			add(new Label("firstName",  new Model<String>() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public String getObject() {
+					if (getDefaultModelObject() == null)
+						return "";
+					else {
+						return user.getFirstName();
+					}
+				}
+			}));
 			add(new Label("currentPeriod", new PropertyModel<String>(ISISession.get().getCurrentPeriodModel(), "name")));
-			periodChoice2 = new PeriodChoice("newPeriod", ISISession.get().getCurrentPeriodModel());
-			add(periodChoice2);
+			periodChoiceMove = new PeriodChoice("newPeriod", ISISession.get().getCurrentPeriodModel());
+			add(periodChoiceMove);
 			FeedbackPanel f = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(this));
 			add(f);
+			
+			AjaxSubmitLink moveLink = new AjaxSubmitLink("moveLink"){
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+					ManageClasses.this.visitChildren(EditLink.class, EditLink.getVisitor(target, false));
+					moveForm.setVisible(false);
+
+				}
+									
+			};
+			add(moveLink);
+			
 		}
 		
 		@Override
 		protected void onSubmit() {
 			super.onSubmit();
-			IModel<Period> mCurrentPeriod = ISISession.get().getCurrentPeriodModel();
 			User currentUser = getModelObject();
-			Period newPeriod = periodChoice2.getModelObject();
+			Period currentPeriod = currentUser.getPeriods().first();
+			Period newPeriod = periodChoiceMove.getModelObject();
 			
 			// Ensure that someone else does not have the same first and last name in the destination period 
-			IModel<User> mOtherUser = UserService.get().getByFullnameFromPeriod(currentUser.getFirstName(), currentUser.getLastName(), periodChoice2.getModel());
+			IModel<User> mOtherUser = UserService.get().getByFullnameFromPeriod(currentUser.getFirstName(), currentUser.getLastName(), periodChoiceMove.getModel());
 			boolean error = false;
 			if (mOtherUser != null && mOtherUser.getObject() != null && !mOtherUser.getObject().getId().equals(currentUser.getId()) ) {
 				error("Move Failed: A student with that name already exists in " + newPeriod.getName() + ". \n");
 				error = true;
-			} else 
-			if (newPeriod.equals(mCurrentPeriod)) {
+			} else if (newPeriod == currentPeriod) {
 				error("Cannot move student to the same period");
-				error = true;
-			} else {
-				Databinder.getHibernateSession().evict(mOtherUser); // Evict "other" person by convention, but it shouldn't happen here
+				error = true;			
 			}
 
 			if (!error) {
 				currentUser.getPeriods().clear();
 				currentUser.getPeriods().add(newPeriod);
+				
 				CwmService.get().flushChanges();
 				EventService.get().saveEvent("student:periodmove", "Student: " + currentUser.getId() + 
-						"; From PeriodId " + mCurrentPeriod.getObject().getId() + " to PeriodId " + newPeriod.getId(), getPageName());
-			}
+						"; From PeriodId " + currentPeriod.getId() + " to PeriodId " + newPeriod.getId(), getPageName());
+			}	
+
 		}		
 	}
 	
@@ -240,9 +307,10 @@ public class ManageClasses extends ISIStandardPage {
 			
 			// Labels to display student information when not actively editing
 			add(new StudentFlagPanel("studentFlagPanelLabel", mUser.getObject(), flagMap));
-			add(new Label("lastName"));
-			add(new Label("firstName"));
-			add(new Label("username"));
+			add(new Label("lastName", mUser.getObject().getLastName()));
+			add(new Label("firstName", mUser.getObject().getFirstName()));
+			add(new Label("email", mUser.getObject().getEmail()));
+			add(new Label("username", mUser.getObject().getUsername()));
 			add(new Label("password", new Model<String>("******")));
 			
 			// Link for editing a student (basically an Ajax request to hide student and show the form.
@@ -252,7 +320,7 @@ public class ManageClasses extends ISIStandardPage {
 				@Override
 				public void onClick(AjaxRequestTarget target) {
 					findParent(EditStudentForm.class).setModel(mUser);
-					FormRowFragment newFragment = new FormRowFragment("fragment", mUser);
+					FormRowFragment newFragment = new FormRowFragment("studentFragment", mUser);
 					DisplayRowFragment.this.replaceWith(newFragment);
 					ManageClasses.this.visitChildren(EditLink.class, EditLink.getVisitor(target, false));
 					
@@ -282,17 +350,23 @@ public class ManageClasses extends ISIStandardPage {
 			
 			add(new StudentFlagPanel("studentFlagPanel", mUser.getObject(), flagMap).setVisible(!newStudent));
 
-			TextField<String> lastName = new TextField<String>("lastName");
+			TextField<String> lastName = new TextField<String>("lastName", new PropertyModel<String>(mUser, "lastName"));
 			lastName.setRequired(true);
 			lastName.add(new SimpleAttributeModifier("maxlength", "32"));
 			add(lastName);
 					
-			TextField<String> firstName = new TextField<String>("firstName");
+			TextField<String> firstName = new TextField<String>("firstName", new PropertyModel<String>(mUser, "firstName"));
 			firstName.setRequired(true);
 			firstName.add(new SimpleAttributeModifier("maxlength", "32"));
 			add(firstName);
 
-			TextField<String> userName = new TextField<String>("username");
+			// E-mail Address
+			TextField<String> email = new TextField<String>("email", new PropertyModel<String>(mUser, "email"));
+			email.add(EmailAddressValidator.getInstance());
+			email.add(new UniqueUserFieldValidator(mUser, Field.EMAIL));
+			add(email);
+
+			TextField<String> userName = new TextField<String>("username", new PropertyModel<String>(mUser, "username"));
 			userName.add(new SimpleAttributeModifier("maxlength", "32"));
 			userName.setRequired(true);
 			userName.add(new UniqueUserFieldValidator(mUser, Field.USERNAME));
@@ -327,7 +401,7 @@ public class ManageClasses extends ISIStandardPage {
 						target.addComponent(findParent(EditStudentForm.class));
 						FormRowFragment.this.replaceWith(new WebMarkupContainer("newStudent").setVisible(false).setOutputMarkupPlaceholderTag(true));
 					} else {
-						DisplayRowFragment newFragment = new DisplayRowFragment("fragment", mUser);
+						DisplayRowFragment newFragment = new DisplayRowFragment("studentFragment", mUser);
 						FormRowFragment.this.replaceWith(newFragment);
 						target.addComponent(newFragment);
 					}
@@ -356,7 +430,7 @@ public class ManageClasses extends ISIStandardPage {
 						FormRowFragment.this.replaceWith(placeholder);
 						target.addComponent(placeholder);
 					} else {
-						DisplayRowFragment newFragment = new DisplayRowFragment("fragment", mUser);
+						DisplayRowFragment newFragment = new DisplayRowFragment("studentFragment", mUser);
 						FormRowFragment.this.replaceWith(newFragment);
 						target.addComponent(newFragment);
 					}
@@ -371,12 +445,15 @@ public class ManageClasses extends ISIStandardPage {
 
 				@Override
 				public void onClick(AjaxRequestTarget target) {
+					moveForm.setUser(mUser.getObject());
 					moveForm.setDefaultModel(mUser);
 					
 					if (target != null) {
 						target.addComponent(FormRowFragment.this);
 						target.addComponent(moveForm);
+						String moveButtonMarkupId = this.getMarkupId();
 						target.appendJavascript("$('#moveModal').show();");
+						target.appendJavascript("matchVerticalPosition('" + moveButtonMarkupId + "', \'moveModal');");
 					}
 				}
 
@@ -422,7 +499,7 @@ public class ManageClasses extends ISIStandardPage {
 			
 			// Current User being saved
 			User student = getModelObject();
-			
+
 			// Are we saving a new user?
 			boolean isNewStudent = student.isTransient(); 
 
@@ -486,7 +563,7 @@ public class ManageClasses extends ISIStandardPage {
 					if (target != null) {
 						target.addComponent(periodTitle);
 						target.addComponent(editPeriodForm);
-						// TODO: Update the Dropdown Menu
+						target.addChildren(getPage(), PeriodStudentSelectPanel.class);
 					}	
 				}
 				
@@ -508,6 +585,8 @@ public class ManageClasses extends ISIStandardPage {
 		}
 	}
 
+
+	
 	
 	/**
 	 * The container for displaying, editing and deleting the class message
@@ -635,7 +714,6 @@ public class ManageClasses extends ISIStandardPage {
 	 * @param <T>
 	 */
 	public static abstract class EditLink<T> extends AjaxFallbackLink<T> {
-
 		private static final long serialVersionUID = 1L;
 		
 		public EditLink(String id) {
