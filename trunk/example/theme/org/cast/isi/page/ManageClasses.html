@@ -39,15 +39,19 @@
 	                    <div wicket:id="feedback" class="myFeedback"></div>
 	            	</div>
 	            </form>
+            <span wicket:id="addPeriodPanel"></span>
             <p class="userAdd">
+	            <a href="#" wicket:id="addPeriodButton" class="button">Add a Class</a>
                 <a href="#" wicket:id="addStudentButton" class="button">Add a Student</a>
             </p>
+            <div wicket:id="feedback"></div>
  			<form wicket:id="editStudentForm">
 	            <table class="userTable">
 		            <thead>
 			            <tr>
 			                <th>Last Name</th>
 			                <th>First Name</th>
+			                <th>Email Address</th>
 			                <th>User Name</th>
 			                <th>Password</th>
 			                <th>Actions</th>
@@ -56,12 +60,11 @@
 		            <tbody>
 		            	<tr wicket:id="newStudent" />
 		            	<wicket:container wicket:id="studentList">
-		            		<tr wicket:id="fragment" />
+		            		<tr wicket:id="studentFragment" />
 						</wicket:container>
 		            </tbody>
 	            </table>
 			</form>
-            <div wicket:id="feedback"></div>
             <br />
         </div>
     </div>
@@ -92,7 +95,7 @@
         <!-- END - Support Content -->
     </div>
     
-    <div id="moveModal" class="modalContainer modalBody modalNarrow modalSidebar modalPopup">
+    <div id="moveModal" class="visuraloverlaycontent modalContainer modalBody modalNarrow modalSidebar">
 		<div class="modalHeader" role="banner">
 	        <div class="modalTitle">Move Student</div>
 			<a href="javascript:void(0)" onclick="$('#moveModal .feedback').html(''); $('#moveModal').hide();" class="modalClose button icon" title="Close Window"><img src="/img/icons/close.png" width="15" height="15" alt="" /></a>
@@ -114,7 +117,8 @@
 							</select>
 						</p>
 	                    <p>
-		                    <input type="submit" value="Save" class="button" />
+<!-- 		                    <input wicket:id="moveLink" type="submit" value="Move" class="button" /> -->
+	 		                <a href="javascript:void(0)" wicket:id="moveLink" onclick="$('#moveModal .feedback').html(''); $('#moveModal').hide(); " class="button">Move</a>
 	 		                <a href="javascript:void(0)" onclick="$('#moveModal .feedback').html(''); $('#moveModal').hide(); " class="button">Cancel</a>
 	                    </p>
 		                <div class="feedback" wicket:id="feedback" />
@@ -133,6 +137,7 @@
 			<span wicket:id="lastName">lastName</span>
 		</td>
 		<td><span wicket:id="firstName">firstName</span></td>
+		<td><span wicket:id="email">email</span></td>
 		<td><span wicket:id="username">userName</span></td>
 		<td><span wicket:id="password">***</span></td>
 		<td>
@@ -146,6 +151,7 @@
            	<input type="text" wicket:id="lastName" />
         </td>
 		<td><input type="text" wicket:id="firstName" /></td>
+        <td><input type="text" wicket:id="email" /></td>
         <td><input type="text" wicket:id="username" /></td>
         <td><input type="password" wicket:id="password" /></td>
         <td>
