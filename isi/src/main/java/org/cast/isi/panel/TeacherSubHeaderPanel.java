@@ -82,6 +82,7 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 			}			
 		};    	
 		add(periodStudentSelectPanel);
+		periodStudentSelectPanel.setOutputMarkupId(true);
 
 		// Teacher Notes Pop-up for the current student
 		teacherNotesLink = new BookmarkablePageLink<Page>("teacherNotesLink", ISIApplication.get().getTeacherNotesPageClass());
