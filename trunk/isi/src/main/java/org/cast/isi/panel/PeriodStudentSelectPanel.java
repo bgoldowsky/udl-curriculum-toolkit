@@ -30,7 +30,9 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponentLabel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.cast.cwm.data.Role;
+import org.cast.cwm.data.Site;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.builders.UserCriteriaBuilder;
 import org.cast.cwm.data.component.PeriodChoice;
@@ -82,6 +84,10 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 			protected void onUpdate(AjaxRequestTarget target) {
 				ISISession.get().setStudentModel(null); // Reset session's selected student since period changed
 				ISISession.get().setCurrentPeriodModel(periodChoice.getModel()); // Save period change in session
+				// Save current site information
+				Site currentSite = ISISession.get().getCurrentPeriodModel().getObject().getSite();
+				IModel<Site> mCurrentSite = new Model<Site>(currentSite);
+				ISISession.get().setCurrentSiteModel(mCurrentSite);
 				if (showStudents) {
 					studentChoice.setChoices(getUserListModel()); // Alert student drop-down of the change
 					target.addComponent(studentChoice);
