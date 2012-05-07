@@ -28,16 +28,20 @@ import org.apache.wicket.Application;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
+import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponentLabel;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.validation.FormComponentFeedbackBorder;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.Period;
+import org.cast.cwm.data.Site;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.EventService;
 import org.cast.isi.ISIApplication;
@@ -45,7 +49,7 @@ import org.cast.isi.ISISession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Login extends ISIBasePage {
+public class Login extends ISIBasePage implements IHeaderContributor {
 	static final Logger log = LoggerFactory.getLogger(Login.class);
 
 	@SuppressWarnings("unchecked")
@@ -55,6 +59,9 @@ public class Login extends ISIBasePage {
 		add(new Label("pageTitle", ISIApplication.get().getPageTitleBase() + " :: Login"));
 		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
 		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+
+		add (new BookmarkablePageLink<Void>("forgot", ForgotPassword.class));
+		add (new BookmarkablePageLink<Void>("register", Register.class));
 		
 		// If getRequestCycleSettings().setGatherExtendedBrowserInfo(true) is set in the application
 		// this line is necessary to prevent a failed login session.
@@ -114,6 +121,9 @@ public class Login extends ISIBasePage {
 				// Set default Period
 				if (user != null && user.usesPeriods()) {
 					session.setCurrentPeriodModel(new HibernateObjectModel<Period>(user.getPeriods().iterator().next()));
+					Site currentSite = ISISession.get().getCurrentPeriodModel().getObject().getSite();
+					IModel<Site> mCurrentSite = new Model<Site>(currentSite);
+					session.setCurrentSiteModel(mCurrentSite);
 				}
 				
 				setResponsePage(getApplication().getHomePage());
@@ -130,6 +140,7 @@ public class Login extends ISIBasePage {
 	@Override
 	public void renderHead(final IHeaderResponse response) {
 		response.renderCSSReference(new ResourceReference("/css/login.css"));
+		response.renderCSSReference(new ResourceReference("/css/main.css"));
 		super.renderHead(response);
 	}
 
