@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+<title wicket:id="pageTitle">Create an acct</title>
+<wicket:link>
+	<!--<script type="text/javascript" src="/js/jquery/jquery-1.5.1.min.js"></script>-->
+</wicket:link>
+</head>
+<body class="themeAccount">
+	<div id="header">
+		<div id="headerLeft">
+        <div id="logo">
+            <img src="img/logos/logo.png" width="54" height="54" alt="" />
+        </div>
+			<div wicket:id="applicationTitle" id="title">CAST UDL
+				Curriculum Toolkit</div>
+			<div wicket:id="applicationSubTitle" id="tagline">Tagline</div>
+		</div>
+	</div>
+
+	<div id="wrapper">
+		<div id="mainWrapper">
+			<div id="mainContent">
+				<div id="mainContentLeft">
+					<!-- BEGIN - Main Content -->
+					<div class="leftContainer">
+						<div id="signUp">
+
+							<h1>Sign up for a UDL Curriculum Toolkit account</h1>
+							<p>You can request a free account. Once you sign up, you will
+								receive an email with a link needed to confirm your account.</p>
+							<!--<h2>Secondary Header?</h2> -->
+
+							<p wicket:id="feedback" class="errorMsg"></p>
+
+							<form wicket:id="registerForm" name="signUp" id="signUp"
+								action="#">
+								<div class="formRow">
+									<label for="username">User Name:</label> <span
+										wicket:id="usernameBorder" class="inputItem"> <input
+										wicket:id="username" type="text" name="username" id="username" />
+									</span>
+								</div>
+								<div class="formRow">
+									<label for="firstname">First Name:</label> <span
+										wicket:id="firstnameBorder" class="inputItem"> <input
+										wicket:id="firstName" type="text" name="firstname"
+										id="firstname" />
+									</span>
+								</div>
+								<div class="formRow">
+									<label for="lastname">Last Name:</label> <span
+										wicket:id="lastnameBorder" class="inputItem"> <input
+										wicket:id="lastName" type="text" name="lastname" id="lastname" />
+									</span>
+								</div>
+								<div class="formRow">
+									<label for="email">Email Address:</label> <span
+										wicket:id="emailBorder" class="inputItem"> <input
+										wicket:id="email" type="text" name="email" id="email" />
+									</span>
+								</div>
+								<div class="formRow">
+									<label for="vemail">Confirm Email:</label> <span
+										wicket:id="verifyEmailBorder" class="inputItem"> <input
+										wicket:id="verifyEmail" type="text" name="vemail" id="vemail" />
+									</span>
+								</div>
+								<div class="formRow">
+									<label for="password">Password:</label> <span
+										wicket:id="passwordBorder" class="inputItem"> <input
+										wicket:id="password" type="password" name="password"
+										id="password" />
+									</span>
+								</div>
+								<div class="formRow">
+									<label for="vpassword">Confirm Password:</label> <span
+										wicket:id="verifyPasswordBorder" class="inputItem"> <input
+										wicket:id="verifyPassword" type="password" name="vpassword"
+										id="vpassword" />
+									</span>
+								</div>
+
+								<div wicket:id="userType">
+									<div class="formRow">
+										<div class="inputLeft">
+											<input wicket:id="teacher" type="radio" name="identity"
+												id="teacherRadio" value="Teacher" />
+										</div>
+										<label for="teacherRadio" class="labelRight"> I want
+											to use UDL Curriculum Toolkit as a Teacher in a classroom. </label>
+									</div>
+									<div class="formRow">
+										<div class="inputLeft">
+											<input wicket:id="student" type="radio" name="identity"
+												id="studentRadio" value="Visitor" />
+										</div>
+										<label for="studentRadio" class="labelRight"> I want
+											to explore the UDL Curriculum Toolkit as a User. </label>
+									</div>
+								</div>
+								<div class="formRow">
+									<div class="inputRight">
+										<input type="submit" class="button standard"
+											value="Create a Free Account" />
+									</div>
+								</div>
+								<div class="formRow">
+									<div class="inputRight">
+										<a wicket:id="login" href="#">Sign in with an existing account.</a> | 
+										<a wicket:id="forgot" href="#">Forgot your password?</a>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="footer" wicket:id="pageFooter">
+		<div id="copyright">
+			<p>
+				<strong>&copy; Copyright 2011</strong>, footer text
+			</p>
+		</div>
+		<div id="build">
+			<p>Built with [product name/image]</p>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -63,7 +63,6 @@ import org.apache.wicket.util.time.Time;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.CwmPopupSettings;
-import org.cast.cwm.components.service.JavascriptService;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
@@ -108,6 +107,7 @@ import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.HeaderPanel;
+import org.cast.isi.service.ISIEmailService;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.QuestionService;
 import org.hibernate.Session;
@@ -194,6 +194,14 @@ public abstract class ISIApplication extends CwmApplication {
 	protected String[] studentContentFiles;
 	@Getter protected XmlDocumentList studentContent = new XmlDocumentList();
 	
+	//email related
+	@Getter protected String EMAIL_FILE_NAME = "email.xml";
+	@Getter protected String EMAIL_TRANSFORMER = "email";
+	// Application URL - needed for emailing links
+	@Getter protected String url;
+	@Getter protected XmlDocument emailContent;
+
+	
 	protected List<IDocumentObserver> documentObservers = new ArrayList<IDocumentObserver>();
 	protected static Time lastFileCheck;
 	protected List<String> enabledFeatures = new ArrayList<String>();
@@ -209,6 +217,7 @@ public abstract class ISIApplication extends CwmApplication {
 
 		super.init();
 		
+		ISIEmailService.useAsServiceInstance();
 		ISIResponseService.useAsServiceInstance();
 		ISIResponseService.get().setResponseClass(getResponseClass());
 		XmlService.get().setXmlSectionClass(getXmlSectionClass());
@@ -344,6 +353,12 @@ public abstract class ISIApplication extends CwmApplication {
 		mathMLOn = setBooleanProperty("isi.mathML.isOn", mathMLOn);
 		useAuthoredResponseType = setBooleanProperty("isi.useAuthoredResponseType.isOn", useAuthoredResponseType);	
 		rssFeedOn = setBooleanProperty("isi.rssFeed.isOn", rssFeedOn);
+
+		String urlValue = appProperties.getProperty("app.url");
+		if (urlValue != null) {
+			url = urlValue.trim();
+			log.info("using this URL starter for email links: {}", url);
+		}
 
 		/* if the glossary is on, decide what type of glossary link is used */
 		if (glossaryOn == true) {
@@ -517,6 +532,22 @@ public abstract class ISIApplication extends CwmApplication {
 			XmlDocument doc = xmls.loadXmlDocument(file, resource, new DtbookParser(), documentObservers);
 			studentContent.add(doc);
 		}
+		
+		// Load email content files
+		String emailFileName = "email.xml";
+		if (appProperties.getProperty("isi.emailFile") != null) {
+			emailFileName = appProperties.getProperty("isi.emailFile").trim();
+		}
+			
+		Resource emailResource;
+		if (davServer != null) {
+			emailResource = new DavResource(davServer, getContentDir() + "/" + emailFileName);
+		} else {
+			emailResource = new FileResource(new File(getContentDir(), emailFileName));
+		}
+		emailContent = xmls.loadXmlDocument("email", emailResource, new DtbookParser(), null);		
+		
+		
 	}
 
 	/**
@@ -556,7 +587,11 @@ public abstract class ISIApplication extends CwmApplication {
 				new FilterElements(),
 				new XslTransformer(new FileResource(studentXslFile)),
 				new EnsureUniqueWicketIds());
-		xmls.registerTransformer("student", transformchain);			
+		xmls.registerTransformer("student", transformchain);	
+		
+		// For sending emails to users
+		xmls.loadXSLTransformer("email", getEmailTransformationFile(), true);
+
 	}
 
 	
@@ -609,6 +644,9 @@ public abstract class ISIApplication extends CwmApplication {
 		mount(new QueryStringUrlCodingStrategy("compare", getPeriodResponsePageClass()));
 		mount(new QueryStringUrlCodingStrategy("tnotebook", getTeacherNotesPageClass()));
 		mount(new QueryStringUrlCodingStrategy("manage", getManageClassesPageClass()));
+		mount(new QueryStringUrlCodingStrategy("register", getRegisterPageClass()));
+		mount(new QueryStringUrlCodingStrategy("reset", getForgotPasswordPageClass()));
+		mount(new QueryStringUrlCodingStrategy("password", getPasswordPageClass()));
 		
 	}
 	
@@ -705,6 +743,15 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 	public Class<? extends ISIStandardPage> getManageClassesPageClass() {
 		return org.cast.isi.page.ManageClasses.class;
+	}
+	public Class<? extends WebPage> getRegisterPageClass() {
+		return org.cast.isi.page.Register.class;
+	}
+	public Class<? extends WebPage> getForgotPasswordPageClass() {
+		return org.cast.isi.page.ForgotPassword.class;
+	}
+	public Class<? extends WebPage> getPasswordPageClass() {
+		return org.cast.isi.page.Password.class;
 	}
 
 	public Class<? extends org.cast.cwm.data.Response> getResponseClass() {
@@ -823,6 +870,14 @@ public abstract class ISIApplication extends CwmApplication {
 			return (appProperties.getProperty("isi.xslTocFile")).trim();
 		}
 		return "toc.xsl";
+	}
+
+	public String getEmailTransformationFile() {
+		String tf =  appProperties.getProperty("isi.xslEmailFile");
+		if (tf != null) {
+			return (appProperties.getProperty("isi.xslEmailFile")).trim();
+		}
+		return "email.xsl";
 	}
 
 	public String getCustomTransformationDir() {
