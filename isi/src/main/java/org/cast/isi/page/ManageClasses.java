@@ -253,9 +253,11 @@ public class ManageClasses extends ISIStandardPage {
 
 				@Override
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-					ManageClasses.this.visitChildren(EditLink.class, EditLink.getVisitor(target, false));
-					moveForm.setVisible(false);
-
+					ManageClasses.this.visitChildren(EditLink.class, EditLink.getVisitor(target, true));
+					target.addChildren(getPage(), PeriodStudentSelectPanel.class);
+					target.addComponent(editStudentForm);
+					target.addComponent(periodTitle);
+					target.appendJavascript("$('#moveModal').hide();");
 				}
 									
 			};
