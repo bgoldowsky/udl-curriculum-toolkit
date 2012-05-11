@@ -198,6 +198,8 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected XmlDocumentList studentContent = new XmlDocumentList();
 	
 	//email related
+	@Getter protected boolean emailOn = false;			// ability to email, includes password reminder
+	@Getter protected boolean selfRegisterOn = false; 	// users can create their own logins
 	@Getter protected String EMAIL_FILE_NAME = "email.xml";
 	@Getter protected String EMAIL_TRANSFORMER = "email";
 
@@ -356,6 +358,8 @@ public abstract class ISIApplication extends CwmApplication {
 		mathMLOn = setBooleanProperty("isi.mathML.isOn", mathMLOn);
 		useAuthoredResponseType = setBooleanProperty("isi.useAuthoredResponseType.isOn", useAuthoredResponseType);	
 		rssFeedOn = setBooleanProperty("isi.rssFeed.isOn", rssFeedOn);
+		emailOn = setBooleanProperty("isi.email.isOn", emailOn);
+		selfRegisterOn = setBooleanProperty("isi.selfRegister.isOn", selfRegisterOn);
 
 		String urlValue = appProperties.getProperty("app.url");
 		if (urlValue != null) {
@@ -537,19 +541,16 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 		
 		// Load email content files
-		String emailFileName = "email.xml";
-		if (appProperties.getProperty("isi.emailFile") != null) {
-			emailFileName = appProperties.getProperty("isi.emailFile").trim();
+		if (emailOn) {
+			String emailFileName = EMAIL_FILE_NAME;					
+			Resource emailResource;
+			if (davServer != null) {
+				emailResource = new DavResource(davServer, getContentDir() + "/" + emailFileName);
+			} else {
+				emailResource = new FileResource(new File(getContentDir(), emailFileName));
+			}
+			emailContent = xmls.loadXmlDocument("email", emailResource, new DtbookParser(), null);					
 		}
-			
-		Resource emailResource;
-		if (davServer != null) {
-			emailResource = new DavResource(davServer, getContentDir() + "/" + emailFileName);
-		} else {
-			emailResource = new FileResource(new File(getContentDir(), emailFileName));
-		}
-		emailContent = xmls.loadXmlDocument("email", emailResource, new DtbookParser(), null);		
-		
 		
 	}
 
@@ -592,8 +593,10 @@ public abstract class ISIApplication extends CwmApplication {
 				new EnsureUniqueWicketIds());
 		xmls.registerTransformer("student", transformchain);	
 		
-		// For sending emails to users
-		xmls.loadXSLTransformer("email", getEmailTransformationFile(), true);
+		if (emailOn) {
+			// For sending emails to users
+			xmls.loadXSLTransformer("email", getEmailTransformationFile(), true);
+		}
 
 	}
 
