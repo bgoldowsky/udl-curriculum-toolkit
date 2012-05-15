@@ -125,8 +125,11 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 					IModel<Site> mCurrentSite = new Model<Site>(currentSite);
 					session.setCurrentSiteModel(mCurrentSite);
 				}
-				
-				setResponsePage(getApplication().getHomePage());
+
+				if (!continueToOriginalDestination()) {
+					setResponsePage(getApplication().getHomePage());
+					setRedirect(true);
+				}
 				
 			} else {
 				log.warn("Login failed, user {}, password {}", username.getModelObject(), password.getModelObject());
