@@ -472,26 +472,29 @@
 	            	<xsl:copy-of select="@alt" />
 	        	</img>
         	</xsl:if>
-	        <div class="imgCaption">
-			  	<xsl:if test="$thumbImage = 'true'">
-		        	  <div class="imgActions">
-			            <span wicket:id="imageDetailButton_{@id}" target="{@src}"></span>
-			         </div>
-			    </xsl:if>
-		       	<div class="imgText">
-		       		<xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][1]" mode="caption"/>
-				    <!-- want this toggle when the image hasCaptions (more than one caption or a prodnote) -->
-			       	<xsl:if test="$addImageToggle = 'true'">
-	                    <div class="collapseBox">
-			                <h5 wicket:id="imgToggleHeader_">More Information</h5>
-	                        <div class="collapseBody">
-	                        <xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][position()&gt;1]" mode="caption"/>
-				       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>
-				       		</div>
-				       	</div>
+        	<!-- only add the caption div if there is a caption, prodnote, or thumbnail -->
+        	<xsl:if test="count(../dtb:caption) > 0 or count(../dtb:prodnote) > 0 or $thumbImage = 'true'">
+		        <div class="imgCaption">
+				  	<xsl:if test="$thumbImage = 'true'">
+			        	  <div class="imgActions">
+				            <span wicket:id="imageDetailButton_{@id}" target="{@src}"></span>
+				         </div>
 				    </xsl:if>
+			       	<div class="imgText">
+			       		<xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][1]" mode="caption"/>
+					    <!-- want this toggle when the image hasCaptions (more than one caption or a prodnote) -->
+				       	<xsl:if test="$addImageToggle = 'true'">
+		                    <div class="collapseBox">
+				                <h5 wicket:id="imgToggleHeader_">More Information</h5>
+		                        <div class="collapseBody">
+		                        <xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][position()&gt;1]" mode="caption"/>
+					       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>
+					       		</div>
+					       	</div>
+					    </xsl:if>
+					</div>
 				</div>
-			</div>
+			</xsl:if>
 	    </div>
 	    <!-- add the hidden modal with the larger image -->
 	  	<xsl:if test="$thumbImage = 'true'">

@@ -291,6 +291,7 @@
     padding: 4px;
     margin: 0px;
     font-size: 0.9em;
+    min-height: 21px;
 }
 
 .imgCaption a { color: #D7D7D7; text-decoration: underline; }
