@@ -25,6 +25,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -45,8 +46,15 @@ import org.cast.isi.service.ISIEmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
-	
+/**
+ * This page is used when a user forgets their password.  User enters their email address
+ * and an email is sent containing a link to reset their password.  This page is used in 
+ * conjunction with the @Password@ page.
+ * 
+ * @author lynnmccormack
+ *
+ */
+public class ForgotPassword extends ISIBasePage implements IHeaderContributor {	
 
 	boolean success = false; // has a successful send already happened?
 	
@@ -61,6 +69,14 @@ public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
 		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
 		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+		add(new WebMarkupContainer("preSubmitMessage") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isVisible() {
+				return (!success);
+			}			
+		});
 		
 		add (new FeedbackPanel("feedback") {
 			private static final long serialVersionUID = 1L;
@@ -68,14 +84,15 @@ public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
 			public boolean isVisible() { return anyMessage(); }
 		});
 		add (new EmailForm("form"));
+		add (new BookmarkablePageLink<Void>("register", Register.class));
+		add (new BookmarkablePageLink<Void>("login", Login.class));			
 		add(ISIApplication.get().getFooterPanel("pageFooter", params));
 	}
 
 	protected class EmailForm extends Form<Void> {
-
-		TextField<String> email;
-
 		private static final long serialVersionUID = 1L;
+
+		protected TextField<String> email;
 		
 		protected EmailForm(String id) {
 			super(id);
@@ -85,8 +102,6 @@ public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
 					.add(EmailAddressValidator.getInstance())
 					.add(StringValidator.maximumLength(255))
 					.setRequired(true)));
-			add (new BookmarkablePageLink<Void>("register", Register.class));
-			add (new BookmarkablePageLink<Void>("login", Login.class));			
 		}
 
 		@Override

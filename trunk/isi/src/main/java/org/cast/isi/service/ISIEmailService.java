@@ -38,6 +38,7 @@ public class ISIEmailService extends EmailService {
 
 	// Known message IDs
 	public static String EMAIL_CONFIRM = "registerConfirm";
+	public static String EMAIL_CONFIRM_TEACHER = "registerConfirmTeacher";
 	public static String EMAIL_CONFIRM_RESEND = "registerConfirmResend";
 	public static String EMAIL_FORGOT = "forgotPassword";
 
@@ -49,6 +50,10 @@ public class ISIEmailService extends EmailService {
 	
 	public static void useAsServiceInstance() {
 		EmailService.instance = new ISIEmailService();
+	}
+
+	public void sendXmlEmail (IModel<User> mUser, String messageId, String uri) {
+		this.sendXmlEmail(mUser, messageId, uri, null);
 	}
 
 	/**
@@ -65,10 +70,10 @@ public class ISIEmailService extends EmailService {
 	 * @param user the User used for replacements (generally the sender)
 	 * @param messageId an ID string, generally one of the constant values defined above
 	 * @param uri replacement variable
-	 * @param variables a map of additional replacement variables
+	 * @param mStudentUser the default student User if this is a new teacher 
 	 */	
-	public void sendXmlEmail (IModel<User> userM, String messageId, String uri) {
-		String recipient = userM.getObject().getEmail();
+	public void sendXmlEmail (IModel<User> mUser, String messageId, String uri, String studentPassword) {
+		String recipient = mUser.getObject().getEmail();
 
 		XmlDocument emailXml = ISIApplication.get().getEmailContent();
 		TransformParameters params = new TransformParameters();
@@ -84,10 +89,14 @@ public class ISIEmailService extends EmailService {
 			fullUrl = ISIApplication.get().getUrl() + uri;
 		Map<String, String> variables = new HashMap<String, String>();
 		variables.put("url", fullUrl);
-		variables.put("fullname", userM.getObject().getFullName());
-		variables.put("username", userM.getObject().getUsername());		
-		variables.put("recipientEmail", userM.getObject().getEmail());		
-		
+		variables.put("fullname", mUser.getObject().getFullName());
+		variables.put("username", mUser.getObject().getUsername());		
+		variables.put("recipientEmail", mUser.getObject().getEmail());
+		if (studentPassword != null) {
+			variables.put("defaultPeriod", mUser.getObject().getPeriods().first().getName()); // there is only one period when this email is generated
+			variables.put("defaultStudentUsername", mUser.getObject().getPeriods().first().getName()); //default user has username = default period name
+			variables.put("defaultStudentPassword", studentPassword);
+		}
 		
 		EmailMessage emailMessage = new EmailMessage();
 		emailMessage.setFrom(ISIApplication.get().getMailFromAddress());
@@ -104,4 +113,5 @@ public class ISIEmailService extends EmailService {
 		sendMail(emailMessage, variables);
 
 	}
+
 }
