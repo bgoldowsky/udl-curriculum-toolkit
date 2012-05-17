@@ -929,7 +929,7 @@ public abstract class ISIApplication extends CwmApplication {
 	 */
 	public IModel<? extends Site> getMDefaultSite() {
 	// Set the default Site
-		String siteName =  appProperties.getProperty("app.defaultSite");
+		String siteName =  appProperties.getProperty("isi.defaultSite");
 		if (siteName != null) {
 			siteName = siteName.trim();
 			return SiteService.get().getSiteByName(siteName);		
