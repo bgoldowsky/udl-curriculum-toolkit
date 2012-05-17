@@ -20,6 +20,7 @@
 package org.cast.isi.page;
 
 import java.util.Date;
+import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -33,6 +34,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Radio;
 import org.apache.wicket.markup.html.form.RadioGroup;
@@ -62,11 +64,19 @@ import org.cast.isi.service.ISIEmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This page enables anonymous user creation.  User must provide some basic validated
+ * data and they are then sent an email with a confirmation link.
+ * 
+ * @author lynnmccormack
+ *
+ */
 public class Register extends ISIBasePage implements IHeaderContributor{
+		
+	private static final Logger log = LoggerFactory.getLogger(Register.class);
 	
 	boolean success = false; // has a successful registration already happened?
-	
-	private static final Logger log = LoggerFactory.getLogger(Register.class);
+	protected String studentPassword;
 
 	public Register(PageParameters params) {
 		super(params);
@@ -76,6 +86,14 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
 		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
 		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+		add(new WebMarkupContainer("preSubmitMessage") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isVisible() {
+				return (!success);
+			}			
+		});
 		
 		// If user comes in with a registration key, confirm their account.
 		if (params.containsKey("username") && params.containsKey("key")) {
@@ -88,7 +106,7 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 				eventService.saveEvent("user:created", null, null);
 				eventService.saveLoginEvent();
 				String completed = new StringResourceModel("Registration.completed", this, null,
-						"Congratulations, you have successfullly created a new account. You may now begin working in the UDL Curriculum Toolkit and your work will be saved in your account.").getString();
+						"Congratulations, you have successfullly created a new account.").getString();
 				info(completed);
 				success = true;
 			} else {
@@ -114,11 +132,9 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 
 
 	protected class RegisterForm extends DataForm<User> {
-
 		private static final long serialVersionUID = 1L;
 
 		private RSAPasswordTextField password;
-
 		private RadioGroup<Role> radioGroup;
 		
 		protected RegisterForm(String id) {
@@ -128,13 +144,14 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			TextField<String> email;
 			TextField<String> verifyEmail;
 
+			// this would be a custom portion
 			radioGroup = new RadioGroup<Role>("userType", new Model<Role>(Role.STUDENT));
 			add(radioGroup);
 			radioGroup.add(new Radio<Role>("teacher", new Model<Role>(Role.TEACHER), radioGroup));
 			radioGroup.add(new Radio<Role>("student", new Model<Role>(Role.STUDENT), radioGroup));
 			radioGroup.setRequired(true);
 			
-			
+			// this would be the standard portion of this
 			add(new FeedbackBorder("usernameBorder")
 				.add(new TextField<String>("username")
 						.add(StringValidator.lengthBetween(6, 32))
@@ -185,25 +202,25 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 		}
 
 		@Override
-		protected void onBeforeSave(HibernateObjectModel<User> model) {
-			User user = model.getObject();
+		protected void onBeforeSave(HibernateObjectModel<User> mUser) {
+			User user = mUser.getObject();
 			Role userRole = (Role) radioGroup.getDefaultModelObject();
 			user.setRole(userRole);
 			user.setCreateDate(new Date());
 			user.setValid(false);
 			user.generateSecurityToken();
 			user.setPassword(password.getConvertedInput());
+			String url = "/register?username=" + user.getUsername() + "&key=" + user.getSecurityToken();
 			if (userRole.equals(Role.STUDENT)) {
 				// add user to the default period
 				user.getPeriods().clear();
 				user.getPeriods().add(ISIApplication.get().getMDefaultPeriod().getObject());				
+				ISIEmailService.get().sendXmlEmail(mUser, ISIEmailService.EMAIL_CONFIRM, url);
 			} else {
 				createDefaultTeacher(user);
+				ISIEmailService.get().sendXmlEmail(mUser, ISIEmailService.EMAIL_CONFIRM_TEACHER, url, studentPassword);
 			}
-			
-			String url = "/register?username=" + user.getUsername() + "&key=" + user.getSecurityToken();
-			ISIEmailService.get().sendXmlEmail(model, ISIEmailService.EMAIL_CONFIRM, url);
-			
+						
 			String confirmation = new StringResourceModel("Registration.confirmation", this, null,
 					"Thank you! In a few minutes you should get an email.  You will need to click on the link in " +
 					"that email in order to confirm your account.").getString();
@@ -211,37 +228,53 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			success = true;
 		}
 
-		// TODO: consider moving this into a service class - LDM
+
+		// Consider moving this into a service class - LDM
 		protected void createDefaultTeacher(User user) {
 			// teachers need a default period created in the default site
 			Site site = ISIApplication.get().getMDefaultSite().getObject();
 			
 			SortedSet<User> userSet = new TreeSet<User>();
 			userSet.add(user);
+			
+			// create a new site
+			Site newSite = SiteService.get().newSite();
+			newSite.setName("Site_" + user.getUsername()); // make this unique
 
 			Period newPeriod = SiteService.get().newPeriod();
 			newPeriod.setSite(site);
 			newPeriod.setName("Class_" + user.getUsername()); // make this unique
 			
+			// add the period to the user and the site
 			SortedSet<Period> periodSet = new TreeSet<Period>();
 			periodSet.add(newPeriod);
 			user.getPeriods().add(newPeriod);
+			newSite.getPeriods().add(newPeriod);			
 			
 			// a default student must be added to the new period
 			User studentUser = UserService.get().newUser();
 			studentUser.setRole(Role.STUDENT);
-			studentUser.setFirstName("GuestStudent");
+			studentUser.setFirstName("Student");
 			studentUser.setLastName(newPeriod.getName());
 			studentUser.setUsername(newPeriod.getName());
 			studentUser.getPeriods().add(newPeriod);
+			studentUser.setValid(true);
+			
+			// create a random number for the password
+			Random randomNumber = new Random();
+			Integer studentPasswordInteger = randomNumber.nextInt();
+			studentPassword = studentPasswordInteger.toString().substring(0, 6);
+			log.debug("this is the student password : {}", studentPassword);
+			studentUser.setPassword(studentPassword);			
 			
 			// add the teacher and the default student to the new default class
 			userSet.add(studentUser);
 			newPeriod.setUsers(userSet);
 			
 			Databinder.getHibernateSession().save(newPeriod);
-			Databinder.getHibernateSession().save(studentUser);				
+			Databinder.getHibernateSession().save(studentUser);
 		}
+
 	
 	}
 	
@@ -263,5 +296,6 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 	@Override
 	public String getPageViewDetail() {
 		return null;
-	}	
+	}
+
 }
