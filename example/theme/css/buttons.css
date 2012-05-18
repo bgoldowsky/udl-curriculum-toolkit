@@ -189,9 +189,10 @@ span.button.pagenum.current {
 /* Button - Response */
 
 .button.response {
-	padding: 0.2em;
+	padding: 0;
 }
 .button.response img {
+    padding: 0.2em;
     width: 23px !important;
     height: 16px !important;
 }
