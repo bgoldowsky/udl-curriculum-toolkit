@@ -103,9 +103,10 @@ input.button {
 /* Button - Icon */
 
 .button.icon {
-	padding: 0.2em;
+	padding: 0;
 }
 .button.icon img {
+    padding: 0.2em;
     width: 1.15em !important;
     height: 1.15em !important;
 }
