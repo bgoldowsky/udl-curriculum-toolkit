@@ -84,8 +84,8 @@ public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
 			public boolean isVisible() { return anyMessage(); }
 		});
 		add (new EmailForm("form"));
-		add (new BookmarkablePageLink<Void>("register", Register.class));
-		add (new BookmarkablePageLink<Void>("login", Login.class));			
+		add (new BookmarkablePageLink<Void>("register", ISIApplication.get().getRegisterPageClass()));
+		add (new BookmarkablePageLink<Void>("login", ISIApplication.get().getSignInPageClass()));			
 		add(ISIApplication.get().getFooterPanel("pageFooter", params));
 	}
 
