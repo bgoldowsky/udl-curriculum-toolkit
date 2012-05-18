@@ -913,7 +913,7 @@ public abstract class ISIApplication extends CwmApplication {
 	 */
 	public IModel<? extends Period> getMDefaultPeriod() {
 		// Set the default Period
-		String periodName =  appProperties.getProperty("app.defaultPeriod");
+		String periodName =  appProperties.getProperty("isi.defaultPeriod");
 		if (periodName != null) {
 			periodName = periodName.trim();
 			return SiteService.get().getPeriodByName(periodName);		
@@ -921,22 +921,6 @@ public abstract class ISIApplication extends CwmApplication {
 			// error if this period doesn't exist
 			log.error("No default period was found");
 		}		
-		return null;
-	}
-
-	/**
-	 * Configure the default site
-	 */
-	public IModel<? extends Site> getMDefaultSite() {
-	// Set the default Site
-		String siteName =  appProperties.getProperty("isi.defaultSite");
-		if (siteName != null) {
-			siteName = siteName.trim();
-			return SiteService.get().getSiteByName(siteName);		
-		} else {
-			// error if this site doesn't exist
-			log.error("No default site was found");
-		}
 		return null;
 	}
 
