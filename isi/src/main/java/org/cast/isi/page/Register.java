@@ -124,8 +124,8 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 		});
 		add (new RegisterForm("registerForm"));
 
-		add (new BookmarkablePageLink<Void>("forgot", ForgotPassword.class).setVisible(!success));
-		add (new BookmarkablePageLink<Void>("login", Login.class));
+		add (new BookmarkablePageLink<Void>("forgot", ISIApplication.get().getForgotPasswordPageClass()).setVisible(!success));
+		add (new BookmarkablePageLink<Void>("login", ISIApplication.get().getSignInPageClass()));			
 		add(ISIApplication.get().getFooterPanel("pageFooter", params));
 		
 	}

@@ -67,7 +67,6 @@ import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
-import org.cast.cwm.data.Site;
 import org.cast.cwm.data.component.DialogBorder;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
 import org.cast.cwm.dav.DavClientManager;

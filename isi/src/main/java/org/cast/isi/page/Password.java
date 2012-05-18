@@ -63,7 +63,12 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
 		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
 		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
-		
+
+		// forgot password shows up when there is an error in the link - expired link
+		BookmarkablePageLink<Void> resetLink = new BookmarkablePageLink<Void>("reset", ISIApplication.get().getForgotPasswordPageClass());
+		add(resetLink);
+		resetLink.setVisible(false);
+
 		// User may come in with a secret key from the "Forgot Password" page.
 		if (params.containsKey("username") && params.containsKey("key")) {
 			User user = UserService.get().getByUsername(params.getString("username")).getObject();
@@ -72,15 +77,17 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 				add (new ChangePasswordForm ("form", user));
 			} else {
 				log.warn("Failed reset-password attempt: username={}, key={}", params.getString("username"), params.getString("key"));
-				error("Incorrect URL");
+				String failed = new StringResourceModel("Password.failed", this, null, "Incorrect URL").getString();
+				error(failed);
 				add (new ChangePasswordForm ("form", null));
+				resetLink.setVisible(true);
 			}
 		} else {			
 			add(new ChangePasswordForm("form", CwmSession.get().getUser()));
 		}
 		add(ISIApplication.get().getFooterPanel("pageFooter", params));
-		add (new BookmarkablePageLink<Void>("register", Register.class));
-		add (new BookmarkablePageLink<Void>("login", Login.class));			
+		add (new BookmarkablePageLink<Void>("register", ISIApplication.get().getRegisterPageClass()));
+		add (new BookmarkablePageLink<Void>("login", ISIApplication.get().getSignInPageClass()));			
 	}
 	
 
