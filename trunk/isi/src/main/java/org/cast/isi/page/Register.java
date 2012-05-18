@@ -231,8 +231,6 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 
 		// Consider moving this into a service class - LDM
 		protected void createDefaultTeacher(User user) {
-			// teachers need a default period created in the default site
-			Site site = ISIApplication.get().getMDefaultSite().getObject();
 			
 			SortedSet<User> userSet = new TreeSet<User>();
 			userSet.add(user);
@@ -241,8 +239,9 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			Site newSite = SiteService.get().newSite();
 			newSite.setName("Site_" + user.getUsername()); // make this unique
 
+			// create a new period
 			Period newPeriod = SiteService.get().newPeriod();
-			newPeriod.setSite(site);
+			newPeriod.setSite(newSite);
 			newPeriod.setName("Class_" + user.getUsername()); // make this unique
 			
 			// add the period to the user and the site
@@ -259,6 +258,7 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			studentUser.setUsername(newPeriod.getName());
 			studentUser.getPeriods().add(newPeriod);
 			studentUser.setValid(true);
+			studentUser.setCreateDate(new Date());
 			
 			// create a random number for the password
 			Random randomNumber = new Random();
@@ -270,7 +270,8 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			// add the teacher and the default student to the new default class
 			userSet.add(studentUser);
 			newPeriod.setUsers(userSet);
-			
+
+			Databinder.getHibernateSession().save(newSite);
 			Databinder.getHibernateSession().save(newPeriod);
 			Databinder.getHibernateSession().save(studentUser);
 		}
