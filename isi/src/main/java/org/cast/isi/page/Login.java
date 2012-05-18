@@ -118,13 +118,19 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 				eventService.saveLoginEvent();
 				
 				User user = session.getUser();
+				if (!user.isValid()) {
+					String notConfirmed = new StringResourceModel("Login.notConfirmed", this, null, "Account not confirmed.").getString();
+					error(notConfirmed);
+					return;
+				}
+
 				// Set default Period
 				if (user != null && user.usesPeriods()) {
 					session.setCurrentPeriodModel(new HibernateObjectModel<Period>(user.getPeriods().iterator().next()));
 					Site currentSite = ISISession.get().getCurrentPeriodModel().getObject().getSite();
 					IModel<Site> mCurrentSite = new Model<Site>(currentSite);
 					session.setCurrentSiteModel(mCurrentSite);
-				}
+				}				
 
 				if (!continueToOriginalDestination()) {
 					setResponsePage(getApplication().getHomePage());
@@ -133,7 +139,8 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 				
 			} else {
 				log.warn("Login failed, user {}, password {}", username.getModelObject(), password.getModelObject());
-				error(getLocalizer().getString("signInFailed", this, "Invalid username and/or password."));
+				String loginFailed = new StringResourceModel("Login.signInFailed", this, null, "Invalid username and/or password.").getString();
+				error(loginFailed);
 			}
 		}
 
