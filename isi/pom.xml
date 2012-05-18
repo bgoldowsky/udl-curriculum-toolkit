@@ -4,7 +4,7 @@
 	<name>Common code for UDL Curriculum Toolkit projects</name>
 	<groupId>org.cast</groupId>
 	<artifactId>isi</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
     <url>http://code.google.com/p/udl-curriculum-toolkit</url>
@@ -207,7 +207,7 @@
 	</build>
 
   <properties>
-      <cwm.version>1.3-SNAPSHOT</cwm.version>
+      <cwm.version>1.2</cwm.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
   </properties>
