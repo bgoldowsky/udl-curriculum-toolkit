@@ -1,0 +1,215 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<name>Common code for UDL Curriculum Toolkit projects</name>
+	<groupId>org.cast</groupId>
+	<artifactId>isi</artifactId>
+	<version>1.2</version>
+	<packaging>jar</packaging>
+
+    <url>http://code.google.com/p/udl-curriculum-toolkit</url>
+    <description>The UDL Curriculum Toolkit allows for the easy creation of
+    web interfaces to curricular content, with supports and student-teacher
+    interaction.</description>
+    <inceptionYear>2011</inceptionYear>
+
+	<organization>
+		<name>CAST, Inc.</name>
+        <url>http://cast.org</url>
+	</organization>
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License</name>
+            <url>http://www.gnu.org/licenses/agpl.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    <issueManagement>
+        <system>Google Code</system>
+        <url>http://code.google.com/p/udl-curriculum-toolkit/issues</url>
+    </issueManagement>
+    
+    <scm>
+      <url>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-1.2</url>
+      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-1.2</connection>
+      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-1.2</developerConnection>
+    </scm>
+
+    <distributionManagement>
+      <repository>
+        <id>CAST</id>
+        <url>scpexe://xander.cast.org/shared/maven2-repository</url>
+      </repository>
+      <!-- todo: site -->
+    </distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>CAST</id>
+			<url>http://comp.cast.org/maven2/</url>
+		</repository>
+		<repository>
+            <id>visural-common</id>
+            <name>visural-common</name>
+            <url>http://visural-common.googlecode.com/svn/trunk/visural-common/maven/</url>
+        </repository>
+        <repository>
+            <id>visural-wicket</id>
+            <name>visural-wicket</name>
+            <url>http://visural-wicket.googlecode.com/svn/trunk/visural-wicket/maven/</url>
+        </repository>
+	</repositories>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.cast.cwm</groupId>
+			<artifactId>cwm-tag</artifactId>
+			<version>${cwm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cast.cwm</groupId>
+			<artifactId>cwm-glossary</artifactId>
+			<version>${cwm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cast.cwm</groupId>
+			<artifactId>cwm-mediaplayer</artifactId>
+			<version>${cwm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cast.cwm</groupId>
+			<artifactId>cwm-dav</artifactId>
+			<version>${cwm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cast.cwm</groupId>
+			<artifactId>cwm-indira</artifactId>
+			<version>0.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>rhino</groupId>
+			<artifactId>js</artifactId>
+			<version>1.7R2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.visural</groupId>
+			<artifactId>visural-common</artifactId>
+			<version>0.4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jeremybrooks</groupId>
+			<artifactId>knicker</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>0.10.0</version>
+        </dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.3.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <header>etc/header.txt</header>
+                    <strictCheck>true</strictCheck>
+                    <aggregate>true</aggregate>
+                    <includes>
+                        <include>src/**/*.java</include>
+                    </includes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <properties>
+                        <year>${project.inceptionYear}</year>
+                    </properties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>https://udl-curriculum-toolkit.googlecode.com/svn/tags</tagBase>
+                </configuration>
+            </plugin>
+		</plugins>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>1.0</version>
+            </extension>
+        </extensions> 
+
+		<resources>
+			<resource>
+                <filtering>false</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<filtering>false</filtering>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
+	</build>
+
+  <properties>
+      <cwm.version>1.2</cwm.version>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
+  </properties>
+  
+</project>
