@@ -21,6 +21,7 @@ package org.cast.isi.panel;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -52,11 +53,17 @@ public class SingleSelectSummaryPanel extends Panel {
 		
 		// Put into order 1...N tries, then 0 (which means never correctly answered)
 		List<Integer> sorted = new ArrayList<Integer>(responseMap.keySet());
-		Collections.sort(sorted);
-		if (sorted.get(0) == 0) {
-			sorted.remove(0);
-			sorted.add(0);
-		}
+		Collections.sort(sorted, new Comparator<Integer>(){
+
+			public int compare(Integer arg0, Integer arg1) {
+				if (arg0 == 0) 
+					return (arg1 == 0) ? 0: 1;
+				if (arg0 > arg1)
+					return 1;
+				if (arg0 < arg1) 
+					return -1;
+				return 0;
+			}});
 		
 		for (Integer tries : sorted) {
 			WebMarkupContainer container = new WebMarkupContainer(byTries.newChildId());
