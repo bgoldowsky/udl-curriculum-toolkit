@@ -210,6 +210,13 @@ public abstract class ISIApplication extends CwmApplication {
 	protected static Time lastFileCheck;
 	protected List<String> enabledFeatures = new ArrayList<String>();
 
+	@Override
+	public void loadAppProperties() {
+		super.loadAppProperties();
+		// get the configuration from the properties file
+		configureApplicationProperties();
+	}
+	
 	protected void init() {
 		
 		EventService.get().setEventClass(ISIEvent.class);
@@ -264,8 +271,6 @@ public abstract class ISIApplication extends CwmApplication {
 		if (!Strings.isEmpty(requestedTags))
 			TagService.get().setDefaultTags(Arrays.asList(requestedTags.split("\\s*,\\s*")));
 
-		// get the configuration from the properties file
-		configureApplicationProperties();
 		configureResponseTypes();
 		configureResponseSort();
 		if (highlightsPanelOn) 
@@ -425,27 +430,26 @@ public abstract class ISIApplication extends CwmApplication {
 		if (responseTypeList != null) {
 			responseTypes = responseTypeList.split("\\s*,\\s*");	
 		}
-		CwmApplication app = CwmApplication.get();
 		if (responseTypes == null) {
 			log.info("No Response Types Set - using the Defaults: text, image, audio, file and table");
-			defaultResponseTypes.add(app.getResponseType("HTML"));
-			defaultResponseTypes.add(app.getResponseType("AUDIO"));
-			defaultResponseTypes.add(app.getResponseType("SVG"));
-			defaultResponseTypes.add(app.getResponseType("UPLOAD"));
-			defaultResponseTypes.add(app.getResponseType("TABLE"));
+			defaultResponseTypes.add(getResponseType("HTML"));
+			defaultResponseTypes.add(getResponseType("AUDIO"));
+			defaultResponseTypes.add(getResponseType("SVG"));
+			defaultResponseTypes.add(getResponseType("UPLOAD"));
+			defaultResponseTypes.add(getResponseType("TABLE"));
 		} else {
 			for (String responseType : responseTypes) {
 				log.info("Adding the application Response type {}", responseType);
 				if (responseType.toLowerCase().trim().equals("text"))
-					defaultResponseTypes.add(app.getResponseType("HTML"));				
+					defaultResponseTypes.add(getResponseType("HTML"));				
 				else if (responseType.toLowerCase().trim().equals("image"))
-					defaultResponseTypes.add(app.getResponseType("SVG"));
+					defaultResponseTypes.add(getResponseType("SVG"));
 				else if (responseType.toLowerCase().trim().equals("audio"))
-					defaultResponseTypes.add(app.getResponseType("AUDIO"));
+					defaultResponseTypes.add(getResponseType("AUDIO"));
 				else if (responseType.toLowerCase().trim().equals("file"))
-					defaultResponseTypes.add(app.getResponseType("UPLOAD"));
+					defaultResponseTypes.add(getResponseType("UPLOAD"));
 				else if (responseType.toLowerCase().trim().equals("table"))
-					defaultResponseTypes.add(app.getResponseType("TABLE"));
+					defaultResponseTypes.add(getResponseType("TABLE"));
 				else log.error("This Response Type {} is NOT valid and will NOT be added", responseType);
 			}
 		}
