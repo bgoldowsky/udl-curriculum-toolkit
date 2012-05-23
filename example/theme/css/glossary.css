@@ -126,6 +126,7 @@ a:hover, a:focus { color: #1E2D56; }
 
 #nav ul li.empty a {
 	color: #A4A4A4;
+	display: none;
 }
 
 #newword {
