@@ -526,6 +526,11 @@
       	    	<!-- ADD the teacher specific annotation WHAT TO LOOK FOR here -->
         		<a wicket:id="compareResponses_" href="#" class="button" rgid="{ancestor-or-self::dtb:responsegroup/@id}" type="{$type}">Compare Responses</a>
             	<span wicket:id="feedbackButton_" for="teacher" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+            	<xsl:choose>
+            		<xsl:when test="not($type='select1')">
+						<span wicket:id="scoreButtons_" for="teacher"  rgid="{ancestor-or-self::dtb:responsegroup/@id}"  type="{$type}"></span>
+            		</xsl:when>
+            	</xsl:choose>
        	 	</div>
        </div>
        <xsl:apply-templates select="dtb:prompt"/>
