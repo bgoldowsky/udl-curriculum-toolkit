@@ -35,6 +35,7 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
@@ -57,6 +58,7 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
+import org.cast.cwm.data.User;
 import org.cast.cwm.indira.FileResource;
 import org.cast.cwm.indira.FileResourceManager;
 import org.cast.cwm.mediaplayer.AudioPlayerPanel;
@@ -92,6 +94,7 @@ import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.SectionCompleteToggleComponent;
 import org.cast.isi.panel.SingleSelectSummaryPanel;
+import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.ISIResponseService;
 import org.slf4j.Logger;
@@ -314,7 +317,16 @@ public class ISIXmlComponent extends XmlComponent {
 			component.setVisibilityAllowed(usesTeacherButton ? forRole.equals("teacher") : forRole.equals("student"));
 			component.add(new AttributeRemover("rgid", "for"));
 			return component;
-			
+		} else if (wicketId.startsWith("scoreButtons_")) {
+//			ContentLoc loc = new ContentLoc(getModel().getObject());
+//			String responseGroupId = elt.getAttributeNS(null, "rgid");
+//			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
+			IModel<Prompt> promptModel = getPrompt(elt);
+			IModel<User> studentModel = ISISession.get().getTargetUserModel();
+			ISortableDataProvider<Response> responseProvider = ISIResponseService.get().getResponseProviderForPrompt(promptModel, studentModel);
+			//TODO:  Either get a response model here instead of a responseProvider or really implement this constructor to get the latest model.
+			TeacherScoreResponseButtonPanel component = new TeacherScoreResponseButtonPanel(wicketId, responseProvider);
+			return component;
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_")) {
