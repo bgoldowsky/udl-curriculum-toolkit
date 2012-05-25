@@ -92,8 +92,10 @@ import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackButtonPanel;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
+import org.cast.isi.panel.ScorePanel;
 import org.cast.isi.panel.SectionCompleteToggleComponent;
 import org.cast.isi.panel.SingleSelectSummaryPanel;
+import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.ISIResponseService;
@@ -318,14 +320,16 @@ public class ISIXmlComponent extends XmlComponent {
 			component.add(new AttributeRemover("rgid", "for"));
 			return component;
 		} else if (wicketId.startsWith("scoreButtons_")) {
-//			ContentLoc loc = new ContentLoc(getModel().getObject());
-//			String responseGroupId = elt.getAttributeNS(null, "rgid");
-//			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> promptModel = getPrompt(elt);
 			IModel<User> studentModel = ISISession.get().getTargetUserModel();
 			ISortableDataProvider<Response> responseProvider = ISIResponseService.get().getResponseProviderForPrompt(promptModel, studentModel);
-			//TODO:  Either get a response model here instead of a responseProvider or really implement this constructor to get the latest model.
 			TeacherScoreResponseButtonPanel component = new TeacherScoreResponseButtonPanel(wicketId, responseProvider);
+			return component;
+		} else if (wicketId.startsWith("showScore_")) {
+			IModel<Prompt> promptModel = getPrompt(elt);
+			IModel<User> studentModel = ISISession.get().getUserModel();
+			ISortableDataProvider<Response> responseProvider = ISIResponseService.get().getResponseProviderForPrompt(promptModel, studentModel);
+			ScorePanel component = new StudentScorePanel(wicketId, responseProvider);
 			return component;
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  

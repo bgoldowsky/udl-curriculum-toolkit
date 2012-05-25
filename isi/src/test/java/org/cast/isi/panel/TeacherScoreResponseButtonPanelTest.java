@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -73,9 +74,21 @@ public class TeacherScoreResponseButtonPanelTest {
 	}
 	
 	@Test
+	public void gotItButtonHasIcon() {
+		wicketTester.startPanel(new TestPanelSource());
+		wicketTester.assertComponent("panel:gotItButton:icon", Image.class);
+	}
+	
+	@Test
 	public void panelHasNotGotItButton() {
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertComponent("panel:notGotItButton", AjaxLink.class);
+	}
+	
+	@Test
+	public void notGotItButtonHasIcon() {
+		wicketTester.startPanel(new TestPanelSource());
+		wicketTester.assertComponent("panel:notGotItButton:icon", Image.class);
 	}
 	
 	@Test
@@ -108,6 +121,24 @@ public class TeacherScoreResponseButtonPanelTest {
 		wicketTester.startPanel(new TestPanelSource());
 		Component link = wicketTester.getComponentFromLastRenderedPage("panel:notGotItButton");
 		wicketTester.assertNotAttribute("Should not have 'current' class attribute", "current", link, "class");
+	}
+	
+	@Test
+	public void gotItIconHasProperAltTextIfResponsesUnmarked() {
+		setResponseScores(null);
+		wicketTester.startPanel(new TestPanelSource());
+		Component icon = wicketTester.getComponentFromLastRenderedPage("panel:gotItButton:icon");
+		String expectedAltText = "Click to score as \"Got it!\"";
+		wicketTester.assertAttribute("Should have 'alt' text \"" + expectedAltText + "\"" , expectedAltText, icon, "alt");
+	}
+	
+	@Test
+	public void gotItIconHasProperAltTextIfResponsesScoredCorrect() {
+		setResponseScores(1);
+		wicketTester.startPanel(new TestPanelSource());
+		Component icon = wicketTester.getComponentFromLastRenderedPage("panel:gotItButton:icon");
+		String expectedAltText = "Click to remove \"Got it!\" scoring.";
+		wicketTester.assertAttribute("Should have 'alt' text \"" + expectedAltText + "\"" , expectedAltText, icon, "alt");
 	}
 	
 	@Test
@@ -151,6 +182,24 @@ public class TeacherScoreResponseButtonPanelTest {
 		wicketTester.clickLink("panel:gotItButton");
 		Component link = wicketTester.getComponentFromLastRenderedPage("panel:gotItButton");
 		wicketTester.assertAttribute("Should have 'current' class attribute", "current", link, "class");
+	}
+	
+	@Test
+	public void notGotItIconHasProperAltTextIfResponsesUnmarked() {
+		setResponseScores(null);
+		wicketTester.startPanel(new TestPanelSource());
+		Component icon = wicketTester.getComponentFromLastRenderedPage("panel:notGotItButton:icon");
+		String expectedAltText = "Click to score as \"Didn't get it\"";
+		wicketTester.assertAttribute("Should have 'alt' text \"" + expectedAltText + "\"" , expectedAltText, icon, "alt");
+	}
+	
+	@Test
+	public void notGotItIconHasProperAltTextIfResponsesScoredIncorrect() {
+		setResponseScores(0);
+		wicketTester.startPanel(new TestPanelSource());
+		Component icon = wicketTester.getComponentFromLastRenderedPage("panel:notGotItButton:icon");
+		String expectedAltText = "Click to remove \"Didn't get it\" scoring.";
+		wicketTester.assertAttribute("Should have 'alt' text \"" + expectedAltText + "\"" , expectedAltText, icon, "alt");
 	}
 	
 	@Test
