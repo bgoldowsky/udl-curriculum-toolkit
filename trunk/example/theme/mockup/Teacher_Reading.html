@@ -88,9 +88,9 @@
             <h2>Lesson 2: Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem</h2>
         </div>
         <div id="pageJump">
-            <strong>Quick Flip:</strong>
             <form action="#">
-                <input type="text" class="pageJumpVal" />
+                <label for="pageJumpVal"><strong>Quick Flip:</strong></label>
+                <input type="text" class="pageJumpVal" id="pageJumpVal" />
                 <a href="#" class="button">Go</a>
             </form>
         </div>
@@ -599,7 +599,8 @@
                     </p>
 
                     <form method="post" action="#" name="something" id="something" class="tagAddForm">
-                        <!-- <input type="text" value="" class="tagTerm" /> FIXME -->
+                        <label for="addTags">Add Tags</label><br />
+                        <input type="text" value="" class="tagTerm" id="addTags" />
                         <a href="#" class="button">Add</a>
                     </form>
                     <!-- END - Tag - Cloud/Alph Example -->
