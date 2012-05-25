@@ -566,6 +566,7 @@
 						<!-- helper links -->
 						<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
 						<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+						<span wicket:id="showScore_" rgid="{@id}" type="responsearea"></span>
 					</div>
 				</div>
 				<!-- list of responses -->
