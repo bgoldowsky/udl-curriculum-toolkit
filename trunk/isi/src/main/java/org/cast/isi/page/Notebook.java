@@ -274,7 +274,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 					entryPrompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(),""));
 
 			// Add the title and link to the page where this note is located
-			BookmarkablePageLink<ISIStandardPage> link = ISIStandardPage.linkTo("titleLink", entryPrompt.getContentElement().getContentLocObject().getSection());
+			BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("titleLink", entryPrompt.getContentElement().getContentLocObject().getSection());
 			link.add(new Label("sectionTitle", entryPrompt.getContentElement().getContentLocObject().getSection().getTitle()));
 			link.add(new ClassAttributeModifier("sectionLink"));
 			promptGroup.add(link);
@@ -307,7 +307,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 					item.add(removeLink);
 
 					// Link back to content
-					BookmarkablePageLink<ISIStandardPage> editLink = ISIStandardPage.linkTo(
+					BookmarkablePageLink<ISIStandardPage> editLink = new SectionLinkFactory().linkTo(
 							"editLink",
 							entryPrompt.getContentElement().getContentLocObject().getSection(),
 							entryPrompt.getContentElement().getXmlId());

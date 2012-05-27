@@ -104,7 +104,7 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		String crumbTrail = prompt.getContentElement().getContentLocObject().getSection().getCrumbTrailAsString(1, 1);
 		add(new Label("crumbTrail", crumbTrail));
 		// TODO: should target link to main window, not in popup
-		BookmarkablePageLink<ISIStandardPage> link = ISIStandardPage.linkTo("titleLink", prompt.getContentElement().getContentLocObject().getSection());
+		BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("titleLink", prompt.getContentElement().getContentLocObject().getSection());
 		link.add(new Label("title", prompt.getContentElement().getContentLocObject().getSection().getTitle()));
 		link.add(new ClassAttributeModifier("sectionLink"));
 		add(link);

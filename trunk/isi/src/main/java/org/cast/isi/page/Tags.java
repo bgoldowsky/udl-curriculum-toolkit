@@ -114,11 +114,11 @@ public class Tags extends ISIStandardPage {
 					String crumbTrail = sec.getCrumbTrailAsString(1, 1);
 					item.add(new Label("crumbTrail", crumbTrail));
 					
-					BookmarkablePageLink<ISIStandardPage> link = ISIStandardPage.linkTo("titleLink", sec);
+					BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("titleLink", sec);
 					link.add(new Label("title", sec.getTitle()));
 					item.add(link);
 
-					BookmarkablePageLink<ISIStandardPage> iconLink = ISIStandardPage.linkTo("iconLink", sec);
+					BookmarkablePageLink<ISIStandardPage> iconLink = new SectionLinkFactory().linkToPage("iconLink", sec);
 					iconLink.add(ISIApplication.get().iconFor(sec.getSectionAncestor(),""));
 					item.add(iconLink);
 				

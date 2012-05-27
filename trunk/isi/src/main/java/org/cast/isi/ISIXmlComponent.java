@@ -71,7 +71,6 @@ import org.cast.cwm.xml.TransformResult;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
-import org.cast.cwm.xml.service.XmlService;
 import org.cast.isi.component.AnnotatedImageComponent;
 import org.cast.isi.component.HotSpotComponent;
 import org.cast.isi.component.SingleSelectForm;
@@ -81,6 +80,7 @@ import org.cast.isi.component.SlideShowComponent;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.page.ISIStandardPage;
+import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.panel.AgentLink;
 import org.cast.isi.panel.GlossaryLink;
 import org.cast.isi.panel.ImageDetailButtonPanel;
@@ -219,13 +219,13 @@ public class ISIXmlComponent extends XmlComponent {
 			int hashLocation = href.indexOf('#');
 			if (hashLocation > 0) {
 				// filename#ID case
-				return ISIStandardPage.linkTo(wicketId, href.substring(0, hashLocation), href.substring(hashLocation+1));
+				return new SectionLinkFactory().linkTo(wicketId, href.substring(0, hashLocation), href.substring(hashLocation+1));
 			}
 			// "#ID" or "ID" case:
 			String file = getModel().getObject().getXmlDocument().getName(); // same file as we're currently viewing
 			String id = href.substring(hashLocation+1);  // start at index 0 or 1
 			log.debug("Link to {} # {}", file, id);
-			return ISIStandardPage.linkTo(wicketId, file, id);
+			return new SectionLinkFactory().linkTo(wicketId, file, id);
 			
 		} else if (wicketId.startsWith("fileLink_")) {
 			// link to file in content directory
@@ -548,10 +548,10 @@ public class ISIXmlComponent extends XmlComponent {
 			// Find all wicket nodes and add appropriate label components
 			// NOTE: These could be added via XmlComponent.getDynamicComponent(), but that would mean repeating the same queries
 			// over and over again for each item.  This method requires just one database query.
-			NodeList wicketNodes = XmlService.get().getWicketNodes((Element) elt, false);
+			NodeList wicketNodes = xmlService.getWicketNodes((Element) elt, false);
 			for (int i = 0; i < wicketNodes.getLength(); i++) {
 				Element itemElt = (Element) wicketNodes.item(i);
-				String itemWicketId = itemElt.getAttributeNS(XmlService.get().getNamespaceContext().getNamespaceURI("wicket"), "id");
+				String itemWicketId = itemElt.getAttributeNS(xmlService.getNamespaceContext().getNamespaceURI("wicket"), "id");
 				
 				// String itemXmlId = itemElt.getAttributeNS(null, "xmlId");
 				boolean correct = Boolean.valueOf(itemElt.getAttributeNS(null, "correct"));

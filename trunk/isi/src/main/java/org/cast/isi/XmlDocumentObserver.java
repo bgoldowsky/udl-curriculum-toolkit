@@ -22,8 +22,6 @@ package org.cast.isi;
 import org.cast.cwm.xml.IDocumentObserver;
 import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ISI's IDocumentObserver class that identifies and labels ISIXmlSections 

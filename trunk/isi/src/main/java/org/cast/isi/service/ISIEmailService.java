@@ -22,17 +22,20 @@ package org.cast.isi.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.EmailService;
 import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSectionModel;
-import org.cast.cwm.xml.service.XmlService;
+import org.cast.cwm.xml.service.IXmlService;
 import org.cast.cwm.xml.transform.TransformParameters;
 import org.cast.isi.ISIApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
+import com.google.inject.Inject;
 
 public class ISIEmailService extends EmailService {
 
@@ -44,6 +47,14 @@ public class ISIEmailService extends EmailService {
 
 	protected static final Logger log = LoggerFactory.getLogger(ISIEmailService.class);
 
+	@Inject
+	private IXmlService xmlService;
+
+	public ISIEmailService() {
+		super();
+		InjectorHolder.getInjector().inject(this);
+	}
+	
 	public static ISIEmailService get() {
 		return (ISIEmailService) EmailService.get();
 	}
@@ -80,7 +91,7 @@ public class ISIEmailService extends EmailService {
 		params.put("subDelimiter", subDelimiter);
 
 		XmlSectionModel sectionModel = new XmlSectionModel(emailXml.getById(messageId));
-		Element emailContent = XmlService.get().getTransformed(sectionModel, ISIApplication.get().getEMAIL_TRANSFORMER(), params)
+		Element emailContent = xmlService.getTransformed(sectionModel, ISIApplication.get().getEMAIL_TRANSFORMER(), params)
 					.getElement();
 		
 		// Message substitution variables

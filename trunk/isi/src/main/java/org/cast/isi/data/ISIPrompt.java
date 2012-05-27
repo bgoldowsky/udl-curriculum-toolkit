@@ -24,16 +24,18 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import org.apache.wicket.injection.web.InjectorHolder;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.TransformResult;
 import org.cast.cwm.xml.XmlSectionModel;
-import org.cast.cwm.xml.service.XmlService;
+import org.cast.cwm.xml.service.IXmlService;
 import org.cast.isi.DynamicComponentRemoverFilter;
 import org.hibernate.annotations.Index;
 import org.slf4j.Logger;
@@ -43,6 +45,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
+
+import com.google.inject.Inject;
 
 @Entity
 @Getter
@@ -71,10 +75,19 @@ public class ISIPrompt extends Prompt implements Comparable<ISIPrompt> {
 
 	@Index(name="prompt_collection_idx")
 	private String collectionName; // grouping of prompts for MyModels, ResponseCollections (or whatever it is named)
+
+	//TODO: Get service field and service access out of this entity.
+	@Inject
+	@Transient
+	private IXmlService xmlService;
 	
-	protected ISIPrompt() {/* Empty constructor for datastore */}
+	protected ISIPrompt() {
+		super();
+		InjectorHolder.getInjector().inject(this);
+	}
 	
 	public ISIPrompt(PromptType type) {
+		this();
 		this.type = type;
 	}
 	
@@ -94,7 +107,7 @@ public class ISIPrompt extends Prompt implements Comparable<ISIPrompt> {
 		} else if (getType().equals(PromptType.RESPONSEAREA)) {
 			// TODO: Modify Schema so getElementById works instead of looping through
 			String divId = "prompt_" + getContentElement().getXmlId();
-			TransformResult html = XmlService.get().getTransformed(new XmlSectionModel(getContentElement().getContentLocObject().getSection()), "student");
+			TransformResult html = xmlService.getTransformed(new XmlSectionModel(getContentElement().getContentLocObject().getSection()), "student");
 			NodeList elements = html.getElement().getOwnerDocument().getElementsByTagName("div");
 			Element prompt = null;
 			for (int i = 0; i < elements.getLength(); i++) {

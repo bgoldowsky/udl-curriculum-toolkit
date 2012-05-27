@@ -45,6 +45,7 @@ import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIStandardPage;
+import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.SectionService;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 						protected void populateItem(ListItem item) {
 							XmlSection sec3 = (XmlSection) item.getModelObject();
 							boolean lev3isCurrent = sec3.getId().equals(currentLev3Id);
-							BookmarkablePageLink link = ISIStandardPage.linkTo("link", sec3);
+							BookmarkablePageLink link = new SectionLinkFactory().linkToPage("link", sec3);
 							item.add(link);
 							WebComponent icon = ISIApplication.get().iconFor(sec3, "_small_t");
 							if (((ISIXmlSection) sec3).hasResponseGroup() && !ISISession.get().getUser().getRole().equals(Role.STUDENT))
@@ -126,7 +127,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 									protected void populateItem(ListItem<XmlSection> item) {
 										XmlSection sec4 = (XmlSection) item.getModelObject();
 										boolean isCurrent = sec4.getId().equals(currentLev4Id) || sec4.getId().equals(currentLev3Id);
-										BookmarkablePageLink link = ISIStandardPage.linkTo("link", sec4);
+										BookmarkablePageLink link = new SectionLinkFactory().linkToPage("link", sec4);
 										item.add(link);
 										if (isCurrent) {
 											link.setEnabled(false);
@@ -243,7 +244,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 					if (isCurrent)
 						lev3.add(new ClassAttributeModifier(sec2.getClassName()));
 
-					BookmarkablePageLink link = ISIStandardPage.linkTo("link", sec2);
+					BookmarkablePageLink link = new SectionLinkFactory().linkToPage("link", sec2);
 					lev3.add(link);			
 					link.add (ISIApplication.get().iconFor(sec2, "_small_t"));
 
@@ -307,7 +308,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 					lev4.setVisible(isCurrent);
 					lev3.add(lev4);
 					
-					BookmarkablePageLink pageLink = ISIStandardPage.linkTo("link", sec2);
+					BookmarkablePageLink pageLink = new SectionLinkFactory().linkToPage("link", sec2);
 					lev4.add(pageLink);
 					pageLink.setEnabled(false);
 					pageLink.add(new ClassAttributeModifier("current"));
@@ -342,7 +343,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 			link.setEnabled(false);
 		} else {
 		
-			sec = ISIStandardPage.sectionLinkDest ((ISIXmlSection) sec);
+			sec = new SectionLinkFactory().sectionLinkDest ((ISIXmlSection) sec);
 			Class<? extends ISIStandardPage> pageType = ISIApplication.get().getReadingPageClass();
 			ContentLoc loc = new ContentLoc (sec);
 			link = new BookmarkablePageLink<Void>(name, pageType);
