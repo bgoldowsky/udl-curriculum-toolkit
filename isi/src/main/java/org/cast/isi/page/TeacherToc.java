@@ -143,7 +143,7 @@ public class TeacherToc extends ISIStandardPage {
 					@Override
 					protected void populateItem(ListItem<ISIXmlSection> item) {
 						ISIXmlSection sec = item.getModelObject();
-						BookmarkablePageLink<ISIStandardPage> link = linkTo("sectionLink", sec);
+						BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("sectionLink", sec);
 						item.add(link);
 						link.add(ISIApplication.get().iconFor(sec));
 					}
@@ -180,7 +180,7 @@ public class TeacherToc extends ISIStandardPage {
 									@Override
 									public void onClick() {
 										SectionStatus stat = getUserSectionStatus(student, sec);
-										ISIXmlSection targetSection = sectionLinkDest(sec);
+										ISIXmlSection targetSection = new SectionLinkFactory().sectionLinkDest(sec);
 										Class<? extends ISIStandardPage> pageType = ISIApplication.get().getReadingPageClass();
 										ISISession.get().setStudentModel(new HibernateObjectModel<User>(student));
 										PageParameters param = new PageParameters();

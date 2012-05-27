@@ -88,6 +88,7 @@ import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlDocumentList;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.parser.DtbookParser;
+import org.cast.cwm.xml.service.IXmlService;
 import org.cast.cwm.xml.service.XmlService;
 import org.cast.cwm.xml.transform.EnsureUniqueWicketIds;
 import org.cast.cwm.xml.transform.FilterElements;
@@ -121,6 +122,9 @@ import org.slf4j.LoggerFactory;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
 
+import com.google.inject.Binder;
+import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.visural.wicket.util.lesscss.LessCSSResourceStreamLocator;
 
 public abstract class ISIApplication extends CwmApplication {
@@ -210,6 +214,8 @@ public abstract class ISIApplication extends CwmApplication {
 	protected static Time lastFileCheck;
 	protected List<String> enabledFeatures = new ArrayList<String>();
 
+	private IXmlService xmlService;
+
 	@Override
 	public void loadAppProperties() {
 		super.loadAppProperties();
@@ -217,7 +223,29 @@ public abstract class ISIApplication extends CwmApplication {
 		configureApplicationProperties();
 	}
 	
+	@Override
+	protected void loadServices() {
+		log.debug("Loading XML Service");
+		super.loadServices();
+		xmlService = XmlService.get();
+		xmlService.setXmlSectionClass(getXmlSectionClass());
+		log.debug("Finished loading XML Service");
+	}
+
+	@Override
+	protected List<Module> getInjectionModules() {
+		List<Module> modules = super.getInjectionModules();
+		modules.add(new Module() {
+        public void configure(Binder binder) {
+			log.debug("Binding XML Service");
+   			binder.bind(IXmlService.class).toInstance(xmlService);
+    		}
+        });
+        return modules;
+	}
+	
 	protected void init() {
+		log.debug("Starting ISI Application Init");
 		
 		EventService.get().setEventClass(ISIEvent.class);
 
@@ -231,7 +259,6 @@ public abstract class ISIApplication extends CwmApplication {
 		ISIEmailService.useAsServiceInstance();
 		ISIResponseService.useAsServiceInstance();
 		ISIResponseService.get().setResponseClass(getResponseClass());
-		XmlService.get().setXmlSectionClass(getXmlSectionClass());
 		
 		
 		// Gather Extended Browser Information - Uses a wicket-administered redirect.
@@ -288,6 +315,7 @@ public abstract class ISIApplication extends CwmApplication {
 		if (!DEVELOPMENT.equalsIgnoreCase(getConfigurationType())) {
 			log.warn("********************** Wicket is running in Deployment Mode **********************");
 		}
+		log.debug("Finished ISI Application Init");
 	}
 
 	protected void registerHighlighters() {
@@ -347,6 +375,7 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 	
 	protected void configureApplicationProperties() {
+		log.debug("Configuring ISI Application Properties");
 		// Set Application settings based on property file
 		notebookOn = setBooleanProperty("isi.notebook.isOn", notebookOn);
 		whiteboardOn = setBooleanProperty("isi.whiteboard.isOn", whiteboardOn);
@@ -407,7 +436,7 @@ public abstract class ISIApplication extends CwmApplication {
 			log.info("The RSS feed will have at most {} items displayed.", maxRssFeedItems);
 		}
 
-	
+		log.debug("Finished configuring ISI Application Properties");
 	}
 
 	protected Boolean setBooleanProperty(String property, boolean defaultPropertyValue) {
@@ -424,6 +453,7 @@ public abstract class ISIApplication extends CwmApplication {
 	 * determine what the default response types are used
 	 */
 	public void configureResponseTypes() {
+		log.debug("Configuring ISI Response Types");
 		// Set default response types based on comma separated values in the property file
 		String responseTypeList = appProperties.getProperty("isi.defaultResponse.type");
 		String[] responseTypes = null;
@@ -459,6 +489,7 @@ public abstract class ISIApplication extends CwmApplication {
 		for (IResponseType rt : defaultResponseTypes) {
 			responseMetadata.addType(rt);
 		}
+		log.debug("Finished configuring ISI Response Types");
 	}
 
 	/**
@@ -488,10 +519,9 @@ public abstract class ISIApplication extends CwmApplication {
 	 * Load XML documents
 	 */
 	protected void loadXmlFiles() {
+		log.debug("Loading ISI XML Files");
 		
 		String davServer  = getDavServer();
-		XmlService xmls = XmlService.get();
-
 		if (davServer != null) {
 			final String davUser = appProperties.getProperty("isi.davUser");
 			final String davPassword = appProperties.getProperty("isi.davPassword");
@@ -514,7 +544,7 @@ public abstract class ISIApplication extends CwmApplication {
 			} else {
 				glossaryResource = new FileResource(new File(getContentDir(), glossaryFileName));
 			}
-			final XmlDocument glossaryDoc = xmls.loadXmlDocument("glossary", glossaryResource, new DtbookParser(), null);
+			final XmlDocument glossaryDoc = xmlService.loadXmlDocument("glossary", glossaryResource, new DtbookParser(), null);
 			
 			// Set up Glossary
 			Databinder.ensureSession(new SessionUnit() {
@@ -539,7 +569,7 @@ public abstract class ISIApplication extends CwmApplication {
 				log.debug("attempting to load Resource file = {}", getContentDir() + "/" + file);
 				resource = new FileResource(new File(getContentDir(), file));
 			}
-			XmlDocument doc = xmls.loadXmlDocument(file, resource, new DtbookParser(), documentObservers);
+			XmlDocument doc = xmlService.loadXmlDocument(file, resource, new DtbookParser(), documentObservers);
 			studentContent.add(doc);
 		}
 		
@@ -552,28 +582,25 @@ public abstract class ISIApplication extends CwmApplication {
 			} else {
 				emailResource = new FileResource(new File(getContentDir(), emailFileName));
 			}
-			emailContent = xmls.loadXmlDocument("email", emailResource, new DtbookParser(), null);					
+			emailContent = xmlService.loadXmlDocument("email", emailResource, new DtbookParser(), null);					
 		}
-		
+		log.debug("Finished loading ISI XML Files");
 	}
 
 	/**
 	 * Load XSL transformer files
 	 */
 	protected void loadXslFiles() {
-		XmlService xmls = XmlService.get();
-
+		log.debug("Loading ISI XSL Files");
 		// load the transformation directories into the list managed by XmlService
 		// load the custom directory first, then the base directory (if they are different)
-		List<String> xslTransformerDirectories = new ArrayList<String>();
-		xslTransformerDirectories.add(getCustomTransformationDir());
+		xmlService.addTransformerDirectory(getCustomTransformationDir());
 		if (!getCustomTransformationDir().equals(getTransformationDir()))
-			xslTransformerDirectories.add(getTransformationDir());
-		xmls.setTransformerDirectories(xslTransformerDirectories);
+			xmlService.addTransformerDirectory(getTransformationDir());
 
 		// Transformers
-		xmls.loadXSLTransformer("glossary", getGlossaryTransformationFile(), true);
-		xmls.loadXSLTransformer("toc", getTocTransformationFile(), true);
+		xmlService.loadXSLTransformer("glossary", getGlossaryTransformationFile(), true);
+		xmlService.loadXSLTransformer("toc", getTocTransformationFile(), true);
 		
 		// check for the student transformation file in the custom dir first then base dir
 		File studentXslFile = new File(getCustomTransformationDir(), getStudentTransformationFile());
@@ -583,9 +610,9 @@ public abstract class ISIApplication extends CwmApplication {
 		// For comparing responses, need to filter down to a single response area and invoke custom XSL
 		TransformChain compareChain = new TransformChain(
 				new FilterElements(),
-				new XslTransformer(xmls.findXslResource("compare-responses.xsl")),
+				new XslTransformer(xmlService.findXslResource("compare-responses.xsl")),
 				new EnsureUniqueWicketIds());
-		xmls.registerTransformer("compare-responses", compareChain);
+		xmlService.registerTransformer("compare-responses", compareChain);
 
 		
 		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
@@ -594,12 +621,13 @@ public abstract class ISIApplication extends CwmApplication {
 				new FilterElements(),
 				new XslTransformer(new FileResource(studentXslFile)),
 				new EnsureUniqueWicketIds());
-		xmls.registerTransformer("student", transformchain);	
+		xmlService.registerTransformer("student", transformchain);	
 		
 		if (emailOn) {
 			// For sending emails to users
-			xmls.loadXSLTransformer("email", getEmailTransformationFile(), true);
+			xmlService.loadXSLTransformer("email", getEmailTransformationFile(), true);
 		}
+		log.debug("Finished loading ISI XSL Files");
 
 	}
 

@@ -23,12 +23,15 @@ import java.io.Serializable;
 
 import lombok.Getter;
 
+import org.apache.wicket.injection.web.InjectorHolder;
 import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSection;
-import org.cast.cwm.xml.service.XmlService;
+import org.cast.cwm.xml.service.IXmlService;
 import org.cast.isi.ISIXmlSection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * A convenience object that can be used to access a {@link ISIXmlSection} object
@@ -48,6 +51,9 @@ public class ContentLoc implements Serializable, Comparable<ContentLoc> {
 	@Getter private final String id;
 	private transient ISIXmlSection section = null;
 
+	@Inject
+	private IXmlService xmlService;
+
 
 	/**
 	 * Constructor from a location string, previously generated
@@ -55,6 +61,7 @@ public class ContentLoc implements Serializable, Comparable<ContentLoc> {
 	 * @param location
 	 */
 	public ContentLoc(String location) {
+		InjectorHolder.getInjector().inject(this);
 		this.location = location;
 		int index = location.lastIndexOf('_');
 		if (index < 1 || index>location.length()-2)
@@ -68,6 +75,7 @@ public class ContentLoc implements Serializable, Comparable<ContentLoc> {
 	 * @param sec
 	 */
 	public ContentLoc (XmlSection sec) {
+		InjectorHolder.getInjector().inject(this);
 		if (sec == null)
 			throw new IllegalArgumentException("sec cannot be null in ContentLoc");
 		if (sec.getXmlDocument() == null)
@@ -84,7 +92,7 @@ public class ContentLoc implements Serializable, Comparable<ContentLoc> {
 	 */
 	public ISIXmlSection getSection() {
 		if (section == null) {
-			XmlDocument document = XmlService.get().getDocument(fileName);
+			XmlDocument document = xmlService.getDocument(fileName);
 			if (fileName == null || document == null) {
 				log.error("Locator refers to nonexistent content file: " + this);
 				return null;

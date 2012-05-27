@@ -42,6 +42,7 @@ import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.data.SectionStatus;
 import org.cast.isi.page.ISIStandardPage;
+import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.SectionService;
 import org.slf4j.Logger;
@@ -84,7 +85,7 @@ public class PageLinkPanel extends ISIPanel {
 			WebMarkupContainer pageLinkContainer = new WebMarkupContainer(pageRepeater.newChildId());
 			pageRepeater.add(pageLinkContainer);
 			
-			BookmarkablePageLink<ISIStandardPage> link = ISIStandardPage.linkTo("pageLink", page);
+			BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("pageLink", page);
 			pageLinkContainer.add(link);
 			link.setVisible(ISIApplication.get().isPageNumbersOn());
 			link.add(new Label("pageNum", String.valueOf(pageNumDisplay)).setRenderBodyOnly(true));

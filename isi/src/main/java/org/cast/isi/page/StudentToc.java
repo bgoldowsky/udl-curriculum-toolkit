@@ -152,7 +152,7 @@ public class StudentToc extends ISIStandardPage {
 			protected void populateItem(ListItem<XmlSection> item) {
 				XmlSection sec3 = item.getModelObject();
 				ContentLoc loc = new ContentLoc(sec3);
-				BookmarkablePageLink<ISIStandardPage> link = linkTo("link", sec3);
+				BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("link", sec3);
 				if (locsWithUnread.contains(loc.getLocation()))
 					link.add(new Image("messageIcon", new ResourceReference("img/icons/envelope_new.png")));
 				else if (locsWithMessages.contains(loc.getLocation()))

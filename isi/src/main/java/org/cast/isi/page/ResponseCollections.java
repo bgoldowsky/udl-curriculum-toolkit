@@ -160,7 +160,7 @@ public class ResponseCollections extends ISIStandardPage {
 							prompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(),""));
 				
 				// Add the title and link to the page where this note is located
-				BookmarkablePageLink<ISIStandardPage> link = ISIStandardPage.linkTo("contentLink", prompt.getContentElement().getContentLocObject().getSection());
+				BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("contentLink", prompt.getContentElement().getContentLocObject().getSection());
 				link.add(new Label("contentLinkTitle", prompt.getContentElement().getContentLocObject().getSection().getTitle()));
 				rvPromptList.add(link);
 			
