@@ -39,6 +39,7 @@ import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.SectionStatus;
 import org.cast.isi.page.ISIStandardPage;
+import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.QuickFlipForm;
@@ -148,7 +149,7 @@ public class ExampleNavBar extends AbstractNavBar<XmlSection> {
 				add(sectionContainer);
 				boolean current = section.equals(currentSection);
 
-				BookmarkablePageLink<ISIStandardPage> link = ISIStandardPage.linkTo("sectionLink", section);
+				BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("sectionLink", section);
 				if (current) {
 					link.setEnabled(false);
 					link.add(new ClassAttributeModifier("current"));
