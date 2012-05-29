@@ -51,6 +51,14 @@ public abstract class ScorePanel extends Panel {
 		return !(getResponses().isEmpty());
 	}
 
+	@Override
+	public void onDetach() {
+		for (IModel<Response> responseModel: responseModels) {
+			responseModel.detach();
+		}
+		super.onDetach();
+	}
+	
 	protected static List< IModel<Response>> getResponses(ISortableDataProvider<Response> responseProvider) {
 		List< IModel<Response>> responses = new ArrayList< IModel<Response>>();
 		for (Iterator<? extends Response> it = responseProvider.iterator(0, Integer.MAX_VALUE); it.hasNext(); ) {
