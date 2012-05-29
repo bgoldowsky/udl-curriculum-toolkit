@@ -151,6 +151,15 @@ public class TeacherScoreResponseButtonPanelTest {
 	}
 	
 	@Test
+	public void clickingGotItSetsScoresToCorrectIfSetToIncorrect() {
+		setResponseScores(0);
+		wicketTester.startPanel(new TestPanelSource());
+		wicketTester.clickLink("panel:gotItButton");
+		assertThat("Response should be scored as correct", response1.getScore(), equalTo(1));
+		assertThat("Response should be scored as correct", response2.getScore(), equalTo(1));
+	}
+	
+	@Test
 	public void clickingGotItSavesNewlySetScores() {
 		setResponseScores(null);
 		wicketTester.startPanel(new TestPanelSource());
@@ -205,6 +214,14 @@ public class TeacherScoreResponseButtonPanelTest {
 	@Test
 	public void clickingNotGotItSetsScoresIfNotSet() {
 		setResponseScores(null);
+		wicketTester.startPanel(new TestPanelSource());
+		wicketTester.clickLink("panel:notGotItButton");
+		assertThat("Response should be scored as incorrect", response1.getScore(), equalTo(0));
+	}
+	
+	@Test
+	public void clickingNotGotItSetsScoresToIncorrectIfSetToCorrect() {
+		setResponseScores(1);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.clickLink("panel:notGotItButton");
 		assertThat("Response should be scored as incorrect", response1.getScore(), equalTo(0));

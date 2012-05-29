@@ -70,27 +70,23 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 		private GotItButton(String id) {
 			super(id);
 			add(new Icon("icon", "/img/icons/response_positive.png", getAltText()));
-			if (isMarkedCorrect()) {
+			if (isMarkedCorrect()) 
 				add(new AttributeAppender("class", new Model<String>("current"), " "));
-			}
 		}
 		
 		private String getAltText() {
 			if (isMarkedCorrect())
 				return "Click to remove \"Got it!\" scoring.";
-			else {
+			else 
 				return "Click to score as \"Got it!\"";
-			}
 		}
 
 		@Override
 		public void onClick(AjaxRequestTarget target) {
-			if (isUnmarked()) {
-				updateResponseScore(target, 1);
-			}
-			else if (isMarkedCorrect()) {
+			if (isMarkedCorrect()) 
 				updateResponseScore(target, null);
-			}
+			else 
+				updateResponseScore(target, 1);
 		}
 
 	}
@@ -102,27 +98,23 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 		private NotGotItButton(String id) {
 			super(id);
 			add(new Icon("icon", "/img/icons/response_negative.png", getAltText()));
-			if (isMarkedIncorrect()) {
+			if (isMarkedIncorrect()) 
 				add(new AttributeAppender("class", new Model<String>("current"), " "));
-			}
 		}
 
 		private String getAltText() {
 			if (isMarkedIncorrect())
 				return "Click to remove \"Didn't get it\" scoring.";
-			else {
+			else 
 				return "Click to score as \"Didn't get it\"";
-			}
 		}
 
 		@Override
 		public void onClick(AjaxRequestTarget target) {
-			if (isUnmarked()) {
-				updateResponseScore(target, 0);
-			}
-			else if (isMarkedIncorrect()) {
+			if (isMarkedIncorrect()) 
 				updateResponseScore(target, null);
-			}
+			else
+				updateResponseScore(target, 0);
 		}
 	}
 
