@@ -43,7 +43,10 @@ import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.QuickFlipForm;
+import org.cast.isi.service.ISectionService;
 import org.cast.isi.service.SectionService;
+
+import com.google.inject.Inject;
 
 /**
  * A Navigation bar that shows the sequence of sections within a chapter.
@@ -53,6 +56,9 @@ import org.cast.isi.service.SectionService;
  */
 public class ExampleNavBar extends AbstractNavBar<XmlSection> {
 	private static final long serialVersionUID = 1L;
+
+	@Inject
+	public ISectionService sectionService;
 
 	/**
 	 * Construct nav bar based on a certain page that is currently being displayed.
@@ -158,7 +164,7 @@ public class ExampleNavBar extends AbstractNavBar<XmlSection> {
 				// if this is a teacher then display the section status
 				if (teacher) {
 					IModel<User> mTargetUser = ISISession.get().getTargetUserModel();
-					SectionStatus stat = SectionService.get().getSectionStatus(mTargetUser.getObject(), section);
+					SectionStatus stat = sectionService.getSectionStatus(mTargetUser.getObject(), section);
 					link.add(ISIApplication.statusIconFor(stat));					
 				} else {
 					link.add(ISIApplication.get().iconFor(section, ""));
