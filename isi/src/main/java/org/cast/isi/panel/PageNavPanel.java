@@ -49,7 +49,7 @@ public class PageNavPanel extends ISIPanel {
 	private static final Logger log = LoggerFactory.getLogger(PageNavPanel.class);
 
 	@Inject
-	public ISectionService sectionService;
+	private ISectionService sectionService;
 
 	public PageNavPanel(String id, IModel<? extends XmlSection> mSection) {
 		super(id);

@@ -41,7 +41,7 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 	@Getter @Setter private User targetPerson;
 	
 	@Inject
-	public ISectionService sectionService;
+	protected ISectionService sectionService;
 
 //	private static String BUSY_ICON = "/img/icons/busy.gif";
 //	private static String busyUrl;
@@ -59,12 +59,6 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 		super(id);
 		setOutputMarkupId(true);
 		this.location = new ContentLoc(model.getObject()).getLocation();
-		
-//		if (busyUrl == null) {
-//			busyUrl = FileResourceManager.get().getUrl(BUSY_ICON);
-//			busyWidth = IndiraImage.get(BUSY_ICON).getWidth();
-//			busyHeight = IndiraImage.get(BUSY_ICON).getHeight();
-//		}
 		
 		add(new IndiraImageComponent("doneImg") {
 			private static final long serialVersionUID = 1L;
@@ -87,7 +81,6 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 	
 	@Override
 	public void onClick (final AjaxRequestTarget target) {	
-//		ISIApplication.get().getSectionService().setCompleted(getUser(), new ContentLoc(location), !isComplete());
 		sectionService.setCompleted(getUser(), new ContentLoc(location), !isComplete());
 		if (target != null) {
 			getPage().visitChildren(SectionCompleteToggleComponent.class, new IVisitor<SectionCompleteToggleComponent>() {
@@ -100,38 +93,7 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 		}
 	}
 
-//	@Override
-//	/**
-//	 * Call Decorator that switches the icon to the animated busy icon, and disables the ajax link.
-//	 * Similar in function to BlockingAjaxCallDecorator, but the jQuery blockUI plugin seems to
-//	 * have trouble with positioning itself properly in inline contexts like this, and anyway
-//	 * is probably overkill in this simple situation of changing one link with one icon.
-//	 */
-//	protected IAjaxCallDecorator getAjaxCallDecorator() {
-//		return new IAjaxCallDecorator() {
-//
-//			private static final long serialVersionUID = 1L;
-//
-//			public CharSequence decorateOnFailureScript(CharSequence script) {
-//				return "alert(\"Update failed\");";
-//			}
-//
-//			public CharSequence decorateOnSuccessScript(CharSequence script) {
-//				return null;
-//			}
-//
-//			public CharSequence decorateScript(CharSequence script) {
-//				String id = get("img").getMarkupId();
-//				return String.format("$(\"#%s\").attr(\"src\", \"%s\").attr(\"height\",\"%d\").attr(\"width\",\"%d\");"
-//									+ "$(this).attr(\"onclick\",\"return false;\");%s", 
-//									id, busyUrl, busyHeight, busyWidth, script);
-//			}
-//			
-//		};
-//	}
-//	
 	public boolean isComplete() {
-//		Boolean isComplete = ISIApplication.get().getSectionService().getSectionStatusMap(getUser()).get(location);			
 		Boolean isComplete = sectionService.getSectionStatusMap(getUser()).get(location);			
 		if (isComplete == null)
 			isComplete = false;

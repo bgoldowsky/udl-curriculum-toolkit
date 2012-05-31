@@ -69,7 +69,7 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 	private static final Logger log = LoggerFactory.getLogger(ResponseFeedbackButtonPanel.class);
 
 	@Inject
-	public ISectionService sectionService;
+	private ISectionService sectionService;
 
 	public ResponseFeedbackButtonPanel(String id, final IModel<Prompt> promptM, final ResponseFeedbackPanel p) {
 		super(id);

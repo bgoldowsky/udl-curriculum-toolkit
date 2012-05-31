@@ -73,7 +73,7 @@ public class ResponseFeedbackPanel extends ISIPanel {
 	private ICwmService cwmService;
 
 	@Inject
-	public ISectionService sectionService;
+	private ISectionService sectionService;
 
 	public ResponseFeedbackPanel(String id) {
 		super(id);
