@@ -112,7 +112,9 @@ import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.HeaderPanel;
 import org.cast.isi.service.ISIEmailService;
 import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.ISectionService;
 import org.cast.isi.service.QuestionService;
+import org.cast.isi.service.SectionService;
 import org.hibernate.Session;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
@@ -237,8 +239,9 @@ public abstract class ISIApplication extends CwmApplication {
 		List<Module> modules = super.getInjectionModules();
 		modules.add(new Module() {
         public void configure(Binder binder) {
-			log.debug("Binding XML Service");
+    		log.debug("Binding ISI Services");
    			binder.bind(IXmlService.class).toInstance(xmlService);
+   			binder.bind(ISectionService.class).to(SectionService.class).in(Scopes.SINGLETON);
     		}
         });
         return modules;
@@ -558,7 +561,7 @@ public abstract class ISIApplication extends CwmApplication {
 		// Load student content files
 		String fileList = appProperties.getProperty("isi.studentContentFiles", DEFAULT_STUDENT_CONTENT_FILE_NAMES).trim();
 		studentContentFiles = fileList.split("\\s*,\\s*");		
-		documentObservers.add(new XmlDocumentObserver()); // Use set so sub-classed applications can add to it as well
+		documentObservers.add(new XmlDocumentObserver(getSectionElement(), getPageElement())); // Use set so sub-classed applications can add to it as well
 		for (String file : studentContentFiles) {
 			Resource resource;
 			if (davServer != null) {

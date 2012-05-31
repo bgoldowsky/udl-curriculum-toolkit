@@ -32,9 +32,11 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.page.ISIStandardPage;
-import org.cast.isi.service.SectionService;
+import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * This nav panel adds the previous/next buttons, the completion checkmark, the section title
@@ -45,6 +47,9 @@ public class PageNavPanel extends ISIPanel {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(PageNavPanel.class);
+
+	@Inject
+	public ISectionService sectionService;
 
 	public PageNavPanel(String id, IModel<? extends XmlSection> mSection) {
 		super(id);
@@ -120,7 +125,7 @@ public class PageNavPanel extends ISIPanel {
 			};
 			// Teacher can only mark as reviewed if the student has marked this as completed
 			// and there are no outstanding messages from the student.
-			toggle.setEnabled(SectionService.get().sectionReviewable(mTargetUser.getObject(), currentSection));
+			toggle.setEnabled(sectionService.sectionReviewable(mTargetUser.getObject(), currentSection));
 			add(toggle);
 
 		}

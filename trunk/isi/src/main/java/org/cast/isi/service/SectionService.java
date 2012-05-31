@@ -26,33 +26,38 @@ import java.util.Map;
 import net.databinder.hib.Databinder;
 
 import org.cast.cwm.data.Period;
-import org.cast.cwm.data.User;
 import org.cast.cwm.data.Role;
-import org.cast.cwm.service.CwmService;
+import org.cast.cwm.data.User;
 import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.ICwmService;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.SectionStatus;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Restrictions;
 
+import com.google.inject.Inject;
+
 /**
  * Database service methods for Section, SectionStatus, etc.
  * @author boris
  *
  */
-public class SectionService {
-	
-	private static SectionService INSTANCE = new SectionService();
-	
-	public static SectionService get() {
-		return INSTANCE;
-	}
-	
+public class SectionService implements ISectionService {
+
+	@Inject
+	private ICwmService cwmService;
+
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#getSectionStatus(org.cast.cwm.data.User, java.lang.String)
+	 */
 	public SectionStatus getSectionStatus(User person, String loc) {
 		return getSectionStatus(person, new ContentLoc(loc).getSection());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#getSectionStatus(org.cast.cwm.data.User, org.cast.isi.ISIXmlSection)
+	 */
 	public SectionStatus getSectionStatus(User person, ISIXmlSection xs) {
 		xs = xs.getSectionAncestor();
 		if (xs == null)
@@ -65,6 +70,9 @@ public class SectionService {
 			.uniqueResult();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#getSectionStatusMap(org.cast.cwm.data.User)
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String,Boolean> getSectionStatusMap (User person) {
 		List<SectionStatus> list = 
@@ -79,9 +87,8 @@ public class SectionService {
 		return m;
 	}
 	
-	/**
-	 * Get Map of all section statuses for a Period
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#getSectionStatusMaps(java.util.List)
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<Long,Map<String,SectionStatus>> getSectionStatusMaps (List<Period> periodList) {
@@ -106,6 +113,9 @@ public class SectionService {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#sectionIsCompleted(org.cast.cwm.data.User, java.lang.String)
+	 */
 	public boolean sectionIsCompleted (User person, String loc) {
 		SectionStatus stat = getSectionStatus(person, loc);
 		if (stat==null || !stat.getCompleted())
@@ -113,6 +123,9 @@ public class SectionService {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#sectionIsCompleted(org.cast.cwm.data.User, org.cast.isi.ISIXmlSection)
+	 */
 	public boolean sectionIsCompleted (User person, ISIXmlSection xs) {
 		SectionStatus stat = getSectionStatus(person, xs);
 		if (stat==null || !stat.getCompleted())
@@ -120,6 +133,9 @@ public class SectionService {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#setCompleted(org.cast.cwm.data.User, org.cast.isi.data.ContentLoc, boolean)
+	 */
 	public SectionStatus setCompleted (User person, ContentLoc loc, boolean complete) {
 		ISIXmlSection sec = loc.getSection().getSectionAncestor();
 		if (sec == null)
@@ -136,11 +152,14 @@ public class SectionService {
 		if (!sec.hasResponseGroup()) {
 			stat.setReviewed(complete);
 		}
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		EventService.get().saveEvent("section:" + (complete ? "done" : "not done"), null, loc.getLocation());
 		return stat;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#adjustMessageCount(org.cast.cwm.data.User, org.cast.isi.data.ContentLoc, org.cast.cwm.data.Role, int)
+	 */
 	public void adjustMessageCount (User student, ContentLoc loc, Role role, int amount) {
 		ISIXmlSection sec = loc.getSection().getSectionAncestor();
 		if (sec == null) {
@@ -156,9 +175,12 @@ public class SectionService {
 			stat.setUnreadStudentMessages(stat.getUnreadStudentMessages() + amount);
 		else
 			stat.setUnreadTeacherMessages(stat.getUnreadTeacherMessages() + amount);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#sectionIsReviewed(org.cast.cwm.data.User, java.lang.String)
+	 */
 	public boolean sectionIsReviewed (User person, String loc) {
 		SectionStatus stat = getSectionStatus(person, loc);
 		if (stat == null || !stat.getReviewed()) {
@@ -167,6 +189,9 @@ public class SectionService {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#sectionIsReviewed(org.cast.cwm.data.User, org.cast.isi.ISIXmlSection)
+	 */
 	public boolean sectionIsReviewed (User person, ISIXmlSection xs) {
 		SectionStatus stat = getSectionStatus(person, xs);
 		if (stat == null || !stat.getReviewed()) {
@@ -175,6 +200,9 @@ public class SectionService {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#sectionReviewable(org.cast.cwm.data.User, org.cast.isi.ISIXmlSection)
+	 */
 	public boolean sectionReviewable (User person, ISIXmlSection xs) {
 		SectionStatus stat = getSectionStatus(person, xs);
 		// teacher can only review if the sectionstatus exists, the student has completed
@@ -186,6 +214,9 @@ public class SectionService {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#setReviewed(org.cast.cwm.data.User, org.cast.isi.data.ContentLoc, boolean)
+	 */
 	public SectionStatus setReviewed (User person, ContentLoc loc, boolean reviewed) {
 		ISIXmlSection sec = loc.getSection().getSectionAncestor();
 		if (sec == null)
@@ -196,11 +227,14 @@ public class SectionService {
 		} else {
 			stat.setReviewed(reviewed);
 		}
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		EventService.get().saveEvent("section:" + (reviewed ? "reviewed" : "not reviewed"), null, loc.getLocation());
 		return stat;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#toggleReviewed(org.cast.cwm.data.User, org.cast.isi.data.ContentLoc)
+	 */
 	public SectionStatus toggleReviewed (User person, ContentLoc loc) {
 		ISIXmlSection sec = loc.getSection().getSectionAncestor();
 		if (sec == null)
@@ -212,7 +246,7 @@ public class SectionService {
 			boolean reviewed = stat.getReviewed();
 			stat.setReviewed(!reviewed);
 		}
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		EventService.get().saveEvent("section:" + (stat.getReviewed() ? "reviewed" : "not reviewed"), null, loc.getLocation());
 		return stat;
 	}

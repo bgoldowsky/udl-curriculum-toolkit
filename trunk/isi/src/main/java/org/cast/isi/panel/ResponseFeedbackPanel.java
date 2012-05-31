@@ -46,13 +46,15 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.AjaxDeletePersistedObjectDialog;
-import org.cast.cwm.service.CwmService;
 import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.ICwmService;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.service.ISIResponseService;
-import org.cast.isi.service.SectionService;
+import org.cast.isi.service.ISectionService;
+
+import com.google.inject.Inject;
 
 public class ResponseFeedbackPanel extends ISIPanel {
 
@@ -66,6 +68,12 @@ public class ResponseFeedbackPanel extends ISIPanel {
 	private IModel<Prompt> promptM;
 	
 	@Getter private SidebarDialog sidebarDialog;
+
+	@Inject
+	private ICwmService cwmService;
+
+	@Inject
+	public ISectionService sectionService;
 
 	public ResponseFeedbackPanel(String id) {
 		super(id);
@@ -88,10 +96,10 @@ public class ResponseFeedbackPanel extends ISIPanel {
 				m.setTimestamp(new Date());
 				if (m.getAuthor().getRole().equals(Role.STUDENT)) {
 					student = ISISession.get().getUser();
-					SectionService.get().adjustMessageCount(student, ((ISIStandardPage) getPage()).getLoc(), Role.STUDENT, 1);
+					sectionService.adjustMessageCount(student, ((ISIStandardPage) getPage()).getLoc(), Role.STUDENT, 1);
 				} else {
 					student = ISISession.get().getStudent();
-					SectionService.get().adjustMessageCount(student, ((ISIStandardPage) getPage()).getLoc(), m.getAuthor().getRole(), 1);
+					sectionService.adjustMessageCount(student, ((ISIStandardPage) getPage()).getLoc(), m.getAuthor().getRole(), 1);
 				}
 				m.setStudent(student);
 				m.setPrompt(promptM.getObject());
@@ -99,7 +107,7 @@ public class ResponseFeedbackPanel extends ISIPanel {
 				m.setUnread(true);
 				m.setVisible(true);
 				Databinder.getHibernateSession().save(m);
-				CwmService.get().flushChanges();
+				cwmService.flushChanges();
 				EventService.get().saveEvent("message:sent", String.valueOf(m.getId()), ((ISIStandardPage) getPage()).getPageName());
 			}
 			
@@ -160,9 +168,9 @@ public class ResponseFeedbackPanel extends ISIPanel {
 						messageList.remove(m);
 						if (m.isUnread()) {
 							if (m.getAuthor().getRole().equals(Role.STUDENT)) {
-								SectionService.get().adjustMessageCount(m.getStudent(), ((ISIStandardPage) getPage()).getLoc(), Role.STUDENT, -1);
+								sectionService.adjustMessageCount(m.getStudent(), ((ISIStandardPage) getPage()).getLoc(), Role.STUDENT, -1);
 							} else {
-								SectionService.get().adjustMessageCount(m.getStudent(), ((ISIStandardPage) getPage()).getLoc(), m.getAuthor().getRole(), -1);
+								sectionService.adjustMessageCount(m.getStudent(), ((ISIStandardPage) getPage()).getLoc(), m.getAuthor().getRole(), -1);
 							}
 						}
 						target.addComponent(responseContainer);				

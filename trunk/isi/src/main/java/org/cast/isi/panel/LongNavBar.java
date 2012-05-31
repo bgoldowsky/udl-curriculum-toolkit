@@ -47,9 +47,11 @@ import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.service.ISIResponseService;
-import org.cast.isi.service.SectionService;
+import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * Deprecated in favor of implementing your own Nav Bar in the application that extends
@@ -67,6 +69,9 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 	private List<String> locsWithUnread;
 	private List<String> locsWithMessages;
 	
+	@Inject
+	public ISectionService sectionService;
+
 	public LongNavBar(String id, XmlSection sec) {
 		this(id, sec, false);
 	}
@@ -166,7 +171,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 
 									@Override
 									public void onClick(final AjaxRequestTarget target) {
-										SectionService.get().toggleReviewed(ISISession.get().getStudent(), new ContentLoc(sec));
+										sectionService.toggleReviewed(ISISession.get().getStudent(), new ContentLoc(sec));
 									
 										
 										if (target != null) {
@@ -193,7 +198,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 
 									@Override
 									public IndiraImage getObject() {
-										boolean reviewed = SectionService.get().sectionIsReviewed(ISISession.get().getStudent(), (ISIXmlSection) sec);
+										boolean reviewed = sectionService.sectionIsReviewed(ISISession.get().getStudent(), (ISIXmlSection) sec);
 										if (!reviewed) 
 											return IndiraImage.get("img/buttons/mark_reviewed_off.png");
 										else
@@ -206,7 +211,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 								markReviewedLink.setOutputMarkupPlaceholderTag(true);
 								// TODO: Should this always be the last page?
 								if (teacher && ISISession.get().getStudent() != null 
-										&& SectionService.get().sectionIsCompleted(ISISession.get().getStudent(), (ISIXmlSection) sec)) {
+										&& sectionService.sectionIsCompleted(ISISession.get().getStudent(), (ISIXmlSection) sec)) {
 									markReviewedLink.setVisible(true);
 								} else {
 									markReviewedLink.setVisible(false);
@@ -257,7 +262,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 
 						@Override
 						public void onClick(final AjaxRequestTarget target) {
-							SectionService.get().toggleReviewed(ISISession.get().getStudent(), new ContentLoc(sec2));
+							sectionService.toggleReviewed(ISISession.get().getStudent(), new ContentLoc(sec2));
 						
 							if (target != null) {
 								getPage().visitChildren(AbstractNavBar.class, new IVisitor<AbstractNavBar>() {
@@ -285,7 +290,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 
 						@Override
 						public Object getObject() {
-							boolean reviewed = SectionService.get().sectionIsReviewed(ISISession.get().getStudent(), (ISIXmlSection) sec2);
+							boolean reviewed = sectionService.sectionIsReviewed(ISISession.get().getStudent(), (ISIXmlSection) sec2);
 							if (!reviewed) 
 								return new ResourceReference("img/buttons/mark_reviewed_off.png");
 							else
@@ -297,7 +302,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 					markReviewedLink.setOutputMarkupPlaceholderTag(true);
 
 					if (isCurrent && teacher && ISISession.get().getStudent() != null 
-							&& SectionService.get().sectionIsCompleted(ISISession.get().getStudent(), (ISIXmlSection) sec2)) {
+							&& sectionService.sectionIsCompleted(ISISession.get().getStudent(), (ISIXmlSection) sec2)) {
 						markReviewedLink.setVisible(true);
 					} else {
 						markReviewedLink.setVisible(false);

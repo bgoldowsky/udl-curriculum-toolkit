@@ -52,9 +52,11 @@ import org.cast.isi.data.ContentLoc;
 import org.cast.isi.panel.QuickFlipForm;
 import org.cast.isi.panel.TagCloudTocPanel;
 import org.cast.isi.service.ISIResponseService;
-import org.cast.isi.service.SectionService;
+import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 @AuthorizeInstantiation("STUDENT")
 public class StudentToc extends ISIStandardPage {
@@ -69,6 +71,9 @@ public class StudentToc extends ISIStandardPage {
 	private transient ISIXmlSection currentPage;
 	private transient ISIXmlSection currentRootSection;
 		
+	@Inject
+	public ISectionService sectionService;
+
 	public StudentToc(PageParameters parameters) {
 		super(parameters);
 
@@ -184,7 +189,7 @@ public class StudentToc extends ISIStandardPage {
 		IndiraImageComponent image = new IndiraImageComponent(id);
 		ISIXmlSection currentSection = (ISIXmlSection) model.getObject();
 		
-		Boolean isComplete = SectionService.get().getSectionStatusMap(getUser()).get(new ContentLoc(currentSection).getLocation());
+		Boolean isComplete = sectionService.getSectionStatusMap(getUser()).get(new ContentLoc(currentSection).getLocation());
 
 		if (isComplete == null)
 			isComplete = false;
