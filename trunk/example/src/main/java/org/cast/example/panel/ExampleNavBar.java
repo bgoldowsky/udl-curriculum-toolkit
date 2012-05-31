@@ -44,7 +44,6 @@ import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.QuickFlipForm;
 import org.cast.isi.service.ISectionService;
-import org.cast.isi.service.SectionService;
 
 import com.google.inject.Inject;
 
@@ -58,7 +57,7 @@ public class ExampleNavBar extends AbstractNavBar<XmlSection> {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	public ISectionService sectionService;
+	private ISectionService sectionService;
 
 	/**
 	 * Construct nav bar based on a certain page that is currently being displayed.
