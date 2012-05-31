@@ -72,7 +72,7 @@ public class StudentToc extends ISIStandardPage {
 	private transient ISIXmlSection currentRootSection;
 		
 	@Inject
-	public ISectionService sectionService;
+	protected ISectionService sectionService;
 
 	public StudentToc(PageParameters parameters) {
 		super(parameters);

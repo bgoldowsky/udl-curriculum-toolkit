@@ -23,11 +23,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.data.ContentLoc;
-import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
 
 public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent {
 	
@@ -35,9 +32,6 @@ public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent
 	private static final Logger log = LoggerFactory.getLogger(TeacherSectionCompleteToggle.class);
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	public ISectionService sectionService;
 
 	/**
 	 * Constructor

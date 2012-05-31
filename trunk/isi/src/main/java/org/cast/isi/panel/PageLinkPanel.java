@@ -58,7 +58,7 @@ public class PageLinkPanel extends ISIPanel {
 	private static final Logger log = LoggerFactory.getLogger(PageLinkPanel.class);
 
 	@Inject
-	public ISectionService sectionService;
+	private ISectionService sectionService;
 
 	private UserModel mUser;
 	private IModel<User> mTargetUser;

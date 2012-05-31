@@ -70,7 +70,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 	private List<String> locsWithMessages;
 	
 	@Inject
-	public ISectionService sectionService;
+	private ISectionService sectionService;
 
 	public LongNavBar(String id, XmlSection sec) {
 		this(id, sec, false);

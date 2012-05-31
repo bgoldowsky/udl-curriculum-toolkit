@@ -84,7 +84,7 @@ public class TeacherToc extends ISIStandardPage {
 	protected LoadableDetachableModel<HashMap<Long, Boolean>> mFlagMap;
 
 	@Inject
-	public ISectionService sectionService;
+	protected ISectionService sectionService;
 
 	public TeacherToc(PageParameters parameters) {
 		super(parameters);
