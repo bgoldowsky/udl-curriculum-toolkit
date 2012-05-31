@@ -32,10 +32,16 @@ import org.cast.cwm.xml.XmlSection;
  */
 public class XmlDocumentObserver implements IDocumentObserver {
 
-	String sectionElementName = ISIApplication.get().getSectionElement();
-	String pageElementName = ISIApplication.get().getPageElement();
+	String sectionElementName;
+	String pageElementName;
 	
 	private static final long serialVersionUID = 1L;
+
+	public XmlDocumentObserver(String sectionElementName, String pageElementName) {
+		super();
+		this.sectionElementName = sectionElementName;
+		this.pageElementName = pageElementName;
+	}
 
 	public void xmlUpdated(XmlDocument doc) {
 		identifySections(doc);

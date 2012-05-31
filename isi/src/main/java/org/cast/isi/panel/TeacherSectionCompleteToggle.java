@@ -23,9 +23,11 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.data.ContentLoc;
-import org.cast.isi.service.SectionService;
+import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent {
 	
@@ -33,6 +35,9 @@ public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent
 	private static final Logger log = LoggerFactory.getLogger(TeacherSectionCompleteToggle.class);
 
 	private static final long serialVersionUID = 1L;
+
+	@Inject
+	public ISectionService sectionService;
 
 	/**
 	 * Constructor
@@ -47,7 +52,7 @@ public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent
 	
 	@Override
 	public void onClick (final AjaxRequestTarget target) {	
-		SectionService.get().setReviewed(getUser(), new ContentLoc(location), !isComplete());
+		sectionService.setReviewed(getUser(), new ContentLoc(location), !isComplete());
 		if (target != null) {
 			getPage().visitChildren(TeacherSectionCompleteToggle.class, new IVisitor<TeacherSectionCompleteToggle>() {
 				public Object component(TeacherSectionCompleteToggle component) {
@@ -62,7 +67,7 @@ public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent
 	
 	// in this case isComplete means the teacher has reviewed
 	public boolean isComplete() {
-		Boolean isComplete = SectionService.get().sectionIsReviewed(getUser(), location);			
+		Boolean isComplete = sectionService.sectionIsReviewed(getUser(), location);			
 		if (isComplete == null)
 			isComplete = false;
 		return isComplete;

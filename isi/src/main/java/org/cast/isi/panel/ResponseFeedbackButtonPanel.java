@@ -43,9 +43,11 @@ import org.cast.isi.ISISession;
 import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.service.ISIResponseService;
-import org.cast.isi.service.SectionService;
+import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 
 /**
@@ -65,6 +67,9 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ResponseFeedbackButtonPanel.class);
+
+	@Inject
+	public ISectionService sectionService;
 
 	public ResponseFeedbackButtonPanel(String id, final IModel<Prompt> promptM, final ResponseFeedbackPanel p) {
 		super(id);
@@ -104,7 +109,7 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 						ISIResponseService.get().updateFeedbackMessage(new HibernateObjectModel<FeedbackMessage>(m), getPage());
 					}
 
-					SectionService.get().adjustMessageCount(ISISession.get().getUser(), ((ISIStandardPage) getPage()).getLoc(), Role.TEACHER, -1 * unreadTeacherMessages.size());
+					sectionService.adjustMessageCount(ISISession.get().getUser(), ((ISIStandardPage) getPage()).getLoc(), Role.TEACHER, -1 * unreadTeacherMessages.size());
 					unreadTeacherMessages.clear();
 
 				} else if (!role.equals(Role.STUDENT) && !unreadStudentMessages.isEmpty()) {
@@ -113,7 +118,7 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 						ISIResponseService.get().updateFeedbackMessage(new HibernateObjectModel<FeedbackMessage>(m), getPage());
 					}
 					
-					SectionService.get().adjustMessageCount(ISISession.get().getStudent(), ((ISIStandardPage) getPage()).getLoc(), Role.STUDENT, -1 * unreadStudentMessages.size());
+					sectionService.adjustMessageCount(ISISession.get().getStudent(), ((ISIStandardPage) getPage()).getLoc(), Role.STUDENT, -1 * unreadStudentMessages.size());
 					unreadStudentMessages.clear();
 				}
 				responseFeedbackPanel.clearFeedbackMessageForm();

@@ -57,9 +57,11 @@ import org.cast.isi.data.SectionStatus;
 import org.cast.isi.data.StudentFlag;
 import org.cast.isi.panel.StudentFlagPanel;
 import org.cast.isi.service.ISIResponseService;
-import org.cast.isi.service.SectionService;
+import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * Teacher Table of Contents
@@ -80,6 +82,9 @@ public class TeacherToc extends ISIStandardPage {
 	protected LoadableDetachableModel<List<User>> mStudentWithNotes;
 	protected LoadableDetachableModel<Map<Long, Map<String, SectionStatus>>> mStatusMap;
 	protected LoadableDetachableModel<HashMap<Long, Boolean>> mFlagMap;
+
+	@Inject
+	public ISectionService sectionService;
 
 	public TeacherToc(PageParameters parameters) {
 		super(parameters);
@@ -288,7 +293,7 @@ public class TeacherToc extends ISIStandardPage {
 				Map<Long, Map<String, SectionStatus>> statusMap;
 				List<Period> periods = new ArrayList<Period>(1);
 				periods.add(ISISession.get().getCurrentPeriodModel().getObject());		
-				statusMap = SectionService.get().getSectionStatusMaps(periods);
+				statusMap = sectionService.getSectionStatusMaps(periods);
 				return statusMap;
 			}			
 		};

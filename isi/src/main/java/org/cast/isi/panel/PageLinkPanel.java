@@ -44,15 +44,22 @@ import org.cast.isi.data.SectionStatus;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.ISectionService;
 import org.cast.isi.service.SectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 public class PageLinkPanel extends ISIPanel {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(PageLinkPanel.class);
+
+	@Inject
+	public ISectionService sectionService;
+
 	private UserModel mUser;
 	private IModel<User> mTargetUser;
 	private boolean teacher;
@@ -75,7 +82,7 @@ public class PageLinkPanel extends ISIPanel {
 
 		ISIXmlSection currentPage = mCurrentPage != null ? (ISIXmlSection) mCurrentPage.getObject() : null;
  		ISIXmlSection currentSection = ((ISIXmlSection) mSection.getObject()); // May be itself
-		SectionStatus currentSectionStatus = SectionService.get().getSectionStatus(mTargetUser.getObject(), currentSection);
+		SectionStatus currentSectionStatus = sectionService.getSectionStatus(mTargetUser.getObject(), currentSection);
 
 		// Page Number Repeater
 		RepeatingView pageRepeater = new RepeatingView("pageRepeater");

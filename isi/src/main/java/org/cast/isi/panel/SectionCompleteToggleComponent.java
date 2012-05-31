@@ -31,13 +31,18 @@ import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
-import org.cast.isi.service.SectionService;
+import org.cast.isi.service.ISectionService;
+
+import com.google.inject.Inject;
 
 public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 	
 	@Getter @Setter protected String location;
 	@Getter @Setter private User targetPerson;
 	
+	@Inject
+	public ISectionService sectionService;
+
 //	private static String BUSY_ICON = "/img/icons/busy.gif";
 //	private static String busyUrl;
 //	private static int busyHeight, busyWidth;
@@ -83,7 +88,7 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 	@Override
 	public void onClick (final AjaxRequestTarget target) {	
 //		ISIApplication.get().getSectionService().setCompleted(getUser(), new ContentLoc(location), !isComplete());
-		SectionService.get().setCompleted(getUser(), new ContentLoc(location), !isComplete());
+		sectionService.setCompleted(getUser(), new ContentLoc(location), !isComplete());
 		if (target != null) {
 			getPage().visitChildren(SectionCompleteToggleComponent.class, new IVisitor<SectionCompleteToggleComponent>() {
 				public Object component(SectionCompleteToggleComponent component) {
@@ -127,7 +132,7 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 //	
 	public boolean isComplete() {
 //		Boolean isComplete = ISIApplication.get().getSectionService().getSectionStatusMap(getUser()).get(location);			
-		Boolean isComplete = SectionService.get().getSectionStatusMap(getUser()).get(location);			
+		Boolean isComplete = sectionService.getSectionStatusMap(getUser()).get(location);			
 		if (isComplete == null)
 			isComplete = false;
 		return isComplete;
