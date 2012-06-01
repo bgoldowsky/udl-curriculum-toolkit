@@ -216,7 +216,7 @@ public abstract class ISIApplication extends CwmApplication {
 	protected static Time lastFileCheck;
 	protected List<String> enabledFeatures = new ArrayList<String>();
 
-	private IXmlService xmlService;
+	protected IXmlService xmlService;
 
 	@Override
 	public void loadAppProperties() {
