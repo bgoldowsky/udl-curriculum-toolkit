@@ -113,7 +113,7 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 				// Incorrect credentials or already confirmed: redirect to login page here.
 				log.warn("Failed confirmation attempt: username={}, key={}", params.getString("username"), params.getString("key"));
 				this.setRedirect(true);
-				this.setResponsePage(Login.class);
+				this.setResponsePage(ISIApplication.get().getSignInPageClass());
 				return;
 			}
 		}
