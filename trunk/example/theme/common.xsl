@@ -583,7 +583,7 @@
 				<xsl:apply-templates select="dtb:item//dtb:label" />
 			</div>
 			<p class="responseMCActions">
-				<a href="#" wicket:id="submitLink" class="button">Check My Answer</a>	
+				<a href="#" wicket:id="submitLink" class="button"><span wicket:id="responseSubmitText">Check My Answer</span></a>	
 			</p>
 			<div class="responseMCFeedback">
 				<xsl:apply-templates select="dtb:item//dtb:message" />
