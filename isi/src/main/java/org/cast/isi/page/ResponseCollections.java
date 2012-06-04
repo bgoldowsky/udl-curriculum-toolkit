@@ -40,9 +40,11 @@ import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * ResponseCollections are groups of response areas that are collected under a response name.
@@ -58,6 +60,10 @@ public class ResponseCollections extends ISIStandardPage {
 	private String pageTitleEnd;
 	private UserModel mUser;
 	private boolean isTeacher = false;
+	
+	@Inject
+	private IISIResponseService responseService;
+	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ResponseCollections.class);
 	protected static ResponseMetadata responseMetadata = new ResponseMetadata();
@@ -96,7 +102,7 @@ public class ResponseCollections extends ISIStandardPage {
 		
 		List<String> listNames = null;
 		if (mUser.getObject() != null) {
-			listNames = ISIResponseService.get().getResponseCollectionNames(mUser);
+			listNames = responseService.getResponseCollectionNames(mUser);
 		}
 		
 		if (!(listNames == null)) {
@@ -145,7 +151,7 @@ public class ResponseCollections extends ISIStandardPage {
 		add(rvPromptResponseList);
 
 		if (!StringUtils.isEmpty(paramCollectionName)) {
-			List<ISIPrompt> listPrompts = ISIResponseService.get().getResponseCollectionPrompts(mUser, paramCollectionName);
+			List<ISIPrompt> listPrompts = responseService.getResponseCollectionPrompts(mUser, paramCollectionName);
 			for (ISIPrompt prompt : listPrompts) {
 				PromptModel mPrompt = new PromptModel(prompt);
 

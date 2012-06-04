@@ -36,7 +36,9 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.page.ISIBasePage;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
+
+import com.google.inject.Inject;
 
 public class EditableResponseViewer extends Panel {
 	
@@ -72,6 +74,9 @@ public class EditableResponseViewer extends Panel {
 
 	private AjaxLink<Response> addToNotebook;
 
+	@Inject
+	protected IISIResponseService responseService;
+	
 	public EditableResponseViewer (String wicketId, IModel<Response> model, ResponseMetadata metadata, ContentLoc loc) {
 		super(wicketId, model);
 		this.model = model;
@@ -171,7 +176,7 @@ public class EditableResponseViewer extends Panel {
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				ISIResponseService.get().addToWhiteboard((ISIResponse) getModelObject(), (ISIBasePage)getPage());
+				responseService.addToWhiteboard((ISIResponse) getModelObject(), (ISIBasePage)getPage());
 				target.addComponent(whiteboardLink);
 				super.onClick(target);
 			}
@@ -203,7 +208,7 @@ public class EditableResponseViewer extends Panel {
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				ISIResponseService.get().addToNotebook((ISIResponse) getModelObject(), (ISIBasePage)getPage());
+				responseService.addToNotebook((ISIResponse) getModelObject(), (ISIBasePage)getPage());
 				target.addComponent(notebookLink);
 				super.onClick(target);
 			}

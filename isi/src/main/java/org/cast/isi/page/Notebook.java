@@ -67,10 +67,13 @@ import org.cast.isi.panel.RemoveDialog;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.ResponseViewer;
+import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISIResponseService;
 import org.hibernate.LockOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * A base Notebook view.  Notebook entries viewable by Chapter.  Entries can be directly inside
@@ -99,6 +102,9 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 	protected ResponseMetadata notebookMetadata;
 
+	@Inject
+	IISIResponseService responseService;
+	
 	public Notebook(PageParameters parameters) {
 		super(parameters);
 
@@ -205,7 +211,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	 * These responses are associated with the Chapter (level1).
 	 */
 	protected void addNotebookResponses () {
-		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.NOTEBOOK_NOTES, currentChapterLoc);
+		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.NOTEBOOK_NOTES, currentChapterLoc);
 		ResponseList responseList = new ResponseList("nbResponseList", mPrompt, notebookMetadata, currentChapterLoc, null);
 		responseList.setContext("notebook");
 		responseList.setAllowEdit(!isTeacher);
@@ -227,7 +233,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	protected void populateResponseMap() {
 
 		// get all the notebook responses for this target user, sorted by notebook insert time
-		IModel<List<ISIResponse>> responseList = ISIResponseService.get().getAllNotebookResponsesByStudent(ISISession.get().getTargetUserModel());	
+		IModel<List<ISIResponse>> responseList = responseService.getAllNotebookResponsesByStudent(ISISession.get().getTargetUserModel());	
 		responseMap = new TreeMap<ISIPrompt, List<ISIResponse>>();
 
 		// Loop through the responses.  Group them by prompt, starting with the response added
@@ -364,7 +370,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 			ISIResponse resp = (ISIResponse) getDefaultModelObject();
 			// Lock to current session - necessary since objects are stored detached in responseMap
 			Databinder.getHibernateSession().buildLockRequest(LockOptions.UPGRADE).lock(resp);
-			ISIResponseService.get().removeFromNotebook(resp, getPage());
+			responseService.removeFromNotebook(resp, getPage());
 			setResponsePage(ISIApplication.get().getNotebookPageClass(), getPageParameters());
 		}
 

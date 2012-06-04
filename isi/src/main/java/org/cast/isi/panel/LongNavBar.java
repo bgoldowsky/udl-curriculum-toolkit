@@ -46,7 +46,7 @@ import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +72,9 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 	@Inject
 	private ISectionService sectionService;
 
+	@Inject
+	protected IISIResponseService responseService;
+	
 	public LongNavBar(String id, XmlSection sec) {
 		this(id, sec, false);
 	}
@@ -87,14 +90,14 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 		final String currentLev4Id = currentLev4 == null ? null : currentLev4.getId();
 		
 		User student = ISISession.get().getTargetUserModel().getObject();
-		locsWithUnread = ISIResponseService.get().getPagesWithNotes(student, true);
-		locsWithMessages = ISIResponseService.get().getPagesWithNotes(student);
+		locsWithUnread = responseService.getPagesWithNotes(student, true);
+		locsWithMessages = responseService.getPagesWithNotes(student);
 				
 		add (new Label("title", top.getTitle()));
 		add (new ListView<XmlSection> ("lev2", top.getChildren()) {
 
 			// Here we are iterating over the parts of the chapter: consider, investigate, ...
-			protected void populateItem(ListItem item) {
+			protected void populateItem(ListItem<XmlSection> item) {
 				final XmlSection sec2 = (XmlSection) item.getModelObject();
 				
 				if (sec2.hasChildren()) {				
@@ -107,7 +110,7 @@ public class LongNavBar extends AbstractNavBar<XmlSection> {
 					container.add(new ListView<XmlSection> ("lev3", sec2.getChildren()) {
 
 						// Create icon for each section
-						protected void populateItem(ListItem item) {
+						protected void populateItem(ListItem<XmlSection> item) {
 							XmlSection sec3 = (XmlSection) item.getModelObject();
 							boolean lev3isCurrent = sec3.getId().equals(currentLev3Id);
 							BookmarkablePageLink link = new SectionLinkFactory().linkToPage("link", sec3);

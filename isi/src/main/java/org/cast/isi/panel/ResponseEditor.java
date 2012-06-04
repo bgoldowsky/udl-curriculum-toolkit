@@ -49,7 +49,6 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
-import org.cast.cwm.service.ResponseService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
@@ -151,7 +150,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 					// This gets invoked when user clicks "save" button.
 					// First, save the title to datastore (creating Response if necessary).
-					ResponseService.get().saveResponseWithoutData(model);
+					responseService.saveResponseWithoutData(model);
 					// Then get the audio data streamed back to the server
 					target.appendJavascript(((AbstractAudioRecorder)editor.get("applet")).generateJavascriptMessage("SAVE"));
 				}

@@ -38,12 +38,14 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.User;
-import org.cast.cwm.service.ResponseService;
+import org.cast.cwm.service.IResponseService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * Container for a list of responses and some auxiliary components.
@@ -80,6 +82,9 @@ public class ResponseList extends Panel {
 	protected ResponseMetadata metadata;
 	protected ContentLoc loc;
 
+	@Inject
+	IResponseService responseService;
+	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ResponseList.class);
 	private static final long serialVersionUID = 1L;
@@ -98,7 +103,7 @@ public class ResponseList extends Panel {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		dataProvider = ResponseService.get().getResponseProviderForPrompt(promptModel, mTargetUser);
+		dataProvider = responseService.getResponseProviderForPrompt(promptModel, mTargetUser);
 		// response list sort order is set by application configuration
 		dataProvider.getSortState().setPropertySortOrder(ISIApplication.get().getResponseSortField(), ISIApplication.get().getResponseSortState());
 		

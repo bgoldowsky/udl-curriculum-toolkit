@@ -40,9 +40,11 @@ import org.cast.cwm.data.behavior.AjaxAutoSavingBehavior;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * This panel creates a thumbs panel, an affect selection, and a text response area
@@ -61,6 +63,9 @@ public class RatePanel extends Panel {
 	protected IModel<Response> mResponseAffect;
 	protected String xmlId;
 	protected TextArea<String> commentText;
+	
+	@Inject
+	protected IISIResponseService responseService;
 	
 	/**
 	 * @param id wicket component id
@@ -88,11 +93,11 @@ public class RatePanel extends Panel {
 		}
 		
 		// Set up the prompt and response for the affect button
-		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RATING_AFFECT, contentLoc, xmlId);
-		mResponseAffect = ISIResponseService.get().getResponseForPrompt(mPrompt, mUser);
+		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RATING_AFFECT, contentLoc, xmlId);
+		mResponseAffect = responseService.getResponseForPrompt(mPrompt, mUser);
 		if (mResponseAffect == null || mResponseAffect.getObject() == null && !readOnly)
 			// TODO: should probably be one of the other response types
-			mResponseAffect = ISIResponseService.get().newResponse(mUser, CwmApplication.get().getResponseType("TEXT"), mPrompt);
+			mResponseAffect = responseService.newResponse(mUser, CwmApplication.get().getResponseType("TEXT"), mPrompt);
 		setDefaultModel(mResponseAffect);	
 		
 		addCommentForm("commentForm");
@@ -124,7 +129,7 @@ public class RatePanel extends Panel {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				ISIResponseService.get().saveTextResponse(((IModel<Response>)RatePanel.this.getDefaultModel()), affectText, contentLoc.getLocation());
+				responseService.saveTextResponse(((IModel<Response>)RatePanel.this.getDefaultModel()), affectText, contentLoc.getLocation());
 				target.addChildren(RatePanel.this, AjaxLink.class);
 			}
 
@@ -158,7 +163,7 @@ public class RatePanel extends Panel {
 			@Override
 			protected void onAutoSave(AjaxRequestTarget target) {
 				super.onAutoSave(target);
-				ISIResponseService.get().saveTextResponse(((IModel<Response>)commentForm.getDefaultModel()), commentText.getDefaultModelObjectAsString(), contentLoc.getLocation());
+				responseService.saveTextResponse(((IModel<Response>)commentForm.getDefaultModel()), commentText.getDefaultModelObjectAsString(), contentLoc.getLocation());
 			}
 		});
 	}
@@ -171,10 +176,10 @@ public class RatePanel extends Panel {
 			super(id);
 			
 			// Set up the prompt and response for the rating comment
-			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RATING_COMMENT, contentLoc, xmlId);
-			IModel<Response> mResponseComment = ISIResponseService.get().getResponseForPrompt(mPrompt, mUser);
+			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RATING_COMMENT, contentLoc, xmlId);
+			IModel<Response> mResponseComment = responseService.getResponseForPrompt(mPrompt, mUser);
 			if ((mResponseComment == null || mResponseComment.getObject() == null) && !readOnly)
-				mResponseComment = ISIResponseService.get().newResponse(mUser, CwmApplication.get().getResponseType("TEXT"), mPrompt);
+				mResponseComment = responseService.newResponse(mUser, CwmApplication.get().getResponseType("TEXT"), mPrompt);
 			setDefaultModel(mResponseComment);
 			
 			// set the text area to either what was in the db or a new string if nothing has been entered

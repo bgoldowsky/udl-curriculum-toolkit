@@ -43,9 +43,9 @@ import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.data.SectionStatus;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
+import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
-import org.cast.isi.service.SectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +65,9 @@ public class PageLinkPanel extends ISIPanel {
 	private boolean teacher;
 	private boolean feedbackRequired = false;
 
+	@Inject
+	protected IISIResponseService responseService;
+	
 	/**
 	 * Construct a set of links to all the pages in a given section.
 	 * 
@@ -153,7 +156,7 @@ public class PageLinkPanel extends ISIPanel {
 				student = ISISession.get().getUser();
 			else
 				student = ISISession.get().getStudent();
-			List<FeedbackMessage> messages = ISIResponseService.get().getNotesForPage(student, new ContentLoc(model.getObject()).getLocation());
+			List<FeedbackMessage> messages = responseService.getNotesForPage(student, new ContentLoc(model.getObject()).getLocation());
 			boolean unread = false;
 			for (FeedbackMessage m : messages) {
 				if (m.isUnread() 

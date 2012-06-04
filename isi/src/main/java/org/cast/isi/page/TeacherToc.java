@@ -56,7 +56,7 @@ import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.SectionStatus;
 import org.cast.isi.data.StudentFlag;
 import org.cast.isi.panel.StudentFlagPanel;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +86,9 @@ public class TeacherToc extends ISIStandardPage {
 	@Inject
 	protected ISectionService sectionService;
 
+	@Inject
+	protected IISIResponseService responseService;
+	
 	public TeacherToc(PageParameters parameters) {
 		super(parameters);
 
@@ -194,7 +197,7 @@ public class TeacherToc extends ISIStandardPage {
 										// is able to be out of sync with FeedbackMessage.isUnread() flag and is displaying
 										// the wrong icon on the page.  See ISIApplication.statusIconFor() as well.
 										String s = null;
-										if (stat != null && stat.getUnreadStudentMessages() > 0 && (s = ISIResponseService.get().locationOfFirstUnreadMessage(student, sec)) != null) {
+										if (stat != null && stat.getUnreadStudentMessages() > 0 && (s = responseService.locationOfFirstUnreadMessage(student, sec)) != null) {
 											param.put("loc", s);
 										} else if (stat != null && stat.getCompleted() && !stat.getReviewed()){
 											ISIXmlSection section = targetSection.getSectionAncestor().firstPageWithResponseGroup();
@@ -270,7 +273,7 @@ public class TeacherToc extends ISIStandardPage {
 			@Override
 			protected HashMap<Long, Boolean> load() {
 				// Load Student flags for this period and this teacher
-				List<StudentFlag> l = ISIResponseService.get().getAllFlags();
+				List<StudentFlag> l = responseService.getAllFlags();
 				HashMap<Long, Boolean> flagMap = new HashMap<Long, Boolean>();
 				for (StudentFlag f : l) {
 					flagMap.put(f.getFlagee().getId(), true);
@@ -314,7 +317,7 @@ public class TeacherToc extends ISIStandardPage {
 
 			@Override
 			protected List<User> load() {
-				List<ISIPrompt> mTeacherNotes = ISIResponseService.get().getTeacherNotes(ISISession.get().getUserModel());
+				List<ISIPrompt> mTeacherNotes = responseService.getTeacherNotes(ISISession.get().getUserModel());
 				List<User> studentsWithNotes = new ArrayList<User>();
 				// go through each teacher note and pull off the students (target users)
 				for (ISIPrompt prompt : mTeacherNotes) {
