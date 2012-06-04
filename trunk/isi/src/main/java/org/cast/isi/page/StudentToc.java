@@ -51,7 +51,7 @@ import org.cast.isi.data.ClassMessage;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.panel.QuickFlipForm;
 import org.cast.isi.panel.TagCloudTocPanel;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +74,9 @@ public class StudentToc extends ISIStandardPage {
 	@Inject
 	protected ISectionService sectionService;
 
+	@Inject
+	protected IISIResponseService responseService;
+	
 	public StudentToc(PageParameters parameters) {
 		super(parameters);
 
@@ -95,7 +98,7 @@ public class StudentToc extends ISIStandardPage {
 		// Loads the Class Message for this period
 		WebMarkupContainer classMessageBox = new WebMarkupContainer("classMessageBox");
 		add(classMessageBox);
-		ClassMessage m = ISIResponseService.get().getClassMessage(ISISession.get().getCurrentPeriodModel());
+		ClassMessage m = responseService.getClassMessage(ISISession.get().getCurrentPeriodModel());
 		if (m == null) {
 			classMessageBox.add(new Label("classMessage", new ResourceModel("classMessage")));
 		} else {
@@ -104,8 +107,8 @@ public class StudentToc extends ISIStandardPage {
 		classMessageBox.setVisible(ISIApplication.get().isClassMessageOn());
 
 		// Loads a list of locations that have Unread Messages and Regular Messages
-		locsWithUnread = ISIResponseService.get().getPagesWithNotes(ISISession.get().getUser(), true);
-		locsWithMessages = ISIResponseService.get().getPagesWithNotes(ISISession.get().getUser());
+		locsWithUnread = responseService.getPagesWithNotes(ISISession.get().getUser(), true);
+		locsWithMessages = responseService.getPagesWithNotes(ISISession.get().getUser());
 		
 		WebMarkupContainer tagsBox = new WebMarkupContainer("tagsBox");
 		add(tagsBox);

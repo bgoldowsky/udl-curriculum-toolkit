@@ -20,7 +20,6 @@
 package org.cast.isi.panel;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -37,28 +36,48 @@ import com.google.inject.Inject;
 
 public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 	
-	@Getter @Setter protected String location;
-	@Getter @Setter private User targetPerson;
-	
+	private static final long serialVersionUID = 1L;
+
 	@Inject
 	protected ISectionService sectionService;
 
-//	private static String BUSY_ICON = "/img/icons/busy.gif";
-//	private static String busyUrl;
-//	private static int busyHeight, busyWidth;
+	@Getter protected String location;
 	
-	private static final long serialVersionUID = 1L;
+	protected IModel<User> targetUserModel;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param id wicket id
-	 * @param location the xmlSection to be checked/toggled
+	 * @param model the xmlSection to be checked/toggled
 	 */
 	public SectionCompleteToggleComponent(String id, IModel<XmlSection> model) {
+		this(id, model, ISISession.get().getTargetUserModel());
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param id wicket id
+	 * @param model the xmlSection to be checked/toggled
+	 * @param targetUserModel the user to be marked/unmarked as completing the section
+	 */
+	public SectionCompleteToggleComponent(String id, IModel<XmlSection> model, IModel<User> targetUserModel) {
+		this(id, new ContentLoc(model.getObject()).getLocation(), targetUserModel);
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param id wicket id
+	 * @param location a string representing the section to be checked/toggled
+	 * @param targetUserModel the user to be marked/unmarked as completing the section
+	 */
+	public SectionCompleteToggleComponent(String id, String location, IModel<User> targetUserModel) {
 		super(id);
 		setOutputMarkupId(true);
-		this.location = new ContentLoc(model.getObject()).getLocation();
+		this.location = location;
+		this.targetUserModel = targetUserModel;
 		
 		add(new IndiraImageComponent("doneImg") {
 			private static final long serialVersionUID = 1L;
@@ -101,6 +120,6 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 	}
 	
 	public User getUser() {
-			return ISISession.get().getTargetUserModel().getObject();
+			return targetUserModel.getObject();
 	}
 }

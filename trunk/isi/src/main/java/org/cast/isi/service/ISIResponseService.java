@@ -39,7 +39,6 @@ import org.cast.cwm.data.ResponseData;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
-import org.cast.cwm.service.CwmService;
 import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.ResponseService;
 import org.cast.cwm.xml.XmlSection;
@@ -72,14 +71,14 @@ import org.slf4j.LoggerFactory;
  * @author jbrookover
  *
  */
-public class ISIResponseService extends ResponseService {
+public class ISIResponseService extends ResponseService implements IISIResponseService {
 	
 //	private static Map<ThumbNailLookup, byte[]> thumbNails;
 //	private static final int MAX_THUMBNAIL_ENTRIES = 1000;
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ISIResponseService.class);
 	
-	protected ISIResponseService() {/* Protected Constructor - use ISIResponseService.get() */}
+	protected ISIResponseService() {/* Protected Constructor - use injection */}
 	
 	public static ISIResponseService get() {
 		return (ISIResponseService) ResponseService.get();
@@ -92,39 +91,66 @@ public class ISIResponseService extends ResponseService {
 		ResponseService.instance = new ISIResponseService();
 	}
 		
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreatePrompt(org.cast.isi.data.PromptType)
+	 */
 	public IModel<Prompt> getOrCreatePrompt(PromptType type) {
 		return genericGetOrCreatePrompt(type, null, null, null, null, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreatePrompt(org.cast.isi.data.PromptType, java.lang.String)
+	 */
 	public IModel<Prompt> getOrCreatePrompt(PromptType type, String identifier) {
 		return genericGetOrCreatePrompt(type, null, null, null, identifier, null);
 	}
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreatePrompt(org.cast.isi.data.PromptType, org.cast.isi.data.ContentLoc)
+	 */
 	public IModel<Prompt> getOrCreatePrompt(PromptType type, ContentLoc loc) {
 		return genericGetOrCreatePrompt(type, loc, null, null, null, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreatePrompt(org.cast.isi.data.PromptType, org.cast.isi.data.ContentLoc, java.lang.String)
+	 */
 	public IModel<Prompt> getOrCreatePrompt(PromptType type, ContentLoc loc, String xmlId) {
 		return genericGetOrCreatePrompt(type, loc, xmlId, null, null, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreatePrompt(org.cast.isi.data.PromptType, org.apache.wicket.model.IModel)
+	 */
 	public IModel<Prompt> getOrCreatePrompt(PromptType type, IModel<User> targetUser) {
 		return genericGetOrCreatePrompt(type, null, null, targetUser, null, null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreatePrompt(org.cast.isi.data.PromptType, org.apache.wicket.model.IModel, java.lang.String)
+	 */
 	public IModel<Prompt> getOrCreatePrompt(PromptType type, IModel<User> targetUser, String identifier) {
 		return genericGetOrCreatePrompt(type, null, null, targetUser, identifier, null);
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreatePrompt(org.cast.isi.data.PromptType, org.cast.isi.data.ContentLoc, java.lang.String, java.lang.String)
+	 */
 	public IModel<Prompt> getOrCreatePrompt(PromptType type, ContentLoc loc, String xmlId, String collectionName) {
 		return genericGetOrCreatePrompt(type, loc, xmlId, null, null, collectionName);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreateHighlightPrompt(org.cast.isi.data.PromptType, org.cast.isi.data.ContentLoc, java.lang.String)
+	 */
 	public IModel<Prompt> getOrCreateHighlightPrompt(PromptType highlightlabel, ContentLoc loc, String color) {
 		return genericGetOrCreatePrompt(highlightlabel, loc, null, null, color, null);
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#genericGetOrCreatePrompt(org.cast.isi.data.PromptType, org.cast.isi.data.ContentLoc, java.lang.String, org.apache.wicket.model.IModel, java.lang.String, java.lang.String)
+	 */
 	public synchronized IModel<Prompt> genericGetOrCreatePrompt(PromptType type, ContentLoc loc, String xmlId, IModel<User> targetUser, String identifier, String collectionName) {
 		
 		IModel<ContentElement> ce = getOrCreateContentElement(loc, xmlId);
@@ -157,28 +183,20 @@ public class ISIResponseService extends ResponseService {
 			Databinder.getHibernateSession().save(p);	
 		}
 		
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		
 		return new PromptModel(p);
 	}
 	
-	/**
-	 * Returns a persisted ContentElement object for the given ContentLoc.
-	 * @param loc ContentLoc of a page
-	 * 
-	 * @return model of ContentElement, created if necessary and saved to DB
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreateContentElement(org.cast.isi.data.ContentLoc)
 	 */
 	public IModel<ContentElement> getOrCreateContentElement(ContentLoc loc) {
 		return getOrCreateContentElement(loc, null);
 	}
 	
-	/**
-	 * Return a persisted ContentElement for the given page ContentLoc and (optionally) XML ID within the page.
-	 * Returns null if ContentLoc is null.
-	 * 
-	 * @param loc  ContentLoc of a page
-	 * @param xmlId ID of element within the page
-	 * @return model of ContentElement, created if necessary and saved to DB
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getOrCreateContentElement(org.cast.isi.data.ContentLoc, java.lang.String)
 	 */
 	public synchronized IModel<ContentElement> getOrCreateContentElement(ContentLoc loc, String xmlId) {
 		
@@ -204,22 +222,21 @@ public class ISIResponseService extends ResponseService {
 				e.setXmlId(xmlId);
 			Databinder.getHibernateSession().save(e);	
 		}
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		
 		return new HibernateObjectModel<ContentElement>(e);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#newPageHighlightsLabel(org.apache.wicket.model.IModel, org.apache.wicket.model.IModel)
+	 */
 	public IModel<Response> newPageHighlightsLabel(IModel<User> user, IModel<ISIPrompt> prompt) {
 		return super.newResponse(user, CwmApplication.get().getResponseType("TEXT"), prompt);
 	}
 
 	
-	/**
-	 * Save the response for a multiple choice response
-	 * 
-	 * @param mResponse
-	 * @param text
-	 * @param correct
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#saveSingleSelectResponse(org.apache.wicket.model.IModel, java.lang.String, boolean, java.lang.String)
 	 */
 	public void saveSingleSelectResponse(IModel<Response> mResponse, String text, boolean correct, String pageName) {
 		Response r = mResponse.getObject();
@@ -237,22 +254,22 @@ public class ISIResponseService extends ResponseService {
 		super.genericSaveResponse(mResponse, text, score, 1, 1, null, pageName);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#newSingleSelectResponse(org.apache.wicket.model.IModel, org.apache.wicket.model.IModel)
+	 */
 	public IModel<Response> newSingleSelectResponse(IModel<User> user, IModel<Prompt> model) {
 		return super.newResponse(user, CwmApplication.get().getResponseType("SINGLE_SELECT"), model);
 	}
 
-	/**
-	 * A set of methods for saving a response object with the appropriate type for these custom responses.
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#saveHighlighterLabel(org.apache.wicket.model.IModel, java.lang.String)
 	 */	
 	public void saveHighlighterLabel(IModel<Response> response, String label) {
 		super.saveTextResponse(response, label, null);
 	}
 	
-	/**
-	 * Set the message/announcement for a given Period.
-	 * 
-	 * @param p - the period
-	 * @param s - the message
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#setClassMessage(org.apache.wicket.model.IModel, java.lang.String)
 	 */
 	public void setClassMessage(IModel<Period> mPeriod, String s) {
 		
@@ -270,15 +287,12 @@ public class ISIResponseService extends ResponseService {
 			old.setCurrent(false);
 		}
 		Databinder.getHibernateSession().save(m);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		EventService.get().saveEvent("classmessage:create", "Period Id: " + p.getId() + " Message Id: " + m.getId(), null);		
 	}
 	
-	/**
-	 * Get the message/announcement for a given period that is marked current.
-	 * 
-	 * @param p - the period
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getClassMessage(org.apache.wicket.model.IModel)
 	 */
 	public ClassMessage getClassMessage(IModel<Period> p) {
 		Query q = Databinder.getHibernateSession().getNamedQuery("ClassMessage.queryByPeriod");
@@ -291,10 +305,8 @@ public class ISIResponseService extends ResponseService {
 	}
 	
 	
-	/**
-	 * Marks the current message/announcement for a period as not-current.  It remains in the database, but is not displayed.
-	 * 
-	 * @param p
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#deleteClassMessage(org.apache.wicket.model.IModel)
 	 */
 	public void deleteClassMessage(IModel<Period> mPeriod) {
 		
@@ -302,18 +314,13 @@ public class ISIResponseService extends ResponseService {
 		ClassMessage m = getClassMessage(mPeriod);
 		if (m != null) {
 			m.setCurrent(false);
-			CwmService.get().flushChanges();
+			cwmService.flushChanges();
 			EventService.get().saveEvent("classmessage:delete", "Period Id: " + p.getId() + " Message Id: " + m.getId(), null);
 		}
 	}
 
-	/**
-	 * This is an expensive method as the Event table is a very large table.  Call this only
-	 * once per session as part of getting the bookmark.
-	 * 
-	 * @param person
-	 * @param type
-	 * @return Most recent event for Person of a particular type
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#findLatestMatchingEvent(org.cast.cwm.data.User, java.lang.String)
 	 */
 	public ISIEvent findLatestMatchingEvent (User person, String type) {
 		Session s = Databinder.getHibernateSession();
@@ -326,6 +333,9 @@ public class ISIResponseService extends ResponseService {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#toggleFlag(org.cast.cwm.data.User, org.cast.cwm.data.Period)
+	 */
 	public void toggleFlag(User person, Period period) {
 		Query q;
 		String note;
@@ -353,14 +363,20 @@ public class ISIResponseService extends ResponseService {
 			session.delete(f);
 			note = "off";
 		}
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		EventService.get().saveEvent("flag", note, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#toggleFlag(org.cast.cwm.data.User)
+	 */
 	public void toggleFlag(User person) {
 		toggleFlag(person, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#isFlagged(org.cast.cwm.data.User, org.cast.cwm.data.Period)
+	 */
 	public boolean isFlagged(User person, Period period) {
 		Query q;
 		if (period != null) {
@@ -381,10 +397,16 @@ public class ISIResponseService extends ResponseService {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#isFlagged(org.cast.cwm.data.User)
+	 */
 	public boolean isFlagged(User person) {
 		return isFlagged(person, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getAllFlags()
+	 */
 	@SuppressWarnings("unchecked")
 	public List<StudentFlag> getAllFlags () {
 		Query q = Databinder.getHibernateSession().getNamedQuery("StudentFlag.queryByFlagger");
@@ -393,6 +415,9 @@ public class ISIResponseService extends ResponseService {
 		return q.list();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getFeedbackMessages(org.apache.wicket.model.IModel, org.cast.cwm.data.User)
+	 */
 	@SuppressWarnings("unchecked")
 	public List<FeedbackMessage> getFeedbackMessages(IModel<Prompt> promptM, User student) {
 		// FIXME needs to query by prompt
@@ -403,27 +428,30 @@ public class ISIResponseService extends ResponseService {
 		return q.list();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#deleteFeedbackMessage(org.apache.wicket.model.IModel)
+	 */
 	public void deleteFeedbackMessage(IModel<FeedbackMessage> mFeedbackMessage) {
 		FeedbackMessage feedbackMessage = mFeedbackMessage.getObject();
 		feedbackMessage.setVisible(false);
 		Databinder.getHibernateSession().update(feedbackMessage);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		EventService.get().saveEvent("feedback:delete", "Message Id: " + feedbackMessage.getId(), null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#updateFeedbackMessage(org.apache.wicket.model.IModel, org.apache.wicket.Page)
+	 */
 	public void updateFeedbackMessage(IModel<FeedbackMessage> mFeedbackMessage, Page page) {
 		FeedbackMessage feedbackMessage = mFeedbackMessage.getObject();
 		Databinder.getHibernateSession().update(feedbackMessage);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
 		EventService.get().saveEvent("message:view", "Message Id: " + String.valueOf(feedbackMessage.getId()), pageName);
 	}
 
-	/**
-	 * @param teacher
-	 * @return list of prompts
-	 * 
-	 * Get all of the active teacher notes written by this teacher.
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getTeacherNotes(org.apache.wicket.model.IModel)
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ISIPrompt> getTeacherNotes(IModel<User> teacher) {
@@ -439,6 +467,9 @@ public class ISIResponseService extends ResponseService {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getPagesWithNotes(org.cast.cwm.data.User, boolean)
+	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getPagesWithNotes(User student, boolean isUnread) {
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getPagesWithNotesByStudentAndUnreadStatus");
@@ -450,6 +481,9 @@ public class ISIResponseService extends ResponseService {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getPagesWithNotes(org.cast.cwm.data.User)
+	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getPagesWithNotes(User student) {
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getPagesWithNotesByStudent");
@@ -458,6 +492,9 @@ public class ISIResponseService extends ResponseService {
 		return q.list();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getNotesForPage(org.cast.cwm.data.User, java.lang.String)
+	 */
 	@SuppressWarnings("unchecked")
 	public List<FeedbackMessage> getNotesForPage(User student, String loc) {
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getNotesForPage");
@@ -467,6 +504,9 @@ public class ISIResponseService extends ResponseService {
 		return q.list();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#locationOfFirstUnreadMessage(org.cast.cwm.data.User, org.cast.isi.ISIXmlSection)
+	 */
 	public String locationOfFirstUnreadMessage(User student, ISIXmlSection sec) {
 		List<String> locations = new ArrayList<String>();
 		if (sec.hasChildren()) {
@@ -487,6 +527,9 @@ public class ISIResponseService extends ResponseService {
 		return m.getLocation();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getAllNotebookResponsesByStudent(org.apache.wicket.model.IModel)
+	 */
 	public IModel<List<ISIResponse>> getAllNotebookResponsesByStudent (IModel<User> student) {
 		ISIResponseCriteriaBuilder builder = new ISIResponseCriteriaBuilder();
 		builder.setUserModel(student);
@@ -496,6 +539,9 @@ public class ISIResponseService extends ResponseService {
 		return new HibernateListModel<ISIResponse>(ISIResponse.class, builder);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getAllWhiteboardResponses()
+	 */
 	@SuppressWarnings("unchecked")
 	public List<ISIResponse> getAllWhiteboardResponses() {
 		Query q = Databinder.getHibernateSession().getNamedQuery("ISIResponse.getAllWhiteboardResponses");
@@ -503,6 +549,9 @@ public class ISIResponseService extends ResponseService {
 		return q.list();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getWhiteboardResponsesByPeriod(org.cast.cwm.data.Period)
+	 */
 	@SuppressWarnings("unchecked")
 	public List<ISIResponse> getWhiteboardResponsesByPeriod(Period p) {
 		Query q = Databinder.getHibernateSession().getNamedQuery("ISIResponse.getPeriodWhiteboardResponses");
@@ -511,6 +560,9 @@ public class ISIResponseService extends ResponseService {
 		return q.list();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#clearWhiteboardForPeriod(org.cast.cwm.data.Period)
+	 */
 	public void clearWhiteboardForPeriod(Period p) {
 		List<ISIResponse> list = getWhiteboardResponsesByPeriod(p);
 		for (ISIResponse r : list) {
@@ -518,43 +570,55 @@ public class ISIResponseService extends ResponseService {
 			r.setWhiteboardInsertTime(null);
 		}
 		EventService.get().saveEvent("whiteboard:clear", "Period: "+p.getId(), null);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#addToWhiteboard(org.cast.isi.data.ISIResponse, org.apache.wicket.Page)
+	 */
 	public void addToWhiteboard(ISIResponse resp, Page page) {
 		resp.setInWhiteboard(true);
 		resp.setWhiteboardInsertTime(new Date());
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
 		EventService.get().saveEvent("whiteboard:add", String.valueOf(resp.getId()), pageName);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#removeFromWhiteboard(org.cast.isi.data.ISIResponse, org.apache.wicket.Page)
+	 */
 	public void removeFromWhiteboard(ISIResponse resp, Page page) {
 		resp.setInWhiteboard(false);
 		resp.setWhiteboardInsertTime(null);
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
 		EventService.get().saveEvent("whiteboard:remove", String.valueOf(resp.getId()), pageName);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#addToNotebook(org.cast.isi.data.ISIResponse, org.apache.wicket.Page)
+	 */
 	public void addToNotebook(ISIResponse resp, Page page) {
 		resp.setInNotebook(true);
 		resp.setNotebookInsertTime(new Date());
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
 		EventService.get().saveEvent("notebook:add", String.valueOf(resp.getId()), pageName);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#removeFromNotebook(org.cast.isi.data.ISIResponse, org.apache.wicket.Page)
+	 */
 	public void removeFromNotebook(ISIResponse resp, Page page) {
 		resp.setInNotebook(false);
 		resp.setNotebookInsertTime(null);
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
 		EventService.get().saveEvent("notebook:remove", String.valueOf(resp.getId()), pageName);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 	}
 
-	/**
-	 * Get the Response Collections
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getResponseCollectionNames(org.cast.cwm.data.models.UserModel)
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -566,6 +630,9 @@ public class ISIResponseService extends ResponseService {
 		return q.list();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getResponseCollectionPrompts(org.cast.cwm.data.models.UserModel, java.lang.String)
+	 */
 	@SuppressWarnings("unchecked")
 	public List<ISIPrompt> getResponseCollectionPrompts(UserModel mUser, String collectionName) {
 		Criteria promptCriteria = Databinder.getHibernateSession()

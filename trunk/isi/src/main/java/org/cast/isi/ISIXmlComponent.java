@@ -72,8 +72,9 @@ import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
 import org.cast.isi.component.AnnotatedImageComponent;
+import org.cast.isi.component.DelayedFeedbackSingleSelectForm;
 import org.cast.isi.component.HotSpotComponent;
-import org.cast.isi.component.SingleSelectForm;
+import org.cast.isi.component.ImmediateFeedbackSingleSelectForm;
 import org.cast.isi.component.SingleSelectItem;
 import org.cast.isi.component.SingleSelectMessage;
 import org.cast.isi.component.SlideShowComponent;
@@ -98,12 +99,14 @@ import org.cast.isi.panel.SingleSelectSummaryPanel;
 import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
 import org.cast.isi.panel.ThumbPanel;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.inject.Inject;
 
 /**
  * A component to display XML content in ISI.
@@ -113,6 +116,9 @@ public class ISIXmlComponent extends XmlComponent {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(ISIXmlComponent.class);
+
+	@Inject
+	private IISIResponseService responseService;
 	
 	@Getter @Setter private String contentPage;
 	@Getter @Setter private MiniGlossaryModal miniGlossaryModal;
@@ -130,6 +136,17 @@ public class ISIXmlComponent extends XmlComponent {
 		return (XmlSectionModel) super.getModel();
 	}
 	
+	public XmlSection getXmlSection() {
+		XmlSectionModel model = getModel();
+		if (model == null)
+			return null;
+		return model.getObject();
+	}
+	
+	protected ISIXmlSection getISIXmlSection() {
+		return (ISIXmlSection) getXmlSection();
+	}
+
 	// FIXME - HACK:  For some reason, Unicode D7 (and that alone, as far as I can see) is getting swallowed up and not showing up
 	// when called for in XML content.  This fixes it.
 	protected String getMarkup() {
@@ -312,7 +329,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("feedbackButton_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttributeNS(null, "rgid");
-			IModel<Prompt> pm = ISIResponseService.get().getOrCreatePrompt(PromptType.FEEDBACK, loc, responseGroupId);
+			IModel<Prompt> pm = responseService.getOrCreatePrompt(PromptType.FEEDBACK, loc, responseGroupId);
 			ResponseFeedbackButtonPanel component = new ResponseFeedbackButtonPanel(wicketId, pm, responseFeedbackPanel);
 			String forRole = elt.getAttributeNS(null, "for");
 			boolean usesTeacherButton = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
@@ -322,27 +339,37 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("scoreButtons_")) {
 			IModel<Prompt> promptModel = getPrompt(elt);
 			IModel<User> studentModel = ISISession.get().getTargetUserModel();
-			ISortableDataProvider<Response> responseProvider = ISIResponseService.get().getResponseProviderForPrompt(promptModel, studentModel);
+			ISortableDataProvider<Response> responseProvider = responseService.getResponseProviderForPrompt(promptModel, studentModel);
 			TeacherScoreResponseButtonPanel component = new TeacherScoreResponseButtonPanel(wicketId, responseProvider);
 			return component;
 		} else if (wicketId.startsWith("showScore_")) {
 			IModel<Prompt> promptModel = getPrompt(elt);
 			IModel<User> studentModel = ISISession.get().getUserModel();
-			ISortableDataProvider<Response> responseProvider = ISIResponseService.get().getResponseProviderForPrompt(promptModel, studentModel);
+			ISortableDataProvider<Response> responseProvider = responseService.getResponseProviderForPrompt(promptModel, studentModel);
 			ScorePanel component = new StudentScorePanel(wicketId, responseProvider);
 			return component;
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_")) {
-			SingleSelectForm selectForm = new SingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
-			//selectForm.setDisabledOnCorrect(true);
+			ISIXmlSection section = getISIXmlSection();
+			IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
+			Component selectForm;
+			if (section.isDelayFeedback()) {
+				selectForm = new DelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
+			}
+			else {
+				selectForm = new ImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
+				//selectForm.setDisabledOnCorrect(true);
+			}
 			selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 			return selectForm;
 			
 		// A multiple choice radio button. Stores a "correct" value. This is
 		// added to a generic RadioGroup in a SingleSelectForm.
 		} else if (wicketId.startsWith("selectItem_")) {
-			SingleSelectItem mcItem = new SingleSelectItem(wicketId,
+			ISIXmlSection section = getISIXmlSection();
+			IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
+			Component mcItem = new SingleSelectItem(wicketId,
 					new Model<String>(wicketId.substring("selectItem_".length())),
 					Boolean.valueOf(elt.getAttributeNS(null, "correct")));
 			mcItem.add(new AttributeRemover("correct"));
@@ -354,11 +381,20 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("selectMessage_")) {
 			return new SingleSelectMessage(wicketId, elt.getAttributeNS(null, "for")).add(new AttributeRemover("for"));
 
+		} else if (wicketId.startsWith("responseSubmitText")) {
+			ISIXmlSection section = getISIXmlSection();
+			String text;
+			if (section.isDelayFeedback())
+				text = "Done with this question";
+			else
+				text = "Check My Answer";
+			return new Label(wicketId, text);
+
 		} else if (wicketId.startsWith("responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttributeNS(null, "rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
-			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
+			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc, null);
 			dataView.setContext("response");
 			dataView.setAllowEdit(!isTeacher);
@@ -376,7 +412,7 @@ public class ISIXmlComponent extends XmlComponent {
 				// set all the response types to the default per application configuration here
 				metadata = addMetadata(metadata);
 			}
-			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
+			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
 			ResponseButtons buttons = new ResponseButtons(wicketId, mPrompt, metadata, loc);
 			buttons.setVisible(!isTeacher);
 			return buttons;
@@ -525,12 +561,12 @@ public class ISIXmlComponent extends XmlComponent {
 			// Find the prompt
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttributeNS(null, "rgid");
-			IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.SINGLE_SELECT, loc, responseGroupId);
+			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.SINGLE_SELECT, loc, responseGroupId);
 			
 			// Find responses and categorize by number of tries used (0 if never correct)
 			// TODO restrict query by current Period and use a better method
-			// List<Response> responses = ISIResponseService.get().getResponsesForPrompt(mPrompt).getObject();
-			List<Response> responses = ISIResponseService.get().getResponsesForPeriod(mPrompt, CwmSession.get().getCurrentPeriodModel()).getObject();
+			// List<Response> responses = responseService.getResponsesForPrompt(mPrompt).getObject();
+			List<Response> responses = responseService.getResponsesForPeriod(mPrompt, CwmSession.get().getCurrentPeriodModel()).getObject();
 			Map<Integer, List<Response>> sorted = new HashMap<Integer, List<Response>>();
 			if (responses != null) {
 				for (Response r : responses) {
@@ -570,7 +606,7 @@ public class ISIXmlComponent extends XmlComponent {
 			return super.getDynamicComponent(wicketId, elt);
 		}
 	}
-
+	
 	protected IModel<Prompt> getPrompt(Element elt) {
 		String type = elt.getAttributeNS(null, "type");
 		if (type.equals("select1"))
@@ -584,7 +620,7 @@ public class ISIXmlComponent extends XmlComponent {
 		ContentLoc loc = new ContentLoc(getModel().getObject());
 		String responseGroupId = elt.getAttributeNS(null, "rgid");
 		String collectionName = elt.getAttributeNS(null, "group").trim();
-		return ISIResponseService.get().getOrCreatePrompt(type, loc, responseGroupId, collectionName);
+		return responseService.getOrCreatePrompt(type, loc, responseGroupId, collectionName);
 	}
 	
 	protected ResponseMetadata getResponseMetadata (String responseGroupId) {

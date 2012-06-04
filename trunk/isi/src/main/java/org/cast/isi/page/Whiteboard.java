@@ -56,10 +56,12 @@ import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.panel.RemoveDialog;
 import org.cast.isi.panel.ResponseViewer;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.hibernate.LockOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * This is a general purpose whiteboard shared by all users within a period.
@@ -77,6 +79,9 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 	protected String pageTitleEnd = null;
 	private UserModel mUser;
 
+	@Inject
+	protected IISIResponseService responseService;
+	
 	public Whiteboard(PageParameters parameters) {
 		super(parameters);
 
@@ -223,7 +228,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 	 *        - List of responses to that prompt - reverse date sorted from the database
 	 */
 	protected TreeMap<ISIXmlSection, SortedMap<ISIPrompt, List<ISIResponse>>> getResponseMap() {
-		List<ISIResponse> responseList = ISIResponseService.get().getWhiteboardResponsesByPeriod(ISISession.get().getCurrentPeriodModel().getObject());
+		List<ISIResponse> responseList = responseService.getWhiteboardResponsesByPeriod(ISISession.get().getCurrentPeriodModel().getObject());
 		TreeMap<ISIXmlSection, SortedMap<ISIPrompt, List<ISIResponse>>> responseMap = new TreeMap<ISIXmlSection, SortedMap<ISIPrompt, List<ISIResponse>>>();
 
 		// Fit Responses into Map
@@ -287,7 +292,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 			ISIResponse resp = (ISIResponse) getDefaultModelObject();
 			// Lock to current session - necessary since objects are stored detached in responseMap
 			Databinder.getHibernateSession().buildLockRequest(LockOptions.UPGRADE).lock(resp);
-			ISIResponseService.get().removeFromWhiteboard(resp, Whiteboard.this);
+			responseService.removeFromWhiteboard(resp, Whiteboard.this);
 			setResponsePage(ISIApplication.get().getWhiteboardPageClass(), getPageParameters());
 		}
 
@@ -312,7 +317,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 		}
 
 		protected void removeObject() {
-			ISIResponseService.get().clearWhiteboardForPeriod (ISISession.get().getCurrentPeriodModel().getObject());
+			responseService.clearWhiteboardForPeriod (ISISession.get().getCurrentPeriodModel().getObject());
 			setResponsePage (ISIApplication.get().getWhiteboardPageClass(), getPageParameters());
 		}
 

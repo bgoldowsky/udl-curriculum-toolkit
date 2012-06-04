@@ -78,8 +78,11 @@ import org.cast.cwm.indira.FileResourceManager;
 import org.cast.cwm.indira.IndiraImage;
 import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.indira.IndiraMarkupParserFactory;
+import org.cast.cwm.service.CwmService;
 import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.HighlightService;
+import org.cast.cwm.service.ICwmService;
+import org.cast.cwm.service.IResponseService;
 import org.cast.cwm.service.SiteService;
 import org.cast.cwm.tag.TagService;
 import org.cast.cwm.xml.FileResource;
@@ -110,6 +113,7 @@ import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.HeaderPanel;
+import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISIEmailService;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
@@ -232,6 +236,10 @@ public abstract class ISIApplication extends CwmApplication {
 		xmlService = XmlService.get();
 		xmlService.setXmlSectionClass(getXmlSectionClass());
 		log.debug("Finished loading XML Service");
+		log.debug("Loading Response Service");
+		ISIResponseService.useAsServiceInstance();
+		ISIResponseService.get().setResponseClass(getResponseClass());
+		log.debug("Finished loading Response Service");
 	}
 
 	@Override
@@ -240,7 +248,12 @@ public abstract class ISIApplication extends CwmApplication {
 		modules.add(new Module() {
         public void configure(Binder binder) {
     		log.debug("Binding ISI Services");
+			// Temporary while we lose the singleton.
    			binder.bind(IXmlService.class).toInstance(xmlService);
+			// Temporary while we lose the singleton.
+			binder.bind(IISIResponseService.class).toInstance(ISIResponseService.get());
+			//TODO: Deal with extended interfaces properly.
+			binder.bind(IResponseService.class).toInstance(ISIResponseService.get());
    			binder.bind(ISectionService.class).to(SectionService.class).in(Scopes.SINGLETON);
     		}
         });
@@ -260,8 +273,6 @@ public abstract class ISIApplication extends CwmApplication {
 		super.init();
 		
 		ISIEmailService.useAsServiceInstance();
-		ISIResponseService.useAsServiceInstance();
-		ISIResponseService.get().setResponseClass(getResponseClass());
 		
 		
 		// Gather Extended Browser Information - Uses a wicket-administered redirect.

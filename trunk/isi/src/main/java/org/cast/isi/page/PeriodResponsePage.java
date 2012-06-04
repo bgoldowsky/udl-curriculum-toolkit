@@ -38,7 +38,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
-import org.cast.cwm.service.ResponseService;
+import org.cast.cwm.service.IResponseService;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.transform.FilterElements;
 import org.cast.isi.ISIApplication;
@@ -49,9 +49,10 @@ import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.PeriodResponseListPanel;
-import org.cast.isi.panel.SingleSelectSummaryPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * Given a prompt id and period, list all the user responses
@@ -66,6 +67,9 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 	protected String pageTitleEnd = null;
 
 	@Getter protected boolean showNames = false;
+	
+	@Inject
+	private IResponseService responseService;
 
 	protected static final Logger log = LoggerFactory.getLogger(PeriodResponsePage.class);
 
@@ -97,7 +101,7 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		} 
 
 		// get the prompt for this id
-		IModel<Prompt> mPrompt = ResponseService.get().getPromptById(promptId);
+		IModel<Prompt> mPrompt = responseService.getPromptById(promptId);
 		ISIPrompt prompt = (ISIPrompt) mPrompt.getObject();
 
 		// Add the crumb trail, link and icon link to the page where this response is located

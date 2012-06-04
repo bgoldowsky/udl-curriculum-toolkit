@@ -38,9 +38,11 @@ import org.cast.isi.ISISession;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * This page is a notebook for a teacher.  It contains notes
@@ -57,6 +59,9 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 	private IModel<User> mStudent = ISISession.get().getStudentModel();
 	private IModel<Period> mPeriod = ISISession.get().getCurrentPeriodModel();
 	protected ResponseMetadata notebookMetadata;
+	
+	@Inject
+	protected IISIResponseService responseService;
 	
 	public TeacherNotesPopup (PageParameters param) {
 		super(param);
@@ -82,7 +87,7 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 //			location = new ContentLoc(param.getString("loc"));
 //		}
 		
-		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.TEACHER_NOTES, mStudent);
+		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.TEACHER_NOTES, mStudent);
 		ResponseList responseList = new ResponseList("nbResponseList", mPrompt, notebookMetadata, null, ISISession.get().getUserModel());
 		add(responseList);
 		responseList.setContext("TeacherNotes");

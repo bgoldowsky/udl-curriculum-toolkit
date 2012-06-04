@@ -60,10 +60,12 @@ import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.QuestionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 @AuthorizeInstantiation("STUDENT")
 public class Reading extends ISIStandardPage implements IHeaderContributor {
 	
@@ -78,8 +80,8 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	protected IModel<Prompt> mNotesPrompt;
 	protected ResponseMetadata pageNotesMetadata = new ResponseMetadata();
 
-	
-	
+	@Inject
+	private IISIResponseService responseService;
 	
 	public Reading (PageParameters parameters) {
 		this(parameters, true);
@@ -158,7 +160,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 
 	protected void addNotesPanel () {
 		setPageNotesMetadata();
-		mNotesPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
+		mNotesPrompt = responseService.getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
 		WebMarkupContainer notesbox = new WebMarkupContainer("notesbox") {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -189,11 +191,11 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 
 	public void addHighlightPanel() {	
 		add(new HighlightControlPanel("highlightControlPanel", loc, mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
-		add(new HighlightDisplayPanel("highlightDisplayPanel", ISIResponseService.get().getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc)).setVisible(ISIApplication.get().isHighlightsPanelOn()));
+		add(new HighlightDisplayPanel("highlightDisplayPanel", responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc)).setVisible(ISIApplication.get().isHighlightsPanelOn()));
 	}
 	
 	protected void addTaggingPanel () {
-		ContentElement ce = ISIResponseService.get().getOrCreateContentElement(loc).getObject();
+		ContentElement ce = responseService.getOrCreateContentElement(loc).getObject();
 		WebMarkupContainer tagsBox = new WebMarkupContainer("tagsBox");
 		add(tagsBox);
 		tagsBox.setVisible(ISIApplication.get().isTagsOn());

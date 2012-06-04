@@ -73,12 +73,29 @@ public class ISIXmlSection extends XmlSection {
 	@Getter @Setter protected boolean chapter = false;
 	
 	
-	@Setter protected boolean hasResponseGroup = false; // True if a page, or a section that contains such a page, has a response group
+	/**
+	 * True if a page, or a section that contains such a page, has a response group.
+	 */
+	@Getter @Setter protected boolean hasResponseGroup = false;
+
+	/**
+	 * True if this XML element or a parent has a behavior="lock-response" attribute
+	 * This is set in the xml and controls whether the student can change his response after submission.
+	 */
+	@Getter protected boolean lockResponse;
+
+	/**
+	 * True if this XML element or a parent has a behavior="delayed-feedback" attribute
+	 * This is set in the xml and controls whether the student sees immediate feedback on his response.
+	 */
+	@Getter protected boolean delayFeedback;
 	
 	public void init (XmlDocument document, XmlSection parent, String id, Element elt, String title) {
 		super.init(document, parent, id, elt, title);
 		Element element = getElement();
 		if (element != null) {
+			lockResponse = hasLockResponse(parent) || hasAttribute(element, "behavior", "lock-response");
+			delayFeedback = hasDelayedFeedback(parent) || hasAttribute(element, "behavior", "delay-feedback");
 			NodeList children = element.getChildNodes();
 			
 			// Get the subtitle
@@ -97,7 +114,19 @@ public class ISIXmlSection extends XmlSection {
 				hasResponseGroup = true;
 		}
 	}
-	
+
+	private boolean hasDelayedFeedback(XmlSection parent) {
+		if ((parent == null) || (!(parent instanceof ISIXmlSection)))
+			return false;
+		return ((ISIXmlSection) parent).isDelayFeedback();
+	}
+
+	private boolean hasLockResponse(XmlSection parent) {
+		if ((parent == null) || (!(parent instanceof ISIXmlSection)))
+			return false;
+		return ((ISIXmlSection) parent).isLockResponse();
+	}
+
 	@Override
 	public ISIXmlSection getParent() {
 		return (ISIXmlSection) parent;
@@ -317,4 +346,13 @@ public class ISIXmlSection extends XmlSection {
 	public boolean hasResponseGroup() {
 		return hasResponseGroup;
 	}
+	
+	private boolean hasAttribute(Element element, String attribute, String value) {
+		return matches(element.getAttribute(attribute), value);
+	}
+
+	private boolean matches(String attributeValue, String checkValue) {
+		return (attributeValue != null) && (attributeValue.contains(checkValue));
+	}
+
 }

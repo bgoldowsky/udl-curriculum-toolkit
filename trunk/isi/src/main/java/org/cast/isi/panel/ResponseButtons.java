@@ -34,8 +34,12 @@ import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
+import org.cast.cwm.service.IResponseService;
 import org.cast.cwm.service.ResponseService;
 import org.cast.isi.data.ContentLoc;
+import org.cast.isi.service.IISIResponseService;
+
+import com.google.inject.Inject;
 
 public class ResponseButtons extends Panel {
 
@@ -45,6 +49,9 @@ public class ResponseButtons extends Panel {
 	private ResponseMetadata metadata;
 	private ContentLoc loc;
 	private ResponseList listComponent;
+	
+	@Inject
+	protected IResponseService responseService;
 	
 	private IResponseType openEditor = null;
 
@@ -115,7 +122,7 @@ public class ResponseButtons extends Panel {
 				return;
 			openEditor = type;
 
-			IModel<Response> mResponse = ResponseService.get().newResponse(CwmSession.get().getUserModel(), type, mPrompt);
+			IModel<Response> mResponse = responseService.newResponse(CwmSession.get().getUserModel(), type, mPrompt);
 			ResponseEditor editor = new ResponseEditor(getPlaceholderId(), mResponse, metadata, loc) {
 				private static final long serialVersionUID = 1L;
 				@Override

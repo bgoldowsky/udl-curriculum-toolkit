@@ -73,9 +73,11 @@ import org.cast.isi.data.ClassMessage;
 import org.cast.isi.data.StudentFlag;
 import org.cast.isi.panel.PeriodStudentSelectPanel;
 import org.cast.isi.panel.StudentFlagPanel;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * Teacher page for managing student accounts.
@@ -95,6 +97,9 @@ public class ManageClasses extends ISIStandardPage {
 	private FeedbackPanel feedback;
 	private MoveForm moveForm;
 	private ISortableDataProvider<User> studentListProvider;
+	
+	@Inject
+	private IISIResponseService responseService;
 	
 	
 	public ManageClasses(final PageParameters param) {
@@ -148,7 +153,7 @@ public class ManageClasses extends ISIStandardPage {
 		// Load flags for this period and this teacher
 		// Do just once so we're not querying for every single flag.
 		flagMap = new HashMap<Long, Boolean>();
-		List<StudentFlag> l = ISIResponseService.get().getAllFlags();
+		List<StudentFlag> l = responseService.getAllFlags();
 		for (StudentFlag f : l) {
 			flagMap.put(f.getFlagee().getId(), true);
 		}
@@ -602,7 +607,7 @@ public class ManageClasses extends ISIStandardPage {
 		
 		public ClassMessageContainer(String id) {
 			super(id);
-			m = ISIResponseService.get().getClassMessage(ISISession.get().getCurrentPeriodModel());
+			m = responseService.getClassMessage(ISISession.get().getCurrentPeriodModel());
 			setOutputMarkupId(true);
 			addStatic();
 			addForm();
@@ -645,7 +650,7 @@ public class ManageClasses extends ISIStandardPage {
 
 				@Override
 				protected void deleteObject() {
-					ISIResponseService.get().deleteClassMessage(ISISession.get().getCurrentPeriodModel());
+					responseService.deleteClassMessage(ISISession.get().getCurrentPeriodModel());
 					m = null;
 				}
 			};
@@ -663,7 +668,7 @@ public class ManageClasses extends ISIStandardPage {
 				protected void onSubmit() {
 					super.onSubmit();
 					m = getModelObject();			
-					ISIResponseService.get().setClassMessage(ISISession.get().getCurrentPeriodModel(), m.getMessage());
+					responseService.setClassMessage(ISISession.get().getCurrentPeriodModel(), m.getMessage());
 				}
 			};
 			add(classMessageForm);

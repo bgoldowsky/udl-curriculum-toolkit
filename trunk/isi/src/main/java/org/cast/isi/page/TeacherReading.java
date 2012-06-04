@@ -34,14 +34,19 @@ import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.HighlightControlPanel;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 @AuthorizeInstantiation("TEACHER")
 public class TeacherReading extends Reading implements IHeaderContributor {
 
 	protected static final Logger log = LoggerFactory.getLogger(TeacherReading.class);
+	
+	@Inject
+	protected IISIResponseService responseService;
 	
 	public TeacherReading(final PageParameters parameters) {
 		// If there is no student model, tell super constructor that we won't be displaying XML content.
@@ -53,7 +58,7 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	// view the student's notes
 	protected void addNotesPanel () {
 		setPageNotesMetadata();
-		mNotesPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
+		mNotesPrompt = responseService.getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
 		WebMarkupContainer notesbox = new WebMarkupContainer("notesbox") {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -83,7 +88,7 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	// and will create a READ-ONLY tagging panel to view student's tags.
 	protected void addTaggingPanel () {
 		if (showXmlContent) {
-			ContentElement ce = ISIResponseService.get().getOrCreateContentElement(loc).getObject();
+			ContentElement ce = responseService.getOrCreateContentElement(loc).getObject();
 			WebMarkupContainer tagsBox = new WebMarkupContainer("tagsBox");
 			add(tagsBox);
 			tagsBox.setVisible(ISIApplication.get().isTagsOn());
@@ -104,7 +109,7 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 		if (showXmlContent) {
 			add(new HighlightControlPanel("highlightControlPanel", loc, mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
 			HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", 
-					ISIResponseService.get().getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
+					responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
 					ISISession.get().getStudentModel());
 			add(highlightDisplayPanel);
 			highlightDisplayPanel.setVisible(ISIApplication.get().isHighlightsPanelOn());

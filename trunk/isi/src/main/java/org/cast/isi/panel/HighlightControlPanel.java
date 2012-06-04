@@ -52,11 +52,14 @@ import org.cast.isi.ISIXmlComponent;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.PromptType;
+import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.google.inject.Inject;
 
 /**
  * A page-level control panel for highlights.  The basic controls are handled
@@ -75,6 +78,9 @@ public class HighlightControlPanel extends Panel {
 	// Target user to display (current user or student that teacher is viewing)
 	private IModel<User> targetUser = ISISession.get().getTargetUserModel();
 
+	@Inject
+	protected IISIResponseService responseService;
+	
 	public HighlightControlPanel(String id, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
 		this.loc = loc;
@@ -162,10 +168,10 @@ public class HighlightControlPanel extends Panel {
 		controlContainer.add(label);
 		label.setVisible(!editable);
 
-		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, loc, color);
+		IModel<Prompt> mPrompt = responseService.getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, loc, color);
 
 		EditHighlightLabelForm editHighlightLabelForm = new EditHighlightLabelForm(formName, 
-				ISIResponseService.get().getResponseForPrompt(mPrompt, targetUser), 
+				responseService.getResponseForPrompt(mPrompt, targetUser), 
 				mPrompt);
 		controlContainer.add(editHighlightLabelForm);
 		editHighlightLabelForm.setEnabled(!isTeacher);
@@ -209,7 +215,7 @@ public class HighlightControlPanel extends Panel {
 			
 			// If there is no existing editable label, create a response and swap to label editing mode
 			if (getModelObject() == null) {
-				setModel(ISIResponseService.get().newPageHighlightsLabel(targetUser, (IModel<ISIPrompt>) mHighlightPrompt));
+				setModel(responseService.newPageHighlightsLabel(targetUser, (IModel<ISIPrompt>) mHighlightPrompt));
 				editing = true;
 			}
 			
@@ -280,7 +286,7 @@ public class HighlightControlPanel extends Panel {
 		public void onSubmit() {
 			editing = false; // In case submitted in a non-ajax manner			
 			String label = get("editableColor" + Component.PATH_SEPARATOR + "labelEdit").getDefaultModelObjectAsString();
-			ISIResponseService.get().saveHighlighterLabel(getModel(), label);
+			responseService.saveHighlighterLabel(getModel(), label);
 		}
 	}
 
