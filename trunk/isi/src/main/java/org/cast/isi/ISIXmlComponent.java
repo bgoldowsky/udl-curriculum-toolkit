@@ -350,25 +350,24 @@ public class ISIXmlComponent extends XmlComponent {
 			return component;
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
-		} else if (wicketId.startsWith("select1_")) {
+		} else if (wicketId.startsWith("select1_immediate_")) {
+			Component selectForm = new ImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
+				//selectForm.setDisabledOnCorrect(true);
+			selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
+			return selectForm;
+			
+		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
+		// child of this form.  
+		} else if (wicketId.startsWith("select1_delay_")) {
 			ISIXmlSection section = getISIXmlSection();
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
-			Component selectForm;
-			if (section.isDelayFeedback()) {
-				selectForm = new DelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
-			}
-			else {
-				selectForm = new ImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
-				//selectForm.setDisabledOnCorrect(true);
-			}
+			Component selectForm = new DelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
 			selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 			return selectForm;
 			
 		// A multiple choice radio button. Stores a "correct" value. This is
 		// added to a generic RadioGroup in a SingleSelectForm.
 		} else if (wicketId.startsWith("selectItem_")) {
-			ISIXmlSection section = getISIXmlSection();
-			IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
 			Component mcItem = new SingleSelectItem(wicketId,
 					new Model<String>(wicketId.substring("selectItem_".length())),
 					Boolean.valueOf(elt.getAttributeNS(null, "correct")));
@@ -380,15 +379,6 @@ public class ISIXmlComponent extends XmlComponent {
 		// Visibility based on whether the corresponding radio button is selected in the enclosing form.
 		} else if (wicketId.startsWith("selectMessage_")) {
 			return new SingleSelectMessage(wicketId, elt.getAttributeNS(null, "for")).add(new AttributeRemover("for"));
-
-		} else if (wicketId.startsWith("responseSubmitText")) {
-			ISIXmlSection section = getISIXmlSection();
-			String text;
-			if (section.isDelayFeedback())
-				text = "Done with this question";
-			else
-				text = "Check My Answer";
-			return new Label(wicketId, text);
 
 		} else if (wicketId.startsWith("responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
