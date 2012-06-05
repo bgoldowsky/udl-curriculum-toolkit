@@ -12,7 +12,10 @@
     xmlns:wicket="http://wicket.apache.org"
     xmlns="http://www.w3.org/1999/xhtml" 
     exclude-result-prefixes="dtb">
-    
+
+	<xsl:param name="lock-response" select="false()"/>    
+	<xsl:param name="delay-feedback" select="false()"/>     
+
     <xsl:variable name="lower">abcdefghijklmnopqrstuvwxyz</xsl:variable>
     <xsl:variable name="upper">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
     
@@ -539,9 +542,58 @@
    </xsl:template>
 
 	<xsl:template name="responseArea">
+   	<xsl:choose>
+   		<xsl:when test="boolean($delay-feedback)">
+   			<xsl:call-template name="responseArea-delay-feedback" />
+   		</xsl:when>
+   		<xsl:otherwise>
+   			<xsl:call-template name="responseArea-immediate-feedback" />
+   		</xsl:otherwise>
+   	</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="responseArea-immediate-feedback">
 		<xsl:choose>
 			<xsl:when test="dtb:select1">
-				<form wicket:id="select1_"
+				<form wicket:id="select1_immediate_"
+					rgid="{ancestor-or-self::dtb:responsegroup/@id}"
+					title="{ancestor-or-self::dtb:responsegroup/@title}"
+					group="{ancestor-or-self::dtb:responsegroup/@group}"
+					class="subactivity">					
+					<div class="responseBar">
+						<div class="responseLeft"><!-- empty --></div>
+						<div class="responseRight">
+							<!-- helper links -->
+							<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
+							<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+							<span wicket:id="mcScore"></span>
+						</div>
+					</div>
+					<xsl:apply-templates select="dtb:select1" />
+				</form>
+			</xsl:when>
+			<xsl:otherwise>
+				<div class="responseBar">
+					<div wicket:id="responseButtons_" rgid="{@id}" class="responseLeft">
+					</div>
+					<div class="responseRight">
+						<!-- helper links -->
+						<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
+						<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+						<span wicket:id="showScore_" rgid="{@id}" type="responsearea"></span>
+					</div>
+				</div>
+				<!-- list of responses -->
+				<div wicket:id="responseList_" rgid="{@id}" group="{@group}">
+				</div>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="responseArea-delay-feedback">
+		<xsl:choose>
+			<xsl:when test="dtb:select1">
+				<form wicket:id="select1_delay_"
 					rgid="{ancestor-or-self::dtb:responsegroup/@id}"
 					title="{ancestor-or-self::dtb:responsegroup/@title}"
 					group="{ancestor-or-self::dtb:responsegroup/@group}"
@@ -583,7 +635,12 @@
 				<xsl:apply-templates select="dtb:item//dtb:label" />
 			</div>
 			<p class="responseMCActions">
-				<a href="#" wicket:id="submitLink" class="button"><span wicket:id="responseSubmitText">Check My Answer</span></a>	
+				<a href="#" wicket:id="submitLink" class="button">
+					<xsl:choose>
+						<xsl:when test="boolean($delay-feedback)">Done with this question</xsl:when>
+						<xsl:otherwise>Check My Answer</xsl:otherwise>
+					</xsl:choose>
+				</a>	
 			</p>
 			<div class="responseMCFeedback">
 				<xsl:apply-templates select="dtb:item//dtb:message" />
