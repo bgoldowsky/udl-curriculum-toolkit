@@ -55,8 +55,6 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 	@Inject
 	private ISectionService sectionService;
 
-	private boolean saved = false;
-	
 	private String location;
 	
 	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt, IModel<User> userModel, IModel<User> targetUserModel) {
@@ -73,8 +71,6 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 		super.onInitialize();
 		if (mResponse.getObject() == null)
 			mResponse = responseService.newSingleSelectResponse(mTargetUser, getModel());
-		else
-			saved = true;
 		add(new SingleSelectScoreIndicator("mcScore", mResponse){
 
 			private static final long serialVersionUID = 1L;
@@ -100,7 +96,7 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 			
 			@Override
 			public boolean isVisible() {
-				return isEnabledInHierarchy() && !saved;
+				return isEnabledInHierarchy() && !isComplete();
 			}
 		};
 		link.setOutputMarkupId(true);
@@ -112,7 +108,7 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 	
 	@Override
 	protected void onBeforeRender() {
-		if (saved)
+		if (isComplete())
 			setEnabled(false);
 		super.onBeforeRender();
 	}
@@ -129,15 +125,19 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 			get("radioGroup:selectNone").setVisible(false);
 			// Save Response
 			responseService.saveSingleSelectResponse(mResponse, selectedItem.getModel().getObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
-			saved = true;
 		}
 	}
 	
+	public boolean isComplete() {
+		return nullSafeBoolean(sectionService.sectionIsCompleted(getUser(), location));
+	}
+
 	public boolean isReviewed() {
-		Boolean isReviewed = sectionService.sectionIsReviewed(getUser(), location);			
-		if (isReviewed == null)
-			isReviewed = false;
-		return isReviewed;
+		return nullSafeBoolean(sectionService.sectionIsReviewed(getUser(), location));			
+	}
+
+	private boolean nullSafeBoolean(Boolean b) {
+		return (b != null) && b;
 	}
 
 }

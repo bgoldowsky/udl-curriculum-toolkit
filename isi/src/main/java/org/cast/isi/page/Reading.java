@@ -44,6 +44,7 @@ import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.tag.component.TagPanel;
+import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.CollapseBoxBehavior;
 import org.cast.isi.ISIApplication;
@@ -155,7 +156,20 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	}
 	
 	protected ISIXmlComponent makeXmlComponent (String wicketId, XmlSectionModel model) {
-		return new ISIXmlComponent(wicketId, model, "student");
+		ISIXmlComponent component = new ISIXmlComponent(wicketId, model, "student");
+		component.setTransformParameter("lock-response", isLockResponse(model));
+		component.setTransformParameter("delay-feedback", isDelayFeedback(model));
+		return component;
+	}
+
+	private boolean isDelayFeedback(XmlSectionModel model) {
+		ISIXmlSection section = (ISIXmlSection) model.getObject();
+		return (section != null) && section.isDelayFeedback();
+	}
+
+	private boolean isLockResponse(XmlSectionModel model) {
+		ISIXmlSection section = (ISIXmlSection) model.getObject();
+		return (section != null) && section.isLockResponse();
 	}
 
 	protected void addNotesPanel () {
