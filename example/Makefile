@@ -45,6 +45,7 @@ toolkit-bundle.zip:
 	cp target/$(APP)-$(VERSION).war toolkit-bundle/$(APP).war
 	chmod -R u+rwX toolkit-bundle
 	zip -r toolkit-bundle.zip toolkit-bundle
+	@echo "Bundle file created.  Remember to RENAME it before uploading to Google Code - the download name must be unique"
 .PHONY: toolkit-bundle.zip
 
 ## Command line for copying WAR file to server
