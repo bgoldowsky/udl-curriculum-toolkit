@@ -20,6 +20,8 @@
 
 package org.cast.isi.component;
 
+import java.util.Arrays;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,7 +37,7 @@ import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIBasePage;
-import org.cast.isi.panel.SingleSelectScoreIndicator;
+import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
@@ -66,12 +68,13 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 		location = new ContentLoc(currentSectionModel.getObject()).getLocation();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
 		if (mResponse.getObject() == null)
 			mResponse = responseService.newSingleSelectResponse(mTargetUser, getModel());
-		add(new SingleSelectScoreIndicator("mcScore", mResponse){
+		add(new StudentScorePanel("mcScore", Arrays.asList(mResponse)){
 
 			private static final long serialVersionUID = 1L;
 			
