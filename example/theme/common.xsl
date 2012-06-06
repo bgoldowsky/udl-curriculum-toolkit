@@ -630,20 +630,56 @@
 
 	<!-- Multiple Choice -->
 	<xsl:template match="dtb:select1">
+		
+		<xsl:choose>
+			<xsl:when test="boolean($delay-feedback)">
+				<xsl:call-template name="select1-delay-feedback" />
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="select1-immediate-feedback" />
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
+	<!-- Multiple Choice -->
+	<xsl:template name="select1-immediate-feedback">
+
 		<div class="responseItem" wicket:id="radioGroup">
         	<div class="responseMCItem">
 				<xsl:apply-templates select="dtb:item//dtb:label" />
 			</div>
 			<p class="responseMCActions">
 				<a href="#" wicket:id="submitLink" class="button">
-					<xsl:choose>
-						<xsl:when test="boolean($delay-feedback)">Done with this question</xsl:when>
-						<xsl:otherwise>Check My Answer</xsl:otherwise>
-					</xsl:choose>
+					Check My Answer
 				</a>	
 			</p>
 			<div class="responseMCFeedback">
 				<xsl:apply-templates select="dtb:item//dtb:message" />
+				<wicket:enclosure child="selectNone">
+					<div class="stResult incorrect">
+						<p wicket:id="selectNone" >Select an answer...</p>
+					</div>
+				</wicket:enclosure>
+			</div>
+		</div>
+	</xsl:template>
+	
+	<!-- Multiple Choice -->
+	<xsl:template name="select1-delay-feedback">
+
+		<div class="responseItem" wicket:id="radioGroup">
+			<xsl:for-each select="dtb:item">
+	        	<div class="responseMCItem">
+					<xsl:apply-templates select="dtb:label" />
+					<xsl:call-template name="select1-delay-message" />
+				</div>
+			</xsl:for-each>
+			<p class="responseMCActions">
+				<a href="#" wicket:id="submitLink" class="button">
+					Ready for Review
+				</a>	
+			</p>
+			<div class="responseMCFeedback">
 				<wicket:enclosure child="selectNone">
 					<div class="stResult incorrect">
 						<p wicket:id="selectNone" >Select an answer...</p>
@@ -664,6 +700,19 @@
 			<label wicket:id="label">
 				<xsl:apply-templates />
 			</label>
+		</div>
+	</xsl:template>
+	
+	<xsl:template name="select1-delay-message">
+		<xsl:variable name="messageid" select="concat('selectDelayMessage_', ancestor::dtb:responsegroup/@id, '_', @id)"/>
+		<div wicket:id="{$messageid}">
+			<xsl:attribute name="class">
+				<xsl:choose>
+					<xsl:when test="@correct='true'">stResult correct</xsl:when>
+					<xsl:otherwise>stResult incorrect</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:value-of select="dtb:message" />
 		</div>
 	</xsl:template>
 
