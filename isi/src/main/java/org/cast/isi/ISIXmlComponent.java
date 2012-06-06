@@ -75,6 +75,7 @@ import org.cast.isi.component.AnnotatedImageComponent;
 import org.cast.isi.component.DelayedFeedbackSingleSelectForm;
 import org.cast.isi.component.HotSpotComponent;
 import org.cast.isi.component.ImmediateFeedbackSingleSelectForm;
+import org.cast.isi.component.SingleSelectDelayMessage;
 import org.cast.isi.component.SingleSelectItem;
 import org.cast.isi.component.SingleSelectMessage;
 import org.cast.isi.component.SlideShowComponent;
@@ -155,6 +156,7 @@ public class ISIXmlComponent extends XmlComponent {
 			log.debug ("Fixing instances of unicode D7");
 			x = x.replaceAll("\u00d7", "&#xd7;");
 		}
+		log.debug(x);
 		return x;
 	}
 
@@ -379,6 +381,15 @@ public class ISIXmlComponent extends XmlComponent {
 		// Visibility based on whether the corresponding radio button is selected in the enclosing form.
 		} else if (wicketId.startsWith("selectMessage_")) {
 			return new SingleSelectMessage(wicketId, elt.getAttributeNS(null, "for")).add(new AttributeRemover("for"));
+
+			// A delayed feedback message associated with a wicketId.startsWith("selectItem_").
+			// The wicketId of the associated SingleSelectItem should be provided as a "for" attribute.
+			// Visibility based on whether the response has been reviewed.
+			} else if (wicketId.startsWith("selectDelayMessage_")) {
+				ISIXmlSection section = getISIXmlSection();
+				IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
+				SingleSelectDelayMessage component = new SingleSelectDelayMessage(wicketId, currentSectionModel);
+				return component.add(new AttributeRemover("for"));
 
 		} else if (wicketId.startsWith("responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());

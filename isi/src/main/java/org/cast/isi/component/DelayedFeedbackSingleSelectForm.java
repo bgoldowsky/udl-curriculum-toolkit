@@ -47,6 +47,7 @@ import com.google.inject.Inject;
  * several {@link ImmediateFeedbackSingleSelectItem} children.
  *  
  * @author jbrookover
+ * @author droby
  *
  */
 @Slf4j
@@ -106,7 +107,7 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 		radioGroup.add(link);
 
 		// Message displayed if no multiple choice item has been chosen
-		radioGroup.add(new Label("selectNone", new ResourceModel("isi.noMultChoiceSelected", "Make a selection")).setVisible(false));
+		radioGroup.add(new Label("selectNone", new ResourceModel("isi.nofeedback.noMultChoiceSelected", "Make a selection")).setVisible(false));
 	}
 	
 	@Override
