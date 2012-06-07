@@ -101,6 +101,7 @@ import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.IISIResponseService;
+import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -121,6 +122,9 @@ public class ISIXmlComponent extends XmlComponent {
 	@Inject
 	private IISIResponseService responseService;
 	
+	@Inject
+	private ISectionService sectionService;
+
 	@Getter @Setter private String contentPage;
 	@Getter @Setter private MiniGlossaryModal miniGlossaryModal;
 	@Getter @Setter private ResponseFeedbackPanel responseFeedbackPanel;
@@ -398,7 +402,7 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc, null);
 			dataView.setContext("response");
-			dataView.setAllowEdit(!isTeacher);
+			dataView.setAllowEdit(!isTeacher && !isCompleteAndLocked(loc, ISISession.get().getUser()));
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
 			dataView.add(new AttributeRemover("rgid"));
@@ -415,7 +419,7 @@ public class ISIXmlComponent extends XmlComponent {
 			}
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
 			ResponseButtons buttons = new ResponseButtons(wicketId, mPrompt, metadata, loc);
-			buttons.setVisible(!isTeacher);
+			buttons.setVisible(!isTeacher && !isCompleteAndLocked(loc, ISISession.get().getUser()));
 			return buttons;
 
 		} else if (wicketId.startsWith("ratePanel_")) {
@@ -639,6 +643,20 @@ public class ISIXmlComponent extends XmlComponent {
 		return metadata;
 	}
 
+	
+	private boolean isCompleteAndLocked(ContentLoc contentLoc, User user) {
+		ISIXmlSection section = contentLoc.getSection();
+		String location = contentLoc.getLocation();
+		return section.isLockResponse() && isComplete(location, user);
+	}
+	
+	private boolean isComplete(String location, User user) {
+		return nullSafeBoolean(sectionService.sectionIsCompleted(user, location));
+	}
+
+	private boolean nullSafeBoolean(Boolean b) {
+		return (b != null) && b;
+	}
 	
 	public ResourceReference getRelativeRef (String src) {
 		Resource xmlFile = ((XmlSection)getModel().getObject()).getXmlDocument().getXmlFile();
