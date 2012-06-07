@@ -22,6 +22,7 @@ package org.cast.isi.component;
 
 import java.util.Arrays;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -37,6 +38,7 @@ import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIBasePage;
+import org.cast.isi.panel.ISectionCompleteToggleListener;
 import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.service.ISectionService;
 
@@ -50,13 +52,14 @@ import com.google.inject.Inject;
  *
  */
 @Slf4j
-public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
+public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements ISectionCompleteToggleListener {
 
 	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private ISectionService sectionService;
 
+	@Getter
 	private String location;
 	private boolean lockResponse;
 	
