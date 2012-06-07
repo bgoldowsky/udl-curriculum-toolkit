@@ -44,7 +44,6 @@ import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.tag.component.TagPanel;
-import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.CollapseBoxBehavior;
 import org.cast.isi.ISIApplication;
@@ -67,6 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+
 @AuthorizeInstantiation("STUDENT")
 public class Reading extends ISIStandardPage implements IHeaderContributor {
 	

@@ -33,8 +33,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.data.Prompt;
-import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
+import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.panel.StudentScorePanel;
@@ -44,10 +44,9 @@ import com.google.inject.Inject;
 
 /**
  * A multiple choice form.  This will have a {@link RadioGroup}&lt;String&gt; child with
- * several {@link ImmediateFeedbackSingleSelectItem} children.
+ * several {@link DelayedFeedbackSingleSelectItem} children.
  *  
- * @author jbrookover
- * @author droby
+ * @author Don Roby
  *
  */
 @Slf4j
@@ -59,16 +58,23 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 	private ISectionService sectionService;
 
 	private String location;
-	
-	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt, IModel<User> userModel, IModel<User> targetUserModel) {
-		super(id, mcPrompt, userModel, targetUserModel);
-	}
+	private boolean lockResponse;
 	
 	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt, IModel<XmlSection> currentSectionModel) {
 		super(id, mcPrompt);
 		location = new ContentLoc(currentSectionModel.getObject()).getLocation();
+		ISIXmlSection section = getIsiXmlSection(currentSectionModel);
+		lockResponse = (section != null) && section.isLockResponse();
 	}
 	
+	private ISIXmlSection getIsiXmlSection(IModel<XmlSection> model) {
+		
+		XmlSection section = model.getObject();
+		if ((section == null) || (!(section instanceof ISIXmlSection)))
+			return null;
+		return (ISIXmlSection) section;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onInitialize() {
@@ -112,7 +118,7 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 	
 	@Override
 	protected void onBeforeRender() {
-		if (isComplete())
+		if (isComplete()  && isLockResponse())
 			setEnabled(false);
 		super.onBeforeRender();
 	}
@@ -132,11 +138,15 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm {
 		}
 	}
 	
-	public boolean isComplete() {
+	private boolean isLockResponse() {
+		return lockResponse;
+	}
+
+	private boolean isComplete() {
 		return nullSafeBoolean(sectionService.sectionIsCompleted(getUser(), location));
 	}
 
-	public boolean isReviewed() {
+	private boolean isReviewed() {
 		return nullSafeBoolean(sectionService.sectionIsReviewed(getUser(), location));			
 	}
 

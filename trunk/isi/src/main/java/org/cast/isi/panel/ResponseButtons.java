@@ -35,9 +35,7 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.service.IResponseService;
-import org.cast.cwm.service.ResponseService;
 import org.cast.isi.data.ContentLoc;
-import org.cast.isi.service.IISIResponseService;
 
 import com.google.inject.Inject;
 
