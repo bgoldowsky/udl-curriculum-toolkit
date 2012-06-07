@@ -612,7 +612,7 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<div class="responseBar">
-					<div wicket:id="responseButtons_" rgid="{@id}" class="responseLeft">
+					<div wicket:id="locking_responseButtons_" rgid="{@id}" class="responseLeft">
 					</div>
 					<div class="responseRight">
 						<!-- helper links -->
@@ -622,7 +622,7 @@
 					</div>
 				</div>
 				<!-- list of responses -->
-				<div wicket:id="responseList_" rgid="{@id}" group="{@group}">
+				<div wicket:id="locking_responseList_" rgid="{@id}" group="{@group}">
 				</div>
 			</xsl:otherwise>
 		</xsl:choose>
