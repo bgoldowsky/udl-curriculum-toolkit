@@ -21,6 +21,7 @@ package org.cast.isi.panel;
 
 import lombok.Getter;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.model.IModel;
@@ -34,7 +35,7 @@ import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
 
-public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
+public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> implements ISectionCompleteToggleListener {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -102,9 +103,10 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
 	public void onClick (final AjaxRequestTarget target) {	
 		sectionService.setCompleted(getUser(), new ContentLoc(location), !isComplete());
 		if (target != null) {
-			getPage().visitChildren(SectionCompleteToggleComponent.class, new IVisitor<SectionCompleteToggleComponent>() {
-				public Object component(SectionCompleteToggleComponent component) {
-					if (getLocation().equals(component.getLocation()))
+			getPage().visitChildren(ISectionCompleteToggleListener.class, new IVisitor<Component>() {
+				public Object component(Component component) {
+					ISectionCompleteToggleListener listener = (ISectionCompleteToggleListener) component;
+					if (getLocation().equals(listener.getLocation()))
 						target.addComponent(component);
 					return CONTINUE_TRAVERSAL;
 				}

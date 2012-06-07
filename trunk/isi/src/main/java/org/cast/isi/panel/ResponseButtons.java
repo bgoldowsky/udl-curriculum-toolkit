@@ -45,7 +45,9 @@ public class ResponseButtons extends Panel {
 	protected String context = "default";
 	private IModel<Prompt> mPrompt;
 	private ResponseMetadata metadata;
-	private ContentLoc loc;
+
+	protected ContentLoc loc;
+	
 	private ResponseList listComponent;
 	
 	@Inject

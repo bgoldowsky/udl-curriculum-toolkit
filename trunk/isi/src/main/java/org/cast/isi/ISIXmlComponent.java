@@ -86,6 +86,8 @@ import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.panel.AgentLink;
 import org.cast.isi.panel.GlossaryLink;
 import org.cast.isi.panel.ImageDetailButtonPanel;
+import org.cast.isi.panel.LockingResponseButtons;
+import org.cast.isi.panel.LockingResponseList;
 import org.cast.isi.panel.MiniGlossaryLink;
 import org.cast.isi.panel.MiniGlossaryModal;
 import org.cast.isi.panel.PageLinkPanel;
@@ -101,7 +103,6 @@ import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.IISIResponseService;
-import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -122,9 +123,6 @@ public class ISIXmlComponent extends XmlComponent {
 	@Inject
 	private IISIResponseService responseService;
 	
-	@Inject
-	private ISectionService sectionService;
-
 	@Getter @Setter private String contentPage;
 	@Getter @Setter private MiniGlossaryModal miniGlossaryModal;
 	@Getter @Setter private ResponseFeedbackPanel responseFeedbackPanel;
@@ -402,7 +400,19 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc, null);
 			dataView.setContext("response");
-			dataView.setAllowEdit(!isTeacher && !isCompleteAndLocked(loc, ISISession.get().getUser()));
+			dataView.setAllowEdit(!isTeacher);
+			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
+			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
+			dataView.add(new AttributeRemover("rgid"));
+			return dataView;
+
+		} else if (wicketId.startsWith("locking_responseList_")) {
+			ContentLoc loc = new ContentLoc(getModel().getObject());
+			String responseGroupId = elt.getAttributeNS(null, "rgid");
+			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
+			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
+			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, ISISession.get().getUserModel());
+			dataView.setContext("response");
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
 			dataView.add(new AttributeRemover("rgid"));
@@ -419,8 +429,20 @@ public class ISIXmlComponent extends XmlComponent {
 			}
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
 			ResponseButtons buttons = new ResponseButtons(wicketId, mPrompt, metadata, loc);
-			buttons.setVisible(!isTeacher && !isCompleteAndLocked(loc, ISISession.get().getUser()));
+			buttons.setVisible(!isTeacher);
 			return buttons;
+
+		} else if (wicketId.startsWith("locking_responseButtons_")) {
+			ContentLoc loc = new ContentLoc(getModel().getObject());
+			String responseGroupId = elt.getAttributeNS(null, "rgid");
+			Element xmlElement = getModel().getObject().getElement().getOwnerDocument().getElementById(responseGroupId);
+			ResponseMetadata metadata = new ResponseMetadata(xmlElement);
+			if (!ISIApplication.get().isUseAuthoredResponseType()) {
+				// set all the response types to the default per application configuration here
+				metadata = addMetadata(metadata);
+			}
+			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
+			return new LockingResponseButtons(wicketId, mPrompt, metadata, loc, ISISession.get().getUserModel());
 
 		} else if (wicketId.startsWith("ratePanel_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
@@ -634,28 +656,12 @@ public class ISIXmlComponent extends XmlComponent {
 		return metadata;
 	}
 
-	
 	protected ResponseMetadata addMetadata (ResponseMetadata metadata) {
 		// Set the response types to be allowed for this application configuration
 		for (IResponseType responseType : ISIApplication.get().defaultResponseTypes) {
 			metadata.addType(responseType);
 		}
 		return metadata;
-	}
-
-	
-	private boolean isCompleteAndLocked(ContentLoc contentLoc, User user) {
-		ISIXmlSection section = contentLoc.getSection();
-		String location = contentLoc.getLocation();
-		return section.isLockResponse() && isComplete(location, user);
-	}
-	
-	private boolean isComplete(String location, User user) {
-		return nullSafeBoolean(sectionService.sectionIsCompleted(user, location));
-	}
-
-	private boolean nullSafeBoolean(Boolean b) {
-		return (b != null) && b;
 	}
 	
 	public ResourceReference getRelativeRef (String src) {
@@ -664,7 +670,6 @@ public class ISIXmlComponent extends XmlComponent {
 			return ((IRelativeLinkSource)xmlFile).getRelativeReference(src);
 		throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
 	}
-
 	
 	public static class AttributeRemover extends AbstractBehavior {
 		
