@@ -158,7 +158,7 @@ public class ISIXmlComponent extends XmlComponent {
 			log.debug ("Fixing instances of unicode D7");
 			x = x.replaceAll("\u00d7", "&#xd7;");
 		}
-		log.debug(x);
+		//log.debug(x);
 		return x;
 	}
 
@@ -511,17 +511,36 @@ public class ISIXmlComponent extends XmlComponent {
 //			if (contentPage == null && !inGlossary) // Don't do imageDetails on non-content pages (e.g. the Table of Contents)
 //				return new WebMarkupContainer(wicketId).setVisible(false);
 
-		} else if (wicketId.startsWith("imgToggleHeader_")) {
-			// long description header for toggle area
-			return new Label(wicketId, new ResourceModel("imageLongDescription.toggleHeading", "image information"));
-
-		} else if (wicketId.startsWith("objectToggleHeader_")) {
+		} else if (wicketId.startsWith("imgToggleHeader")
+				|| wicketId.startsWith("imgDetailToggleHeader")
+				|| wicketId.startsWith("objectToggleHeader")) {
 			// long description header for toggle area
 			String src = elt.getAttributeNS(null, "src");
-			add(new AttributeRemover("src"));
-			if (src.contains(".mp3"))
-				return new Label(wicketId, new ResourceModel("audioLongDescription.toggleHeading", "more audio information"));
-			return new Label(wicketId, new ResourceModel("videoLongDescription.toggleHeading", "more video information"));
+
+			// remove everything but the name of the media
+			int lastIndex = src.lastIndexOf("/") + 1;
+			src = src.substring(lastIndex, src.length());
+
+			Label label;
+			String eventType = null;
+			if (wicketId.startsWith("imgToggleHeader")) {
+				label = new Label(wicketId, new ResourceModel("imageLongDescription.toggleHeading",	"image information"));
+				eventType = "ld:" + src;
+			} else if (wicketId.startsWith("imgDetailToggleHeader")) {
+				label = new Label(wicketId, new ResourceModel("imageLongDescription.toggleHeading",	"image information"));
+				eventType = "ld:detail:" + src;
+			} else { // video or mp3 files
+				if (src.contains(".mp3")) {
+					label = new Label(wicketId, new ResourceModel("audioLongDescription.toggleHeading",	"more audio information"));
+				} else {
+					label = new Label(wicketId, new ResourceModel("videoLongDescription.toggleHeading",	"more video information"));
+				}
+				eventType = "ld:" + src;
+			}
+
+			label.add(new CollapseBoxBehavior("onclick", eventType, ((ISIStandardPage) getPage()).getPageName()));
+			label.add(new AttributeRemover("src"));
+			return label;
 			
 		} else if (wicketId.startsWith("annotatedImage_")) {
 			// image with hotspots
@@ -537,6 +556,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("slideShow_")) {
 			SlideShowComponent slideShowComponent = new SlideShowComponent(wicketId, elt);
+			log.debug("THIS IS THE WICKET ID FOR THE SLIDESHOW {}", wicketId);
 			return slideShowComponent;
 						
 		} else if (wicketId.startsWith("collapseBoxControl-")) {
