@@ -123,21 +123,31 @@
 
     <!-- Slide Show -->
     <xsl:template match="dtb:div[@class='slideshow']">
-		<div wicket:id="slideShow_" class="slideshow" id="{@id}">
+    	<xsl:variable name="tempId" select='count(preceding::dtb:div[@class="slideshow"])' />    
+		<div wicket:id="slideShow_{$tempId}" class="slideshow" id="slideShow_{$tempId}">
 			<div class="slideshowTitle">
 				<xsl:value-of select="@title" />
 			</div>
 			<ul>
 	         	<xsl:apply-templates select="dtb:div" mode="slideshowLink" />
 			</ul>
-			<xsl:apply-templates select="dtb:div" />
+			<xsl:apply-templates select="dtb:div" mode="slide" />
 		</div>
 	</xsl:template>
 
-	<!-- these turn into buttons for the slide show  -->
+	<!-- put a unique id on the slide div  -->
+    <xsl:template match="dtb:div" mode="slide">
+    	<xsl:variable name="tempId" select='count(preceding::dtb:div[@class="slide"])' /> 
+    	<div id="slide_{$tempId}">
+        	<xsl:apply-templates/>
+    	</div>
+    </xsl:template>
+
+	<!-- these turn into buttons for the slide show with the bridgeheads used as titles -->
     <xsl:template match="dtb:div" mode="slideshowLink">
+    	<xsl:variable name="tempId" select='count(preceding::dtb:div[@class="slide"])' /> 
     	<li>
-    		<a href="#{@id}" title="{dtb:bridgehead/@title}"><xsl:value-of select="dtb:bridgehead" /></a>
+    		<a href="#slide_{$tempId}" title="{dtb:bridgehead/@title}"><xsl:value-of select="dtb:bridgehead" /></a>
     	</li>
    		<xsl:text> </xsl:text>
     </xsl:template>
@@ -410,7 +420,7 @@
 						    <!-- want this toggle when the image hasCaptions (more than one caption or a prodnote) -->
 					       	<xsl:if test="$addImageToggle = 'true'">
 			                    <div class="collapseBox">
-			                        <h5 wicket:id="imgToggleHeader_">More Information</h5>
+			                        <h5 wicket:id="imgDetailToggleHeader" src="{@src}">More Information</h5>
 			                        <div class="collapseBody">
 			                        <xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][position()&gt;1]" mode="caption"/>
 						       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>
@@ -488,7 +498,7 @@
 					    <!-- want this toggle when the image hasCaptions (more than one caption or a prodnote) -->
 				       	<xsl:if test="$addImageToggle = 'true'">
 		                    <div class="collapseBox">
-				                <h5 wicket:id="imgToggleHeader_">More Information</h5>
+				                <h5 wicket:id="imgToggleHeader" src="{@src}">More Information</h5>
 		                        <div class="collapseBody">
 		                        <xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][position()&gt;1]" mode="caption"/>
 					       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>
