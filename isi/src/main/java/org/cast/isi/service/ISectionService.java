@@ -35,6 +35,8 @@ public interface ISectionService {
 
 	SectionStatus getSectionStatus(User person, ISIXmlSection xs);
 
+	SectionStatus getSectionStatus(User user, ContentLoc contentLoc);
+
 	Map<String, Boolean> getSectionStatusMap(User person);
 
 	/**
@@ -48,6 +50,8 @@ public interface ISectionService {
 
 	boolean sectionIsCompleted(User person, ISIXmlSection xs);
 
+	SectionStatus setCompleted(User user, String location, boolean complete);
+
 	SectionStatus setCompleted(User person, ContentLoc loc, boolean complete);
 
 	void adjustMessageCount(User student, ContentLoc loc, Role role, int amount);
@@ -58,8 +62,12 @@ public interface ISectionService {
 
 	boolean sectionReviewable(User person, ISIXmlSection xs);
 
+	SectionStatus setReviewed(User person, String location, boolean reviewed);
+
 	SectionStatus setReviewed(User person, ContentLoc loc, boolean reviewed);
 
 	SectionStatus toggleReviewed(User person, ContentLoc loc);
+
+	SectionStatus setLocked(User person, ContentLoc loc, boolean locked);
 
 }

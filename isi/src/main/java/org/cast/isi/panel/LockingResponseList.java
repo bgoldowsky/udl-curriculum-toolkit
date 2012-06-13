@@ -5,7 +5,6 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
-import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.service.ISectionService;

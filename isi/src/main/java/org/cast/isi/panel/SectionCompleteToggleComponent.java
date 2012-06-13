@@ -19,54 +19,31 @@
  */
 package org.cast.isi.panel;
 
-import lombok.Getter;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
-import org.cast.cwm.indira.IndiraImage;
-import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISISession;
+import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
 
-public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> implements ISectionCompleteToggleListener {
-	
+public abstract class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
+
 	private static final long serialVersionUID = 1L;
 
 	@Inject
 	protected ISectionService sectionService;
 
-	@Getter protected String location;
-	
 	protected IModel<User> targetUserModel;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param id wicket id
-	 * @param model the xmlSection to be checked/toggled
-	 */
-	public SectionCompleteToggleComponent(String id, IModel<XmlSection> model) {
-		this(id, model, ISISession.get().getTargetUserModel());
-	}
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param id wicket id
-	 * @param model the xmlSection to be checked/toggled
-	 * @param targetUserModel the user to be marked/unmarked as completing the section
-	 */
-	public SectionCompleteToggleComponent(String id, IModel<XmlSection> model, IModel<User> targetUserModel) {
-		this(id, new ContentLoc(model.getObject()).getLocation(), targetUserModel);
-	}
-	
+	protected ContentLoc contentLoc;
+
 	/**
 	 * Constructor
 	 * 
@@ -75,53 +52,80 @@ public class SectionCompleteToggleComponent extends AjaxLink<XmlSection> impleme
 	 * @param targetUserModel the user to be marked/unmarked as completing the section
 	 */
 	public SectionCompleteToggleComponent(String id, String location, IModel<User> targetUserModel) {
+		this(id, new ContentLoc(location), targetUserModel);
+	}
+
+	public SectionCompleteToggleComponent(String id,
+			IModel<XmlSection> model, IModel<User> targetUserModel) {
+		this(id, new ContentLoc(model.getObject()), targetUserModel);
+	}
+
+	public SectionCompleteToggleComponent(String id,
+			ContentLoc contentLoc, IModel<User> targetUserModel) {
 		super(id);
-		setOutputMarkupId(true);
-		this.location = location;
+		this.contentLoc = contentLoc;
 		this.targetUserModel = targetUserModel;
-		
-		add(new IndiraImageComponent("doneImg") {
-			private static final long serialVersionUID = 1L;
+		setOutputMarkupId(true);
+	}
 
-			@Override
-			public void onBeforeRender() {	
-				if (isComplete()) {
-					setDefaultModelObject(IndiraImage.get("/img/icons/check_done.png"));
-					setTitleText("Finished");
-					setAltText("Finished");
-				} else {
-					setDefaultModelObject(IndiraImage.get("/img/icons/check_notdone.png"));
-					setTitleText("Not Finished");
-					setAltText("Not Finished");
-				}			
-				super.onBeforeRender();
-			}
-		});
+	public SectionCompleteToggleComponent(String id, IModel<XmlSection> model) {
+		this(id, model, ISISession.get().getTargetUserModel());
+	}
+
+	protected User getUser() {
+		return targetUserModel.getObject();
 	}
 	
+	public String getLocation() {
+		return contentLoc.getLocation();
+	}
+
 	@Override
-	public void onClick (final AjaxRequestTarget target) {	
-		sectionService.setCompleted(getUser(), new ContentLoc(location), !isComplete());
-		if (target != null) {
-			getPage().visitChildren(ISectionCompleteToggleListener.class, new IVisitor<Component>() {
-				public Object component(Component component) {
-					ISectionCompleteToggleListener listener = (ISectionCompleteToggleListener) component;
-					if (getLocation().equals(listener.getLocation()))
-						target.addComponent(component);
-					return CONTINUE_TRAVERSAL;
-				}
-			});
-		}
+	protected void onBeforeRender() {
+		addOrReplace(getImage());
+		super.onBeforeRender();
 	}
 
-	public boolean isComplete() {
-		Boolean isComplete = sectionService.getSectionStatusMap(getUser()).get(location);			
-		if (isComplete == null)
-			isComplete = false;
-		return isComplete;
+	protected Image getImage() {
+		if (isComplete())
+			return new DoneImage("doneImg");
+		else return new NotDoneImage("doneImg");
 	}
-	
-	public User getUser() {
-			return targetUserModel.getObject();
+
+	protected abstract boolean isComplete();
+
+	protected boolean isLockResponse() {
+		ISIXmlSection section = contentLoc.getSection();
+		return (section != null) && (section.isLockResponse());
 	}
+
+	private void addAttribute(Component component, String name, String value) {
+		component.add(new SimpleAttributeModifier(name, value));
+	}
+
+	public class DoneImage extends Image {
+
+		private static final long serialVersionUID = 1L;
+
+		public DoneImage(String id) {
+			super(id, "/img/icons/check_done.png");
+			addAttribute(this, "alt", "Finished");
+			addAttribute(this, "title", "Finished");
+		}
+
+	}
+
+	public class NotDoneImage extends Image {
+
+		private static final long serialVersionUID = 1L;
+
+		public NotDoneImage(String id) {
+			super(id, "/img/icons/check_notdone.png");
+			addAttribute(this, "alt", "Not Finished");
+			addAttribute(this, "title", "Not Finished");
+		}
+
+	}
+
+
 }

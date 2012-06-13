@@ -49,6 +49,9 @@ public class SectionStatus extends PersistedObject {
 	
 	@Column(nullable=false)
 	protected Boolean reviewed;
+
+	@Column(nullable=false, columnDefinition = "boolean default false")
+	protected Boolean locked;
 	
 	@Column(nullable=false)
 	protected int unreadTeacherMessages;
@@ -65,6 +68,7 @@ public class SectionStatus extends PersistedObject {
 		this.loc = loc;
 		this.completed = completed;
 		this.reviewed = false;
+		this.locked = false;
 		this.unreadTeacherMessages = 0;
 		this.unreadStudentMessages = 0;
 	}
@@ -100,6 +104,14 @@ public class SectionStatus extends PersistedObject {
 
 	public void setCompleted(Boolean completed) {
 		this.completed = completed;
+	}
+
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
 	}
 
 	public Boolean getReviewed() {
