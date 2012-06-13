@@ -21,15 +21,17 @@ package org.cast.isi.panel;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.data.ContentLoc;
+import org.cast.isi.data.SectionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent {
+public class TeacherSectionCompleteToggleComponent extends SectionCompleteToggleComponent {
 	
 	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(TeacherSectionCompleteToggle.class);
+	private static final Logger log = LoggerFactory.getLogger(TeacherSectionCompleteToggleComponent.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,17 +41,34 @@ public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent
 	 * @param id wicket id
 	 * @param location the xmlSection to be checked/toggled
 	 */
-	public TeacherSectionCompleteToggle(String id, IModel<XmlSection> mSection) {
-		super(id, mSection);
-		setOutputMarkupId(true);
+	public TeacherSectionCompleteToggleComponent(String id, IModel<XmlSection> model) {
+		super(id, model);
 	}
 	
+	public TeacherSectionCompleteToggleComponent(String id, String loc, IModel<User> studentModel) {
+		super(id, loc, studentModel);
+	}
+
+	public TeacherSectionCompleteToggleComponent(String id,
+			IModel<XmlSection> model, IModel<User> targetUserModel) {
+		super(id, model, targetUserModel);
+	}
+
+	public TeacherSectionCompleteToggleComponent(String id,
+			ContentLoc contentLoc, IModel<User> targetUserModel) {
+		super(id, contentLoc, targetUserModel);
+	}
+
 	@Override
 	public void onClick (final AjaxRequestTarget target) {	
-		sectionService.setReviewed(getUser(), new ContentLoc(location), !isComplete());
+		User student = getUser();
+		boolean newState = !isComplete();
+		sectionService.setReviewed(student, contentLoc, newState);
+		if (isLockResponse())
+			sectionService.setLocked(student, contentLoc, newState);
 		if (target != null) {
-			getPage().visitChildren(TeacherSectionCompleteToggle.class, new IVisitor<TeacherSectionCompleteToggle>() {
-				public Object component(TeacherSectionCompleteToggle component) {
+			getPage().visitChildren(TeacherSectionCompleteToggleComponent.class, new IVisitor<TeacherSectionCompleteToggleComponent>() {
+				public Object component(TeacherSectionCompleteToggleComponent component) {
 					if (getLocation().equals(component.getLocation()))
 						target.addComponent(component);
 					return CONTINUE_TRAVERSAL;
@@ -60,10 +79,10 @@ public class TeacherSectionCompleteToggle extends SectionCompleteToggleComponent
 
 	
 	// in this case isComplete means the teacher has reviewed
-	public boolean isComplete() {
-		Boolean isComplete = sectionService.sectionIsReviewed(getUser(), location);			
-		if (isComplete == null)
-			isComplete = false;
-		return isComplete;
+	protected boolean isComplete() {
+		SectionStatus status = sectionService.getSectionStatus(getUser(), getLocation());			
+		if (status == null)
+			return false;
+		return status.getReviewed();
 	}	
 }

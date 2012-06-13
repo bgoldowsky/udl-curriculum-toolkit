@@ -52,7 +52,18 @@ public class SectionService implements ISectionService {
 	 * @see org.cast.isi.service.ISectionService#getSectionStatus(org.cast.cwm.data.User, java.lang.String)
 	 */
 	public SectionStatus getSectionStatus(User person, String loc) {
-		return getSectionStatus(person, new ContentLoc(loc).getSection());
+		return (SectionStatus) Databinder.getHibernateSession().createCriteria(SectionStatus.class)
+				.add(Restrictions.eq("user", person))
+				.add(Restrictions.eq("loc", loc))
+				.setCacheable(true)
+				.uniqueResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#getSectionStatus(org.cast.cwm.data.User, org.cast.isi.data.ContentLoc)
+	 */
+	public SectionStatus getSectionStatus(User person, ContentLoc contentLoc) {
+		return getSectionStatus(person, contentLoc.getLocation());
 	}
 	
 	/* (non-Javadoc)
@@ -62,12 +73,7 @@ public class SectionService implements ISectionService {
 		xs = xs.getSectionAncestor();
 		if (xs == null)
 			return null;
-		String loc = new ContentLoc(xs).getLocation();
-		return (SectionStatus) Databinder.getHibernateSession().createCriteria(SectionStatus.class)
-			.add(Restrictions.eq("user", person))
-			.add(Restrictions.eq("loc", loc))
-			.setCacheable(true)
-			.uniqueResult();
+		return getSectionStatus(person, new ContentLoc(xs));
 	}
 	
 	/* (non-Javadoc)
@@ -133,6 +139,13 @@ public class SectionService implements ISectionService {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#setCompleted(org.cast.cwm.data.User, java.lang.String, boolean)
+	 */
+	public SectionStatus setCompleted(User user, String location, boolean complete) {
+		return setCompleted(user, new ContentLoc(location), complete);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.ISectionService#setCompleted(org.cast.cwm.data.User, org.cast.isi.data.ContentLoc, boolean)
 	 */
@@ -215,6 +228,13 @@ public class SectionService implements ISectionService {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.cast.isi.service.ISectionService#setCompleted(org.cast.cwm.data.User, java.lang.String, boolean)
+	 */
+	public SectionStatus setReviewed(User user, String location, boolean reviewed) {
+		return setReviewed(user, new ContentLoc(location), reviewed);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.cast.isi.service.ISectionService#setReviewed(org.cast.cwm.data.User, org.cast.isi.data.ContentLoc, boolean)
 	 */
 	public SectionStatus setReviewed (User person, ContentLoc loc, boolean reviewed) {
@@ -250,5 +270,19 @@ public class SectionService implements ISectionService {
 		EventService.get().saveEvent("section:" + (stat.getReviewed() ? "reviewed" : "not reviewed"), null, loc.getLocation());
 		return stat;
 	}
-	
+
+	public SectionStatus setLocked(User person, ContentLoc loc, boolean locked) {
+		ISIXmlSection sec = loc.getSection().getSectionAncestor();
+		if (sec == null)
+			return null;
+		SectionStatus stat = getSectionStatus(person, sec);
+		if (stat == null || !stat.getCompleted()) {
+			throw new IllegalStateException("Should not be able to adjust a lock on an uncomplete or non-existant section status");
+		} else {
+			stat.setLocked(locked);
+		}
+		cwmService.flushChanges();
+		return stat;
+	}
+
 }
