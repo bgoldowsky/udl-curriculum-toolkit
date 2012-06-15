@@ -49,6 +49,11 @@ import org.cast.isi.ISIApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * When a user forgets their password, they are emailed a link to this page where
+ * they can change their password.  This page will also validate any user that has
+ * not been previously validated.
+ */
 public class Password extends ISIBasePage implements IHeaderContributor {
 
 	private boolean haveKey = false;
@@ -139,6 +144,7 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 			Databinder.getHibernateSession().beginTransaction();
 			user.setPassword(password.getModelObject());
 			user.setSecurityToken(null);
+			user.setValid(true); // if the user was not validated previously, changing password from email link will validate user
 			Databinder.getHibernateSession().getTransaction().commit();
 			info("Password changed.");
 			fields.setVisible(false); // don't show form when confirming success
