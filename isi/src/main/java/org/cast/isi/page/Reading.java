@@ -60,6 +60,7 @@ import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
+import org.cast.isi.panel.StudentSectionCompleteToggleTextLink;
 import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.QuestionService;
 import org.slf4j.Logger;
@@ -76,14 +77,15 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 
 	protected QuestionListView questionList;
 	protected WebMarkupContainer questionContainer;
-	private IModel<User> mTargetUser;
+	protected IModel<User> mTargetUser;
 	protected XmlSectionModel mSection;
 	protected IModel<Prompt> mNotesPrompt;
 	protected ResponseMetadata pageNotesMetadata = new ResponseMetadata();
+	protected boolean showSectionToggleLink;
 
 	@Inject
-	private IISIResponseService responseService;
-	
+	protected IISIResponseService responseService;
+
 	public Reading (PageParameters parameters) {
 		this(parameters, true);
 	}
@@ -97,6 +99,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	 */
 	public Reading (PageParameters parameters, boolean showXmlContent) {
 		super(parameters);
+		showSectionToggleLink = ISIApplication.get().isSectionToggleLinksOn();
 		pageTitle = (new StringResourceModel("Reading.pageTitle", this, null, "Reading").getString());
 		setPageTitle(pageTitle);
 
@@ -128,6 +131,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
     	add(ISIApplication.get().getNavBar("navbar", mSection, teacher));
     	
 		addXmlComponent(section);
+		addSectionCompleteToggle(section);
     	addNotesPanel();		
 		addHighlightPanel();
 		addTaggingPanel();
@@ -137,6 +141,13 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		add(bottomNavPanel);
 	}
 		
+	protected void addSectionCompleteToggle(ISIXmlSection section) {
+		WebMarkupContainer container = new WebMarkupContainer("toggleCompleteContainer");
+		container.add(new StudentSectionCompleteToggleTextLink("toggleComplete", mSection, mTargetUser));
+		container.setVisible(showSectionToggleLink);
+		add(container);
+	}
+
 	protected void addXmlComponent (ISIXmlSection section) {
 		MiniGlossaryModal miniGlossaryModal = new MiniGlossaryModal("miniGlossaryModal", getPageName());
 		add(miniGlossaryModal);

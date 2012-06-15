@@ -20,68 +20,41 @@
 package org.cast.isi.panel;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
-import org.cast.isi.ISISession;
-import org.cast.isi.ISIXmlSection;
-import org.cast.isi.data.ContentLoc;
-import org.cast.isi.service.ISectionService;
 
-import com.google.inject.Inject;
 
-public abstract class SectionCompleteToggleComponent extends AjaxLink<XmlSection> {
+public abstract class SectionCompleteToggleImageLink extends SectionCompleteToggleLink {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	protected ISectionService sectionService;
-
-	protected IModel<User> targetUserModel;
-
-	protected ContentLoc contentLoc;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param id wicket id
-	 * @param location a string representing the section to be checked/toggled
+	 * @param model a model containing the section to be checked/toggled
 	 * @param targetUserModel the user to be marked/unmarked as completing the section
 	 */
-	public SectionCompleteToggleComponent(String id, String location, IModel<User> targetUserModel) {
-		this(id, new ContentLoc(location), targetUserModel);
-	}
-
-	public SectionCompleteToggleComponent(String id,
+	public SectionCompleteToggleImageLink(String id,
 			IModel<XmlSection> model, IModel<User> targetUserModel) {
-		this(id, new ContentLoc(model.getObject()), targetUserModel);
+		super(id, model, targetUserModel);
 	}
 
-	public SectionCompleteToggleComponent(String id,
-			ContentLoc contentLoc, IModel<User> targetUserModel) {
-		super(id);
-		this.contentLoc = contentLoc;
-		this.targetUserModel = targetUserModel;
-		setOutputMarkupId(true);
-	}
-
-	public SectionCompleteToggleComponent(String id, IModel<XmlSection> model) {
-		this(id, model, ISISession.get().getTargetUserModel());
-	}
-
-	protected User getUser() {
-		return targetUserModel.getObject();
-	}
-	
-	public String getLocation() {
-		return contentLoc.getLocation();
+	/**
+	 * Constructor
+	 * 
+	 * @param id wicket id
+	 * @param model a model containing the section to be checked/toggled
+	 */
+	public SectionCompleteToggleImageLink(String id, IModel<XmlSection> model) {
+		super(id, model);
 	}
 
 	@Override
-	protected void onBeforeRender() {
+	public void onBeforeRender() {
 		addOrReplace(getImage());
 		super.onBeforeRender();
 	}
@@ -90,13 +63,6 @@ public abstract class SectionCompleteToggleComponent extends AjaxLink<XmlSection
 		if (isComplete())
 			return new DoneImage("doneImg");
 		else return new NotDoneImage("doneImg");
-	}
-
-	protected abstract boolean isComplete();
-
-	protected boolean isLockResponse() {
-		ISIXmlSection section = contentLoc.getSection();
-		return (section != null) && (section.isLockResponse());
 	}
 
 	private void addAttribute(Component component, String name, String value) {

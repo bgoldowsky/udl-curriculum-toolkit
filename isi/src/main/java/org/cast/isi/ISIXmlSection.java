@@ -29,6 +29,7 @@ import lombok.Setter;
 import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
+import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -54,6 +55,8 @@ public class ISIXmlSection extends XmlSection {
 	@Getter @Setter protected boolean page = false;
 
 	/**
+	 * TODO: Can we agree on a different word for this?  "section" is sort of overloaded.
+	 * 
 	 * True if this is considered a "section".
 	 * This is expected to be one level above pages in general, although
 	 * you can have one-page sections where there is no child element
@@ -126,6 +129,10 @@ public class ISIXmlSection extends XmlSection {
 			return false;
 		return ((ISIXmlSection) parent).isLockResponse();
 	}
+	
+	public ContentLoc getContentLoc() {
+		return new ContentLoc(this);
+	}
 
 	@Override
 	public ISIXmlSection getParent() {
@@ -140,6 +147,14 @@ public class ISIXmlSection extends XmlSection {
 	@Override
 	public ISIXmlSection getPrev() {
 		return (ISIXmlSection) super.getPrev();
+	}
+	
+	public boolean isLastPageInSection() {
+		return isPage() && (getNext() == null);
+	}
+	
+	public boolean isFirstPageInSection() {
+		return isPage() && (getPrev() == null);
 	}
 	
 	public ISIXmlSection getNextPage() {

@@ -1,3 +1,22 @@
+/*
+ * Copyright 2011 CAST, Inc.
+ *
+ * This file is part of the UDL Curriculum Toolkit:
+ * see <http://code.google.com/p/udl-curriculum-toolkit>.
+ *
+ * The UDL Curriculum Toolkit is free software: you can redistribute and/or
+ * modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * The UDL Curriculum Toolkit is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.cast.isi.panel;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -12,13 +31,13 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.image.Image;
 import org.junit.Test;
 
-public class TeacherSectionCompleteToggleComponentTest extends
-		SectionCompleteToggleComponentTestCase {
+public class TeacherSectionCompleteToggleImageLinkTest extends
+		SectionCompleteToggleImageLinkTestCase {
 
 	@Test
 	public void canRender() {
 		startWicket();
-		wicketTester.assertComponent("panel:component", TeacherSectionCompleteToggleComponent.class);
+		wicketTester.assertComponent("panel:component", TeacherSectionCompleteToggleImageLink.class);
 	}
 	
 	@Test
@@ -81,7 +100,7 @@ public class TeacherSectionCompleteToggleComponentTest extends
 		sectionStatus.setReviewed(false);
 		startWicket();
 		wicketTester.clickLink("panel:component");
-		verify(sectionService).setReviewed(eq(student), eq(contentLoc), eq(true));
+		verify(sectionService).setReviewed(eq(student), eq(sectionContentLoc), eq(true));
 	}
 
 	@Test
@@ -90,58 +109,58 @@ public class TeacherSectionCompleteToggleComponentTest extends
 		sectionStatus.setReviewed(true);
 		startWicket();
 		wicketTester.clickLink("panel:component");
-		verify(sectionService).setReviewed(eq(student), eq(contentLoc), eq(false));
+		verify(sectionService).setReviewed(eq(student), eq(sectionContentLoc), eq(false));
 	}
 
 	@Test
 	public void clickingComponentMarksUnreviewedSummativeSectionAsLocked() {
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(false);
-		when(section.isLockResponse()).thenReturn(true);
+		when(pageXmlSection.isLockResponse()).thenReturn(true);
 		startWicket();
 		wicketTester.clickLink("panel:component");
-		verify(section).isLockResponse();
-		verify(sectionService).setLocked(eq(student), eq(contentLoc), eq(true));
+		verify(pageXmlSection).isLockResponse();
+		verify(sectionService).setLocked(eq(student), eq(sectionContentLoc), eq(true));
 	}
 
 	@Test
 	public void clickingComponentMarksReviewedSummativeSectionAsUnlocked() {
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(true);
-		when(section.isLockResponse()).thenReturn(true);
+		when(pageXmlSection.isLockResponse()).thenReturn(true);
 		startWicket();
 		wicketTester.clickLink("panel:component");
-		verify(section).isLockResponse();
-		verify(sectionService).setLocked(eq(student), eq(contentLoc), eq(false));
+		verify(pageXmlSection).isLockResponse();
+		verify(sectionService).setLocked(eq(student), eq(sectionContentLoc), eq(false));
 	}
 
 	@Test
 	public void clickingComponentDoesNotNotAffectLockOnUnreviewedNonSummativeSection() {
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(false);
-		when(section.isLockResponse()).thenReturn(false);
+		when(pageXmlSection.isLockResponse()).thenReturn(false);
 		startWicket();
 		wicketTester.clickLink("panel:component");
-		verify(sectionService).setReviewed(eq(student), eq(contentLoc), eq(true));
-		verify(section).isLockResponse();
-		verify(sectionService, never()).setLocked(eq(student), eq(contentLoc), anyBoolean());
+		verify(sectionService).setReviewed(eq(student), eq(sectionContentLoc), eq(true));
+		verify(pageXmlSection).isLockResponse();
+		verify(sectionService, never()).setLocked(eq(student), eq(sectionContentLoc), anyBoolean());
 	}
 
 	@Test
 	public void clickingComponentDoesNotAffectLockOnReviewedNonSummativeSection() {
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(true);
-		when(section.isLockResponse()).thenReturn(false);
+		when(pageXmlSection.isLockResponse()).thenReturn(false);
 		startWicket();
 		wicketTester.clickLink("panel:component");
-		verify(sectionService).setReviewed(eq(student), eq(contentLoc), eq(false));
-		verify(section).isLockResponse();
-		verify(sectionService, never()).setLocked(eq(student), eq(contentLoc), anyBoolean());
+		verify(sectionService).setReviewed(eq(student), eq(sectionContentLoc), eq(false));
+		verify(pageXmlSection).isLockResponse();
+		verify(sectionService, never()).setLocked(eq(student), eq(sectionContentLoc), anyBoolean());
 	}
 
 	@Override
 	protected Component newTestComponent() {
-		return new TeacherSectionCompleteToggleComponent("component", contentLoc, studentModel);
+		return new TeacherSectionCompleteToggleImageLink("component", pageSectionXmlModel, studentModel);
 	}
 
 }

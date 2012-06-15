@@ -19,19 +19,17 @@
  */
 package org.cast.isi.panel;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
-import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.SectionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TeacherSectionCompleteToggleComponent extends SectionCompleteToggleComponent {
+public class TeacherSectionCompleteToggleImageLink extends SectionCompleteToggleImageLink {
 	
 	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(TeacherSectionCompleteToggleComponent.class);
+	private static final Logger log = LoggerFactory.getLogger(TeacherSectionCompleteToggleImageLink.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,42 +37,31 @@ public class TeacherSectionCompleteToggleComponent extends SectionCompleteToggle
 	 * Constructor
 	 * 
 	 * @param id wicket id
-	 * @param location the xmlSection to be checked/toggled
+	 * @param model a model containing the section to be checked/toggled
 	 */
-	public TeacherSectionCompleteToggleComponent(String id, IModel<XmlSection> model) {
+	public TeacherSectionCompleteToggleImageLink(String id, IModel<XmlSection> model) {
 		super(id, model);
 	}
 	
-	public TeacherSectionCompleteToggleComponent(String id, String loc, IModel<User> studentModel) {
-		super(id, loc, studentModel);
-	}
-
-	public TeacherSectionCompleteToggleComponent(String id,
+	/**
+	 * Constructor
+	 * 
+	 * @param id wicket id
+	 * @param model a model containing the section to be checked/toggled
+	 * @param targetUserModel the user to be marked/unmarked as completing the section
+	 */
+	public TeacherSectionCompleteToggleImageLink(String id,
 			IModel<XmlSection> model, IModel<User> targetUserModel) {
 		super(id, model, targetUserModel);
 	}
 
-	public TeacherSectionCompleteToggleComponent(String id,
-			ContentLoc contentLoc, IModel<User> targetUserModel) {
-		super(id, contentLoc, targetUserModel);
-	}
-
 	@Override
-	public void onClick (final AjaxRequestTarget target) {	
+	protected void handleClick() {
 		User student = getUser();
 		boolean newState = !isComplete();
-		sectionService.setReviewed(student, contentLoc, newState);
+		sectionService.setReviewed(student, sectionContentLocation, newState);
 		if (isLockResponse())
-			sectionService.setLocked(student, contentLoc, newState);
-		if (target != null) {
-			getPage().visitChildren(TeacherSectionCompleteToggleComponent.class, new IVisitor<TeacherSectionCompleteToggleComponent>() {
-				public Object component(TeacherSectionCompleteToggleComponent component) {
-					if (getLocation().equals(component.getLocation()))
-						target.addComponent(component);
-					return CONTINUE_TRAVERSAL;
-				}
-			});
-		}
+			sectionService.setLocked(student, sectionContentLocation, newState);
 	}
 
 	

@@ -30,30 +30,33 @@ import org.cast.cwm.tag.component.TagPanel;
 import org.cast.isi.CollapseBoxBehavior;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
+import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.HighlightControlPanel;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.service.IISIResponseService;
+import org.cast.isi.panel.TeacherSectionCompleteToggleTextLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
 
 @AuthorizeInstantiation("TEACHER")
 public class TeacherReading extends Reading implements IHeaderContributor {
 
 	protected static final Logger log = LoggerFactory.getLogger(TeacherReading.class);
 	
-	@Inject
-	protected IISIResponseService responseService;
-	
 	public TeacherReading(final PageParameters parameters) {
 		// If there is no student model, tell super constructor that we won't be displaying XML content.
 		super(parameters, ISISession.get().getStudentModel() != null);
 	}
 
-	
+	@Override
+	protected void addSectionCompleteToggle(ISIXmlSection section) {
+		WebMarkupContainer container = new WebMarkupContainer("toggleCompleteContainer");
+		container.add(new TeacherSectionCompleteToggleTextLink("toggleComplete", mSection, mTargetUser));
+		container.setVisible(showSectionToggleLink && showXmlContent);
+		add(container);
+	}
+
 	// Differs from superclass version in that it creates a READ-ONLY page notes area with no edit buttons
 	// view the student's notes
 	protected void addNotesPanel () {

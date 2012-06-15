@@ -97,7 +97,8 @@ import org.cast.isi.panel.ResponseFeedbackButtonPanel;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.ScorePanel;
-import org.cast.isi.panel.StudentSectionCompleteToggleComponent;
+import org.cast.isi.panel.SectionCompleteToggleLink;
+import org.cast.isi.panel.StudentSectionCompleteToggleImageLink;
 import org.cast.isi.panel.SingleSelectSummaryPanel;
 import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
@@ -598,8 +599,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("sectionStatusIcon_")) {
 			String id = elt.getAttributeNS(null, "id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
-			StudentSectionCompleteToggleComponent sectionStatusIcon = new StudentSectionCompleteToggleComponent(wicketId, currentSectionModel); 
-			return sectionStatusIcon;
+			return new StudentSectionCompleteToggleImageLink(wicketId, currentSectionModel);
 			
 		} else if (wicketId.startsWith("itemSummary_")) {
 			// Summary of responses to a singleselect question.

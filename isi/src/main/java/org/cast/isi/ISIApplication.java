@@ -174,7 +174,9 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean classMessageOn = true;
 	@Getter protected boolean pageNumbersOn = true;  // ALL page numbers FIXME need one for TOC only-ldm
 	@Getter protected boolean toolBarOn = true; // text help, dictionary
-	@Getter protected boolean mathMLOn = false; 
+	@Getter protected boolean mathMLOn = false;
+	@Getter protected boolean sectionToggleLinksOn = false;
+	
 	@Getter protected String glossaryLinkType = DEFAULT_GLOSSARY_TYPE;
 	@Getter protected boolean useAuthoredResponseType = false; // false for backwards compatibility
 	@Getter protected String responseSortField = "createDate";
@@ -403,6 +405,7 @@ public abstract class ISIApplication extends CwmApplication {
 		classMessageOn = setBooleanProperty("isi.classMessage.isOn", classMessageOn);
 		toolBarOn = setBooleanProperty("isi.toolBar.isOn", toolBarOn);
 		mathMLOn = setBooleanProperty("isi.mathML.isOn", mathMLOn);
+		sectionToggleLinksOn = setBooleanProperty("isi.sectionToggleLinks.isOn", sectionToggleLinksOn);
 		useAuthoredResponseType = setBooleanProperty("isi.useAuthoredResponseType.isOn", useAuthoredResponseType);	
 		rssFeedOn = setBooleanProperty("isi.rssFeed.isOn", rssFeedOn);
 		emailOn = setBooleanProperty("isi.email.isOn", emailOn);

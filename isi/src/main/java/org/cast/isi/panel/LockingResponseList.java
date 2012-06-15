@@ -30,7 +30,8 @@ public class LockingResponseList extends ResponseList implements ISectionComplet
 	}
 
 	public String getLocation() {
-		return loc.getLocation();
+		ISIXmlSection sectionAncestor = loc.getSection().getSectionAncestor();
+		return sectionAncestor.getContentLoc().getLocation();
 	}
 
 	private User getUser() {

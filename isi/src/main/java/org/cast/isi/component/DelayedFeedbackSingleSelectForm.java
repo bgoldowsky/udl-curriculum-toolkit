@@ -65,8 +65,8 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 	
 	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt, IModel<XmlSection> currentSectionModel) {
 		super(id, mcPrompt);
-		location = new ContentLoc(currentSectionModel.getObject()).getLocation();
 		ISIXmlSection section = getIsiXmlSection(currentSectionModel);
+		location = new ContentLoc(section.getSectionAncestor()).getLocation();
 		lockResponse = (section != null) && section.isLockResponse();
 	}
 	

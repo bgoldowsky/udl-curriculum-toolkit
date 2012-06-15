@@ -19,15 +19,34 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.junit.Test;
 
-/**
- * Interface to be implemented by sections that should be refresh after a section is marked complete. 
- * 
- * @author Don Roby
- *
- */
-public interface ISectionCompleteToggleListener {
+public abstract class SectionCompleteToggleTextLinkTestCase extends
+		SectionCompleteToggleLinkTestCase {
 
-	String getLocation();
+	@Test
+	public void hasTextLabel() {
+		startWicket();
+		wicketTester.assertComponent("panel:component:text", Label.class);
+	}
 	
+	@Override
+	protected Panel newComponentTestPanel(String panelId, Component component) {
+		return new ComponentTestPanel(panelId, component);
+	}
+
+	public class ComponentTestPanel extends Panel {
+
+		private static final long serialVersionUID = 1L;
+
+		public ComponentTestPanel(String id, Component component) {
+			super(id);
+			add(component);
+		}
+
+	}
+
 }

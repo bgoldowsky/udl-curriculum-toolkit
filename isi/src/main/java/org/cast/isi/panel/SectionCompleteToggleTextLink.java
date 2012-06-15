@@ -19,15 +19,36 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.cast.cwm.data.User;
+import org.cast.cwm.xml.XmlSection;
 
-/**
- * Interface to be implemented by sections that should be refresh after a section is marked complete. 
- * 
- * @author Don Roby
- *
- */
-public interface ISectionCompleteToggleListener {
+public abstract class SectionCompleteToggleTextLink extends
+		SectionCompleteToggleLink {
 
-	String getLocation();
+	private static final long serialVersionUID = 1L;
+
+	public SectionCompleteToggleTextLink(String id, IModel<XmlSection> model,
+			IModel<User> targetUserModel) {
+		super(id, model, targetUserModel);
+	}
+
+	public SectionCompleteToggleTextLink(String id, IModel<XmlSection> model) {
+		super(id, model);
+	}
 	
+	@Override
+	public boolean isVisible() {
+		return isLastPageInSection();
+	}
+
+	@Override
+	public void onBeforeRender() {
+		addOrReplace(new Label("text", getLabelText()));
+		super.onBeforeRender();
+	}
+
+	protected abstract String getLabelText(); 
+
 }

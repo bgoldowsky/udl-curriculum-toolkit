@@ -63,7 +63,7 @@ public class SectionService implements ISectionService {
 	 * @see org.cast.isi.service.ISectionService#getSectionStatus(org.cast.cwm.data.User, org.cast.isi.data.ContentLoc)
 	 */
 	public SectionStatus getSectionStatus(User person, ContentLoc contentLoc) {
-		return getSectionStatus(person, contentLoc.getLocation());
+		return getSectionStatus(person, contentLoc.getSection());
 	}
 	
 	/* (non-Javadoc)
@@ -73,7 +73,7 @@ public class SectionService implements ISectionService {
 		xs = xs.getSectionAncestor();
 		if (xs == null)
 			return null;
-		return getSectionStatus(person, new ContentLoc(xs));
+		return getSectionStatus(person, new ContentLoc(xs).getLocation());
 	}
 	
 	/* (non-Javadoc)
