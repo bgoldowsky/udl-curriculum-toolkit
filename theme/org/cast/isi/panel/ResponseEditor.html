@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<body>
+	<wicket:panel>
+		<div wicket:id="editor" class="responseEdit"></div>
+		<div style="padding-top:5px;color:red" wicket:id="feedbackPanel"></div>
+		<div wicket:id="deleteModal"></div>
+		<div wicket:id="cancelModal"></div>
+	</wicket:panel>
+	
+	<wicket:fragment wicket:id="textFragment">
+		<p>
+	      <label wicket:id="sentenceStartersLabel" for="navStudent">Starters:</label>
+		  <select wicket:id="sentenceStarters"></select>
+		  <a href="javascript:void(0)" wicket:id="addLink" class="button">Add</a>
+		</p>
+		<form wicket:id="form" class="autosave">
+			<textarea wicket:id="message"></textarea>
+			<div wicket:id="titleFragment"></div>
+		</form>
+		<p class="autosave_info responseTime">Not Saved</p>
+		<p class="responseActions">
+			<a href="javascript:void(0)" wicket:id="save" class="button">Save</a>
+			<a href="javascript:void(0)" wicket:id="cancel" class="button">Cancel</a>
+			<a href="javascript:void(0)" wicket:id="delete" class="button deletebutton">Delete</a>
+		</p>
+	</wicket:fragment>
+
+	<wicket:fragment wicket:id="tableFragment">	
+        <div class="dataTableEdit">
+			<div wicket:id="gridDiv" class="gridDiv"></div>
+			<a href="javascript:void(0)" wicket:id="addColumn" class="button addColumn"><img src="img/icons/add.png" width="12" height="12" alt="add column" /></a>
+			<a href="javascript:void(0)" wicket:id="removeColumn" class="button delColumn"><img src="img/icons/delete.png" width="12" height="12" alt="remove column" /></a>
+			<a href="javascript:void(0)" wicket:id="addRow" class="button addRow"><img src="img/icons/add.png" width="12" height="12" alt="add row" /></a>		
+			<a href="javascript:void(0)" wicket:id="removeRow" class="button delRow"><img src="img/icons/delete.png" width="12" height="12" alt="remove row" /></a>
+		</div>		
+		<form wicket:id="form" class="autosave">
+ 			<input type="hidden" wicket:id="tableContent"></input>
+			<div wicket:id="titleFragment"></div>
+		</form>
+		<p class="autosave_info responseTime">Not Saved</p>
+		<p class="responseActions">
+			<a href="javascript:void(0)" wicket:id="save" class="button">Save</a>
+			<a href="javascript:void(0)" wicket:id="cancel" class="button">Cancel</a>
+			<a href="javascript:void(0)" wicket:id="delete" class="button deletebutton">Delete</a>
+		</p>
+	</wicket:fragment>
+	
+	<wicket:fragment wicket:id="drawingFragment">
+		<iframe wicket:id="svgeditor" width="550" height="400" scrolling="no"></iframe>
+		<br />
+		<form wicket:id="form">
+			<input type="hidden" wicket:id="svg"></input>
+			<div wicket:id="titleFragment"></div>
+		</form>
+		<p class="autosave_info responseTime">Not Saved</p>
+		<p class="responseActions">
+			<a href="javascript:void(0)" wicket:id="save" class="button">Save</a>
+			<a href="javascript:void(0)" wicket:id="cancel" class="button">Cancel</a>
+			<a href="javascript:void(0)" wicket:id="delete" class="button deletebutton">Delete</a>
+		<p>
+	</wicket:fragment>
+	
+	<wicket:fragment wicket:id="audioFragment">
+		<wicket:enclosure child="starters">
+			<p><strong>Sentence Starters</strong></p>
+			<ul class="starters">
+				<li wicket:id="starters">
+					<wicket:container wicket:id="text">Sentence starter...</wicket:container>
+				</li>
+			</ul>
+		</wicket:enclosure>
+		<div wicket:id="applet"></div>
+		<form wicket:id="form">
+			<div wicket:id="titleFragment"></div>
+		</form>
+		<p class="responseActions">
+	        <a href="javascript:void(0);" wicket:id="save" class="button">Save</a>
+	        <a href="javascript:void(0);" wicket:id="cancel" class="button">Cancel</a>
+	        <a href="javascript:void(0)" wicket:id="delete" class="button deletebutton">Delete</a>
+	    </p>
+	</wicket:fragment>
+	
+	<wicket:fragment wicket:id="uploadFragment">
+		<form wicket:id="form">
+			<p>
+			  <strong>Click "Browse" to choose the image or file you want to upload</strong><br />
+			  <input wicket:id="fileUploadField" type="file"/>
+			</p>
+			<div wicket:id="titleFragment"></div>
+		</form>
+		<p>
+			<a href="javascript:void(0)" wicket:id="save" class="button">Save</a>
+			<a href="javascript:void(0)" wicket:id="cancel" class="button">Cancel</a>
+			<a href="javascript:void(0)" wicket:id="delete" class="button deletebutton">Delete</a>
+		</p>
+	</wicket:fragment>
+	
+	<wicket:fragment wicket:id="titleFragment">
+		<p>
+			<strong wicket:id="titleInstructions">Add a title for this _______</strong><br />
+			<input wicket:id="title" type="text" name="title" class="titleInput"/>
+		</p>
+	</wicket:fragment>
+
+	<wicket:fragment wicket:id="svgNotSupportedFragment">
+		<div class="warning" role="alert">
+			<p>
+				Internet Explorer does not support the SVG-based images that are used by this drawing tool.  If you would like to use this feature, please install
+				the <a href="http://www.google.com/chromeframe/eula.html">Google Chrome Frame Plugin</a>.  Once it is installed, restart your browser and you will be 
+				able to use the tool.
+			</p>
+			<a href="javascript:void(0);" wicket:id="close" class="button standard">Close</a>
+		</div>
+	</wicket:fragment>
+
+</body>
+</html>

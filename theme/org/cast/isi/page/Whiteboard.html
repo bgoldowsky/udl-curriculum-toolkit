@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+<title wicket:id="pageTitle">Product Name</title>
+<wicket:link>
+<!--<script type="text/javascript" src="/js/jquery/jquery-1.5.1.min.js"></script>-->
+</wicket:link>
+</head>
+<body class="themeWindow">
+
+<div id="header">
+    <div wicket:id="heading" id="logo">
+        Whiteboard
+    </div>
+    <div id="close">
+        <a href="javascript:window.print();" class="button"><img src="/img/icons/print.png" width="15" height="15" alt="" /> Print Page</a>
+        <a href="#" wicket:id="hideNamesLink" class="button"><span wicket:id="hideNamesText">Hide Student Names</span></a>
+        <a wicket:id="clearWhiteboardLink1" href="#" class="button icon" title="Clear Whiteboard">Clear Whiteboard</a>
+        <a href="javascript:window.close();" class="button icon"><img src="/img/icons/close.png" width="15" height="15" alt="Close Window" title="Close Window" /></a>
+
+		<div wicket:id="clearWhiteboardModal"></div>
+    </div>
+</div>
+
+<div id="maincol">
+    <div wicket:id="rootContainer" class="content">
+		<wicket:enclosure child="noData">
+        	<p>No responses recorded - Click 'Copy to Whiteboard' near a note that you want to display.</p>
+            <span wicket:id="noData"></span>
+        </wicket:enclosure>
+        <div wicket:id="pageListing" class="responseBox">
+
+ 	      	<div wicket:id="questionListing">
+            <div class="responseIcon">
+                <a wicket:id="titleLink" href="#" class="button icon sectionLink"><img wicket:id="icon" src="/img/icons/activity_reading.png" width="15" height="15" alt="Read" title="Read" /></a>
+            </div>
+	            <div class="responseContent">
+	                <div class="entryBox">
+	                    <div wicket:id="questionText" class="responseQuestion">
+	                        2. Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                    	</div>
+		  	            <div wicket:id="responseListing" class="responseItem">
+							<wicket:enclosure child="teacherRemoveLink">
+			 					<div class="responseAuthor">
+									<span wicket:id="authorName">Name Placeholder</span>
+			                        <a wicket:id="teacherRemoveLink" href="#" class="button">Remove</a>
+								</div>
+				             </wicket:enclosure>
+				             <a wicket:id="responseAnchor"></a>
+			                 <div wicket:id="response">
+			                    <p>
+			                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at ante risus, dictum lobortis turpis. Morbi porttitor gravida neque, interdum egestas velit scelerisque eu. Donec consequat libero eu velit varius tincidunt? In augue eros; malesuada vitae eleifend a, posuere quis odio. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus
+			                    </p>
+			                 </div>
+		                     <div wicket:id="removeModal"></div>
+			                 <a wicket:id="removeLink" href="#" class="button">Remove from Whiteboard</a>
+						</div>
+	                </div>
+	            </div>
+	         </div>
+        </div>
+    </div>
+</div>
+
+<div id="tht" wicket:id="tht" class="thtWindow"></div>
+</body>
+</html>
