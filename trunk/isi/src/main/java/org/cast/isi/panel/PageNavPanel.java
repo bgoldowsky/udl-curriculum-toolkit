@@ -114,13 +114,13 @@ public class PageNavPanel extends ISIPanel {
 		// If this is a student then add the checkbox for a student.  If this is a teacher then add the checkbox for the teacher
 		if (!teacher) {
 		// Section Complete Toggle Icon
-			StudentSectionCompleteToggleComponent toggle = new StudentSectionCompleteToggleComponent("sectionCompleteToggle", new XmlSectionModel(currentSection)) {
+			SectionCompleteToggleLink toggle = new StudentSectionCompleteToggleImageLink("sectionCompleteToggle", new XmlSectionModel(currentSection)) {
 				private static final long serialVersionUID = 1L;
 			};
 			add(toggle);
 		} else {
 			// teacher is finished reviewing this section
-			TeacherSectionCompleteToggleComponent toggle = new TeacherSectionCompleteToggleComponent("sectionCompleteToggle", new XmlSectionModel(currentSection)) {
+			TeacherSectionCompleteToggleImageLink toggle = new TeacherSectionCompleteToggleImageLink("sectionCompleteToggle", new XmlSectionModel(currentSection)) {
 				private static final long serialVersionUID = 1L;
 			};
 			// Teacher can only mark as reviewed if the student has marked this as completed

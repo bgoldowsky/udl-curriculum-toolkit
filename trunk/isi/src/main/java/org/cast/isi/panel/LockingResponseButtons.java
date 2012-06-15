@@ -32,7 +32,8 @@ public class LockingResponseButtons extends ResponseButtons implements ISectionC
 	}
 
 	public String getLocation() {
-		return loc.getLocation();
+		ISIXmlSection sectionAncestor = loc.getSection().getSectionAncestor();
+		return sectionAncestor.getContentLoc().getLocation();
 	}
 
 	private User getUser() {
