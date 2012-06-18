@@ -81,7 +81,7 @@ import org.cast.isi.component.SingleSelectMessage;
 import org.cast.isi.component.SlideShowComponent;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
-import org.cast.isi.page.ISIStandardPage;
+import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.panel.AgentLink;
 import org.cast.isi.panel.GlossaryLink;
@@ -97,10 +97,9 @@ import org.cast.isi.panel.ResponseFeedbackButtonPanel;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.ScorePanel;
-import org.cast.isi.panel.SectionCompleteToggleLink;
-import org.cast.isi.panel.StudentSectionCompleteToggleImageLink;
 import org.cast.isi.panel.SingleSelectSummaryPanel;
 import org.cast.isi.panel.StudentScorePanel;
+import org.cast.isi.panel.StudentSectionCompleteToggleImageLink;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.IISIResponseService;
@@ -539,7 +538,7 @@ public class ISIXmlComponent extends XmlComponent {
 				eventType = "ld:" + src;
 			}
 
-			label.add(new CollapseBoxBehavior("onclick", eventType, ((ISIStandardPage) getPage()).getPageName()));
+			label.add(new CollapseBoxBehavior("onclick", eventType, ((ISIBasePage) getPage()).getPageName()));
 			label.add(new AttributeRemover("src"));
 			return label;
 			
@@ -563,7 +562,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("collapseBoxControl-")) {
 			String boxSequence = (wicketId.substring("collapseBoxControl-".length()).equals("") ? "0" : wicketId.substring("collapseBoxControl-".length()));
 			WebMarkupContainer collapseBoxContainer = new WebMarkupContainer(wicketId);
-			collapseBoxContainer.add(new CollapseBoxBehavior("onclick", "support:" + boxSequence, ((ISIStandardPage) getPage()).getPageName()));
+			collapseBoxContainer.add(new CollapseBoxBehavior("onclick", "support:" + boxSequence, ((ISIBasePage) getPage()).getPageName()));
 			return collapseBoxContainer;
 
 		} else if (wicketId.startsWith("iScienceLink-")) {			
@@ -573,7 +572,7 @@ public class ISIXmlComponent extends XmlComponent {
 				@Override
 				public void onClick(AjaxRequestTarget target) {
 					target.prependJavascript("$('#iScienceVideo-" + wicketId.substring("iScienceLink-".length()) + "').jqmShow();");
-					EventService.get().saveEvent("iscience:view", "Video #" + wicketId.substring("iScienceLink-".length()), ((ISIStandardPage) getPage()).getPageName());
+					EventService.get().saveEvent("iscience:view", "Video #" + wicketId.substring("iScienceLink-".length()), ((ISIBasePage) getPage()).getPageName());
 				}
 			};
 
