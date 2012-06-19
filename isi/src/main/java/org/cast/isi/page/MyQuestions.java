@@ -19,6 +19,7 @@
  */
 package org.cast.isi.page;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -30,6 +31,7 @@ import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponentLabel;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -190,10 +192,12 @@ public class MyQuestions extends ISIStandardPage {
 
 		public NewQuestionForm(String id) {
 			super(id);
-			add(new TextArea<String>("text", textModel)
-					.add(new QuestionNameValidator(null))
+			TextArea<String> questionTextArea = new TextArea<String>("text", textModel);
+			questionTextArea.add(new QuestionNameValidator(null))
 					.setRequired(true)
-					.add(new SimpleAttributeModifier("maxlength", "250")));
+					.add(new SimpleAttributeModifier("maxlength", "250"));
+			add(new FormComponentLabel("questionLabel", questionTextArea));
+			add(questionTextArea);
 			add(new AjaxButton("submit") {
 				private static final long serialVersionUID = 1L;
 

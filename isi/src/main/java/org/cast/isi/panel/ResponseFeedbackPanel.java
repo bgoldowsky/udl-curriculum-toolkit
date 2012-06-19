@@ -33,6 +33,7 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponentLabel;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -117,7 +118,10 @@ public class ResponseFeedbackPanel extends ISIPanel {
 			}
 		};
 		form.setOutputMarkupPlaceholderTag(true);
-		form.add(new TextArea<String>("message").setRequired(true));
+		TextArea<String> messageField = new TextArea<String>("message");
+		messageField.setRequired(true);
+		form.add(messageField);
+		form.add(new FormComponentLabel("messageLabel", messageField));
 		final FeedbackPanel feedbackPanel = new ComponentFeedbackPanel("feedbackPanel", form);
 		feedbackPanel.setOutputMarkupPlaceholderTag(true);
 		form.add(feedbackPanel);
