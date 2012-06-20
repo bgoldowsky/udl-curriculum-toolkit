@@ -22,6 +22,9 @@ package org.cast.isi.component;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponentLabel;
@@ -32,6 +35,8 @@ import org.apache.wicket.model.IModel;
 /**
  * A simple radio button.  It can be told whether it is the correct
  * answer.
+ * 
+ * Not so simple anymore.  It also notifies listeners of a change event.
  * 
  * @author jbrookover
  */
@@ -51,9 +56,30 @@ public class SingleSelectItem extends WebMarkupContainer {
 		Radio<String> radio = new Radio<String>("radio", model);
 		add(radio);
 		add(new FormComponentLabel("label", radio));
+		radio.add(new AjaxEventBehavior("onclick"){
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onEvent(AjaxRequestTarget target) {
+				notifyListeners(target, getComponent());
+			}
+		});
 		
 	}
 
+	public void notifyListeners(final AjaxRequestTarget target, Component component) {
+		if (target != null) {
+			getPage().visitChildren(ISingleSelectItemChangeListener.class, new IVisitor<Component>() {
+				public Object component(Component component) {
+					ISingleSelectItemChangeListener listener = (ISingleSelectItemChangeListener) component;
+					listener.onSelectionChanged(target, component);
+					return CONTINUE_TRAVERSAL;
+				}
+
+			});
+		}
+	}
 	/**
 	 * Is this item currently selected?
 	 * @return true if so
@@ -63,7 +89,7 @@ public class SingleSelectItem extends WebMarkupContainer {
 		Radio<String> radio = (Radio<String>) get("radio");
 		return (radio.getDefaultModelObject().equals(findParent(RadioGroup.class).getDefaultModelObject()));
 	}
-	
+
 	@Override
 	protected void onComponentTag(ComponentTag tag) {
 		super.onComponentTag(tag);
