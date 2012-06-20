@@ -25,6 +25,7 @@ import java.util.Arrays;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -52,7 +53,7 @@ import com.google.inject.Inject;
  *
  */
 @Slf4j
-public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements ISectionCompleteToggleListener {
+public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements ISectionCompleteToggleListener, ISingleSelectItemChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -93,7 +94,6 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 				return isReviewed();
 			}
 		});
-		
 		RadioGroup<String> radioGroup = new RadioGroup<String>("radioGroup", new Model<String>(mResponse.getObject().getText()));
 		add(radioGroup);
 
@@ -103,6 +103,7 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				if (target != null) {
+					getSaveMessage().setVisible(true);
 					target.addComponent(DelayedFeedbackSingleSelectForm.this);
 				}
 			}
@@ -117,7 +118,10 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 
 		// Message displayed if no multiple choice item has been chosen
 		radioGroup.add(new Label("selectNone", new ResourceModel("isi.nofeedback.noMultChoiceSelected", "Make a selection")).setVisible(false));
+		// Message displayed after save
+		radioGroup.add(new Label("savedMessage", new ResourceModel("isi.nofeedback.saved", "Answer has been saved")).setVisible(false).setOutputMarkupId(true));
 	}
+	
 	
 	@Override
 	protected void onBeforeRender() {
@@ -155,6 +159,16 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 
 	private boolean nullSafeBoolean(Boolean b) {
 		return (b != null) && b;
+	}
+
+	private Component getSaveMessage() {
+		return get("radioGroup:savedMessage");
+	}
+
+	public void onSelectionChanged(AjaxRequestTarget target, Component component) {
+		Component saveMessage = getSaveMessage();
+		saveMessage.setVisible(false);
+		target.addComponent(saveMessage);
 	}
 
 }
