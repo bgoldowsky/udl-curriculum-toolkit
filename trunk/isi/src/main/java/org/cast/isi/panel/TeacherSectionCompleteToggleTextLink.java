@@ -33,6 +33,11 @@ public class TeacherSectionCompleteToggleTextLink extends
 			IModel<XmlSection> pageSectionXmlModel, IModel<User> targetUserModel) {
 		super(id, pageSectionXmlModel, targetUserModel);
 	}
+	
+	@Override
+	public void onBeforeRender() {
+		super.onBeforeRender();
+	}
 
 	@Override
 	public boolean isEnabled() {
