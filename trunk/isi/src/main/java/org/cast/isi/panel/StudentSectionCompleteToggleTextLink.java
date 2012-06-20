@@ -61,11 +61,11 @@ public class StudentSectionCompleteToggleTextLink extends
 	
 	protected String getLabelText() {
 		if (isLocked())
-			return "Section is Locked";
+			return getStringResource("isi.sectionToggleLinks.linkText.locked","Section is Locked");
 		else if (isComplete())
-			return "Mark Section Incomplete";
+			return getStringResource("isi.sectionToggleLinks.linkText.markIncomplete","Mark Section Incomplete");
 		else 
-			return "Mark Section Complete";
+			return getStringResource("isi.sectionToggleLinks.linkText.markComplete","Mark Section Complete");
 	}
 
 }

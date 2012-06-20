@@ -21,6 +21,7 @@ package org.cast.isi.panel;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 
@@ -49,6 +50,10 @@ public abstract class SectionCompleteToggleTextLink extends
 		super.onBeforeRender();
 	}
 
-	protected abstract String getLabelText(); 
+	protected abstract String getLabelText();
+
+	protected String getStringResource(String key, String defaultValue) {
+		return new ResourceModel(key, defaultValue).getObject();
+	} 
 
 }

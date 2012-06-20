@@ -42,11 +42,11 @@ public class TeacherSectionCompleteToggleTextLink extends
 	@Override
 	protected String getLabelText() {
 		if (isReviewed())
-			return "Mark Section Not Reviewed";
+			return getStringResource("isi.sectionToggleLinks.linkText.markNotReviewed", "Mark Section Not Reviewed");
 		else if (isComplete())
-			return "Mark Section Reviewed";
+			return getStringResource("isi.sectionToggleLinks.linkText.markReviewed", "Mark Section Reviewed");
 		else 
-			return "Incomplete Student Work";
+			return getStringResource("isi.sectionToggleLinks.linkText.incomplete", "Incomplete Student Work");
 	}
 
 	@Override
