@@ -695,6 +695,11 @@
 						<p wicket:id="selectNone" >Select an answer...</p>
 					</div>
 				</wicket:enclosure>
+				<wicket:enclosure child="savedMessage">
+					<div class="stResult correct">
+						<p wicket:id="savedMessage" >Saved answer ...</p>
+					</div>
+				</wicket:enclosure>
 			</div>
 		</div>
 	</xsl:template>
