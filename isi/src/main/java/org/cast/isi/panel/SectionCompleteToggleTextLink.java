@@ -19,8 +19,10 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
@@ -33,6 +35,19 @@ public abstract class SectionCompleteToggleTextLink extends
 	public SectionCompleteToggleTextLink(String id, IModel<XmlSection> model,
 			IModel<User> targetUserModel) {
 		super(id, model, targetUserModel);
+		add(new AttributeModifier("class", true, new Model<String>(){
+
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public String getObject() {
+					if (isEnabled())
+						return "button";
+					else return "button off";
+				}
+
+			})
+		);
 	}
 
 	public SectionCompleteToggleTextLink(String id, IModel<XmlSection> model) {
