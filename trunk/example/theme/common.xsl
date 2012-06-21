@@ -727,6 +727,14 @@
 					<xsl:otherwise>stResult incorrect</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
+			<xsl:choose>
+				<xsl:when test="@correct='true'">
+					<img style="padding-right:5px;" src="/img/icons/response_positive.png" title="Correct Answer" alt="Correct Answer" />
+				</xsl:when>
+				<xsl:otherwise>
+					<img style="padding-right:5px;" src="img/icons/response_negative.png" title="Incorrect Answer" alt="Incorrect Answer" />
+				</xsl:otherwise>
+			</xsl:choose>
 			<xsl:value-of select="dtb:message" />
 		</div>
 	</xsl:template>
