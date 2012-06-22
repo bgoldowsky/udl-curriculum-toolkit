@@ -43,11 +43,13 @@ public class LockingResponseButtons extends ResponseButtons implements ISectionC
 			ResponseMetadata metadata, ContentLoc loc, IModel<User> mUser) {
 		super(id, mPrompt, metadata, loc);
 		this.mUser = mUser;
+		setOutputMarkupPlaceholderTag(true);
 	}
 	
 	@Override
-	public boolean isVisible() {
-		return !isTeacher() && !isCompleteAndLocked();
+	public void onConfigure() {
+		super.onConfigure();
+		setVisible(!(isTeacher() || isCompleteAndLocked()));
 	}
 
 	public String getLocation() {
