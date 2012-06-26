@@ -99,6 +99,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	 */
 	public Reading (PageParameters parameters, boolean showXmlContent) {
 		super(parameters);
+		this.showXmlContent = showXmlContent;
 		showSectionToggleLink = ISIApplication.get().isSectionToggleLinksOn();
 		pageTitle = (new StringResourceModel("Reading.pageTitle", this, null, "Reading").getString());
 		setPageTitle(pageTitle);
@@ -106,9 +107,23 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		mTargetUser = ISISession.get().getTargetUserModel();
 		boolean teacher = ISISession.get().getUser().getRole().equals(Role.TEACHER);
 
-		// setup the loc of this reading page, check the parameters, then
-		// the bookmark and then finally the first page
+    	setLoc(parameters);
+    	add(ISIApplication.get().getNavBar("navbar", mSection, teacher));    	
+		addXmlComponent((ISIXmlSection) mSection.getObject());
+		addSectionCompleteToggle((ISIXmlSection) mSection.getObject());
+    	addNotesPanel();		
+		addHighlightPanel();
+		addTaggingPanel();
+		addQuestionsPanel();
 		
+		PageNavPanel bottomNavPanel = new PageNavPanel("pageNavPanelBottom", mSection);
+		add(bottomNavPanel);
+	}
+
+	
+	protected void setLoc(PageParameters parameters) {
+		// setup the loc of this reading page, check the parameters, then
+		// the bookmark and then finally the first page		
 		if (parameters.containsKey("loc")) {
 			loc = new ContentLoc(parameters.getString("loc"));
 		} else if (parameters.containsKey("pageNum")) {
@@ -119,28 +134,15 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		if (loc == null || loc.getSection() == null) {
 			loc = new ContentLoc(ISIApplication.get().getPageNum(0));
 		}
-		
-		this.showXmlContent = showXmlContent;
-		
+				
     	ISIXmlSection section = loc.getSection();
     	if (section != null) {
     		ISISession.get().setBookmark(loc);    		
     	}
     	mSection = new XmlSectionModel(section);
-    	
-    	add(ISIApplication.get().getNavBar("navbar", mSection, teacher));
-    	
-		addXmlComponent(section);
-		addSectionCompleteToggle(section);
-    	addNotesPanel();		
-		addHighlightPanel();
-		addTaggingPanel();
-		addQuestionsPanel();
-		
-		PageNavPanel bottomNavPanel = new PageNavPanel("pageNavPanelBottom", mSection);
-		add(bottomNavPanel);
 	}
-		
+	
+	
 	protected void addSectionCompleteToggle(ISIXmlSection section) {
 		WebMarkupContainer container = new WebMarkupContainer("toggleCompleteContainer");
 		container.add(new StudentSectionCompleteToggleTextLink("toggleComplete", mSection, mTargetUser));
