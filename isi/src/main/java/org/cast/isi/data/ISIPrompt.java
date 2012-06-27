@@ -104,7 +104,7 @@ public class ISIPrompt extends Prompt implements Comparable<ISIPrompt> {
 		String question = "Question Not Available";
 		if (getType().equals(PromptType.PAGE_NOTES)) {
 			question = "<em>Page Notes</em>";
-		} else if (getType().equals(PromptType.RESPONSEAREA)) {
+		} else if ((getType().equals(PromptType.SINGLE_SELECT)) || (getType().equals(PromptType.RESPONSEAREA))) {
 			// TODO: Modify Schema so getElementById works instead of looping through
 			String divId = "prompt_" + getContentElement().getXmlId();
 			TransformResult html = xmlService.getTransformed(new XmlSectionModel(getContentElement().getContentLocObject().getSection()), "student");

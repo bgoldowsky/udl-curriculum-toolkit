@@ -27,6 +27,7 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISISession;
+import org.cast.isi.panel.ResponseViewActionsPanel;
 import org.cast.isi.service.IISIResponseService;
 
 import com.google.inject.Inject;
@@ -66,7 +67,7 @@ public abstract class SingleSelectForm extends Form<Prompt> {
 		super.onInitialize();
 		mResponse = responseService.getResponseForPrompt(getModel(), mTargetUser);
 	}
-
+	
 	/**
 	 * Find the currently selected SingleSelectItem
 	 * @return the selected item, or null if there is none.
@@ -102,7 +103,6 @@ public abstract class SingleSelectForm extends Form<Prompt> {
 		if (mUser == null)
 			return null;
 		return mUser.getObject();
-	}	
-
+	}
 
 }

@@ -52,10 +52,10 @@ import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
+import org.cast.isi.ResponseViewerFactory;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.panel.RemoveDialog;
-import org.cast.isi.panel.ResponseViewer;
 import org.cast.isi.service.IISIResponseService;
 import org.hibernate.LockOptions;
 import org.slf4j.Logger;
@@ -185,11 +185,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 						responses.add(responseItem);
 						responseItem.add(new WebMarkupContainer("responseAnchor")
 								.add(new SimpleAttributeModifier("name", String.valueOf(response.getId()))));
-						ResponseViewer rv = new ResponseViewer("response",
-								new HibernateObjectModel<Response>(Response.class, response.getId()), 
-								500, 500);
-						rv.setShowDateTime(false);
-						responseItem.add(rv);
+						responseItem.add(new ResponseViewerFactory().makeResponseViewComponent(new HibernateObjectModel<ISIResponse>(Response.class, response.getId())));
 
 						// Remove from Whiteboard link
 						WhiteboardRemoveDialog removeModal = new WhiteboardRemoveDialog("removeModal", new ResponseModel(response));
@@ -217,7 +213,6 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 			}
 		}
 	}
-
 
 	/**
 	 *  Query for responses, and creates a multi-level map to sort them out for display.

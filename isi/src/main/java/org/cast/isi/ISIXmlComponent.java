@@ -96,6 +96,7 @@ import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackButtonPanel;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
+import org.cast.isi.panel.ResponseViewActionsPanel;
 import org.cast.isi.panel.ScorePanel;
 import org.cast.isi.panel.SingleSelectSummaryPanel;
 import org.cast.isi.panel.StudentScorePanel;
@@ -352,23 +353,34 @@ public class ISIXmlComponent extends XmlComponent {
 			ISortableDataProvider<Response> responseProvider = responseService.getResponseProviderForPrompt(promptModel, studentModel);
 			ScorePanel component = new StudentScorePanel(wicketId, responseProvider);
 			return component;
+		// A container for a single-select form and whiteboard, notebook links
+		} else if (wicketId.startsWith("responseContainer")) {
+			return new WebMarkupContainer(wicketId);
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_immediate_")) {
-			Component selectForm = new ImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
-				//selectForm.setDisabledOnCorrect(true);
-			selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
-			return selectForm;
-			
+			return makeImmediateResponseForm(wicketId, elt);
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_delay_")) {
-			ISIXmlSection section = getISIXmlSection();
-			IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
-			Component selectForm = new DelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
-			selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
-			return selectForm;
-			
+			return makeDelayedResponseForm(wicketId, elt);
+		// buttons for viewing in whiteboard and notebook
+		} else if (wicketId.startsWith("viewActions")) {
+			IModel<Prompt> mPrompt = getPrompt(elt, PromptType.SINGLE_SELECT);
+			Long promptId = mPrompt.getObject().getId();
+			ResponseViewActionsPanel component = new ResponseViewActionsPanel(wicketId, promptId);
+			component.add(new AttributeRemover("rgid", "title", "group", "type"));
+			return component;
+		} else if (wicketId.startsWith("select1_immediate_view")) {
+			Component form = makeImmediateResponseForm(wicketId, elt);
+			form.setEnabled(false);
+			return form;
+		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
+		// child of this form.  
+		} else if (wicketId.startsWith("select1_delay_view")) {
+			Component form = makeDelayedResponseForm(wicketId, elt);
+			form.setEnabled(false);
+			return form;
 		// A multiple choice radio button. Stores a "correct" value. This is
 		// added to a generic RadioGroup in a SingleSelectForm.
 		} else if (wicketId.startsWith("selectItem_")) {
@@ -384,14 +396,14 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("selectMessage_")) {
 			return new SingleSelectMessage(wicketId, elt.getAttributeNS(null, "for")).add(new AttributeRemover("for"));
 
-			// A delayed feedback message associated with a wicketId.startsWith("selectItem_").
-			// The wicketId of the associated SingleSelectItem should be provided as a "for" attribute.
-			// Visibility based on whether the response has been reviewed.
-			} else if (wicketId.startsWith("selectDelayMessage_")) {
-				ISIXmlSection section = getISIXmlSection();
-				IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
-				SingleSelectDelayMessage component = new SingleSelectDelayMessage(wicketId, currentSectionModel);
-				return component.add(new AttributeRemover("for"));
+		// A delayed feedback message associated with a wicketId.startsWith("selectItem_").
+		// The wicketId of the associated SingleSelectItem should be provided as a "for" attribute.
+		// Visibility based on whether the response has been reviewed.
+		} else if (wicketId.startsWith("selectDelayMessage_")) {
+			ISIXmlSection section = getISIXmlSection();
+			IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
+			SingleSelectDelayMessage component = new SingleSelectDelayMessage(wicketId, currentSectionModel);
+			return component.add(new AttributeRemover("for"));
 
 		} else if (wicketId.startsWith("responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
@@ -651,6 +663,23 @@ public class ISIXmlComponent extends XmlComponent {
 		} else {
 			return super.getDynamicComponent(wicketId, elt);
 		}
+	}
+	
+	private Component makeDelayedResponseForm(final String wicketId,
+			final Element elt) {
+		ISIXmlSection section = getISIXmlSection();
+		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
+		Component selectForm = new DelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
+		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
+		return selectForm;
+	}
+	
+	private Component makeImmediateResponseForm(final String wicketId,
+			final Element elt) {
+		Component selectForm = new ImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
+			//selectForm.setDisabledOnCorrect(true);
+		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
+		return selectForm;
 	}
 	
 	protected IModel<Prompt> getPrompt(Element elt) {
