@@ -101,12 +101,13 @@ public class ResponseViewActionsPanel extends Panel {
 	@Override
 	public void onConfigure() {
 		super.onConfigure();
-		setVisible((getResponse() != null) && belongsToUser());
+		ISIResponse isiResponse = getISIResponse();
+		setVisible((isiResponse != null) && belongsToUser(isiResponse));
 	}
 	
-	private boolean belongsToUser() {
+	private boolean belongsToUser(ISIResponse isiResponse) {
 		User user = mUser.getObject();
-		return user.getRole().equals(Role.STUDENT) && user.equals((getISIResponse()).getUser());
+		return (user != null) && Role.STUDENT.equals(user.getRole()) && user.equals(isiResponse.getUser());
 	}
 
 	protected boolean whiteboardEnabled() {
