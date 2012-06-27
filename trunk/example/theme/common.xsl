@@ -565,22 +565,29 @@
 	<xsl:template name="responseArea-immediate-feedback">
 		<xsl:choose>
 			<xsl:when test="dtb:select1">
-				<form wicket:id="select1_immediate_"
-					rgid="{ancestor-or-self::dtb:responsegroup/@id}"
-					title="{ancestor-or-self::dtb:responsegroup/@title}"
-					group="{ancestor-or-self::dtb:responsegroup/@group}"
-					class="subactivity">					
-					<div class="responseBar">
-						<div class="responseLeft"><!-- empty --></div>
-						<div class="responseRight">
-							<!-- helper links -->
-							<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
-							<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
-							<span wicket:id="mcScore"></span>
+				<div wicket:id="responseContainer">
+					<form wicket:id="select1_immediate_"
+						rgid="{ancestor-or-self::dtb:responsegroup/@id}"
+						title="{ancestor-or-self::dtb:responsegroup/@title}"
+						group="{ancestor-or-self::dtb:responsegroup/@group}"
+						class="subactivity">					
+						<div class="responseBar">
+							<div class="responseLeft"><!-- empty --></div>
+							<div class="responseRight">
+								<!-- helper links -->
+								<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
+								<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+								<span wicket:id="mcScore"></span>
+							</div>
 						</div>
+						<xsl:apply-templates select="dtb:select1" />
+					</form>
+					<div wicket:id="viewActions"
+						rgid="{ancestor-or-self::dtb:responsegroup/@id}"
+						title="{ancestor-or-self::dtb:responsegroup/@title}"
+						group="{ancestor-or-self::dtb:responsegroup/@group}">
 					</div>
-					<xsl:apply-templates select="dtb:select1" />
-				</form>
+				</div>
 			</xsl:when>
 			<xsl:otherwise>
 				<div class="responseBar">
@@ -603,22 +610,29 @@
 	<xsl:template name="responseArea-delay-feedback">
 		<xsl:choose>
 			<xsl:when test="dtb:select1">
-				<form wicket:id="select1_delay_"
-					rgid="{ancestor-or-self::dtb:responsegroup/@id}"
-					title="{ancestor-or-self::dtb:responsegroup/@title}"
-					group="{ancestor-or-self::dtb:responsegroup/@group}"
-					class="subactivity">					
-					<div class="responseBar">
-						<div class="responseLeft"><!-- empty --></div>
-						<div class="responseRight">
-							<!-- helper links -->
-							<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
-							<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
-							<span wicket:id="mcScore"></span>
+				<div wicket:id="responseContainer">
+					<form wicket:id="select1_delay_"
+						rgid="{ancestor-or-self::dtb:responsegroup/@id}"
+						title="{ancestor-or-self::dtb:responsegroup/@title}"
+						group="{ancestor-or-self::dtb:responsegroup/@group}"
+						class="subactivity">					
+						<div class="responseBar">
+							<div class="responseLeft"><!-- empty --></div>
+							<div class="responseRight">
+								<!-- helper links -->
+								<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
+								<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+								<span wicket:id="mcScore"></span>
+							</div>
 						</div>
+						<xsl:apply-templates select="dtb:select1" />
+					</form>
+					<div wicket:id="viewActions"
+						rgid="{ancestor-or-self::dtb:responsegroup/@id}"
+						title="{ancestor-or-self::dtb:responsegroup/@title}"
+						group="{ancestor-or-self::dtb:responsegroup/@group}">
 					</div>
-					<xsl:apply-templates select="dtb:select1" />
-				</form>
+				</div>
 			</xsl:when>
 			<xsl:otherwise>
 				<div class="responseBar">
