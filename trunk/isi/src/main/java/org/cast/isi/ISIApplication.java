@@ -113,10 +113,16 @@ import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.HeaderPanel;
+import org.cast.isi.service.FeatureService;
+import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
+import org.cast.isi.service.ILinkPropertiesService;
+import org.cast.isi.service.IPageClassService;
 import org.cast.isi.service.ISIEmailService;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
+import org.cast.isi.service.LinkPropertiesService;
+import org.cast.isi.service.PageClassService;
 import org.cast.isi.service.QuestionService;
 import org.cast.isi.service.SectionService;
 import org.hibernate.Session;
@@ -257,6 +263,9 @@ public abstract class ISIApplication extends CwmApplication {
 			//TODO: Deal with extended interfaces properly.
 			binder.bind(IResponseService.class).toInstance(ISIResponseService.get());
    			binder.bind(ISectionService.class).to(SectionService.class).in(Scopes.SINGLETON);
+   			binder.bind(IPageClassService.class).to(PageClassService.class).in(Scopes.SINGLETON);
+   			binder.bind(IFeatureService.class).to(FeatureService.class).in(Scopes.SINGLETON);
+   			binder.bind(ILinkPropertiesService.class).to(LinkPropertiesService.class).in(Scopes.SINGLETON);
     		}
         });
         return modules;
@@ -631,6 +640,12 @@ public abstract class ISIApplication extends CwmApplication {
 				new EnsureUniqueWicketIds());
 		xmlService.registerTransformer("compare-responses", compareChain);
 
+		// For viewing single-select response in whiteboard or notebook, need to filter down to a single response area and invoke custom XSL
+		TransformChain viewChain = new TransformChain(
+				new FilterElements(),
+				new XslTransformer(xmlService.findXslResource("view-response.xsl")),
+				new EnsureUniqueWicketIds());
+		xmlService.registerTransformer("view-response", viewChain);
 		
 		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
 		TransformChain transformchain = new TransformChain(

@@ -24,18 +24,13 @@ import lombok.Setter;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
-import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIResponse;
-import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.service.IISIResponseService;
 
 import com.google.inject.Inject;
@@ -49,7 +44,6 @@ public class EditableResponseViewer extends Panel {
 	private WebMarkupContainer editContainer;
 	private ResponseViewer viewer;
 	private ResponseEditor editor;
-	private WebMarkupContainer responseActions;
 	private AjaxLink<Void> editLink;
 
 	@Getter @Setter
@@ -69,10 +63,6 @@ public class EditableResponseViewer extends Panel {
 	protected ContentLoc loc;
 	
 	private static final long serialVersionUID = 1L;
-
-	private AjaxLink<Response> addToWhiteboard;
-
-	private AjaxLink<Response> addToNotebook;
 
 	@Inject
 	protected IISIResponseService responseService;
@@ -95,7 +85,7 @@ public class EditableResponseViewer extends Panel {
 		viewer.setShowDateTime(true);
 		viewContainer.add(viewer);
 		
-		responseActions = new WebMarkupContainer("responseActions");
+		WebMarkupContainer responseActions = new WebMarkupContainer("responseActions");
 		responseActions.setOutputMarkupId(true);
 		viewContainer.add(responseActions);
 		addResponseViewActions(responseActions);
@@ -156,70 +146,7 @@ public class EditableResponseViewer extends Panel {
 			}
 		};
 		container.add(editLink);
-		
-		// Link to the whiteboard when response is already on the whiteboard
-		final AnchoredLink whiteboardLink = new AnchoredLink("whiteboardLink", ISIApplication.get().getWhiteboardPageClass()) {	
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void onBeforeRender() {
-				setVisible(((ISIResponse)EditableResponseViewer.this.getModelObject()).isInWhiteboard());
-				super.onBeforeRender();
-			}
-		};
-		ISIApplication.get().setLinkProperties(whiteboardLink);
-		whiteboardLink.setOutputMarkupPlaceholderTag(true);
-		container.add(whiteboardLink);
-
-		addToWhiteboard = new AdderButton("addToWhiteboardLink", getModel()) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				responseService.addToWhiteboard((ISIResponse) getModelObject(), (ISIBasePage)getPage());
-				target.addComponent(whiteboardLink);
-				super.onClick(target);
-			}
-			
-			@Override
-			public void onBeforeRender() {
-				setVisible(allowWhiteboard && !((ISIResponse)getModelObject()).isInWhiteboard());
-				super.onBeforeRender();
-			}
-		};
-		container.add(addToWhiteboard);
-		
-		// Link to the notebook when response is already on the whiteboard
-		final AnchoredLink notebookLink = new AnchoredLink("notebookLink", ISIApplication.get().getNotebookPageClass()) {	
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void onBeforeRender() {
-				setVisible(((ISIResponse)EditableResponseViewer.this.getModelObject()).isInNotebook());
-				super.onBeforeRender();
-			}
-		};
-		ISIApplication.get().setLinkProperties(notebookLink);
-		notebookLink.setOutputMarkupId(true);
-		container.add(notebookLink);
-
-		addToNotebook = new AdderButton("addToNotebookLink", getModel()) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				responseService.addToNotebook((ISIResponse) getModelObject(), (ISIBasePage)getPage());
-				target.addComponent(notebookLink);
-				super.onClick(target);
-			}
-			
-			@Override
-			public void onBeforeRender() {
-				setVisible(allowNotebook && !((ISIResponse)getModelObject()).isInNotebook());
-				super.onBeforeRender();
-			}
-		};
-		container.add(addToNotebook);
+		container.add(new ResponseViewActionsPanel("viewActions", getModel()));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -254,50 +181,5 @@ public class EditableResponseViewer extends Panel {
 	 * @param target
 	 */
 	protected void onSave(AjaxRequestTarget target) { }
-	
-
-	/**
-	 * Button that adds the response to a list and pops up a window - common code for adding to Notebook and Whiteboard
-	 */
-	private class AdderButton extends AjaxLink<Response> {
-
-		private static final long serialVersionUID = 1L;
-
-		public AdderButton(String id, IModel<Response> model) {
-			super(id, model);
-		}
-
-		@Override
-		public void onClick(AjaxRequestTarget target) {
-			target.addComponent(responseActions);
-			target.addComponent(this);
-		}
-		
-		@Override
-		protected boolean callOnBeforeRenderIfNotVisible() { return true; }
-		
-	};
-
-	/**
-	 * Link that anchors to the id of the object in the page.  For links to Notebook and Whiteboard.
-	 */
-	private class AnchoredLink extends BookmarkablePageLink<ISIBasePage> {
-		
-		private static final long serialVersionUID = 1L;
-
-		public AnchoredLink(String id, Class<? extends WebPage> pageClass) {
-			super(id, pageClass);
-		}
-
-		@Override
-		protected CharSequence appendAnchor(ComponentTag tag, CharSequence url) {
-			if (url.toString().indexOf('#')>-1)
-				return super.appendAnchor(tag, url);
-			return url + "#" + EditableResponseViewer.this.getModelObject().getId();
-		}
-
-		@Override
-		protected boolean callOnBeforeRenderIfNotVisible() { return true; }
-	}
 
 }

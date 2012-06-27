@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import lombok.Getter;
 import net.databinder.hib.Databinder;
@@ -59,6 +59,7 @@ import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
+import org.cast.isi.ResponseViewerFactory;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
@@ -66,9 +67,7 @@ import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.RemoveDialog;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.panel.ResponseViewer;
 import org.cast.isi.service.IISIResponseService;
-import org.cast.isi.service.ISIResponseService;
 import org.hibernate.LockOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -301,9 +300,8 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 					.add(new SimpleAttributeModifier("name", String.valueOf(item.getModelObject().getId()))));
 
 					// Actual response
-					ResponseViewer responseViewer = new ResponseViewer("response", item.getModel(), 500, 500);
-					responseViewer.setShowDateTime(true);
-					item.add(responseViewer);
+					Component responseViewComponent = new ResponseViewerFactory().makeResponseViewComponent(item.getModel());
+					item.add(responseViewComponent);
 
 					// Remove From Notebook button
 					NotebookRemoveDialog removeDialog = new NotebookRemoveDialog("removeModal", item.getModel());
@@ -320,6 +318,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 					editLink.add(new ClassAttributeModifier("sectionLink"));
 					item.add(editLink);
 				}
+
 			});
 		}
 	}
@@ -357,7 +356,6 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 			mChapterList.detach();
 		super.onDetach();
 	}
-
 
 	protected class NotebookRemoveDialog extends RemoveDialog {
 		private static final long serialVersionUID = 1L;
