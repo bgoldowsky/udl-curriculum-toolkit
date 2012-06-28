@@ -104,10 +104,10 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				if (target != null) {
 					getSaveMessage().setVisible(true);
-					target.addComponent(DelayedFeedbackSingleSelectForm.this);
+					refreshListeners(target);
 				}
 			}
-			
+
 			@Override
 			public boolean isVisible() {
 				return isEnabledInHierarchy() && !isComplete();

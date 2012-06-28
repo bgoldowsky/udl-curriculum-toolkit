@@ -78,10 +78,10 @@ public class ImmediateFeedbackSingleSelectForm extends SingleSelectForm {
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				if (target != null) {
-					target.addComponent(ImmediateFeedbackSingleSelectForm.this);
+					refreshListeners(target);
 				}
 			}
-			
+
 			@Override
 			public boolean isVisible() {
 				return isEnabledInHierarchy();

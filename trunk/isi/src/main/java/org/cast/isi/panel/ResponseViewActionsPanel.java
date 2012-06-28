@@ -31,6 +31,7 @@ import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.isi.ISISession;
+import org.cast.isi.component.ISingleSelectFormListener;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.service.IFeatureService;
@@ -40,7 +41,7 @@ import org.cast.isi.service.IPageClassService;
 
 import com.google.inject.Inject;
 
-public class ResponseViewActionsPanel extends Panel {
+public class ResponseViewActionsPanel extends Panel implements ISingleSelectFormListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -96,6 +97,7 @@ public class ResponseViewActionsPanel extends Panel {
 		add(new NotebookAnchorLink("notebookLink", getNotebookClass()));
 		add(new NotebookAddLink("addToNotebookLink", (IModel<Response>) getDefaultModel()));
 		setOutputMarkupId(true);
+		setOutputMarkupPlaceholderTag(true);
 	}
 	
 	@Override
