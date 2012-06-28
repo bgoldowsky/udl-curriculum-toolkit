@@ -41,7 +41,7 @@
 	<xsl:template name="responseArea-immediate-feedback">
 		<xsl:choose>
 			<xsl:when test="dtb:select1">
-				<form wicket:id="select1_immediate_view"
+				<form wicket:id="select1_view_immediate"
 					rgid="{ancestor-or-self::dtb:responsegroup/@id}"
 					title="{ancestor-or-self::dtb:responsegroup/@title}"
 					group="{ancestor-or-self::dtb:responsegroup/@group}"
@@ -64,7 +64,7 @@
 	<xsl:template name="responseArea-delay-feedback">
 		<xsl:choose>
 			<xsl:when test="dtb:select1">
-				<form wicket:id="select1_delay_view"
+				<form wicket:id="select1_view_delay"
 					rgid="{ancestor-or-self::dtb:responsegroup/@id}"
 					title="{ancestor-or-self::dtb:responsegroup/@title}"
 					group="{ancestor-or-self::dtb:responsegroup/@group}"
