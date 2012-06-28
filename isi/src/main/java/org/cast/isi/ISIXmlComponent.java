@@ -19,10 +19,6 @@
  */
 package org.cast.isi;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,13 +40,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.ResourceLink;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
-import org.cast.cwm.CwmSession;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.components.DeployJava;
 import org.cast.cwm.data.IResponseType;
@@ -98,7 +92,6 @@ import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.ResponseViewActionsPanel;
 import org.cast.isi.panel.ScorePanel;
-import org.cast.isi.panel.SingleSelectSummaryPanel;
 import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.panel.StudentSectionCompleteToggleImageLink;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
@@ -121,8 +114,7 @@ public class ISIXmlComponent extends XmlComponent {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(ISIXmlComponent.class);
 
-	@Inject
-	private IISIResponseService responseService;
+	@Inject IISIResponseService responseService;
 	
 	@Getter @Setter private String contentPage;
 	@Getter @Setter private MiniGlossaryModal miniGlossaryModal;
@@ -174,17 +166,17 @@ public class ISIXmlComponent extends XmlComponent {
 				Node nextNode = nodes.item(i);
 				if(nextNode instanceof Element) {
 					Element next = (Element)nodes.item(i);
-					if(next.getAttributeNS(null, "name").equals("archive")) {
-						archive = next.getAttributeNS(null, "value");
-					} else if(next.getAttributeNS(null, "name").equals("dataFile")) {
-						dataFile = next.getAttributeNS(null, "value");
+					if(next.getAttribute("name").equals("archive")) {
+						archive = next.getAttribute("value");
+					} else if(next.getAttribute("name").equals("dataFile")) {
+						dataFile = next.getAttribute("value");
 					} 
 				}
 			}
 			if(archive != null) {
 				DeployJava dj = new DeployJava(wicketId);
 				dj.setArchive(FileResourceManager.get().getUrl(archive+".jar"));
-				dj.setCode(elt.getAttributeNS(null, "src"));
+				dj.setCode(elt.getAttribute("src"));
 				dj.addParameter("dataFile", FileResourceManager.get().getUrl(dataFile));
 				return dj;
 			}
@@ -193,7 +185,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		// glossaryLink is associated with a short glossary definition modal
 		} else if (wicketId.startsWith("glossaryLink_")) {
-			MiniGlossaryLink miniGlossaryLink = new MiniGlossaryLink(wicketId, new Model<String>(elt.getAttributeNS(null, "word")), miniGlossaryModal);
+			MiniGlossaryLink miniGlossaryLink = new MiniGlossaryLink(wicketId, new Model<String>(elt.getAttribute("word")), miniGlossaryModal);
 			miniGlossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MODAL));
 			return miniGlossaryLink;
 
@@ -205,7 +197,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("glossdef")) {
 			// Span element, to be filled in with the glossary short def.
-			String word = elt.getAttributeNS(null, "word");
+			String word = elt.getAttribute("word");
 			final String def = ISIApplication.get().getGlossary().getShortDefById(word);
 			WebMarkupContainer container;
 			container = new WebMarkupContainer(wicketId) {
@@ -220,7 +212,7 @@ public class ISIXmlComponent extends XmlComponent {
 			return container;
 					
 		} else if (wicketId.startsWith("glosslink")) {
-			IModel<String> wordModel = new Model<String>(elt.getAttributeNS(null, "word"));
+			IModel<String> wordModel = new Model<String>(elt.getAttribute("word"));
 			GlossaryLink glossaryLink = new GlossaryLink(wicketId, wordModel);
 			ISIApplication.get().setLinkProperties(glossaryLink);
 			glossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_INLINE));
@@ -228,14 +220,14 @@ public class ISIXmlComponent extends XmlComponent {
 		
 		// glossaryMainLinks are linked directly to the glossary popup page
 		} else if (wicketId.startsWith("glossaryMainLink_")) {
-			IModel<String> wordModel = new Model<String>(elt.getAttributeNS(null, "word"));
+			IModel<String> wordModel = new Model<String>(elt.getAttribute("word"));
 			GlossaryLink glossaryLink = new GlossaryLink(wicketId, wordModel);
 			ISIApplication.get().setLinkProperties(glossaryLink);
 			glossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MAIN));
 			return glossaryLink;
 						
 		} else if (wicketId.startsWith("link_")) {
-			String href = elt.getAttributeNS(null, "href");
+			String href = elt.getAttribute("href");
 			// According to NIMAS, href should be in the form "filename.xml#ID"  or just "#ID" for within-file link
 			// For authors' convenience, we accept simple "ID" as well.
 			int hashLocation = href.indexOf('#');
@@ -251,30 +243,30 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("fileLink_")) {
 			// link to file in content directory
-			return new ResourceLink<Object> (wicketId, getRelativeRef(elt.getAttributeNS(null, "href")));
+			return new ResourceLink<Object> (wicketId, getRelativeRef(elt.getAttribute("href")));
 			
 		} else if (wicketId.startsWith("sectionIcon_")) {		
-			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttributeNS(null, "class"));
+			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttribute("class"));
 			icon.add(new AttributeRemover("class"));
 			return icon;
 	
 		} else if (wicketId.startsWith("thumbRating_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String thumbId = elt.getAttributeNS(null, "id");
+			String thumbId = elt.getAttribute("id");
 			ThumbPanel thumbPanel = new ThumbPanel(wicketId, loc, thumbId);
 			thumbPanel.add(new AttributeRemover("id"));
 			return thumbPanel;
 
 		} else if (wicketId.startsWith("videoplayer_")) {
-			final String videoSrc = elt.getAttributeNS(null, "src");
+			final String videoSrc = elt.getAttribute("src");
 			ResourceReference videoRef = getRelativeRef(videoSrc);
 			String videoUrl = RequestCycle.get().urlFor(videoRef).toString();
 
-			Integer width = Integer.valueOf(elt.getAttributeNS(null, "width"));
-			Integer height = Integer.valueOf(elt.getAttributeNS(null, "height"));
-			String preview = elt.getAttributeNS(null, "poster");
-			String captions = elt.getAttributeNS(null, "captions");
-			String audioDescription = elt.getAttributeNS(null, "audiodescription");
+			Integer width = Integer.valueOf(elt.getAttribute("width"));
+			Integer height = Integer.valueOf(elt.getAttribute("height"));
+			String preview = elt.getAttribute("poster");
+			String captions = elt.getAttribute("captions");
+			String audioDescription = elt.getAttribute("audiodescription");
 			
 			MediaPlayerPanel comp = new MediaPlayerPanel(wicketId, videoUrl, width, height) {
 				private static final long serialVersionUID = 1L;
@@ -301,14 +293,14 @@ public class ISIXmlComponent extends XmlComponent {
 			return comp;
 
 		} else if (wicketId.startsWith("audioplayer_")) {
-			String audioSrc = elt.getAttributeNS(null, "src");
+			String audioSrc = elt.getAttribute("src");
 			ResourceReference audioRef = getRelativeRef(audioSrc);
 			String audioUrl = RequestCycle.get().urlFor(audioRef).toString();
 
 			int width = 400;
-			if (!elt.getAttributeNS(null, "width").equals("")) {
+			if (!elt.getAttribute("width").equals("")) {
 				try {
-					width = Integer.parseInt(elt.getAttributeNS(null, "width").trim());
+					width = Integer.parseInt(elt.getAttribute("width").trim());
 				} catch (Exception e) {
 					log.debug("Can't get width for {}: {}", audioUrl, e);
 					width = 400;
@@ -318,7 +310,7 @@ public class ISIXmlComponent extends XmlComponent {
 			player.setShowDownloadLink(false);
 			player.setRenderBodyOnly(true);
 
-			String preview = elt.getAttributeNS(null, "poster");
+			String preview = elt.getAttribute("poster");
 			if (!Strings.isEmpty(preview))
 				player.setPreview(getRelativeRef(preview));
 			
@@ -326,17 +318,17 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("swf_")) {
 			return new FlashAppletPanel(wicketId,
-					new ResourceReference(FileResource.class, elt.getAttributeNS(null, "src"), null, null),
-					Integer.valueOf(elt.getAttributeNS(null, "width")),
-					Integer.valueOf(elt.getAttributeNS(null, "height")),
+					new ResourceReference(FileResource.class, elt.getAttribute("src"), null, null),
+					Integer.valueOf(elt.getAttribute("width")),
+					Integer.valueOf(elt.getAttribute("height")),
 					"");
 
 		} else if (wicketId.startsWith("feedbackButton_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttributeNS(null, "rgid");
+			String responseGroupId = elt.getAttribute("rgid");
 			IModel<Prompt> pm = responseService.getOrCreatePrompt(PromptType.FEEDBACK, loc, responseGroupId);
 			ResponseFeedbackButtonPanel component = new ResponseFeedbackButtonPanel(wicketId, pm, responseFeedbackPanel);
-			String forRole = elt.getAttributeNS(null, "for");
+			String forRole = elt.getAttribute("for");
 			boolean usesTeacherButton = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
 			component.setVisibilityAllowed(usesTeacherButton ? forRole.equals("teacher") : forRole.equals("student"));
 			component.add(new AttributeRemover("rgid", "for"));
@@ -386,7 +378,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("selectItem_")) {
 			Component mcItem = new SingleSelectItem(wicketId,
 					new Model<String>(wicketId.substring("selectItem_".length())),
-					Boolean.valueOf(elt.getAttributeNS(null, "correct")));
+					Boolean.valueOf(elt.getAttribute("correct")));
 			mcItem.add(new AttributeRemover("correct"));
 			return mcItem;
 
@@ -394,7 +386,7 @@ public class ISIXmlComponent extends XmlComponent {
 		// The wicketId of the associated SingleSelectItem should be provided as a "for" attribute.
 		// Visibility based on whether the corresponding radio button is selected in the enclosing form.
 		} else if (wicketId.startsWith("selectMessage_")) {
-			return new SingleSelectMessage(wicketId, elt.getAttributeNS(null, "for")).add(new AttributeRemover("for"));
+			return new SingleSelectMessage(wicketId, elt.getAttribute("for")).add(new AttributeRemover("for"));
 
 		// A delayed feedback message associated with a wicketId.startsWith("selectItem_").
 		// The wicketId of the associated SingleSelectItem should be provided as a "for" attribute.
@@ -407,7 +399,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttributeNS(null, "rgid");
+			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc, null);
@@ -420,7 +412,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("locking_responseList_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttributeNS(null, "rgid");
+			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, ISISession.get().getUserModel());
@@ -432,7 +424,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("responseButtons_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttributeNS(null, "rgid");
+			String responseGroupId = elt.getAttribute("rgid");
 			Element xmlElement = getModel().getObject().getElement().getOwnerDocument().getElementById(responseGroupId);
 			ResponseMetadata metadata = new ResponseMetadata(xmlElement);
 			if (!ISIApplication.get().isUseAuthoredResponseType()) {
@@ -446,7 +438,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("locking_responseButtons_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttributeNS(null, "rgid");
+			String responseGroupId = elt.getAttribute("rgid");
 			Element xmlElement = getModel().getObject().getElement().getOwnerDocument().getElementById(responseGroupId);
 			ResponseMetadata metadata = new ResponseMetadata(xmlElement);
 			if (!ISIApplication.get().isUseAuthoredResponseType()) {
@@ -459,7 +451,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("ratePanel_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String promptText = null;
-			String ratingId = elt.getAttributeNS(null, "id");
+			String ratingId = elt.getAttribute("id");
 			NodeList nodes = elt.getChildNodes();
 			// extract the prompt text authored - we might want to consider re-writing this
 			// to use xsl instead of this - but this works for now - ldm
@@ -467,7 +459,7 @@ public class ISIXmlComponent extends XmlComponent {
 				Node nextNode = nodes.item(i);
 				if (nextNode instanceof Element) {
 					Element next = (Element)nodes.item(i);
-					if (next.getAttributeNS(null, "class").equals("prompt")) {
+					if (next.getAttribute("class").equals("prompt")) {
 						//get all the html under the prompt element
 						promptText = new TransformResult(next).getString();
 					} 
@@ -493,20 +485,20 @@ public class ISIXmlComponent extends XmlComponent {
 			return bpl;
 
 		} else if(wicketId.startsWith("agent_")) {
-			String title = elt.getAttributeNS(null, "title");
+			String title = elt.getAttribute("title");
 			if (Strings.isEmpty(title))
 				title = new StringResourceModel("isi.defaultAgentButtonText", this, null, "Help").getObject();
-			AgentLink link = new AgentLink(wicketId, title, elt.getAttributeNS(null, "responseAreaId"));
+			AgentLink link = new AgentLink(wicketId, title, elt.getAttribute("responseAreaId"));
 			link.add(new AttributeRemover("title", "responseAreaId"));
 			return link;
 			
 		} else if (wicketId.startsWith("image_")) {
-			String src = elt.getAttributeNS(null, "src");
+			String src = elt.getAttribute("src");
 			ResourceReference imgRef = getRelativeRef(src);
 			return new Image(wicketId, imgRef);
 
 		} else if (wicketId.startsWith("imageThumb_")) {			
-			String src = elt.getAttributeNS(null, "src");
+			String src = elt.getAttribute("src");
 			int ext = src.lastIndexOf('.');
 			src = src.substring(0, ext) + "_t" + src.substring(ext);
 			ResourceReference imgRef = getRelativeRef(src);
@@ -527,7 +519,7 @@ public class ISIXmlComponent extends XmlComponent {
 				|| wicketId.startsWith("imgDetailToggleHeader")
 				|| wicketId.startsWith("objectToggleHeader")) {
 			// long description header for toggle area
-			String src = elt.getAttributeNS(null, "src");
+			String src = elt.getAttribute("src");
 
 			// remove everything but the name of the media
 			int lastIndex = src.lastIndexOf("/") + 1;
@@ -591,7 +583,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("youtube_")) {
 			int width = getWidth(elt, 640);
 			int height = getHeight(elt, 385);
-			String src = elt.getAttributeNS(null, "src");
+			String src = elt.getAttribute("src");
 			src = src.replace("youtube.com/watch?v=", "youtube.com/v/");
 
 			FlashAppletPanel panel = new FlashAppletPanel(wicketId, width, height);
@@ -601,64 +593,19 @@ public class ISIXmlComponent extends XmlComponent {
 			return panel;	
 			
 		} else if (wicketId.startsWith("pageLinkPanel_")) {
-			String id = elt.getAttributeNS(null, "id");
+			String id = elt.getAttribute("id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			PageLinkPanel panel = new PageLinkPanel(wicketId, currentSectionModel, null);
 			panel.add(new AttributeRemover("id"));
 			return panel;
 
 		} else if (wicketId.startsWith("sectionStatusIcon_")) {
-			String id = elt.getAttributeNS(null, "id");
+			String id = elt.getAttribute("id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			return new StudentSectionCompleteToggleImageLink(wicketId, currentSectionModel);
 			
 		} else if (wicketId.startsWith("itemSummary_")) {
-			// Summary of responses to a singleselect question.
-			// TODO: consider moving this and other summarizing components to a subclass like UDL Studio's AnalyticsXmlComponent
-			
-			// Find the prompt
-			ContentLoc loc = new ContentLoc(getModel().getObject());
-			String responseGroupId = elt.getAttributeNS(null, "rgid");
-			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.SINGLE_SELECT, loc, responseGroupId);
-			
-			// Find responses and categorize by number of tries used (0 if never correct)
-			// TODO restrict query by current Period and use a better method
-			// List<Response> responses = responseService.getResponsesForPrompt(mPrompt).getObject();
-			List<Response> responses = responseService.getResponsesForPeriod(mPrompt, CwmSession.get().getCurrentPeriodModel()).getObject();
-			Map<Integer, List<Response>> sorted = new HashMap<Integer, List<Response>>();
-			if (responses != null) {
-				for (Response r : responses) {
-					Integer tries = r.getScore()==0 ? 0 : r.getTries();
-					if (sorted.get(tries) == null)
-						sorted.put(tries, new LinkedList<Response>());
-					sorted.get(tries).add(r);
-				}
-			}
-
-			// Create container
-			WebMarkupContainer container = new WebMarkupContainer(wicketId);
-			container.add(new AttributeRemover("type", "rgid"));
-			
-			// Find all wicket nodes and add appropriate label components
-			// NOTE: These could be added via XmlComponent.getDynamicComponent(), but that would mean repeating the same queries
-			// over and over again for each item.  This method requires just one database query.
-			NodeList wicketNodes = xmlService.getWicketNodes((Element) elt, false);
-			for (int i = 0; i < wicketNodes.getLength(); i++) {
-				Element itemElt = (Element) wicketNodes.item(i);
-				String itemWicketId = itemElt.getAttributeNS(xmlService.getNamespaceContext().getNamespaceURI("wicket"), "id");
-				
-				// String itemXmlId = itemElt.getAttributeNS(null, "xmlId");
-				boolean correct = Boolean.valueOf(itemElt.getAttributeNS(null, "correct"));
-				
-				if (correct) {
-					container.add (new SingleSelectSummaryPanel(itemWicketId, sorted));
-				} else {
-					container.add(new EmptyPanel(itemWicketId)); // TODO: show information about incorrect guesses
-				}
-				container.add(new AttributeRemover("xmlId", "correct"));
-			}
-			
-			return container;
+			return new SingleSelectSummaryXmlComponentHandler().makeComponent(wicketId, elt, getModel());
 							
 		} else {
 			return super.getDynamicComponent(wicketId, elt);
@@ -683,7 +630,7 @@ public class ISIXmlComponent extends XmlComponent {
 	}
 	
 	protected IModel<Prompt> getPrompt(Element elt) {
-		String type = elt.getAttributeNS(null, "type");
+		String type = elt.getAttribute("type");
 		if (type.equals("select1"))
 			return getPrompt(elt, PromptType.SINGLE_SELECT);
 		if (type.equals("responsearea"))
@@ -693,8 +640,8 @@ public class ISIXmlComponent extends XmlComponent {
 	
 	protected IModel<Prompt> getPrompt(Element elt, PromptType type) {
 		ContentLoc loc = new ContentLoc(getModel().getObject());
-		String responseGroupId = elt.getAttributeNS(null, "rgid");
-		String collectionName = elt.getAttributeNS(null, "group").trim();
+		String responseGroupId = elt.getAttribute("rgid");
+		String collectionName = elt.getAttribute("group").trim();
 		return responseService.getOrCreatePrompt(type, loc, responseGroupId, collectionName);
 	}
 	
