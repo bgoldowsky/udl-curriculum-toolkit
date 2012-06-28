@@ -363,13 +363,13 @@ public class ISIXmlComponent extends XmlComponent {
 			ResponseViewActionsPanel component = new ResponseViewActionsPanel(wicketId, promptId);
 			component.add(new AttributeRemover("rgid", "title", "group", "type"));
 			return component;
-		} else if (wicketId.startsWith("select1_immediate_view")) {
+		} else if (wicketId.startsWith("select1_view_immediate")) {
 			Component form = makeImmediateResponseForm(wicketId, elt);
 			form.setEnabled(false);
 			return form;
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
-		} else if (wicketId.startsWith("select1_delay_view")) {
+		} else if (wicketId.startsWith("select1_view_delay")) {
 			Component form = makeDelayedResponseForm(wicketId, elt);
 			form.setEnabled(false);
 			return form;
