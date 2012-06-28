@@ -180,3 +180,13 @@ h4 {
     font-size: 0px;
     height: 0px;
 }
+
+.correct {
+    font-weight: bold;
+    color: #005429;
+}
+
+.incorrect {
+    font-weight: bold;
+    color: #790C00;
+}

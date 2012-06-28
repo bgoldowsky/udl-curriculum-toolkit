@@ -737,8 +737,8 @@
 		<div wicket:id="{$messageid}">
 			<xsl:attribute name="class">
 				<xsl:choose>
-					<xsl:when test="@correct='true'">stResult correct</xsl:when>
-					<xsl:otherwise>stResult incorrect</xsl:otherwise>
+					<xsl:when test="@correct='true'">stResult correct responseFeedback</xsl:when>
+					<xsl:otherwise>stResult incorrect responseFeedback</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
 			<xsl:choose>
