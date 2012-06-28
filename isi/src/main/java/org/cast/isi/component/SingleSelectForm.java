@@ -21,6 +21,8 @@ package org.cast.isi.component;
 
 import lombok.Getter;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.Prompt;
@@ -31,7 +33,7 @@ import org.cast.isi.service.IISIResponseService;
 
 import com.google.inject.Inject;
 
-public abstract class SingleSelectForm extends Form<Prompt> {
+public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSelectFormListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -65,6 +67,16 @@ public abstract class SingleSelectForm extends Form<Prompt> {
 	protected void onInitialize() {
 		super.onInitialize();
 		mResponse = responseService.getResponseForPrompt(getModel(), mTargetUser);
+	}
+	
+	protected void refreshListeners(final AjaxRequestTarget target) {
+		getPage().visitChildren(ISingleSelectFormListener.class, new IVisitor<Component>() {
+			public Object component(Component component) {
+				target.addComponent(component);
+				return CONTINUE_TRAVERSAL;
+			}
+
+		});
 	}
 	
 	/**
