@@ -197,7 +197,7 @@ public class ResponseList extends Panel {
 		
 		public void setVisibility() {
 			// Directions hidden when any response is shown or in progress or not allowed. 
-			setVisible(dataProvider.size()==0 && (getPlaceholderComponent() instanceof EmptyPanel) && isAllowEdit());
+			setVisible(dataProvider.size()==0 && (getPlaceholderComponent() instanceof EmptyPanel));
 		}
 	}	
 	
