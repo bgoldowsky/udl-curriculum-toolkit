@@ -1019,6 +1019,14 @@ ul li, ol li {
 }
 
 /*================================================================*/
+/* Teacher TOC legend */
+
+.legendItem {
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
+/*================================================================*/
 /* Data Table */
 
 .dataTable {
