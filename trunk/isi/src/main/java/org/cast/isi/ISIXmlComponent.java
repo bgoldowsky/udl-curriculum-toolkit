@@ -403,7 +403,7 @@ public class ISIXmlComponent extends XmlComponent {
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc, null);
-			dataView.setContext("response");
+			dataView.setContext(getResponseListContext());
 			dataView.setAllowEdit(!isTeacher);
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
@@ -416,7 +416,7 @@ public class ISIXmlComponent extends XmlComponent {
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, ISISession.get().getUserModel());
-			dataView.setContext("response");
+			dataView.setContext(getResponseListContext());
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
 			dataView.add(new AttributeRemover("rgid"));
@@ -610,6 +610,17 @@ public class ISIXmlComponent extends XmlComponent {
 		} else {
 			return super.getDynamicComponent(wicketId, elt);
 		}
+	}
+	
+	private String getResponseListContext() {
+		StringBuilder builder = new StringBuilder();
+		if (inGlossary)
+			builder.append("glossary");
+		else
+			builder.append("response");
+		if (isTeacher)
+			builder.append(".teacher");
+		return builder.toString();
 	}
 	
 	private Component makeDelayedResponseForm(final String wicketId,
