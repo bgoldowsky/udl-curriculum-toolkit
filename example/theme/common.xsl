@@ -536,7 +536,7 @@
      		<div class="teacherBarLeft">
      	    </div>
       	    <div class="teacherBarRight">
-      	    	<!-- ADD the teacher specific annotation WHAT TO LOOK FOR here -->
+				<xsl:apply-templates select="key('annokey', @id)[@class='teacheronly']" mode="teacheronly" />
         		<a wicket:id="compareResponses_" href="#" class="button" rgid="{ancestor-or-self::dtb:responsegroup/@id}" type="{$type}">Compare Responses</a>
             	<span wicket:id="feedbackButton_" for="teacher" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
             	<xsl:choose>

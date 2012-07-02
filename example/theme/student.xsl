@@ -77,6 +77,22 @@
    <xsl:template match="dtb:annotation[@class='hotspot']">
    </xsl:template>
 
+    <!--  this shows only in the teacher response bar -->
+   <xsl:template match="dtb:annotation[@class='teacheronly']">
+   </xsl:template>
+
+    <!--  this shows only in the teacher response bar -->
+   <xsl:template match="dtb:annotation[@class='teacheronly']" mode="showannotations" >
+   </xsl:template>
+
+    <!--  this shows only in the teacher response bar -->
+   <xsl:template match="dtb:annotation[@class='teacheronly']" mode="teacheronly" >
+     <span wicket:id="agent_" responseAreaId="{@id}">
+       <xsl:copy-of select="&catts;"/>
+       <xsl:apply-templates/>
+     </span>
+   </xsl:template>
+
 	<!-- These are annotations or agents that are associated with the response areas -->
    <xsl:template match="dtb:annotation" mode="showannotations">
      <span wicket:id="agent_" responseAreaId="{@id}">
