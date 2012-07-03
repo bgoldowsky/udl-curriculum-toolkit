@@ -19,6 +19,8 @@
  */
 package org.cast.isi.panel;
 
+import static org.mockito.Mockito.when;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -33,6 +35,13 @@ public abstract class SectionCompleteToggleTextLinkTestCase extends
 		wicketTester.assertComponent("panel:component:text", Label.class);
 	}
 	
+	@Test
+	public void componentIsHiddenWhenConfiguredOff() {
+		when(featureService.isSectionToggleTextLinksOn()).thenReturn(false);
+		startWicket();
+		wicketTester.assertInvisible("panel:component");
+	}
+
 	@Override
 	protected Panel newComponentTestPanel(String panelId, Component component) {
 		return new ComponentTestPanel(panelId, component);

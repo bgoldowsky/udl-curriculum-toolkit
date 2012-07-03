@@ -21,6 +21,7 @@ package org.cast.isi.panel;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.image.Image;
@@ -57,6 +58,13 @@ public abstract class SectionCompleteToggleImageLinkTestCase extends SectionComp
 		startWicket();
 		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
 		wicketTester.assertAttribute("Should have title=\"Not Finished\"", "Not Finished", image, "title");
+	}
+	
+	@Test
+	public void componentIsHiddenWhenConfiguredOff() {
+		when(featureService.isSectionToggleImageLinksOn()).thenReturn(false);
+		startWicket();
+		wicketTester.assertInvisible("panel:component");
 	}
 
 	@Override

@@ -51,6 +51,7 @@ import org.cast.isi.data.ClassMessage;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.panel.QuickFlipForm;
 import org.cast.isi.panel.TagCloudTocPanel;
+import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
@@ -73,6 +74,9 @@ public class StudentToc extends ISIStandardPage {
 		
 	@Inject
 	protected ISectionService sectionService;
+
+	@Inject
+	protected IFeatureService featureService;
 
 	@Inject
 	protected IISIResponseService responseService;
@@ -134,12 +138,17 @@ public class StudentToc extends ISIStandardPage {
 	   				rootSectionContainer.add(new ClassAttributeModifier("open"));
 	   			rootSectionContainer.add(new Label("chapterTitle", rootSection.getTitle()));
 	   			ISIXmlComponent xml = new ISIXmlComponent("chapterContent", new XmlSectionModel(rootSection), "toc");
+	   			xml.setTransformParameter("sectionToggleLinks", getSectionToggleParameter());
 	   			xml.setTransformParameter("sectionLevel", sectionLevel);
 	   			if (currentPage != null)
 	   				xml.setTransformParameter("current", currentPage.getSectionAncestor().getId());
 				rootSectionContainer.add(xml);				
 	   		}
 	   	}
+	}
+
+	private String getSectionToggleParameter() {
+		return Boolean.toString(featureService.isTocSectionTogglesOn());
 	}
 	
 	/**

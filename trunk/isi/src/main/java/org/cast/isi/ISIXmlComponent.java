@@ -23,6 +23,7 @@ package org.cast.isi;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
@@ -69,6 +70,7 @@ import org.cast.isi.component.AnnotatedImageComponent;
 import org.cast.isi.component.DelayedFeedbackSingleSelectForm;
 import org.cast.isi.component.HotSpotComponent;
 import org.cast.isi.component.ImmediateFeedbackSingleSelectForm;
+import org.cast.isi.component.SectionCompleteImageContainer;
 import org.cast.isi.component.SingleSelectDelayMessage;
 import org.cast.isi.component.SingleSelectItem;
 import org.cast.isi.component.SingleSelectMessage;
@@ -247,7 +249,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("sectionIcon_")) {		
 			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttribute("class"));
-			icon.add(new AttributeRemover("class"));
+			icon.add(new AttributeModifier("class", true, new Model<String>("sectionIcon")));
 			return icon;
 	
 		} else if (wicketId.startsWith("thumbRating_")) {
@@ -603,6 +605,11 @@ public class ISIXmlComponent extends XmlComponent {
 			String id = elt.getAttribute("id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			return new StudentSectionCompleteToggleImageLink(wicketId, currentSectionModel);
+			
+		} else if (wicketId.startsWith("inactiveSectionStatusIcon_")) {
+			String id = elt.getAttribute("id");
+			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
+			return new SectionCompleteImageContainer(wicketId, currentSectionModel);
 			
 		} else if (wicketId.startsWith("itemSummary_")) {
 			return new SingleSelectSummaryXmlComponentHandler().makeComponent(wicketId, elt, getModel());

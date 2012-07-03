@@ -42,6 +42,7 @@ import org.cast.cwm.xml.service.IXmlService;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.SectionStatus;
+import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.ISectionService;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,11 +65,8 @@ public abstract class SectionCompleteToggleLinkTestCase {
 	protected ISIXmlSection sectionXmlSection;
 	protected IModel<XmlSection> sectionSectionXmlModel;
 	protected XmlDocument sectionDoc;
-	private IXmlService xmlService;
-
-	public SectionCompleteToggleLinkTestCase() {
-		super();
-	}
+	protected IXmlService xmlService;
+	protected IFeatureService featureService;
 
 	@Test
 	public void componentKnowsPageLocation() {
@@ -139,9 +137,13 @@ public abstract class SectionCompleteToggleLinkTestCase {
 	private void setupInjectedServices() {
 		sectionService = mock(ISectionService.class);
 		xmlService = mock(IXmlService.class);
+		featureService = mock(IFeatureService.class);
+		when(featureService.isSectionToggleImageLinksOn()).thenReturn(true);
+		when(featureService.isSectionToggleTextLinksOn()).thenReturn(true);
 		injectionMap = new HashMap<Class<? extends Object>, Object>();
 		injectionMap.put(ISectionService.class, sectionService);
 		injectionMap.put(IXmlService.class, xmlService);
+		injectionMap.put(IFeatureService.class, featureService);
 	}
 
 	protected class TestPanelSource implements ITestPanelSource {

@@ -53,7 +53,7 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	protected void addSectionCompleteToggle(ISIXmlSection section) {
 		WebMarkupContainer container = new WebMarkupContainer("toggleCompleteContainer");
 		container.add(new TeacherSectionCompleteToggleTextLink("toggleComplete", mSection, mTargetUser));
-		container.setVisible(showSectionToggleLink && showXmlContent);
+		container.setVisible(showSectionToggleTextLink && showXmlContent);
 		add(container);
 	}
 
