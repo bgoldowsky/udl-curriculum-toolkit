@@ -15,6 +15,8 @@
 <xsl:param name="current"/>
 <!-- parameter "sectionLevel" should name the element type of sections (level2 or level3) -->
 <xsl:param name="sectionLevel"/>
+<!-- parameter "sectionToggleLinks" controls whether the icons on sections are active section-complete toggles  -->
+<xsl:param name="sectionToggleLinks"/>
 
 <xsl:template match="dtb:level1">
     <div class="collapseBody">
@@ -71,9 +73,18 @@
       <xsl:attribute name="class">current</xsl:attribute>
     </xsl:if>
     <div class="tocIcons">
-      <a wicket:id="sectionStatusIcon_" href="#" id="{@id}" class="button icon" >
-        <img wicket:id="doneImg" class="status" />
-      </a>
+      <xsl:choose>
+      	<xsl:when test="$sectionToggleLinks = 'true'">
+	      <a wicket:id="sectionStatusIcon_" href="#" id="{@id}" class="button icon" >
+	        <img wicket:id="doneImg" class="status" />
+	      </a>
+      	</xsl:when>
+	    <xsl:otherwise>
+	      <span wicket:id="inactiveSectionStatusIcon_"  id="{@id}">
+	        <img wicket:id="doneImg" class="status" />
+	      </span>
+	    </xsl:otherwise>
+      </xsl:choose>
       <xsl:text>&#xA0;</xsl:text>
       <img wicket:id="sectionIcon_" class="{@class}" alt="{@class}"/>
     </div>

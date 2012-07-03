@@ -706,6 +706,11 @@ ul li, ol li {
     vertical-align: middle;
 }
 
+.tocIcons img.sectionIcon {
+	float:right;
+	padding-right: 0.7em;
+}
+
 .tocPageLinks {
     margin-left: 3.5em;
 }
