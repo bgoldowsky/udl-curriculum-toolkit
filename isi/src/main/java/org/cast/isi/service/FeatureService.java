@@ -23,12 +23,64 @@ import org.cast.isi.ISIApplication;
 
 public class FeatureService implements IFeatureService {
 
-	public boolean isWhiteboardEnabled() {
+	public boolean isNotebookOn() {
+		return ISIApplication.get().isNotebookOn();
+	}
+
+	public boolean isWhiteboardOn() {
 		return ISIApplication.get().isWhiteboardOn();
 	}
 
-	public boolean isNotebookEnabled() {
-		return ISIApplication.get().isNotebookOn();
+	public boolean isGlossaryOn() {
+		return ISIApplication.get().isGlossaryOn();
+	}
+
+	public boolean isMyQuestionsOn() {
+		return ISIApplication.get().isMyQuestionsOn();
+	}
+
+	public boolean isResponseCollectionsOn() {
+		return ISIApplication.get().isResponseCollectionsOn();
+	}
+
+	public boolean isTagsOn() {
+		return ISIApplication.get().isTagsOn();
+	}
+
+	public boolean isPageNotesOn() {
+		return ISIApplication.get().isPageNotesOn();
+	}
+
+	public boolean isClassMessageOn() {
+		return ISIApplication.get().isClassMessageOn();
+	}
+
+	public boolean isPageNumbersOn() {
+		return ISIApplication.get().isPageNumbersOn();
+	}
+
+	public boolean isMathMLOn() {
+		return ISIApplication.get().isMathMLOn();
+	}
+
+	public boolean isSectionToggleTextLinksOn() {
+		return ISIApplication.get().isSectionToggleTextLinksOn();
+	}
+
+	public boolean isSectionToggleImageLinksOn() {
+		return ISIApplication.get().isSectionToggleImageLinksOn();
+	}
+
+	public boolean isTocSectionTogglesOn() {
+		return ISIApplication.get().isTocSectionTogglesOn();
+	}
+
+	public boolean isTocSectionCompleteIconsOn() {
+		return ISIApplication.get().isTocSectionCompleteIconsOn();
+	}
+
+	public boolean isTocSectionIncompleteIconsOn() {
+		return ISIApplication.get().isTocSectionIncompleteIconsOn();
 	}
 
 }

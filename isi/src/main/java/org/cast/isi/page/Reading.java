@@ -61,6 +61,7 @@ import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.StudentSectionCompleteToggleTextLink;
+import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.QuestionService;
 import org.slf4j.Logger;
@@ -81,10 +82,13 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	protected XmlSectionModel mSection;
 	protected IModel<Prompt> mNotesPrompt;
 	protected ResponseMetadata pageNotesMetadata = new ResponseMetadata();
-	protected boolean showSectionToggleLink;
+	protected boolean showSectionToggleTextLink;
 
 	@Inject
 	protected IISIResponseService responseService;
+
+	@Inject
+	protected IFeatureService featureService;
 
 	public Reading (PageParameters parameters) {
 		this(parameters, true);
@@ -100,7 +104,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	public Reading (PageParameters parameters, boolean showXmlContent) {
 		super(parameters);
 		this.showXmlContent = showXmlContent;
-		showSectionToggleLink = ISIApplication.get().isSectionToggleLinksOn();
+		showSectionToggleTextLink = featureService.isSectionToggleTextLinksOn();
 		pageTitle = (new StringResourceModel("Reading.pageTitle", this, null, "Reading").getString());
 		setPageTitle(pageTitle);
 
@@ -146,7 +150,8 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	protected void addSectionCompleteToggle(ISIXmlSection section) {
 		WebMarkupContainer container = new WebMarkupContainer("toggleCompleteContainer");
 		container.add(new StudentSectionCompleteToggleTextLink("toggleComplete", mSection, mTargetUser));
-		container.setVisible(showSectionToggleLink);
+		//TODO: Why do we need this?  The link itself has an isVisible() that should do it.
+		container.setVisible(showSectionToggleTextLink);
 		add(container);
 	}
 

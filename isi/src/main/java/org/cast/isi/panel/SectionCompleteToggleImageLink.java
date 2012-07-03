@@ -19,18 +19,24 @@
  */
 package org.cast.isi.panel;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
+import org.cast.isi.component.DoneImage;
+import org.cast.isi.component.NotDoneImage;
+import org.cast.isi.service.IFeatureService;
+
+import com.google.inject.Inject;
 
 
 public abstract class SectionCompleteToggleImageLink extends SectionCompleteToggleLink {
 
 	private static final long serialVersionUID = 1L;
 
+	@Inject
+	protected IFeatureService featureService;
+	
 	/**
 	 * Constructor
 	 * 
@@ -52,6 +58,11 @@ public abstract class SectionCompleteToggleImageLink extends SectionCompleteTogg
 	public SectionCompleteToggleImageLink(String id, IModel<XmlSection> model) {
 		super(id, model);
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return featureService.isSectionToggleImageLinksOn();
+	}
 
 	@Override
 	public void onBeforeRender() {
@@ -64,34 +75,4 @@ public abstract class SectionCompleteToggleImageLink extends SectionCompleteTogg
 			return new DoneImage("doneImg");
 		else return new NotDoneImage("doneImg");
 	}
-
-	private void addAttribute(Component component, String name, String value) {
-		component.add(new SimpleAttributeModifier(name, value));
-	}
-
-	public class DoneImage extends Image {
-
-		private static final long serialVersionUID = 1L;
-
-		public DoneImage(String id) {
-			super(id, "/img/icons/check_done.png");
-			addAttribute(this, "alt", "Finished");
-			addAttribute(this, "title", "Finished");
-		}
-
-	}
-
-	public class NotDoneImage extends Image {
-
-		private static final long serialVersionUID = 1L;
-
-		public NotDoneImage(String id) {
-			super(id, "/img/icons/check_notdone.png");
-			addAttribute(this, "alt", "Not Finished");
-			addAttribute(this, "title", "Not Finished");
-		}
-
-	}
-
-
 }

@@ -113,11 +113,11 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 	}
 
 	protected boolean whiteboardEnabled() {
-		return featureService.isWhiteboardEnabled();
+		return featureService.isWhiteboardOn();
 	}
 
 	protected boolean notebookEnabled() {
-		return featureService.isNotebookEnabled();
+		return featureService.isNotebookOn();
 	}
 
 	protected Long getResponseId() {

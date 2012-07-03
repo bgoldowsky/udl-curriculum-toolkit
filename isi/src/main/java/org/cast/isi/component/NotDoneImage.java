@@ -17,23 +17,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cast.isi.service;
+package org.cast.isi.component;
 
-public interface IFeatureService {
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.markup.html.image.Image;
 
-	boolean isNotebookOn();
-	boolean isWhiteboardOn();
-	boolean isGlossaryOn();
-	boolean isMyQuestionsOn();
-	boolean isResponseCollectionsOn();
-	boolean isTagsOn();
-	boolean isPageNotesOn();
-	boolean isClassMessageOn();
-	boolean isPageNumbersOn();
-	boolean isMathMLOn();
-	boolean isSectionToggleTextLinksOn();
-	boolean isSectionToggleImageLinksOn();
-	boolean isTocSectionTogglesOn();
-	boolean isTocSectionCompleteIconsOn();
-	boolean isTocSectionIncompleteIconsOn();
+public class NotDoneImage extends Image {
+
+	private static final long serialVersionUID = 1L;
+
+	public NotDoneImage(String id) {
+		super(id, "/img/icons/check_notdone.png");
+		addAttribute(this, "alt", "Not Finished");
+		addAttribute(this, "title", "Not Finished");
+	}
+
+	private void addAttribute(Component component, String name, String value) {
+		component.add(new SimpleAttributeModifier(name, value));
+	}
+
 }
+

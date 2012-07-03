@@ -78,11 +78,11 @@ public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> imp
 		return isiXmlSection.getSectionAncestor();
 	}
 
-	public static ISIXmlSection getISIXmlSection(IModel<XmlSection> model) {
+	private static ISIXmlSection getISIXmlSection(IModel<XmlSection> model) {
 		return (ISIXmlSection) model.getObject();
 	}
 
-	public static ContentLoc getContentLoc(ISIXmlSection xmlSection) {
+	private static ContentLoc getContentLoc(ISIXmlSection xmlSection) {
 		return xmlSection.getContentLoc();
 	}
 

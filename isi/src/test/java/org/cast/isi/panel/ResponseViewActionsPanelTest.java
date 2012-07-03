@@ -86,7 +86,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void hasVisibleViewOnWhiteboardLinkWhenEnabledAndOnWhiteboard() {
-		when(featureService.isWhiteboardEnabled()).thenReturn(true);
+		when(featureService.isWhiteboardOn()).thenReturn(true);
 		response.setInWhiteboard(true);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertComponent("panel:whiteboardLink", BookmarkablePageLink.class);
@@ -95,7 +95,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void viewOnWhiteboardLinkIsHiddenWhenResponseNotOnWhiteboard() {
-		when(featureService.isWhiteboardEnabled()).thenReturn(true);
+		when(featureService.isWhiteboardOn()).thenReturn(true);
 		response.setInWhiteboard(false);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertInvisible("panel:whiteboardLink");
@@ -103,7 +103,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void viewOnWhiteboardLinkIsHiddenWhenWhiteboardIsDisabled() {
-		when(featureService.isWhiteboardEnabled()).thenReturn(false);
+		when(featureService.isWhiteboardOn()).thenReturn(false);
 		response.setInWhiteboard(true);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertInvisible("panel:whiteboardLink");
@@ -111,7 +111,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void hasVisibleAddToWhiteboardLinkWhenEnabledAndNotOnWhiteboard() {
-		when(featureService.isWhiteboardEnabled()).thenReturn(true);
+		when(featureService.isWhiteboardOn()).thenReturn(true);
 		response.setInWhiteboard(false);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertComponent("panel:addToWhiteboardLink", AjaxLink.class);
@@ -120,7 +120,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void addToWhiteboardLinkIsHiddenWhenResponseAlreadyOnWhiteboard() {
-		when(featureService.isWhiteboardEnabled()).thenReturn(true);
+		when(featureService.isWhiteboardOn()).thenReturn(true);
 		response.setInWhiteboard(true);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertInvisible("panel:addToWhiteboardLink");
@@ -128,7 +128,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void addToWhiteboardLinkIsHiddenWhenWhiteboardIsDisabled() {
-		when(featureService.isWhiteboardEnabled()).thenReturn(false);
+		when(featureService.isWhiteboardOn()).thenReturn(false);
 		response.setInWhiteboard(false);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertInvisible("panel:whiteboardLink");
@@ -136,7 +136,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void hasVisibleViewOnNotebookLinkWhenEnabledAndOnNotebook() {
-		when(featureService.isNotebookEnabled()).thenReturn(true);
+		when(featureService.isNotebookOn()).thenReturn(true);
 		response.setInNotebook(true);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertComponent("panel:notebookLink", BookmarkablePageLink.class);
@@ -145,7 +145,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void viewOnNotebookLinkIsHiddenWhenResponseNotOnNotebook() {
-		when(featureService.isNotebookEnabled()).thenReturn(true);
+		when(featureService.isNotebookOn()).thenReturn(true);
 		response.setInNotebook(false);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertInvisible("panel:notebookLink");
@@ -153,7 +153,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void viewOnNotebookLinkIsHiddenWhenNotebookIsDisabled() {
-		when(featureService.isNotebookEnabled()).thenReturn(false);
+		when(featureService.isNotebookOn()).thenReturn(false);
 		response.setInNotebook(true);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertInvisible("panel:notebookLink");
@@ -161,7 +161,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void hasVisibleAddToNotebookLinkWhenEnabledAndNotOnNotebook() {
-		when(featureService.isNotebookEnabled()).thenReturn(true);
+		when(featureService.isNotebookOn()).thenReturn(true);
 		response.setInNotebook(false);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertComponent("panel:addToNotebookLink", AjaxLink.class);
@@ -170,7 +170,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void addToNotebookLinkIsHiddenWhenResponseAlreadyOnNotebook() {
-		when(featureService.isNotebookEnabled()).thenReturn(true);
+		when(featureService.isNotebookOn()).thenReturn(true);
 		response.setInNotebook(true);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertInvisible("panel:addToNotebookLink");
@@ -178,7 +178,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void addToNotebookLinkIsHiddenWhenNotebookIsDisabled() {
-		when(featureService.isNotebookEnabled()).thenReturn(false);
+		when(featureService.isNotebookOn()).thenReturn(false);
 		response.setInNotebook(false);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.assertInvisible("panel:notebookLink");
@@ -186,7 +186,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void clickingAddToWhiteboardLinkAddsToWhiteboard() {
-		when(featureService.isWhiteboardEnabled()).thenReturn(true);
+		when(featureService.isWhiteboardOn()).thenReturn(true);
 		response.setInWhiteboard(false);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.clickLink("panel:addToWhiteboardLink");
@@ -195,7 +195,7 @@ public class ResponseViewActionsPanelTest {
 	
 	@Test
 	public void clickingAddToNotebookLinkAddsToNotebook() {
-		when(featureService.isNotebookEnabled()).thenReturn(true);
+		when(featureService.isNotebookOn()).thenReturn(true);
 		response.setInNotebook(false);
 		wicketTester.startPanel(new TestPanelSource());
 		wicketTester.clickLink("panel:addToNotebookLink");
@@ -209,7 +209,7 @@ public class ResponseViewActionsPanelTest {
 		doReturn(Whiteboard.class).when(pageClassService).getWhiteboardPageClass();
 		doReturn(Notebook.class).when(pageClassService).getNotebookPageClass();
 		featureService = mock(IFeatureService.class);
-		when(featureService.isWhiteboardEnabled()).thenReturn(true);
+		when(featureService.isWhiteboardOn()).thenReturn(true);
 		linkPropertiesService = mock(ILinkPropertiesService.class);
 		injectionMap = new HashMap<Class<? extends Object>, Object>();
 		injectionMap.put(ICwmService.class, cwmService);

@@ -26,12 +26,18 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
+import org.cast.isi.service.IFeatureService;
+
+import com.google.inject.Inject;
 
 public abstract class SectionCompleteToggleTextLink extends
 		SectionCompleteToggleLink {
 
 	private static final long serialVersionUID = 1L;
 
+	@Inject
+	protected IFeatureService featureService;
+	
 	public SectionCompleteToggleTextLink(String id, IModel<XmlSection> model,
 			IModel<User> targetUserModel) {
 		super(id, model, targetUserModel);
@@ -56,7 +62,11 @@ public abstract class SectionCompleteToggleTextLink extends
 	
 	@Override
 	public boolean isVisible() {
-		return isLastPageInSection();
+		return isConfiguredOn() && isLastPageInSection();
+	}
+
+	private boolean isConfiguredOn() {
+		return featureService.isSectionToggleTextLinksOn();
 	}
 
 	@Override
