@@ -698,21 +698,11 @@
 					<xsl:call-template name="select1-delay-message" />
 				</div>
 			</xsl:for-each>
-			<p class="responseMCActions">
-				<a href="#" wicket:id="submitLink" class="button">
-					Ready for Review
-				</a>	
-			</p>
 			<div class="responseMCFeedback">
-				<wicket:enclosure child="selectNone">
-					<div class="stResult incorrect">
-						<p wicket:id="selectNone" >Select an answer...</p>
-					</div>
-				</wicket:enclosure>
-				<wicket:enclosure child="savedMessage">
-					<div class="stResult correct">
-						<p wicket:id="savedMessage" >Saved answer ...</p>
-					</div>
+				<wicket:enclosure child="date">
+					<span class="autosave responseTime" >
+						<strong>Last Saved:</strong> <span wicket:id="date" >[Date]</span>
+					</span>
 				</wicket:enclosure>
 			</div>
 		</div>
