@@ -21,21 +21,20 @@
 package org.cast.isi.component;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.PropertyModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.xml.XmlSection;
+import org.cast.isi.ISIDateLabel;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIBasePage;
@@ -62,6 +61,11 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 
 	@Getter
 	private String location;
+	
+	@Getter 
+	@Setter
+	private boolean showDateTime = false;
+	
 	private boolean lockResponse;
 	
 	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt, IModel<XmlSection> currentSectionModel) {
@@ -97,29 +101,10 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 		RadioGroup<String> radioGroup = new RadioGroup<String>("radioGroup", new Model<String>(mResponse.getObject().getText()));
 		add(radioGroup);
 
-		AjaxSubmitLink link = new AjaxSubmitLink("submitLink") {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				if (target != null) {
-					getSaveMessage().setVisible(true);
-					refreshListeners(target);
-				}
-			}
-
-			@Override
-			public boolean isVisible() {
-				return isEnabledInHierarchy() && !isComplete();
-			}
-		};
-		link.setOutputMarkupId(true);
-		radioGroup.add(link);
-
-		// Message displayed if no multiple choice item has been chosen
-		radioGroup.add(new Label("selectNone", new ResourceModel("isi.nofeedback.noMultChoiceSelected", "Make a selection")).setVisible(false));
-		// Message displayed after save
-		radioGroup.add(new Label("savedMessage", new ResourceModel("isi.nofeedback.saved", "Answer has been saved")).setVisible(false).setOutputMarkupId(true));
+		// Last-updated timestamp
+		ISIDateLabel date = new ISIDateLabel("date", new PropertyModel<Date>(mResponse, "lastUpdated"));
+		date.setVisible(showDateTime);
+		radioGroup.add(date);
 	}
 	
 	
@@ -130,21 +115,6 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 		super.onBeforeRender();
 	}
 
-	
-	@Override
-	public void onSubmit() {
-		SingleSelectItem selectedItem = getSelectedItem();
-
-		if (selectedItem == null) {
-			get("radioGroup:selectNone").setVisible(true);
-		} else {
-			log.debug("Single Select Option Submitted: {}", selectedItem.getDefaultModelObject());
-			get("radioGroup:selectNone").setVisible(false);
-			// Save Response
-			responseService.saveSingleSelectResponse(mResponse, selectedItem.getModel().getObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
-		}
-	}
-	
 	private boolean isLockResponse() {
 		return lockResponse;
 	}
@@ -161,14 +131,11 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 		return (b != null) && b;
 	}
 
-	private Component getSaveMessage() {
-		return get("radioGroup:savedMessage");
-	}
-
-	public void onSelectionChanged(AjaxRequestTarget target, Component component) {
-		Component saveMessage = getSaveMessage();
-		saveMessage.setVisible(false);
-		target.addComponent(saveMessage);
+	public void onSelectionChanged(AjaxRequestTarget target, SingleSelectItem selectedItem) {
+		log.debug("Single Select Option Clicked: {}", selectedItem.getDefaultModelObject());
+		get("radioGroup:selectNone").setVisible(false);
+		// Save Response
+		responseService.saveSingleSelectResponse(mResponse, selectedItem.getModel().getObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
 	}
 
 }

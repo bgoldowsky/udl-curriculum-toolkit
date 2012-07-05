@@ -357,7 +357,9 @@ public class ISIXmlComponent extends XmlComponent {
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_delay_")) {
-			return makeDelayedResponseForm(wicketId, elt);
+			DelayedFeedbackSingleSelectForm form = makeDelayedResponseForm(wicketId, elt);
+			form.setShowDateTime(true);
+			return form;
 		// buttons for viewing in whiteboard and notebook
 		} else if (wicketId.startsWith("viewActions")) {
 			IModel<Prompt> mPrompt = getPrompt(elt, PromptType.SINGLE_SELECT);
@@ -372,8 +374,9 @@ public class ISIXmlComponent extends XmlComponent {
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_view_delay")) {
-			Component form = makeDelayedResponseForm(wicketId, elt);
+			DelayedFeedbackSingleSelectForm form = makeDelayedResponseForm(wicketId, elt);
 			form.setEnabled(false);
+			form.setShowDateTime(false);
 			return form;
 		// A multiple choice radio button. Stores a "correct" value. This is
 		// added to a generic RadioGroup in a SingleSelectForm.
@@ -630,11 +633,11 @@ public class ISIXmlComponent extends XmlComponent {
 		return builder.toString();
 	}
 	
-	private Component makeDelayedResponseForm(final String wicketId,
+	private DelayedFeedbackSingleSelectForm makeDelayedResponseForm(final String wicketId,
 			final Element elt) {
 		ISIXmlSection section = getISIXmlSection();
 		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
-		Component selectForm = new DelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
+		DelayedFeedbackSingleSelectForm selectForm = new DelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 		return selectForm;
 	}

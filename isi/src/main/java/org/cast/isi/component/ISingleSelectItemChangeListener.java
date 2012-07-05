@@ -19,7 +19,6 @@
  */
 package org.cast.isi.component;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 /**
@@ -30,6 +29,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
  */
 public interface ISingleSelectItemChangeListener {
 
-	void onSelectionChanged(AjaxRequestTarget target, Component component);
+	void onSelectionChanged(AjaxRequestTarget target, SingleSelectItem source);
 
 }

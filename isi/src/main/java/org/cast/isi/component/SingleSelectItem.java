@@ -53,7 +53,7 @@ public class SingleSelectItem extends WebMarkupContainer {
 	public SingleSelectItem(String id, IModel<String> model, boolean correct) {
 		super(id, model);
 		this.correct = correct;
-		Radio<String> radio = new Radio<String>("radio", model);
+		final Radio<String> radio = new Radio<String>("radio", model);
 		add(radio);
 		add(new FormComponentLabel("label", radio));
 		radio.add(new AjaxEventBehavior("onclick"){
@@ -62,18 +62,18 @@ public class SingleSelectItem extends WebMarkupContainer {
 
 			@Override
 			protected void onEvent(AjaxRequestTarget target) {
-				notifyListeners(target, getComponent());
+				notifyListeners(target, SingleSelectItem.this);
 			}
 		});
 		
 	}
 
-	public void notifyListeners(final AjaxRequestTarget target, Component component) {
+	public void notifyListeners(final AjaxRequestTarget target, final SingleSelectItem source) {
 		if (target != null) {
 			getPage().visitChildren(ISingleSelectItemChangeListener.class, new IVisitor<Component>() {
 				public Object component(Component component) {
 					ISingleSelectItemChangeListener listener = (ISingleSelectItemChangeListener) component;
-					listener.onSelectionChanged(target, component);
+					listener.onSelectionChanged(target, source);
 					return CONTINUE_TRAVERSAL;
 				}
 
