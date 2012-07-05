@@ -150,11 +150,19 @@ public class ISIXmlSection extends XmlSection {
 	}
 	
 	public boolean isLastPageInSection() {
-		return isPage() && (getNext() == null);
+		return isPage() && (isSection() || !hasNextSibling());
+	}
+
+	private boolean hasNextSibling() {
+		return getNext() != null;
 	}
 	
 	public boolean isFirstPageInSection() {
-		return isPage() && (getPrev() == null);
+		return isPage() && (isSection() || !hasPreviousSibling());
+	}
+
+	private boolean hasPreviousSibling() {
+		return getPrev() != null;
 	}
 	
 	public ISIXmlSection getNextPage() {
