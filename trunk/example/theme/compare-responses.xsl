@@ -27,7 +27,7 @@
 			</xsl:choose>
 		</xsl:variable>
    		
-		<div wicket:id="itemSummary_" rgid="{@id}" type="{$type}">
+		<div wicket:id="itemSummary_" rgid="{@id}" group="{@group}" type="{$type}">
 			<xsl:apply-templates select=".//dtb:item" mode="summary">
 				<xsl:with-param name="mode" select="$type" />
 			</xsl:apply-templates>

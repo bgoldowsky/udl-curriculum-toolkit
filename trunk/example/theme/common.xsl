@@ -537,11 +537,11 @@
      	    </div>
       	    <div class="teacherBarRight">
 				<xsl:apply-templates select="key('annokey', @id)[@class='teacheronly']" mode="teacheronly" />
-        		<a wicket:id="compareResponses_" href="#" class="button" rgid="{ancestor-or-self::dtb:responsegroup/@id}" type="{$type}">Compare Responses</a>
+        		<a wicket:id="compareResponses_" href="#" class="button" rgid="{ancestor-or-self::dtb:responsegroup/@id}" group="{ancestor-or-self::dtb:responsegroup/@group}" type="{$type}">Compare Responses</a>
             	<span wicket:id="feedbackButton_" for="teacher" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
             	<xsl:choose>
             		<xsl:when test="not($type='select1')">
-						<span wicket:id="scoreButtons_" for="teacher"  rgid="{ancestor-or-self::dtb:responsegroup/@id}"  type="{$type}"></span>
+						<span wicket:id="scoreButtons_" for="teacher"  rgid="{ancestor-or-self::dtb:responsegroup/@id}"  group="{ancestor-or-self::dtb:responsegroup/@group}" type="{$type}"></span>
             		</xsl:when>
             	</xsl:choose>
        	 	</div>
@@ -597,7 +597,7 @@
 						<!-- helper links -->
 						<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
 						<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
-						<span wicket:id="showScore_" rgid="{@id}" type="responsearea"></span>
+						<span wicket:id="showScore_" rgid="{@id}" group="{@group}" type="responsearea"></span>
 					</div>
 				</div>
 				<!-- list of responses -->
@@ -642,7 +642,7 @@
 						<!-- helper links -->
 						<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
 						<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
-						<span wicket:id="showScore_" rgid="{@id}" type="responsearea"></span>
+						<span wicket:id="showScore_" rgid="{@id}" group="{@group}" type="responsearea"></span>
 					</div>
 				</div>
 				<!-- list of responses -->
