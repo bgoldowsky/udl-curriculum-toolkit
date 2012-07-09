@@ -30,9 +30,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.cast.cwm.data.Prompt;
+import org.cast.cwm.data.Response;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISIDateLabel;
 import org.cast.isi.ISIXmlSection;
@@ -98,13 +98,7 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 				return isReviewed();
 			}
 		});
-		RadioGroup<String> radioGroup = new RadioGroup<String>("radioGroup", new Model<String>(mResponse.getObject().getText()));
-		add(radioGroup);
-
-		// Last-updated timestamp
-		ISIDateLabel date = new ISIDateLabel("date", new PropertyModel<Date>(mResponse, "lastUpdated"));
-		date.setVisible(showDateTime);
-		radioGroup.add(date);
+		add(new ResponseModelRadioGroup("radioGroup", mResponse));
 	}
 	
 	
@@ -133,9 +127,23 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 
 	public void onSelectionChanged(AjaxRequestTarget target, SingleSelectItem selectedItem) {
 		log.debug("Single Select Option Clicked: {}", selectedItem.getDefaultModelObject());
-		get("radioGroup:selectNone").setVisible(false);
 		// Save Response
 		responseService.saveSingleSelectResponse(mResponse, selectedItem.getModel().getObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
+		updateResponseModel();
+		refreshListeners(target);
+	}
+
+	public class ResponseModelRadioGroup extends RadioGroup<String>  {
+
+		private static final long serialVersionUID = 1L;
+
+		public ResponseModelRadioGroup(String id, IModel<Response> mResponse) {
+			super(id, new PropertyModel<String>(mResponse, "text"));
+			ISIDateLabel date = new ISIDateLabel("date", new PropertyModel<Date>(mResponse, "lastUpdated"));
+			date.setVisible(showDateTime);
+			add(date);
+		}
+		
 	}
 
 }
