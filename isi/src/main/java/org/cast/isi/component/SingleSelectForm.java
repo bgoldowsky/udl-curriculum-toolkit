@@ -66,6 +66,10 @@ public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSe
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
+		updateResponseModel();
+	}
+
+	protected void updateResponseModel() {
 		mResponse = responseService.getResponseForPrompt(getModel(), mTargetUser);
 	}
 	
@@ -101,12 +105,13 @@ public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSe
 	protected void onDetach() {
 		if (mResponse != null)
 			mResponse.detach();
-		if (mUser != null) {
+		
+		if (mUser != null)
 			mUser.detach();
-		}
-		if (mTargetUser != null) {
+		
+		if (mTargetUser != null) 
 			mTargetUser.detach();
-		}
+		
 		super.onDetach();
 	}
 	
