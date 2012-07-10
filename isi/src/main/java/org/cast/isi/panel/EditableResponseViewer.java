@@ -146,7 +146,10 @@ public class EditableResponseViewer extends Panel {
 			}
 		};
 		container.add(editLink);
-		container.add(new ResponseViewActionsPanel("viewActions", getModel()));
+		ResponseViewActionsPanel responseViewActionsPanel = new ResponseViewActionsPanel("viewActions", getModel());
+		responseViewActionsPanel.setAllowNotebook(allowNotebook);
+		responseViewActionsPanel.setAllowWhiteboard(allowWhiteboard);
+		container.add(responseViewActionsPanel);
 	}
 
 	@SuppressWarnings("unchecked")
