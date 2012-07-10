@@ -64,10 +64,10 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 	private IModel<User> mUser;
 
 	@Setter
-	private boolean allowWhiteboard;
+	private boolean allowWhiteboard = true;
 
 	@Setter
-	private boolean allowNotebook;
+	private boolean allowNotebook = true;
 	
 	public ResponseViewActionsPanel(String id, IModel<Response> model) {
 		this(id, model, ISISession.get().getTargetUserModel(), ISISession.get().getUserModel());

@@ -289,38 +289,44 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 			promptGroup.add(new Label("question", question).setEscapeModelStrings(false));
 
 			// The list of responses under this prompt
-			promptGroup.add(new ListView<ISIResponse>("responseList", entry.getValue()) {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				protected void populateItem(ListItem<ISIResponse> item) {
-
-					// Anchor so links can jump to this id
-					item.add(new WebMarkupContainer("responseAnchor")
-					.add(new SimpleAttributeModifier("name", String.valueOf(item.getModelObject().getId()))));
-
-					// Actual response
-					Component responseViewComponent = new ResponseViewerFactory().makeResponseViewComponent(item.getModel());
-					item.add(responseViewComponent);
-
-					// Remove From Notebook button
-					NotebookRemoveDialog removeDialog = new NotebookRemoveDialog("removeModal", item.getModel());
-					item.add(removeDialog);
-					Component removeLink = new WebMarkupContainer("removeLink").add(removeDialog.getClickToOpenBehavior());
-					removeLink.setVisible(!isTeacher);
-					item.add(removeLink);
-
-					// Link back to content
-					BookmarkablePageLink<ISIStandardPage> editLink = new SectionLinkFactory().linkTo(
-							"editLink",
-							entryPrompt.getContentElement().getContentLocObject().getSection(),
-							entryPrompt.getContentElement().getXmlId());
-					editLink.add(new ClassAttributeModifier("sectionLink"));
-					item.add(editLink);
-				}
-
-			});
+			promptGroup.add(makeResponseListView(entry.getValue()));
 		}
+	}
+
+
+	private ListView<ISIResponse> makeResponseListView(
+			List<ISIResponse> responses) {
+		return new ListView<ISIResponse>("responseList", responses) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void populateItem(ListItem<ISIResponse> item) {
+
+				// Anchor so links can jump to this id
+				item.add(new WebMarkupContainer("responseAnchor")
+				.add(new SimpleAttributeModifier("name", String.valueOf(item.getModelObject().getId()))));
+
+				// Actual response
+				Component responseViewComponent = new ResponseViewerFactory().makeResponseViewComponent(item.getModel());
+				item.add(responseViewComponent);
+
+				// Remove From Notebook button
+				NotebookRemoveDialog removeDialog = new NotebookRemoveDialog("removeModal", item.getModel());
+				item.add(removeDialog);
+				Component removeLink = new WebMarkupContainer("removeLink").add(removeDialog.getClickToOpenBehavior());
+				removeLink.setVisible(!isTeacher);
+				item.add(removeLink);
+
+				// Link back to content
+				BookmarkablePageLink<ISIStandardPage> editLink = new SectionLinkFactory().linkTo(
+						"editLink",
+						entryPrompt.getContentElement().getContentLocObject().getSection(),
+						entryPrompt.getContentElement().getXmlId());
+				editLink.add(new ClassAttributeModifier("sectionLink"));
+				item.add(editLink);
+			}
+
+		};
 	}
 
 	public void setNotebookMetadata(ResponseMetadata notebookMetadata) {

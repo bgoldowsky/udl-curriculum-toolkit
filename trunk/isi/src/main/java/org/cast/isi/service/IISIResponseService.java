@@ -27,6 +27,7 @@ import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
+import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.IResponseService;
 import org.cast.isi.ISIXmlSection;
@@ -198,5 +199,8 @@ public interface IISIResponseService extends IResponseService {
 
 	List<ISIPrompt> getResponseCollectionPrompts(UserModel mUser,
 			String collectionName);
+
+	List<ISIResponse> getAllResponsesForPromptByStudent(PromptModel mPrompt, UserModel mUser);
+
 
 }

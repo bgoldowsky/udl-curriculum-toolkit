@@ -153,8 +153,6 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	public synchronized IModel<Prompt> genericGetOrCreatePrompt(PromptType type, ContentLoc loc, String xmlId, IModel<User> targetUser, String identifier, String collectionName) {
 
-//		log.debug(String.format("PromptType: %s, Loc: %s, xmlId: %s, User: %s, identifier: %s, collectionName: %s, StackTrace: \n%s", 
-//				type, loc, xmlId, targetUser, identifier, collectionName, formatStackTrace()));
 		IModel<ContentElement> ce = getOrCreateContentElement(loc, xmlId);
 		
 		Criteria c = Databinder.getHibernateSession().createCriteria(ISIPrompt.class)
@@ -203,16 +201,6 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		return new PromptModel(p);
 	}
 
-	private String formatStackTrace() {
-		StringBuilder builder = new StringBuilder();
-		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-		for (StackTraceElement element: stackTrace) {
-			builder.append(element.toString());
-			builder.append("\n");
-		}
-		return builder.toString();
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IISIResponseService#getOrCreateContentElement(org.cast.isi.data.ContentLoc)
 	 */
@@ -669,6 +657,22 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 			.setCacheable(true)
 			.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return promptCriteria.list();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getAllResponsesForPromptByStudent(org.cast.cwm.data.models.PromptModel, org.cast.cwm.data.models.UserModel)
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ISIResponse> getAllResponsesForPromptByStudent(
+			PromptModel mPrompt, UserModel mUser) {
+		Criteria criteria = Databinder.getHibernateSession()
+				.createCriteria(ISIResponse.class)
+				.add(Restrictions.eq("prompt", mPrompt.getObject()))
+				.add(Restrictions.eq("user", mUser.getObject()))
+				.add(Restrictions.eq("valid", true))
+				.setCacheable(true)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return criteria.list();
 	}
 
 
