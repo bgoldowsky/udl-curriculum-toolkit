@@ -224,6 +224,8 @@ public class ResponseViewActionsPanelTest {
 
 		public Panel getTestPanel(String panelId) {
 			ResponseViewActionsPanel panel = new ResponseViewActionsPanel(panelId, new Model<Response>(response), userModel, userModel);
+//			panel.setAllowNotebook(true);
+//			panel.setAllowWhiteboard(true);
 			return panel;
 		}
 	}

@@ -19,9 +19,11 @@
  */
 package org.cast.isi.page;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -29,17 +31,20 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.StringResourceModel;
+import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
-import org.cast.isi.data.ContentLoc;
+import org.cast.isi.ResponseViewerFactory;
 import org.cast.isi.data.ISIPrompt;
-import org.cast.isi.panel.ResponseList;
+import org.cast.isi.data.ISIResponse;
 import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +78,9 @@ public class ResponseCollections extends ISIStandardPage {
 		responseMetadata.addType("SVG");
 		responseMetadata.addType("UPLOAD");
 	}
-	
+
+	private static final ResponseViewerFactory factory = new ResponseViewerFactory();
+
 	public ResponseCollections(final PageParameters parameters) {
 		super(parameters);
 
@@ -153,7 +160,6 @@ public class ResponseCollections extends ISIStandardPage {
 		if (!StringUtils.isEmpty(paramCollectionName)) {
 			List<ISIPrompt> listPrompts = responseService.getResponseCollectionPrompts(mUser, paramCollectionName);
 			for (ISIPrompt prompt : listPrompts) {
-				PromptModel mPrompt = new PromptModel(prompt);
 
 				WebMarkupContainer rvPromptList = new WebMarkupContainer(rvPromptResponseList.newChildId());
 				rvPromptResponseList.add(rvPromptList);
@@ -174,18 +180,27 @@ public class ResponseCollections extends ISIStandardPage {
 				String question =  prompt.getQuestionHTML();			
 				rvPromptList.add(new Label("question", question).setEscapeModelStrings(false));
 				
-				ContentLoc location = prompt.getContentElement().getContentLocObject();
-
-				ResponseList responseList = new ResponseList("responseList", mPrompt, responseMetadata, location, null);
-				responseList.setContext("models");
-				responseList.setAllowEdit(false);
-				responseList.setAllowNotebook(false);
-				responseList.setAllowWhiteboard(false);
-				rvPromptList.add(responseList);
+				rvPromptList.add(makeResponseListView(getResponsesFor(prompt)));
 			}
 		}		
 	}
-			
+
+	private Component makeResponseListView(List<ISIResponse> responses) {
+		return new ListView<ISIResponse>("responseList", responses) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void populateItem(ListItem<ISIResponse> item) {
+				item.add(factory.makeResponseViewComponent(item.getModel()));
+			}
+
+		};
+	}
+
+	private List<ISIResponse> getResponsesFor(ISIPrompt prompt) {
+		return responseService.getAllResponsesForPromptByStudent(new PromptModel(prompt), mUser);
+	}
+
 	@Override
 	public String getPageType() {
 		return "mymodels";
@@ -198,6 +213,6 @@ public class ResponseCollections extends ISIStandardPage {
 	
 	@Override
 	public String getPageViewDetail() {
-		return (paramCollectionName != null ? paramCollectionName : null);
+		return paramCollectionName;
 	}
 }
