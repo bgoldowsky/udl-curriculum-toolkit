@@ -178,8 +178,9 @@ public class ResponseCollections extends ISIStandardPage {
 
 				ResponseList responseList = new ResponseList("responseList", mPrompt, responseMetadata, location, null);
 				responseList.setContext("models");
-				responseList.setAllowEdit(!isTeacher);
-				responseList.setAllowNotebook(!isTeacher);
+				responseList.setAllowEdit(false);
+				responseList.setAllowNotebook(false);
+				responseList.setAllowWhiteboard(false);
 				rvPromptList.add(responseList);
 			}
 		}		

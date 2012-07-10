@@ -19,6 +19,8 @@
  */
 package org.cast.isi.panel;
 
+import lombok.Setter;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
@@ -60,6 +62,12 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 	private IModel<User> mTargetUser;
 
 	private IModel<User> mUser;
+
+	@Setter
+	private boolean allowWhiteboard;
+
+	@Setter
+	private boolean allowNotebook;
 	
 	public ResponseViewActionsPanel(String id, IModel<Response> model) {
 		this(id, model, ISISession.get().getTargetUserModel(), ISISession.get().getUserModel());
@@ -113,11 +121,11 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 	}
 
 	protected boolean whiteboardEnabled() {
-		return featureService.isWhiteboardOn();
+		return allowWhiteboard && featureService.isWhiteboardOn();
 	}
 
 	protected boolean notebookEnabled() {
-		return featureService.isNotebookOn();
+		return allowNotebook && featureService.isNotebookOn();
 	}
 
 	protected Long getResponseId() {
