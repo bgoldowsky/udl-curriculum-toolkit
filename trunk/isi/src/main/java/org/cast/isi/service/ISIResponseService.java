@@ -152,7 +152,9 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 * @see org.cast.isi.service.IISIResponseService#genericGetOrCreatePrompt(org.cast.isi.data.PromptType, org.cast.isi.data.ContentLoc, java.lang.String, org.apache.wicket.model.IModel, java.lang.String, java.lang.String)
 	 */
 	public synchronized IModel<Prompt> genericGetOrCreatePrompt(PromptType type, ContentLoc loc, String xmlId, IModel<User> targetUser, String identifier, String collectionName) {
-		
+
+//		log.debug(String.format("PromptType: %s, Loc: %s, xmlId: %s, User: %s, identifier: %s, collectionName: %s, StackTrace: \n%s", 
+//				type, loc, xmlId, targetUser, identifier, collectionName, formatStackTrace()));
 		IModel<ContentElement> ce = getOrCreateContentElement(loc, xmlId);
 		
 		Criteria c = Databinder.getHibernateSession().createCriteria(ISIPrompt.class)
@@ -161,10 +163,23 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		
 		if (ce != null)
 			c.add(Restrictions.eq("contentElement", ce.getObject()));
+		else
+			c.add(Restrictions.isNull("contentElement"));
+
 		if (targetUser != null)
 			c.add(Restrictions.eq("targetUser", targetUser.getObject()));
+		else
+			c.add(Restrictions.isNull("targetUser"));
+
 		if (identifier != null)
 			c.add(Restrictions.eq("identifier", identifier));
+		else
+			c.add(Restrictions.isNull("identifier"));
+
+		if (collectionName != null)
+			c.add(Restrictions.eq("collectionName", collectionName));
+		else
+			c.add(Restrictions.isNull("collectionName"));
 
 		ISIPrompt p = (ISIPrompt) c.uniqueResult();
 
@@ -186,6 +201,16 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		cwmService.flushChanges();
 		
 		return new PromptModel(p);
+	}
+
+	private String formatStackTrace() {
+		StringBuilder builder = new StringBuilder();
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		for (StackTraceElement element: stackTrace) {
+			builder.append(element.toString());
+			builder.append("\n");
+		}
+		return builder.toString();
 	}
 	
 	/* (non-Javadoc)
