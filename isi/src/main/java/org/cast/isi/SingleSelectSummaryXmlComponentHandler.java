@@ -63,8 +63,9 @@ public class SingleSelectSummaryXmlComponentHandler {
 		container.add(new AttributeRemover("type", "rgid"));
 
 		boolean delayed = isDelayFeedback(model);
-		String responseGroupId = elt.getAttributeNS(null, "rgid");
-		List<Response> responses = getResponses(findPrompt(model, responseGroupId));
+		String responseGroupId = elt.getAttribute("rgid");
+		String collectionName = elt.getAttribute("group");
+		List<Response> responses = getResponses(findPrompt(model, responseGroupId, collectionName));
 
 		NodeList wicketNodes = xmlService.getWicketNodes((Element) elt, false);
 
@@ -118,8 +119,8 @@ public class SingleSelectSummaryXmlComponentHandler {
 		return responseService.getResponsesForPeriod(mPrompt, CwmSession.get().getCurrentPeriodModel()).getObject();
 	}
 
-	private IModel<Prompt> findPrompt(XmlSectionModel model, String responseGroupId) {
-		return responseService.getOrCreatePrompt(PromptType.SINGLE_SELECT, new ContentLoc(model.getObject()), responseGroupId);
+	private IModel<Prompt> findPrompt(XmlSectionModel model, String responseGroupId, String collectionName) {
+		return responseService.getOrCreatePrompt(PromptType.SINGLE_SELECT, new ContentLoc(model.getObject()), responseGroupId, collectionName);
 	}
 
 	private boolean isDelayFeedback(XmlSectionModel model) {
