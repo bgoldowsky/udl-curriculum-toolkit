@@ -19,7 +19,6 @@
  */
 package org.cast.isi.page;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,7 +34,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.StringResourceModel;
-import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.models.PromptModel;
