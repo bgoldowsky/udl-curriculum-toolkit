@@ -1192,3 +1192,25 @@ hr {
 .themeAccount .errorMsg {
     color: #FF0000;
 }
+
+/*================================================================*/
+/* Progress Bar */
+
+.progress{
+    display: block;
+    background: #CCCCCC;
+    border: 1px solid #000000;
+    margin: 0px 0px 1em 0px;
+}
+
+.progressBar {
+    border: 1px solid #000000;
+    text-align: right;
+    background: #364A77;
+    margin: -1px;
+}
+
+.progressValue {
+    color: #FFFFFF;
+    margin-right: 5px;
+}
