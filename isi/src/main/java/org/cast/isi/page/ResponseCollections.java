@@ -19,6 +19,7 @@
  */
 package org.cast.isi.page;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +33,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.ResponseMetadata;
@@ -40,9 +42,12 @@ import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
+import org.cast.isi.ISIXmlSection;
 import org.cast.isi.ResponseViewerFactory;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
+import org.cast.isi.data.ScoreCounts;
+import org.cast.isi.panel.ResponseCollectionSummary;
 import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,45 +100,16 @@ public class ResponseCollections extends ISIStandardPage {
 		
 		paramCollectionName = parameters.getString("name");
 		
-		if (StringUtils.isEmpty(paramCollectionName)) {
+		if (!haveSelectedCollection()) {
 			add(new WebMarkupContainer("collectionTitle").setVisible(false));
 		} else {
 			add(new Label("collectionTitle", paramCollectionName));
 		}
 						
+		List<String> listNames = getCollectionNames();
+		
 		// components on the left side
-		RepeatingView rvCollectionList = new RepeatingView("collectionList");
-		add(rvCollectionList);
-		
-		List<String> listNames = null;
-		if (mUser.getObject() != null) {
-			listNames = responseService.getResponseCollectionNames(mUser);
-		}
-		
-		if (!(listNames == null)) {
-			String collectionName;
-			for (String s : listNames) {
-				collectionName = s;
-				WebMarkupContainer wmc = new WebMarkupContainer(rvCollectionList.newChildId());
-				BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>("link", ISIApplication.get().getResponseCollectionsPageClass())
-												.setParameter("name", collectionName);
-				bpl.add(new Label("name", collectionName));
-				
-				// if the param collection name is the same as this one set the indicator that this is the item clicked
-				if (!StringUtils.isEmpty(paramCollectionName)) {
-					if (paramCollectionName.equals(collectionName)) {
-						bpl.add(new SimpleAttributeModifier("class", "selected"));
-						bpl.setEnabled(false);
-					}
-				}
-
-				wmc.add(bpl);
-				rvCollectionList.add(wmc);
-			}
-		} else {
-			rvCollectionList.add((new WebMarkupContainer("link")).setVisible(false))
-							.add(new WebMarkupContainer("name")).setVisible(false);
-		}
+		add(makeCollectionNameRepeater(listNames));
 
 		// components on the right side of the form		
 		WebMarkupContainer wmcNoModels = new WebMarkupContainer("noModels");
@@ -143,44 +119,101 @@ public class ResponseCollections extends ISIStandardPage {
 		add(new WebMarkupContainer("noStudentSelected").setVisible(mUser.getObject() == null));   	
 
 		if (mUser.getObject() != null) {
-			wmcNoModelSelected.setVisible((StringUtils.isEmpty(paramCollectionName)) &&  
-					!((listNames == null) || (listNames.isEmpty())));
-			wmcNoModels.setVisible((StringUtils.isEmpty(paramCollectionName)) && 
-					((listNames == null) || (listNames.isEmpty())));
+			wmcNoModelSelected.setVisible(!haveSelectedCollection() && haveCollections(listNames));
+			wmcNoModels.setVisible(!haveSelectedCollection() && !haveCollections(listNames));
 		} else {
 			wmcNoModelSelected.setVisible(false);
 			wmcNoModels.setVisible(false);
 		}
 		
-		RepeatingView rvPromptResponseList = new RepeatingView("promptResponseRepeater");
-		add(rvPromptResponseList);
+		if (haveSelectedCollection()) {
+			add(new ResponseCollectionSummary("promptResponseSummary", getScoreCounts()));
+			add(makePromptResponseRepeater("promptResponseRepeater"));
+		}
+		else {
+			add(new EmptyPanel("promptResponseSummary"));
+			add(new RepeatingView("promptResponseRepeater"));
+		}
+		
+	}
 
-		if (!StringUtils.isEmpty(paramCollectionName)) {
-			List<ISIPrompt> listPrompts = responseService.getResponseCollectionPrompts(mUser, paramCollectionName);
-			for (ISIPrompt prompt : listPrompts) {
+	private ScoreCounts getScoreCounts() {
+		return responseService.getScoreCountsForCollectionForStudent(paramCollectionName, mUser);
+	}
 
-				WebMarkupContainer rvPromptList = new WebMarkupContainer(rvPromptResponseList.newChildId());
-				rvPromptResponseList.add(rvPromptList);
-				
-				String crumbTrail = prompt.getContentElement().getContentLocObject().getSection().getCrumbTrailAsString(1, 1);
-				rvPromptList.add(new Label("responseHeader", crumbTrail));
-					
-				// Prompt Icon
-				rvPromptList.add(ISIApplication.get().iconFor(
-							prompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(),""));
-				
-				// Add the title and link to the page where this note is located
-				BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("contentLink", prompt.getContentElement().getContentLocObject().getSection());
-				link.add(new Label("contentLinkTitle", prompt.getContentElement().getContentLocObject().getSection().getTitle()));
-				rvPromptList.add(link);
+	private boolean haveCollections(List<String> listNames) {
+		return (listNames != null) && !(listNames.isEmpty());
+	}
+
+	private boolean haveSelectedCollection() {
+		return StringUtils.isNotEmpty(paramCollectionName);
+	}
+
+	private RepeatingView makePromptResponseRepeater(String id) {
+		RepeatingView rvPromptResponseList = new RepeatingView(id);
+		for (ISIPrompt prompt : responseService.getResponseCollectionPrompts(mUser, paramCollectionName)) {
+			rvPromptResponseList.add(makePromptContainer(rvPromptResponseList.newChildId(), prompt));
+		}
+		return rvPromptResponseList;
+	}
+
+	private RepeatingView makeCollectionNameRepeater(List<String> listNames) {
+		RepeatingView rvCollectionList = new RepeatingView("collectionList");
+		
+		for (String collectionName : listNames) {
+			WebMarkupContainer wmc = new WebMarkupContainer(rvCollectionList.newChildId());
+			wmc.add(makeCollectionLink(collectionName));
+			rvCollectionList.add(wmc);
+		}
+		return rvCollectionList;
+	}
+
+	private WebMarkupContainer makePromptContainer(String newChildId, ISIPrompt prompt) {
+		WebMarkupContainer rvPromptList = new WebMarkupContainer(newChildId);
+		
+		ISIXmlSection section = getSection(prompt);
+		rvPromptList.add(new Label("responseHeader", section.getCrumbTrailAsString(1, 1)));
 			
-				// Text associated with Prompt
-				String question =  prompt.getQuestionHTML();			
-				rvPromptList.add(new Label("question", question).setEscapeModelStrings(false));
-				
-				rvPromptList.add(makeResponseListView(getResponsesFor(prompt)));
+		// Prompt Icon
+		rvPromptList.add(ISIApplication.get().iconFor(section.getSectionAncestor(),""));
+		
+		// Add the title and link to the page where this note is located
+		BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("contentLink", section);
+		link.add(new Label("contentLinkTitle", section.getTitle()));
+		rvPromptList.add(link);
+
+		// Text associated with Prompt
+		String question =  prompt.getQuestionHTML();			
+		rvPromptList.add(new Label("question", question).setEscapeModelStrings(false));
+		
+		rvPromptList.add(makeResponseListView(getResponsesFor(prompt)));
+		return rvPromptList;
+	}
+
+	private ISIXmlSection getSection(ISIPrompt prompt) {
+		return prompt.getContentElement().getContentLocObject().getSection();
+	}
+
+	private BookmarkablePageLink<Page> makeCollectionLink(String collectionName) {
+		BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>("link", ISIApplication.get().getResponseCollectionsPageClass())
+										.setParameter("name", collectionName);
+		bpl.add(new Label("name", collectionName));
+		
+		// if the param collection name is the same as this one set the indicator that this is the item clicked
+		if (haveSelectedCollection()) {
+			if (paramCollectionName.equals(collectionName)) {
+				bpl.add(new SimpleAttributeModifier("class", "selected"));
+				bpl.setEnabled(false);
 			}
-		}		
+		}
+		return bpl;
+	}
+
+	private List<String> getCollectionNames() {
+		if (mUser.getObject() != null) {
+			return responseService.getResponseCollectionNames(mUser);
+		}
+		return new ArrayList<String>();
 	}
 
 	private Component makeResponseListView(List<ISIResponse> responses) {
