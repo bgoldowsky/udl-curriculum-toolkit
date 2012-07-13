@@ -203,4 +203,6 @@ public interface IISIResponseService extends IResponseService {
 
 	ScoreCounts getScoreCountsForCollectionForStudent(String collectionName, IModel<User> mUser);
 
+	ScoreCounts getScoreCountsForStudentsForPrompt(IModel<Prompt> mPrompt);
+
 }
