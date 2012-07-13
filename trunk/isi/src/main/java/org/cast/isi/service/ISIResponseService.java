@@ -679,7 +679,17 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 * @see org.cast.isi.service.IISIResponseService#getScoreCountsForCollectionForStudent(String, org.apache.wicket.model.IModel<org.cast.cwm.data.User>)
 	 */
 	public ScoreCounts getScoreCountsForCollectionForStudent(String collectionName, IModel<User> mUser) {
-		List<Integer> scores = getPromptScoresForCollectionForStudent(collectionName, mUser);
+		return countScores("questions", getPromptScoresForCollectionForStudent(collectionName, mUser)); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getScoreCountsForStudentsForPrompt(org.apache.wicket.model.IModel<org.cast.cwm.data.Prompt>)
+	 */
+	public ScoreCounts getScoreCountsForStudentsForPrompt(IModel<Prompt> mPrompt) {
+		return countScores("students", getStudentScoresForPrompt(mPrompt)); 
+	}
+
+	private ScoreCounts countScores(String context, List<Integer> scores) {
 		int countCorrect = 0;
 		int countIncorrect = 0;
 		int countUnscored = 0;
@@ -694,7 +704,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 				countCorrect++;
 			}
 		}
-		return new ScoreCounts("questions", countCorrect, countIncorrect, countUnscored, scores.size()); 
+		return new ScoreCounts(context, countCorrect, countIncorrect, countUnscored, scores.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -708,6 +718,17 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 				   " group by prompt.id");
 		q.setString("collectionName", collectionName);
 		q.setLong("userId", mUser.getObject().getId());
+		return q.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<Integer> getStudentScoresForPrompt(IModel<Prompt> mPrompt) {
+		Query q = Databinder.getHibernateSession().createSQLQuery(
+				"select  max(response.score) as score from response" + 
+				   " where response.prompt_id = :promptId" +
+				   " and response.valid = 't'" +
+				   " group by response.user_id");
+		q.setLong("promptId", mPrompt.getObject().getId());
 		return q.list();
 	}
 

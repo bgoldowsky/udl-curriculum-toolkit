@@ -38,7 +38,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
-import org.cast.cwm.service.IResponseService;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.transform.FilterElements;
 import org.cast.isi.ISIApplication;
@@ -48,7 +47,10 @@ import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.PromptType;
+import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.panel.PeriodResponseListPanel;
+import org.cast.isi.panel.ResponseCollectionSummary;
+import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +71,7 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 	@Getter protected boolean showNames = false;
 	
 	@Inject
-	private IResponseService responseService;
+	private IISIResponseService responseService;
 
 	protected static final Logger log = LoggerFactory.getLogger(PeriodResponsePage.class);
 
@@ -113,7 +115,8 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		link.add(new ClassAttributeModifier("sectionLink"));
 		add(link);
 		add(ISIApplication.get().iconFor(prompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(), ""));		
-
+		add(new ResponseCollectionSummary("promptResponseSummary", getScoreCounts(mPrompt)));
+		
 		// Add the text associated with Prompt
 		String question =  prompt.getQuestionHTML();			
 		add(new Label("question", question).setEscapeModelStrings(false));
@@ -121,6 +124,10 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		addDetailsPanel(mPrompt);
 	}
 	
+	private ScoreCounts getScoreCounts(IModel<Prompt> mPrompt) {
+		return responseService.getScoreCountsForStudentsForPrompt(mPrompt);
+	}
+
 	protected void addDetailsPanel(IModel<Prompt> mPrompt) {		
 		ISIPrompt prompt = ((ISIPrompt)mPrompt.getObject()); 
 		if (prompt.getType().equals(PromptType.SINGLE_SELECT)) {
