@@ -38,7 +38,6 @@ import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseData;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
-import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.ResponseService;
 import org.cast.cwm.xml.XmlSection;
@@ -52,6 +51,7 @@ import org.cast.isi.data.ISIEvent;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.data.PromptType;
+import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.data.StudentFlag;
 import org.cast.isi.data.builder.ISIResponseCriteriaBuilder;
 import org.cast.isi.page.ISIBasePage;
@@ -73,10 +73,10 @@ import org.slf4j.LoggerFactory;
  */
 public class ISIResponseService extends ResponseService implements IISIResponseService {
 	
-//	private static Map<ThumbNailLookup, byte[]> thumbNails;
-//	private static final int MAX_THUMBNAIL_ENTRIES = 1000;
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ISIResponseService.class);
+	
+	private static final Integer INCORRECT_RESPONSE = 0;
 	
 	protected ISIResponseService() {/* Protected Constructor - use injection */}
 	
@@ -429,7 +429,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.cast.isi.service.IISIResponseService#getFeedbackMessages(org.apache.wicket.model.IModel, org.cast.cwm.data.User)
+	 * @see org.cast.isi.service.IISIResponseService#getFeedbackMessages(org.apache.wicket.model.IModel<org.cast.cwm.data.Prompt>, org.cast.cwm.data.User)
 	 */
 	@SuppressWarnings("unchecked")
 	public List<FeedbackMessage> getFeedbackMessages(IModel<Prompt> promptM, User student) {
@@ -541,7 +541,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.cast.isi.service.IISIResponseService#getAllNotebookResponsesByStudent(org.apache.wicket.model.IModel)
+	 * @see org.cast.isi.service.IISIResponseService#getAllNotebookResponsesByStudent(org.apache.wicket.model.IModel<org.cast.cwm.data.User>)
 	 */
 	public IModel<List<ISIResponse>> getAllNotebookResponsesByStudent (IModel<User> student) {
 		ISIResponseCriteriaBuilder builder = new ISIResponseCriteriaBuilder();
@@ -631,11 +631,11 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	}
 
 	/* (non-Javadoc)
-	 * @see org.cast.isi.service.IISIResponseService#getResponseCollectionNames(org.cast.cwm.data.models.UserModel)
+	 * @see org.cast.isi.service.IISIResponseService#getResponseCollectionNames(org.apache.wicket.model.IModel<org.cast.cwm.data.User>)
 	 */
 
 	@SuppressWarnings("unchecked")
-	public List<String> getResponseCollectionNames(UserModel mUser) {
+	public List<String> getResponseCollectionNames(IModel<User> mUser) {
 		Query q = Databinder.getHibernateSession().createQuery("select distinct(p.collectionName) " +
 				"from ISIPrompt p join p.responses r where p.collectionName is not null and r.user.id=:userId"); 
 		q.setLong("userId", mUser.getObject().getId());
@@ -644,10 +644,10 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.cast.isi.service.IISIResponseService#getResponseCollectionPrompts(org.cast.cwm.data.models.UserModel, java.lang.String)
+	 * @see org.cast.isi.service.IISIResponseService#getResponseCollectionPrompts(org.apache.wicket.model.IModel<org.cast.cwm.data.User>, java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ISIPrompt> getResponseCollectionPrompts(UserModel mUser, String collectionName) {
+	public List<ISIPrompt> getResponseCollectionPrompts(IModel<User> mUser, String collectionName) {
 		Criteria promptCriteria = Databinder.getHibernateSession()
 			.createCriteria(ISIPrompt.class)
 			.createAlias("responses", "r")
@@ -660,11 +660,11 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	}
 
 	/* (non-Javadoc)
-	 * @see org.cast.isi.service.IISIResponseService#getAllResponsesForPromptByStudent(org.cast.cwm.data.models.PromptModel, org.cast.cwm.data.models.UserModel)
+	 * @see org.cast.isi.service.IISIResponseService#getAllResponsesForPromptByStudent(org.apache.wicket.model.IModel<org.cast.cwm.data.Prompt>, org.apache.wicket.model.IModel<org.cast.cwm.data.User>)
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ISIResponse> getAllResponsesForPromptByStudent(
-			PromptModel mPrompt, UserModel mUser) {
+			IModel<Prompt> mPrompt, IModel<User> mUser) {
 		Criteria criteria = Databinder.getHibernateSession()
 				.createCriteria(ISIResponse.class)
 				.add(Restrictions.eq("prompt", mPrompt.getObject()))
@@ -675,86 +675,40 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		return criteria.list();
 	}
 
-
-	/*
-	public byte[] resizeImage(ExtendedResponseDatum er, String type, int maxW, int maxH) {
-		
-		BufferedImage img = null;
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ThumbNailLookup id = new ThumbNailLookup(er.getId(), maxW, maxH);
-		if (ISIService.thumbNails.containsKey(id))
-			return ISIService.thumbNails.get(id);
-
-		if (type == null || type.equals(""))
-			type = er.getMimeType().getSubType();
-		try {
-			img = ImageIO.read(new ByteArrayInputStream(er.getBinaryData()));
-		} catch (IOException e) {
-			img = null;
-			e.printStackTrace();
-		}
-		if (img != null) {
-			int w = img.getWidth();
-			int h = img.getHeight();
-			if (w > maxW) {
-				float factor = (float) maxW / w;
-				w = (int) (w * (factor));
-				h = (int) (h * (factor));
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IISIResponseService#getScoreCountsForCollectionForStudent(String, org.apache.wicket.model.IModel<org.cast.cwm.data.User>)
+	 */
+	public ScoreCounts getScoreCountsForCollectionForStudent(String collectionName, IModel<User> mUser) {
+		List<Integer> scores = getPromptScoresForCollectionForStudent(collectionName, mUser);
+		int countCorrect = 0;
+		int countIncorrect = 0;
+		int countUnscored = 0;
+		for (Integer score: scores) {
+			if (score == null) {
+				countUnscored++;
 			}
-			if (h > maxH) {
-				float factor = (float) maxH / h;
-				w = (int) (w * (factor));
-				h = (int) (h * (factor));
+			else if (score.equals(INCORRECT_RESPONSE)) {
+				countIncorrect++;
 			}
-			BufferedImage resized = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = resized.createGraphics();
-			g.drawImage(img, 0, 0, w, h, null);
-			try {
-				ImageIO.write(resized, type, out);
-			} catch (IOException e) {
-				e.printStackTrace();
+			else {
+				countCorrect++;
 			}
 		}
-		ISIService.thumbNails.put(id, out.toByteArray());
-		return out.toByteArray();
+		return new ScoreCounts("questions", countCorrect, countIncorrect, countUnscored, scores.size()); 
 	}
-	
-	private class ThumbNailLookup {
-		
-		private long id;
-		private int width;
-		private int height;
-		
-		public ThumbNailLookup(long i, int w, int h) {
-			this.id = i;
-			this.width = w;
-			this.height = h;
-		}
-		
-		@Override
-		public int hashCode() {
-			return new HashCodeBuilder(19, 23).
-			append(id).
-			append(width).
-			append(height).
-			toHashCode();
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			if (obj == null) { return false; }
-			if (obj == this) { return true; }
-			if (obj.getClass() != getClass()) {
-				return false;
-			}
-			ThumbNailLookup rhs = (ThumbNailLookup) obj;
-			return new EqualsBuilder()
-			.append(id, rhs.id)
-			.append(width, rhs.width)
-			.append(height, rhs.height)
-			.isEquals();
-		}
 
+	@SuppressWarnings("unchecked")
+	private List<Integer> getPromptScoresForCollectionForStudent(String collectionName, IModel<User> mUser) {
+		Query q = Databinder.getHibernateSession().createSQLQuery(
+				"select  max(response.score) as score from prompt join response" + 
+				   " on prompt.collectionname = :collectionName " +
+				   " and response.prompt_id = prompt.id" +
+				   " and response.user_id = :userId" +
+				   " and response.valid = 't'" +
+				   " group by prompt.id");
+		q.setString("collectionName", collectionName);
+		q.setLong("userId", mUser.getObject().getId());
+		return q.list();
 	}
-*/
+
 }

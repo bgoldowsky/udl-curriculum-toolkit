@@ -27,8 +27,6 @@ import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
-import org.cast.cwm.data.models.PromptModel;
-import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.IResponseService;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ClassMessage;
@@ -39,6 +37,7 @@ import org.cast.isi.data.ISIEvent;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.data.PromptType;
+import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.data.StudentFlag;
 
 public interface IISIResponseService extends IResponseService {
@@ -195,12 +194,13 @@ public interface IISIResponseService extends IResponseService {
 	 * Get the Response Collections
 	 */
 
-	List<String> getResponseCollectionNames(UserModel mUser);
+	List<String> getResponseCollectionNames(IModel<User> mUser);
 
-	List<ISIPrompt> getResponseCollectionPrompts(UserModel mUser,
+	List<ISIPrompt> getResponseCollectionPrompts(IModel<User> mUser,
 			String collectionName);
 
-	List<ISIResponse> getAllResponsesForPromptByStudent(PromptModel mPrompt, UserModel mUser);
+	List<ISIResponse> getAllResponsesForPromptByStudent(IModel<Prompt> mPrompt, IModel<User> mUser);
 
+	ScoreCounts getScoreCountsForCollectionForStudent(String collectionName, IModel<User> mUser);
 
 }

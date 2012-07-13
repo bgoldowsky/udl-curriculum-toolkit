@@ -55,6 +55,18 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 		super.onBeforeRender();
 	}
 
+	private void scoreAsCorrect(AjaxRequestTarget target) {
+		updateResponseScore(target, 1);
+	}
+
+	private void scoreAsIncorrect(AjaxRequestTarget target) {
+		updateResponseScore(target, 0);
+	}
+
+	private void removeScore(AjaxRequestTarget target) {
+		updateResponseScore(target, null);
+	}
+
 	private void updateResponseScore(AjaxRequestTarget target, Integer score) {
 		for (Response response: getResponses()) {
 			response.setScore(score);
@@ -84,9 +96,9 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 		@Override
 		public void onClick(AjaxRequestTarget target) {
 			if (isMarkedCorrect()) 
-				updateResponseScore(target, null);
-			else 
-				updateResponseScore(target, 1);
+				removeScore(target);
+			else
+				scoreAsCorrect(target);
 		}
 
 	}
@@ -111,11 +123,12 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 
 		@Override
 		public void onClick(AjaxRequestTarget target) {
-			if (isMarkedIncorrect()) 
-				updateResponseScore(target, null);
+			if (isMarkedIncorrect())
+				removeScore(target);
 			else
-				updateResponseScore(target, 0);
+				scoreAsIncorrect(target);
 		}
+
 	}
 
 }
