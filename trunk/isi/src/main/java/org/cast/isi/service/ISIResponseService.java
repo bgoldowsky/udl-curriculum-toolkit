@@ -710,12 +710,24 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	@SuppressWarnings("unchecked")
 	private List<Integer> getPromptScoresForCollectionForStudent(String collectionName, IModel<User> mUser) {
 		Query q = Databinder.getHibernateSession().createSQLQuery(
-				"select  max(response.score) as score from prompt join response" + 
-				   " on prompt.collectionname = :collectionName " +
-				   " and response.prompt_id = prompt.id" +
-				   " and response.user_id = :userId" +
-				   " and response.valid = 't'" +
-				   " group by prompt.id");
+				"select max(responsedata.score) as score from prompt, response, responsedata " + 
+				" 	where prompt.collectionname = :collectionName " +
+				" 	and prompt.type = 'SINGLE_SELECT' " +
+				" 	and response.prompt_id = prompt.id " +
+				" 	and response.user_id = :userId " +
+				" 	and response.responsedata_id = responsedata.id " + 
+				" 	and response.valid = 't' " +
+				" group by prompt.id " +
+			
+				"union all " +
+			
+				"select max(response.score) as score from prompt, response " + 
+				" 	where prompt.collectionname = :collectionName " +
+				" 	and prompt.type = 'RESPONSEAREA' " +
+				" 	and response.prompt_id = prompt.id " +
+				" 	and response.user_id = :userId " +
+				" 	and response.valid = 't' " + 
+				" group by prompt.id");
 		q.setString("collectionName", collectionName);
 		q.setLong("userId", mUser.getObject().getId());
 		return q.list();
@@ -723,13 +735,30 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 
 	@SuppressWarnings("unchecked")
 	private List<Integer> getStudentScoresForPrompt(IModel<Prompt> mPrompt) {
-		Query q = Databinder.getHibernateSession().createSQLQuery(
-				"select  max(response.score) as score from response" + 
-				   " where response.prompt_id = :promptId" +
-				   " and response.valid = 't'" +
-				   " group by response.user_id");
+		Query q = Databinder.getHibernateSession().createSQLQuery(getStudentScoresForPromptQueryString(mPrompt));
 		q.setLong("promptId", mPrompt.getObject().getId());
 		return q.list();
+	}
+
+	private String getStudentScoresForPromptQueryString(IModel<Prompt> mPrompt) {
+		if (isChoicePrompt(mPrompt)) {
+			return "select  max(responsedata.score) as score from response join responsedata" + 
+			   " on response.prompt_id = :promptId" +
+			   " and response.responsedata_id = responsedata.id" +
+			   " and response.valid = 't'" +
+			   " group by response.user_id";
+		}
+		else {
+			return "select  max(response.score) as score from response" + 
+			   " where response.prompt_id = :promptId" +
+			   " and response.valid = 't'" +
+			   " group by response.user_id";
+		}
+	}
+
+	private boolean isChoicePrompt(IModel<Prompt> mPrompt) {
+		ISIPrompt prompt = (ISIPrompt) mPrompt.getObject();
+		return prompt.getType() == PromptType.SINGLE_SELECT;
 	}
 
 }
