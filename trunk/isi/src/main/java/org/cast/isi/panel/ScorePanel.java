@@ -34,6 +34,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.cast.cwm.data.Response;
+import org.cast.isi.data.ISIPrompt;
+import org.cast.isi.data.PromptType;
 
 public abstract class ScorePanel extends Panel {
 
@@ -84,7 +86,15 @@ public abstract class ScorePanel extends Panel {
 
 	protected Integer getScore() {
 		List<Response> responses = getResponses();
-		return responses.isEmpty() ? null : responses.get(0).getScore();
+		if (responses.isEmpty())
+			return null;
+		Response response = responses.get(0);
+		ISIPrompt prompt = (ISIPrompt) response.getPrompt();
+		PromptType type = prompt.getType();
+		if (type.equals(PromptType.SINGLE_SELECT))
+			return response.getResponseData().getScore();
+		else
+			return response.getScore();
 	}
 
 	protected List<Response> getResponses() {
