@@ -28,7 +28,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.data.Response;
 
 /**
- * An icon that is "Thumbs up" for a correct response, or "X" for an incorrect one.
+ * An icon that is "Thumbs up" for a correct response, or "Thumbs Down" for an incorrect one.
  * @author bgoldowsky
  *
  */

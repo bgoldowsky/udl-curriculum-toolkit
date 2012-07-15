@@ -22,6 +22,8 @@ package org.cast.isi.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.databinder.models.hib.HibernateObjectModel;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
@@ -35,7 +37,9 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.models.PromptModel;
@@ -48,6 +52,7 @@ import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.panel.ResponseCollectionSummary;
+import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,13 +186,25 @@ public class ResponseCollections extends ISIStandardPage {
 		BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("contentLink", section);
 		link.add(new Label("contentLinkTitle", section.getTitle()));
 		rvPromptList.add(link);
+		List<ISIResponse> responses = getResponsesFor(prompt);
 
+		// Show the score
+		rvPromptList.add(new StudentScorePanel("responseScore", getModels(responses)));
+		
 		// Text associated with Prompt
 		String question =  prompt.getQuestionHTML();			
 		rvPromptList.add(new Label("question", question).setEscapeModelStrings(false));
 		
-		rvPromptList.add(makeResponseListView(getResponsesFor(prompt)));
+		rvPromptList.add(makeResponseListView(responses));
 		return rvPromptList;
+	}
+
+	private List<IModel<Response>> getModels(List<ISIResponse> responses) {
+		List<IModel<Response>> result = new ArrayList<IModel<Response>>();
+		for (ISIResponse response: responses) {
+			result.add(new HibernateObjectModel<Response>(response));
+		}
+		return result;
 	}
 
 	private ISIXmlSection getSection(ISIPrompt prompt) {
