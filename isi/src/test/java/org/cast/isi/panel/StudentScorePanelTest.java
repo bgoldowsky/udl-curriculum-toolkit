@@ -19,8 +19,6 @@
  */
 package org.cast.isi.panel;
 
-import static org.mockito.Mockito.mock;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +31,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.ITestPanelSource;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
-import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.test.CwmWicketTester;
 import org.cast.cwm.test.GuiceInjectedTestApplication;
 import org.cast.isi.data.ISIPrompt;
@@ -49,6 +46,7 @@ public class StudentScorePanelTest {
 	private Prompt prompt;
 	private HashMap<Class<? extends Object>, Object> injectionMap;
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Before
 	public void setUp() {
 		prompt = new ISIPrompt(PromptType.RESPONSEAREA);

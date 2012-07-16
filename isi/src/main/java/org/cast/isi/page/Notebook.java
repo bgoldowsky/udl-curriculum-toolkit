@@ -96,7 +96,6 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	protected ContentLoc currentLoc, currentChapterLoc;
 	protected IModel<List<XmlSection>> mChapterList;
 
-	@Getter private ISIPrompt entryPrompt;
 	@Getter protected DropDownChoice<XmlSection> chapterChoice;
 
 	protected ResponseMetadata notebookMetadata;
@@ -225,8 +224,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 
 	/**
-	 * Fill the response map with responses from the database.  This will either create
-	 * a LinkedHashMap (ordered by notebookinsertTime and grouped by prompt) or a TreeHashMap (sorted
+	 * Fill the response map with responses from the database.  This creates a TreeHashMap (sorted
 	 * by the Prompt's curriculum order).
 	 */
 	protected void populateResponseMap() {
@@ -266,37 +264,38 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		add(noteRepeater.setVisible(!responseMap.isEmpty()));
 
 		for (Entry<ISIPrompt, List<ISIResponse>> entry : responseMap.entrySet()) {
-			entryPrompt = entry.getKey();
+			ISIPrompt currentPrompt = entry.getKey();
 
 			WebMarkupContainer promptGroup = new WebMarkupContainer(noteRepeater.newChildId());
 			noteRepeater.add(promptGroup);
 
-			String crumbTrail = entryPrompt.getContentElement().getContentLocObject().getSection().getCrumbTrailAsString(1, 1);						
+			String crumbTrail = currentPrompt.getContentElement().getContentLocObject().getSection().getCrumbTrailAsString(1, 1);						
 			promptGroup.add(new Label("responseHeader", crumbTrail));
 
 			// Prompt Icon
 			promptGroup.add(ISIApplication.get().iconFor(
-					entryPrompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(),""));
+					currentPrompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(),""));
 
 			// Add the title and link to the page where this note is located
-			BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("titleLink", entryPrompt.getContentElement().getContentLocObject().getSection());
-			link.add(new Label("sectionTitle", entryPrompt.getContentElement().getContentLocObject().getSection().getTitle()));
+			BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("titleLink", currentPrompt.getContentElement().getContentLocObject().getSection());
+			link.add(new Label("sectionTitle", currentPrompt.getContentElement().getContentLocObject().getSection().getTitle()));
 			link.add(new ClassAttributeModifier("sectionLink"));
 			promptGroup.add(link);
 
 			// Text associated with Prompt
-			String question =  entryPrompt.getQuestionHTML();			
+			String question =  currentPrompt.getQuestionHTML();			
 			promptGroup.add(new Label("question", question).setEscapeModelStrings(false));
 
 			// The list of responses under this prompt
-			promptGroup.add(makeResponseListView(entry.getValue()));
+			promptGroup.add(makeResponseListView(entry));
 		}
 	}
 
 
 	private ListView<ISIResponse> makeResponseListView(
-			List<ISIResponse> responses) {
-		return new ListView<ISIResponse>("responseList", responses) {
+			Entry<ISIPrompt, List<ISIResponse>> entry) {
+		final ISIPrompt currentPrompt = entry.getKey();
+		return new ListView<ISIResponse>("responseList", entry.getValue()) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -320,8 +319,8 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 				// Link back to content
 				BookmarkablePageLink<ISIStandardPage> editLink = new SectionLinkFactory().linkTo(
 						"editLink",
-						entryPrompt.getContentElement().getContentLocObject().getSection(),
-						entryPrompt.getContentElement().getXmlId());
+						currentPrompt.getContentElement().getContentLocObject().getSection(),
+						currentPrompt.getContentElement().getXmlId());
 				editLink.add(new ClassAttributeModifier("sectionLink"));
 				item.add(editLink);
 			}
