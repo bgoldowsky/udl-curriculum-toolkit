@@ -177,7 +177,13 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		ISIXmlComponent component = new ISIXmlComponent(wicketId, model, "student");
 		component.setTransformParameter("lock-response", isLockResponse(model));
 		component.setTransformParameter("delay-feedback", isDelayFeedback(model));
+		if (userIsStudent())
+			component.setTransformParameter("strip-class", "teacheronly");
 		return component;
+	}
+
+	protected boolean userIsStudent() {
+		return true;
 	}
 
 	private boolean isDelayFeedback(XmlSectionModel model) {

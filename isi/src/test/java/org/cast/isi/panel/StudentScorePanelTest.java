@@ -19,7 +19,10 @@
  */
 package org.cast.isi.panel;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -28,8 +31,13 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.ITestPanelSource;
+import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
+import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.test.CwmWicketTester;
+import org.cast.cwm.test.GuiceInjectedTestApplication;
+import org.cast.isi.data.ISIPrompt;
+import org.cast.isi.data.PromptType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,12 +46,16 @@ public class StudentScorePanelTest {
 	private CwmWicketTester wicketTester;
 	private Response response1;
 	private Response response2;
+	private Prompt prompt;
+	private HashMap<Class<? extends Object>, Object> injectionMap;
 	
 	@Before
 	public void setUp() {
-		response1 = new Response();
-		response2 = new Response();
-		wicketTester = new CwmWicketTester();
+		prompt = new ISIPrompt(PromptType.RESPONSEAREA);
+		response1 = makeResponse(prompt);
+		response2 = makeResponse(prompt);
+		setupInjectedServices();
+		wicketTester = new CwmWicketTester(new GuiceInjectedTestApplication(injectionMap));
 	}
 	
 	@Test
@@ -111,6 +123,11 @@ public class StudentScorePanelTest {
 	}
 	
 	
+	private void setupInjectedServices() {
+		// Only so that injection doesn't blow up in test.
+		injectionMap = new HashMap<Class<? extends Object>, Object>();
+	}
+
 	private class TestPanelSource implements ITestPanelSource {
 		private static final long serialVersionUID = 1L;
 
@@ -119,6 +136,12 @@ public class StudentScorePanelTest {
 		}
 	}
 
+	private Response makeResponse(Prompt prompt) {
+		Response response = new Response();
+		response.setPrompt(prompt);
+		return response;
+	}
+	
 	private void setResponseScores(Integer score) {
 		response1.setScore(score);
 		response2.setScore(score);

@@ -657,6 +657,7 @@ public abstract class ISIApplication extends CwmApplication {
 		
 		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
 		TransformChain transformchain = new TransformChain(
+				new XslTransformer(xmlService.findXslResource("strip-class.xsl")),
 				new GlossaryTransformer(glossary),
 				new FilterElements(),
 				new XslTransformer(new FileResource(studentXslFile)),
