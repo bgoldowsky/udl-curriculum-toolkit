@@ -49,6 +49,10 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 		super(parameters, ISISession.get().getStudentModel() != null);
 	}
 
+	protected boolean userIsStudent() {
+		return false;
+	}
+
 	@Override
 	protected void addSectionCompleteToggle(ISIXmlSection section) {
 		WebMarkupContainer container = new WebMarkupContainer("toggleCompleteContainer");

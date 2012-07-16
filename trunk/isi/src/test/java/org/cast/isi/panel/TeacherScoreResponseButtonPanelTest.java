@@ -37,10 +37,13 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.ITestPanelSource;
+import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.test.CwmWicketTester;
 import org.cast.cwm.test.GuiceInjectedTestApplication;
+import org.cast.isi.data.ISIPrompt;
+import org.cast.isi.data.PromptType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,16 +54,18 @@ public class TeacherScoreResponseButtonPanelTest {
 	private CwmWicketTester wicketTester;
 	private Response response1;
 	private Response response2;
+	private Prompt prompt;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Before
 	public void setUp() {
-		response1 = new Response();
-		response2 = new Response();
+		prompt = new ISIPrompt(PromptType.RESPONSEAREA);
+		response1 = makeResponse(prompt);
+		response2 = makeResponse(prompt);
 		setupInjectedServices();
 		wicketTester = new CwmWicketTester(new GuiceInjectedTestApplication(injectionMap));
 	}
-	
+
 	@Test
 	public void canRenderPanel() {
 		wicketTester.startPanel(new TestPanelSource());
@@ -293,6 +298,12 @@ public class TeacherScoreResponseButtonPanelTest {
 		}
 	}
 
+	private Response makeResponse(Prompt prompt) {
+		Response response = new Response();
+		response.setPrompt(prompt);
+		return response;
+	}
+	
 	private void setResponseScores(Integer score) {
 		response1.setScore(score);
 		response2.setScore(score);
