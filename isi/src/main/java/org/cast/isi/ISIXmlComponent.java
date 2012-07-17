@@ -420,7 +420,7 @@ public class ISIXmlComponent extends XmlComponent {
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
-			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, ISISession.get().getUserModel());
+			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, null);
 			dataView.setContext(getResponseListContext());
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
