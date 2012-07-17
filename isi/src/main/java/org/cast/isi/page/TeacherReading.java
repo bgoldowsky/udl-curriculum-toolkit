@@ -78,7 +78,7 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 		add(notesbox);
 		notesbox.setVisible(showXmlContent);
 		notesbox.add(new WebMarkupContainer("collapseBoxToggle").add(new CollapseBoxBehavior("onclick", "pagenotes", getPageName())));
-		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc, null);
+		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc);
 		responseList.setContext("pagenote.teacher");
 		responseList.setAllowNotebook(false);
 		responseList.setAllowEdit(false);
