@@ -60,7 +60,7 @@ import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.panel.StudentSectionCompleteToggleTextLink;
+import org.cast.isi.panel.StudentSectionCompleteTogglePanel;
 import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.QuestionService;
@@ -148,11 +148,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	
 	
 	protected void addSectionCompleteToggle(ISIXmlSection section) {
-		WebMarkupContainer container = new WebMarkupContainer("toggleCompleteContainer");
-		container.add(new StudentSectionCompleteToggleTextLink("toggleComplete", mSection, mTargetUser));
-		//TODO: Why do we need this?  The link itself has an isVisible() that should do it.
-		container.setVisible(showSectionToggleTextLink);
-		add(container);
+		add(new StudentSectionCompleteTogglePanel("toggleCompletePanel", mSection, mTargetUser));
 	}
 
 	protected void addXmlComponent (ISIXmlSection section) {

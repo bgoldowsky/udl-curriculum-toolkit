@@ -35,7 +35,7 @@ import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.HighlightControlPanel;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.panel.TeacherSectionCompleteToggleTextLink;
+import org.cast.isi.panel.TeacherSectionCompleteTogglePanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +55,11 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 
 	@Override
 	protected void addSectionCompleteToggle(ISIXmlSection section) {
-		WebMarkupContainer container = new WebMarkupContainer("toggleCompleteContainer");
-		container.add(new TeacherSectionCompleteToggleTextLink("toggleComplete", mSection, mTargetUser));
-		container.setVisible(showSectionToggleTextLink && showXmlContent);
-		add(container);
+		TeacherSectionCompleteTogglePanel sectionCompleteTogglePanel = new TeacherSectionCompleteTogglePanel("toggleCompletePanel", mSection, mTargetUser);
+		sectionCompleteTogglePanel.setVisibilityEnabled(showXmlContent);
+		add(sectionCompleteTogglePanel);
 	}
+
 
 	// Differs from superclass version in that it creates a READ-ONLY page notes area with no edit buttons
 	// view the student's notes

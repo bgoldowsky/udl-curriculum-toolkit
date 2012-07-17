@@ -35,11 +35,6 @@ public class TeacherSectionCompleteToggleTextLink extends
 	}
 	
 	@Override
-	public void onBeforeRender() {
-		super.onBeforeRender();
-	}
-
-	@Override
 	public boolean isEnabled() {
 		return isComplete();
 	}
