@@ -90,14 +90,19 @@ public class ResponseList extends Panel {
 	private static final long serialVersionUID = 1L;
 
 	public ResponseList (String wicketId, IModel<Prompt> mPrompt, final ResponseMetadata metadata, final ContentLoc loc, IModel<User> mUser) {
+		this(wicketId, mPrompt, metadata, loc);
+		if (mUser != null) 
+			this.mTargetUser = mUser;
+		
+	}
+	
+	public ResponseList(String wicketId, IModel<Prompt> mPrompt,
+			ResponseMetadata metadata, ContentLoc loc) {
 		super(wicketId);
 		setOutputMarkupId(true);
 		this.promptModel = mPrompt;
 		this.metadata = metadata;
 		this.loc = loc;
-		if (mUser != null) 
-			this.mTargetUser = mUser;
-		
 	}
 	
 	@Override

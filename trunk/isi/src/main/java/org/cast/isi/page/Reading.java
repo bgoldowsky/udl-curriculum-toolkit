@@ -206,7 +206,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		};
 		add(notesbox);
 		notesbox.add(new WebMarkupContainer("collapseBoxToggle").add(new CollapseBoxBehavior("onclick", "pagenotes", getPageName())));
-		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc, null);
+		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc);
 		responseList.setContext("pagenote");
 		responseList.setAllowNotebook(ISIApplication.get().isNotebookOn());
 		responseList.setAllowWhiteboard(ISIApplication.get().isWhiteboardOn());

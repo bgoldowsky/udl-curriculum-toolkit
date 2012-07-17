@@ -407,7 +407,7 @@ public class ISIXmlComponent extends XmlComponent {
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
-			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc, null);
+			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc);
 			dataView.setContext(getResponseListContext());
 			dataView.setAllowEdit(!isTeacher);
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
@@ -420,7 +420,7 @@ public class ISIXmlComponent extends XmlComponent {
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
-			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, null);
+			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc);
 			dataView.setContext(getResponseListContext());
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
