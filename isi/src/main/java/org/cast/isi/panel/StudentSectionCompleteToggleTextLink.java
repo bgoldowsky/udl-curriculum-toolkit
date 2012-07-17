@@ -35,6 +35,11 @@ public class StudentSectionCompleteToggleTextLink extends
 	}
 
 	@Override
+	public boolean isVisible() {
+		return isEnabled() && super.isVisible();
+	}
+
+	@Override
 	public boolean isEnabled() {
 		return !isLocked();
 	}
