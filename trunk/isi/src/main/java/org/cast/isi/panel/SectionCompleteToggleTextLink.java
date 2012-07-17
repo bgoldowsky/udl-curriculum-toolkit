@@ -48,7 +48,7 @@ public abstract class SectionCompleteToggleTextLink extends
 				@Override
 				public String getObject() {
 					if (isEnabled())
-						return "button";
+						return "button big";
 					else return "button off";
 				}
 
