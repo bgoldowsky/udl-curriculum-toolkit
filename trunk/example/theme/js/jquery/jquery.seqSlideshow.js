@@ -59,6 +59,7 @@
                 n.tabs('select', i - 1);
                 e.preventDefault();
                 // Event log item goes here
+               	$.fn.seqSlideshow.logPrevNextEvent(n, prevBtn, "previous");
                 return false;
             });
         }
@@ -78,10 +79,30 @@
                 n.tabs('select', i + 1);
                 e.preventDefault();
                 // Event log item goes here
+            	$.fn.seqSlideshow.logPrevNextEvent(n, nextBtn, "next");
                 return false;
             });
         }
 
     };
+    
+    // Log event for previous next buttons
+    $.fn.seqSlideshow.logPrevNextEvent = function(n, button, buttonType) {
+        
+    	// get the id of the parent with the class equal slideshow 
+    	var slideshow = button.parents('.slideshow:first');
+    	var slideshowId = slideshow.attr('id');
+    	
+    	// find closest li with the class equal ui-state-active 
+    	// grab the href value of the active button
+    	var tempCurrentSlide = n.find('li.ui-state-active a').attr('href');
+    	// remove the # 
+    	var currentSlideId = tempCurrentSlide.substring(1, tempCurrentSlide.length);
+
+    	// listener has been set up for this event call found in functions.js
+    	logJsEvent("id=" + slideshowId + ",slideId=" + currentSlideId + ",state=" + buttonType, "", "slideshow");
+
+    };
+
 
 })(jQuery);

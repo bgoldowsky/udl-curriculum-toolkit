@@ -2,6 +2,22 @@
 /* this js must be loaded after en.js
 /*=========================================================*/
 
+
+
+/*=========================================================*/
+/* this is called when an js event needs to be logged
+/*=========================================================*/
+/* TODO is there a way to make this info JS safe?? */
+function logJsEvent(detail, page, type) {
+	
+	// logJsEventCallbackUrl is a global js var defined in java.  The value is callback URL for the component
+	// the event behavior is attached to.	
+	wicketAjaxGet(logJsEventCallbackUrl + '&eventDetail=' + detail + '&eventPage=' + page + '&eventType=' + type , function() {}, function() {});
+
+}
+
+
+
 function collapseBox() {
     $(".collapseBox").each(function() {
         var boxElm = $(this).get(0);
@@ -11,7 +27,6 @@ function collapseBox() {
             if ($(this).hasClass("open")) {
                 $(this).addClass("expOpen");
                 $(this).children(".collapseBody").eq(0).show();
-
             }
             // Add toggle item
             $(this).find('h2, h3, h4, h5, h6').eq(0).addClass('toggleOffset').prepend('<a href="#" onclick="return false;" class="toggle"></a>');
@@ -70,10 +85,28 @@ function collapseBoxStatus(id) {
 	}
 	return null;
 }
+
+/*=========================================================*/
+/* Show/Hide student names                                 */
+/*=========================================================*/
+function showHideNames() {
+
+	/* identify names by finding elements with the responseAuthor class */
+	$(".responseAuthor").each(function(index) {
+      var nameElm = $(this);
+
+      if (nameElm.css('display') != 'none') {
+    	  nameElm.hide();
+      }
+      else {
+    	  nameElm.show();
+      }
+    });
+}
+
 /*=========================================================*/
 /* Image Caption Sizing                                    */
 /*=========================================================*/
-
 /**
  * Automatically resizes ".imgBox" images and ".objectBox" objects
  * to fit the "img.thumb" or "div.mediaPlaceholder" that is inside.
@@ -166,7 +199,9 @@ function modalMove() {
             var boxElm = $(this).closest('.modalBody');
             $(boxElm).draggable({
                 handle: ".modalMove",
-                start: function() { $(boxElm).css('z-index', ++moveZIndex); }
+                start: function() { $(boxElm).css('z-index', ++moveZIndex); 
+                /* logJsEvent("move something", "", "modal:move");*/
+                } 
             });
         }
     });

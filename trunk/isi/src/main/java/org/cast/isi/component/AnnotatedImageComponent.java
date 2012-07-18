@@ -106,6 +106,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 				hotSpotDetails.append("\"useImg\": " + "\"true" + "\"" + ", ");
 				hotSpotDetails.append("\"imgSrc\": " + "\"" + imageUrl + "\"" + ", ");
 			}
+			hotSpotDetails.append("\"xmlId\": " + "\"" + component.xmlId + "\"" + ", ");
 			hotSpotDetails.append("\"id\": " + "\"" + component.hotSpotId + "\"" + " }");
 			
 			count++;
