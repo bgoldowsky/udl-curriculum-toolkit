@@ -57,15 +57,6 @@ public class StudentSectionCompleteToggleTextLinkTest extends
 	}
 
 	@Test
-	public void hasCorrectTextWhenSectionCompleteAndLocked() {
-		sectionStatus.setCompleted(true);
-		sectionStatus.setLocked(true);
-		startWicket();
-		Label text = (Label) wicketTester.getComponentFromLastRenderedPage("panel:component:text");
-		assertThat((String) text.getDefaultModelObject(), equalTo("Section is Locked"));
-	}
-
-	@Test
 	public void clickingComponentMarksIncompleteSectionAsComplete() {
 		sectionStatus.setCompleted(false);
 		startWicket();
@@ -79,15 +70,6 @@ public class StudentSectionCompleteToggleTextLinkTest extends
 		startWicket();
 		wicketTester.clickLink("panel:component");
 		verify(sectionService).setCompleted(eq(student), eq(sectionContentLoc), eq(false));
-	}
-	
-	@Test
-	public void componentIsDisabledWhenSectionLocked() {
-		sectionStatus.setCompleted(true);
-		sectionStatus.setLocked(true);
-		startWicket();
-		Component component = wicketTester.getComponentFromLastRenderedPage("panel:component");
-		assertThat("component should be disabled", component.isEnabled(), equalTo(false));
 	}
 	
 	@Test
