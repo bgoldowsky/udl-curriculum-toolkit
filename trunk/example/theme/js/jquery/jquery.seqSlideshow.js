@@ -46,32 +46,30 @@
         if ((i-1) < 0) {
             // Disable button
             prevBtn.attr("disabled", "disabled").addClass("off");
-            prevBtn.click(function(e) {
-                e.preventDefault();
-                return false;
-            });
+            prevBtn.unbind("click");
         } else {
             // Enable button
             prevBtn.attr("disabled", "").removeClass("off");
-            prevBtn.click(function(e) {
+            prevBtn.unbind("click");
+            prevBtn.bind("click", function(e) {
                 n.tabs('select', i - 1);
                 e.preventDefault();
+                // Event log item goes here
                 return false;
             });
         }
         if ((i+1) >= n.tabs('length')) {
             // Disable button
             nextBtn.attr("disabled", "disabled").addClass("off");
-            nextBtn.click(function(e) {
-                e.preventDefault();
-                return false;
-            });
+            nextBtn.unbind("click");
         } else {
             // Enable button
             nextBtn.attr("disabled", "").removeClass("off");
-            nextBtn.click(function(e) {
+            nextBtn.unbind("click");
+            nextBtn.bind("click", function(e) {
                 n.tabs('select', i + 1);
                 e.preventDefault();
+                // Event log item goes here
                 return false;
             });
         }
