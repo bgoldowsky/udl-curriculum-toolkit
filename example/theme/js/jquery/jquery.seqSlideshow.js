@@ -47,6 +47,10 @@
             // Disable button
             prevBtn.attr("disabled", "disabled").addClass("off");
             prevBtn.unbind("click");
+            prevBtn.bind("click", function(e) {
+                e.preventDefault();
+                return false;
+            });
         } else {
             // Enable button
             prevBtn.attr("disabled", "").removeClass("off");
@@ -62,6 +66,10 @@
             // Disable button
             nextBtn.attr("disabled", "disabled").addClass("off");
             nextBtn.unbind("click");
+            nextBtn.bind("click", function(e) {
+                e.preventDefault();
+                return false;
+            });
         } else {
             // Enable button
             nextBtn.attr("disabled", "").removeClass("off");
