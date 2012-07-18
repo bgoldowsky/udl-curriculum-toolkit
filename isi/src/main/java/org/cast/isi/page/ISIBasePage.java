@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.service.JavascriptService;
+import org.cast.cwm.data.behavior.JsEventLoggingBehavior;
 import org.cast.cwm.service.EventService;
 import org.cast.isi.ISIApplication;
 
@@ -48,6 +49,16 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 	
 	public ISIBasePage(final PageParameters param) {
 		super(param);
+		
+		JsEventLoggingBehavior jsEventLoggingBehavior = new JsEventLoggingBehavior() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected String getEventPage() {
+				return getPageName();
+			}
+		};
+		add (jsEventLoggingBehavior);
 	}
 	
 	@Override
@@ -55,7 +66,7 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 		super.onBeforeRender();
 		if (CwmSession.get().getUser() != null) {
 			EventService.get().saveEvent("pageview:" + getPageType(), getPageViewDetail(), getPageName());
-		}
+		}		
 	}
 	
 	public void renderHead(final IHeaderResponse response) {

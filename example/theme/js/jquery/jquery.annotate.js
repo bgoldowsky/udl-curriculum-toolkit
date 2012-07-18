@@ -252,6 +252,7 @@
             newNote.useImg = false;
             newNote.imgSrc = "";
             newNote.imgClass = "button annotate";
+            newNote.xmlId = "";
             this.note = newNote;
         }
 
@@ -377,7 +378,7 @@
             });
         } else {
             this.area.click(function() {
-                return $.fn.annotateCallback($(this), note.id);
+                return $.fn.annotateCallback($(this), note.id, image.imageID, note.xmlId);
             });
         }
     };
@@ -518,6 +519,7 @@
             image.toggles.children('.image-annotate-label-show').replaceWith('<span class="image-annotate-label-show">' +  lang['ANNOTATE_SHOW'] + '</span>');
             image.toggles.children('.image-annotate-label-hide').replaceWith('<a href="#" class="image-annotate-label-hide">' +  lang['ANNOTATE_HIDE'] + '</a>');
             image.toggles.children('.image-annotate-label-hide').click(function() {
+            	logJsEvent("id=" + image.imageID + ",state=labelsOff", "", "annotatedImage");
                 return $.fn.annotateImage.labelToggle(image);
             });
             if (image.canvas.children('.image-annotate-edit').css('display') == 'none') {
@@ -530,6 +532,7 @@
             image.toggles.children('.image-annotate-label-hide').replaceWith('<span class="image-annotate-label-hide">' +  lang['ANNOTATE_HIDE'] + '</span>');
             image.toggles.children('.image-annotate-label-show').click(function() {
                 image.viewAnnotations = true;
+                logJsEvent("id=" + image.imageID + ",state=labelsOn", "", "annotatedImage");
                 return $.fn.annotateImage.labelToggle(image);
             });
             image.canvas.children('.image-annotate-view').removeClass('image-annotate-labels-on').hide();
@@ -537,10 +540,12 @@
         return false;
     };
 
-    $.fn.annotateCallback = function(hotSpotNode, id) {
+    $.fn.annotateCallback = function(hotSpotNode, id, imageId, xmlId) {
 
     	var detail = $("#" + id);
     	var offset = hotSpotNode.offset();
+    	logJsEvent("id=" + xmlId, "", "hotspot");
+    	
 
     	// determine if you are on the home page
     	if ($('body').hasClass("themeHome")) {

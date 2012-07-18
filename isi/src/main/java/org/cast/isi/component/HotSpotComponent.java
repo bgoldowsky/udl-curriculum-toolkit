@@ -40,6 +40,7 @@ public class HotSpotComponent extends DialogBorder {
 	private static final Logger log = LoggerFactory.getLogger(HotSpotComponent.class);
 
 	protected String hotSpotId = "";
+	protected String xmlId = "";
 	protected String top = "";
 	protected String left = "";
 	protected String width = "";
@@ -55,6 +56,7 @@ public class HotSpotComponent extends DialogBorder {
 		super(id, new Model<String>(elt.getAttributeNS(null,"title")));
 
 		this.hotSpotId = getContentContainer().getMarkupId();
+		this.xmlId = elt.getAttributeNS(null,"id");
 		this.top = (elt.getAttributeNS(null,"top").trim().equals("") ? "0" : elt.getAttributeNS(null,"top"));
 		this.left = elt.getAttributeNS(null,"left");
 		this.width = elt.getAttributeNS(null,"width");
