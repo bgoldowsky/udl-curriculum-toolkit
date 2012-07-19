@@ -188,7 +188,7 @@ public class ISIXmlComponent extends XmlComponent {
 		// glossaryLink is associated with a short glossary definition modal
 		} else if (wicketId.startsWith("glossaryLink_")) {
 			MiniGlossaryLink miniGlossaryLink = new MiniGlossaryLink(wicketId, new Model<String>(elt.getAttribute("word")), miniGlossaryModal);
-			miniGlossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MODAL));
+			miniGlossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MODAL) && pageHasMiniGlossary());
 			return miniGlossaryLink;
 
 		// glossdef and the the glosslink that follows are associated with inline glossary definitions
@@ -225,7 +225,7 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<String> wordModel = new Model<String>(elt.getAttribute("word"));
 			GlossaryLink glossaryLink = new GlossaryLink(wicketId, wordModel);
 			ISIApplication.get().setLinkProperties(glossaryLink);
-			glossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MAIN));
+			glossaryLink.setVisible(shouldShowMainGlossaryLink());
 			return glossaryLink;
 						
 		} else if (wicketId.startsWith("link_")) {
@@ -620,6 +620,17 @@ public class ISIXmlComponent extends XmlComponent {
 		} else {
 			return super.getDynamicComponent(wicketId, elt);
 		}
+	}
+	
+	private boolean shouldShowMainGlossaryLink() {
+		String glossaryLinkType = ISIApplication.get().glossaryLinkType;
+		return (glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MAIN) 
+				|| ((glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MODAL) && !pageHasMiniGlossary())));
+	}
+	
+	private boolean pageHasMiniGlossary() {
+		ISIBasePage page = (ISIBasePage) getPage();
+		return page.hasMiniGlossary();
 	}
 	
 	private String getResponseListContext() {

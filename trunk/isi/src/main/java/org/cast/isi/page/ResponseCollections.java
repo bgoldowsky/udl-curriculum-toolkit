@@ -192,8 +192,7 @@ public class ResponseCollections extends ISIStandardPage {
 		rvPromptList.add(new StudentScorePanel("responseScore", getModels(responses)));
 		
 		// Text associated with Prompt
-		String question =  prompt.getQuestionHTML();			
-		rvPromptList.add(new Label("question", question).setEscapeModelStrings(false));
+		rvPromptList.add(factory.makeQuestionTextComponent("question", prompt));
 		
 		rvPromptList.add(makeResponseListView(responses));
 		return rvPromptList;
@@ -239,7 +238,7 @@ public class ResponseCollections extends ISIStandardPage {
 
 			@Override
 			protected void populateItem(ListItem<ISIResponse> item) {
-				item.add(factory.makeResponseViewComponent(item.getModel()));
+				item.add(factory.makeResponseViewComponent("response", item.getModel()));
 			}
 
 		};
