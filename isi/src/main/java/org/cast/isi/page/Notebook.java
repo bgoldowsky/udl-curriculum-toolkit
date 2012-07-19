@@ -103,6 +103,8 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	@Inject
 	IISIResponseService responseService;
 	
+	private static final ResponseViewerFactory factory = new ResponseViewerFactory();
+
 	public Notebook(PageParameters parameters) {
 		super(parameters);
 
@@ -283,8 +285,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 			promptGroup.add(link);
 
 			// Text associated with Prompt
-			String question =  currentPrompt.getQuestionHTML();			
-			promptGroup.add(new Label("question", question).setEscapeModelStrings(false));
+			promptGroup.add(factory.makeQuestionTextComponent("question", currentPrompt));
 
 			// The list of responses under this prompt
 			promptGroup.add(makeResponseListView(entry));
@@ -306,8 +307,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 				.add(new SimpleAttributeModifier("name", String.valueOf(item.getModelObject().getId()))));
 
 				// Actual response
-				Component responseViewComponent = new ResponseViewerFactory().makeResponseViewComponent(item.getModel());
-				item.add(responseViewComponent);
+				item.add(factory.makeResponseViewComponent("response", item.getModel()));
 
 				// Remove From Notebook button
 				NotebookRemoveDialog removeDialog = new NotebookRemoveDialog("removeModal", item.getModel());

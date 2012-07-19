@@ -81,6 +81,8 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 
 	@Inject
 	protected IISIResponseService responseService;
+
+	private static final ResponseViewerFactory factory = new ResponseViewerFactory();
 	
 	public Whiteboard(PageParameters parameters) {
 		super(parameters);
@@ -173,9 +175,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 					titleLink.add(ISIApplication.get().iconFor(sec.getSectionAncestor(), ""));
 					questionItem.add(titleLink);
 
-					String question = isiprompt.getQuestionHTML();
-					questionItem.add(new Label("questionText", question).setEscapeModelStrings(false));
-
+					questionItem.add(factory.makeQuestionTextComponent("questionText", isiprompt));
 					RepeatingView responses = new RepeatingView("responseListing");
 					questionItem.add(responses);
 
@@ -185,7 +185,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 						responses.add(responseItem);
 						responseItem.add(new WebMarkupContainer("responseAnchor")
 								.add(new SimpleAttributeModifier("name", String.valueOf(response.getId()))));
-						responseItem.add(new ResponseViewerFactory().makeResponseViewComponent(new HibernateObjectModel<ISIResponse>(Response.class, response.getId())));
+						responseItem.add(new ResponseViewerFactory().makeResponseViewComponent("response", new HibernateObjectModel<ISIResponse>(Response.class, response.getId())));
 
 						// Remove from Whiteboard link
 						WhiteboardRemoveDialog removeModal = new WhiteboardRemoveDialog("removeModal", new ResponseModel(response));

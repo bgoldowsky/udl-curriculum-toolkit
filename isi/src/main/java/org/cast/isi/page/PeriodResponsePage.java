@@ -44,6 +44,7 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlComponent;
 import org.cast.isi.ISIXmlSection;
+import org.cast.isi.ResponseViewerFactory;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.PromptType;
@@ -74,6 +75,8 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 	private IISIResponseService responseService;
 
 	protected static final Logger log = LoggerFactory.getLogger(PeriodResponsePage.class);
+
+	private static final ResponseViewerFactory factory = new ResponseViewerFactory();
 
 	public PeriodResponsePage(final PageParameters parameters) {
 		super(parameters);
@@ -118,8 +121,7 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		add(new ResponseCollectionSummary("promptResponseSummary", getScoreCounts(mPrompt)));
 		
 		// Add the text associated with Prompt
-		String question =  prompt.getQuestionHTML();			
-		add(new Label("question", question).setEscapeModelStrings(false));
+		add(factory.makeQuestionTextComponent("question", prompt));
 		
 		addDetailsPanel(mPrompt);
 	}
@@ -142,7 +144,7 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 			add (new PeriodResponseListPanel("details", mPrompt));
 		}
 	}
-	
+
 	protected WebMarkupContainer getDetailsPanel() {
 		return (WebMarkupContainer) get("details");
 	}

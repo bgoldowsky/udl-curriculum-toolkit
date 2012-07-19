@@ -99,6 +99,10 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 	}
 	
 
+	public boolean hasMiniGlossary() {
+		return false;
+	}
+
 	/**
 	 * Return a type value that will be used in the event log for views of this page.
 	 * The returned value will have "pageview:" prepended.

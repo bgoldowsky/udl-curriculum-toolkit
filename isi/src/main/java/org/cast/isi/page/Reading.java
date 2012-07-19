@@ -124,6 +124,10 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		add(bottomNavPanel);
 	}
 
+	@Override
+	public boolean hasMiniGlossary() {
+		return true;
+	}
 	
 	protected void setLoc(PageParameters parameters) {
 		// setup the loc of this reading page, check the parameters, then
