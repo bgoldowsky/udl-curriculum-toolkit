@@ -32,9 +32,9 @@
     </issueManagement>
     
     <scm>
-      <url>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-1.2</url>
-      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-1.2</connection>
-      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-1.2</developerConnection>
+      <url>http://code.google.com/p/udl-curriculum-toolkit/source</url>
+      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-1.2.x</connection>
+      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-1.2.x</developerConnection>
     </scm>
 
     <distributionManagement>
