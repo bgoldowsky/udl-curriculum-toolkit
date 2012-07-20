@@ -558,3 +558,93 @@
     padding: 4px;
     word-wrap: break-word;
 }
+
+/*================================================================*/
+/* Misc Content Box and Captions */
+
+.miscBox {
+    position: relative;
+    margin: 0px 0px 1.0em 0px;
+    z-index: 1;
+    clear: both;
+}
+
+.miscBox.left {
+    float: left;
+    margin: 0px 1.5em 1.0em 0px;
+}
+
+.miscBox.right {
+    float: right;
+    margin: 0px 0px 1.0em 1.5em;
+}
+
+.miscBox.center {
+    margin: 0px auto 1.0em auto;
+}
+
+.miscBox img {
+    display: block;
+    padding: 0px;
+    margin: 0px;
+}
+
+.miscCaption {
+    word-wrap: break-word;
+    background: #364A77;
+    color: #FFFFFF;
+    padding: 4px;
+    margin: 0px;
+    font-size: 0.9em;
+    min-height: 21px;
+}
+
+.miscCaption a { color: #D7D7D7; text-decoration: underline; }
+.miscCaption a:hover, .imgCaption a:focus { color: #FFFFFF;}
+
+.miscCaption .source {
+    font-size: 0.9em;
+}
+
+.miscBox .expandIcon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.miscBox .closeIcon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.miscActions {
+    position: relative;
+    display: inline-block;
+    float: right;
+    width: 1.75em;
+    text-align: right;
+    z-index: 1;
+}
+
+.miscCaption h5 {
+    font-size: 1em;
+    font-style: italic;
+    font-weight: normal;
+    margin: 0;
+}
+
+.miscBox .dataTable {
+    margin-bottom: 0px;
+}
+
+.miscBox .dataTable caption {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.9em;
+    font-weight: normal;
+    caption-side: bottom;
+    background: #364A77;
+    color: #FFFFFF;
+    padding: 4px;
+    margin-bottom: 0px;
+}
