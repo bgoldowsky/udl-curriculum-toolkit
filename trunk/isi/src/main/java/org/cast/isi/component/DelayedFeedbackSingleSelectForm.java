@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
@@ -126,11 +127,27 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 	}
 
 	public void onSelectionChanged(AjaxRequestTarget target, SingleSelectItem selectedItem) {
-		log.debug("Single Select Option Clicked: {}", selectedItem.getDefaultModelObject());
-		// Save Response
-		responseService.saveSingleSelectResponse(mResponse, selectedItem.getModel().getObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
-		updateResponseModel();
-		refreshListeners(target);
+		if (locateChild(selectedItem)) {
+			log.debug("In form for {}, Single Select Option Clicked: {}", mResponse.getObject(), selectedItem.getDefaultModelObject());
+			// Save Response
+			responseService.saveSingleSelectResponse(mResponse, selectedItem.getModel().getObject(), selectedItem.isCorrect(), ((ISIBasePage)getPage()).getPageName());
+			updateResponseModel();
+			refreshListeners(target);
+		}
+	}
+
+	private boolean locateChild(final SingleSelectItem selectedItem) {
+		Object found = visitChildren(SingleSelectItem.class, new IVisitor<Component>(){
+
+			public Object component(Component component) {
+				if (component == selectedItem) {
+					return component;
+				}
+				else
+					return CONTINUE_TRAVERSAL;
+			}});
+		
+		return (found != null);
 	}
 
 	public class ResponseModelRadioGroup extends RadioGroup<String>  {

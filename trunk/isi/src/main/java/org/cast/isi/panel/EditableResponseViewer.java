@@ -58,7 +58,6 @@ public class EditableResponseViewer extends Panel {
 	@Getter @Setter
 	protected boolean allowWhiteboard = false;
 
-	protected IModel<Response> model;
 	protected ResponseMetadata metadata;
 	protected ContentLoc loc;
 	
@@ -69,7 +68,6 @@ public class EditableResponseViewer extends Panel {
 	
 	public EditableResponseViewer (String wicketId, IModel<Response> model, ResponseMetadata metadata, ContentLoc loc) {
 		super(wicketId, model);
-		this.model = model;
 		this.metadata = metadata;
 		this.loc = loc;
 		setOutputMarkupId(true);
@@ -81,7 +79,7 @@ public class EditableResponseViewer extends Panel {
 		add (viewContainer = new WebMarkupContainer("viewContainer"));
 		add (editContainer = new WebMarkupContainer("editContainer"));
 		
-		viewer = new ResponseViewer("viewer", model);
+		viewer = new ResponseViewer("viewer", getModel());
 		viewer.setShowDateTime(true);
 		viewContainer.add(viewer);
 		
@@ -90,7 +88,7 @@ public class EditableResponseViewer extends Panel {
 		viewContainer.add(responseActions);
 		addResponseViewActions(responseActions);
 
-		editor = new ResponseEditor("editor", model, metadata, loc) {
+		editor = new ResponseEditor("editor", getModel(), metadata, loc) {
 			private static final long serialVersionUID = 1L;
 
 			@Override

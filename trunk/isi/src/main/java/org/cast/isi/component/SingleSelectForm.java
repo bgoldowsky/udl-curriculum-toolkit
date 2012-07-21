@@ -70,7 +70,8 @@ public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSe
 	}
 
 	protected void updateResponseModel() {
-		mResponse = responseService.getResponseForPrompt(getModel(), mTargetUser);
+		if (mResponse == null)
+			mResponse = responseService.getResponseForPrompt(getModel(), mTargetUser);
 	}
 	
 	protected void refreshListeners(final AjaxRequestTarget target) {
