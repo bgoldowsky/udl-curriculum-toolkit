@@ -53,7 +53,6 @@ import org.cast.isi.data.ISIEvent;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.data.PromptType;
-import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.data.StudentFlag;
 import org.cast.isi.data.builder.ISIResponseCriteriaBuilder;
 import org.cast.isi.page.ISIBasePage;
@@ -77,8 +76,6 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ISIResponseService.class);
-	
-	private static final Integer INCORRECT_RESPONSE = 0;
 	
 	protected ISIResponseService() {/* Protected Constructor - use injection */}
 	
