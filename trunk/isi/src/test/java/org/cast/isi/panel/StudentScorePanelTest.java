@@ -19,9 +19,13 @@
  */
 package org.cast.isi.panel;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
@@ -31,6 +35,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.ITestPanelSource;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
+import org.cast.cwm.data.User;
 import org.cast.cwm.test.CwmWicketTester;
 import org.cast.cwm.test.GuiceInjectedTestApplication;
 import org.cast.isi.data.ISIPrompt;
@@ -43,19 +48,22 @@ public class StudentScorePanelTest {
 	private CwmWicketTester wicketTester;
 	private Response response1;
 	private Response response2;
-	private Prompt prompt;
-	private HashMap<Class<? extends Object>, Object> injectionMap;
+	private ISIPrompt prompt;
+	private IModel<User> userModel;
+	private Map<Class<? extends Object>, Object> injectionMap;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Before
 	public void setUp() {
-		prompt = new ISIPrompt(PromptType.RESPONSEAREA);
+		prompt = mock(ISIPrompt.class);
+		when(prompt.getType()).thenReturn(PromptType.RESPONSEAREA);
 		response1 = makeResponse(prompt);
 		response2 = makeResponse(prompt);
+		userModel = new Model(makeUser() );
 		setupInjectedServices();
 		wicketTester = new CwmWicketTester(new GuiceInjectedTestApplication(injectionMap));
 	}
-	
+
 	@Test
 	public void canRenderPanel() {
 		wicketTester.startPanel(new TestPanelSource());
@@ -120,7 +128,6 @@ public class StudentScorePanelTest {
 		wicketTester.assertInvisible("panel:notGotItButton");
 	}
 	
-	
 	private void setupInjectedServices() {
 		// Only so that injection doesn't blow up in test.
 		injectionMap = new HashMap<Class<? extends Object>, Object>();
@@ -130,10 +137,17 @@ public class StudentScorePanelTest {
 		private static final long serialVersionUID = 1L;
 
 		public Panel getTestPanel(String panelId) {
-			return new StudentScorePanel(panelId, makeResponseModelList()); 
+			return new StudentScorePanel(panelId, makeResponseModelList(), userModel); 
 		}
 	}
 
+	private User makeUser() {
+		User user = new User();
+		user.setFirstName("Mickey");
+		user.setLastName("Mouse");
+		return user;
+	}
+	
 	private Response makeResponse(Prompt prompt) {
 		Response response = new Response();
 		response.setPrompt(prompt);

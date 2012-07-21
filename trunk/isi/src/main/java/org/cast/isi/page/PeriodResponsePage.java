@@ -19,6 +19,8 @@
  */
 package org.cast.isi.page;
 
+import java.util.List;
+
 import lombok.Getter;
 
 import org.apache.wicket.PageParameters;
@@ -47,6 +49,7 @@ import org.cast.isi.ISIXmlSection;
 import org.cast.isi.ResponseViewerFactory;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIPrompt;
+import org.cast.isi.data.ISIResponse;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.panel.PeriodResponseListPanel;
@@ -127,7 +130,8 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 	}
 	
 	private ScoreCounts getScoreCounts(IModel<Prompt> mPrompt) {
-		return responseService.getScoreCountsForStudentsForPrompt(mPrompt);
+		IModel<List<ISIResponse>> responses =  responseService.getPeriodResponsesForPrompt(mPrompt, ISISession.get().getCurrentPeriodModel());
+		return ScoreCounts.forResponses("students", responses);
 	}
 
 	protected void addDetailsPanel(IModel<Prompt> mPrompt) {		
