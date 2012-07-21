@@ -31,6 +31,7 @@ import lombok.ToString;
 
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.User;
+import org.cast.isi.ISIXmlSection;
 import org.hibernate.annotations.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,20 @@ public class ISIPrompt extends Prompt implements Comparable<ISIPrompt> {
 	public ISIPrompt(PromptType type) {
 		this();
 		this.type = type;
+	}
+	
+	public boolean isDelayFeedback() {
+		ISIXmlSection section = getSection();
+		return (section != null) && section.isDelayFeedback();
+	}
+	
+	public ISIXmlSection getSection() {
+		ContentLoc contentLoc = getContentLoc();
+		return (contentLoc == null) ? null: contentLoc.getSection();
+	}
+	
+	public ContentLoc getContentLoc() {
+		return contentElement.getContentLocObject();
 	}
 	
 	// Order by the order of the respective ContentElements.  If none, fall back to ID order.

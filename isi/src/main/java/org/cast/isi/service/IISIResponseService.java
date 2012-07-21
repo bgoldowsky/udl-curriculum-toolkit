@@ -27,6 +27,7 @@ import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
+import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.IResponseService;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ClassMessage;
@@ -201,8 +202,8 @@ public interface IISIResponseService extends IResponseService {
 
 	List<ISIResponse> getAllResponsesForPromptByStudent(IModel<Prompt> mPrompt, IModel<User> mUser);
 
-	ScoreCounts getScoreCountsForCollectionForStudent(String collectionName, IModel<User> mUser);
+	IModel<List<ISIResponse>> getAllResponsesForCollectionByStudent(String collectionName, UserModel mUser);
 
-	ScoreCounts getScoreCountsForStudentsForPrompt(IModel<Prompt> mPrompt);
+	IModel<List<ISIResponse>> getPeriodResponsesForPrompt(IModel<Prompt> mPrompt, IModel<Period> mPeriod);
 
 }

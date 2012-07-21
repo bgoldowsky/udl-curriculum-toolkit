@@ -31,6 +31,7 @@ import net.databinder.models.hib.HibernateObjectModel;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.util.ListModel;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
@@ -38,6 +39,7 @@ import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseData;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
+import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.ResponseService;
 import org.cast.cwm.xml.XmlSection;
@@ -676,89 +678,37 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	}
 
 	/* (non-Javadoc)
-	 * @see org.cast.isi.service.IISIResponseService#getScoreCountsForCollectionForStudent(String, org.apache.wicket.model.IModel<org.cast.cwm.data.User>)
+	 * @see org.cast.isi.service.IISIResponseService#getAllResponsesForCollectionByStudent(String, org.apache.wicket.model.IModel<org.cast.cwm.data.User>)
 	 */
-	public ScoreCounts getScoreCountsForCollectionForStudent(String collectionName, IModel<User> mUser) {
-		return countScores("questions", getPromptScoresForCollectionForStudent(collectionName, mUser)); 
+	@SuppressWarnings("unchecked")
+	public IModel<List<ISIResponse>> getAllResponsesForCollectionByStudent(
+			String collectionName, UserModel mUser) {
+		Criteria criteria = Databinder.getHibernateSession()
+				.createCriteria(ISIResponse.class)
+				.createAlias("prompt", "p")
+				.add(Restrictions.eq("p.collectionName", collectionName))
+				.add(Restrictions.eq("user", mUser.getObject()))
+				.add(Restrictions.eq("valid", true))
+				.setCacheable(true)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return new ListModel<ISIResponse>(criteria.list());
 	}
 
 	/* (non-Javadoc)
-	 * @see org.cast.isi.service.IISIResponseService#getScoreCountsForStudentsForPrompt(org.apache.wicket.model.IModel<org.cast.cwm.data.Prompt>)
+	 * @see org.cast.isi.service.IISIResponseService#gePeriodResponsesForPrompt(org.apache.wicket.model.IModel<org.cast.isi.data.ISIPrompt>,org.apache.wicket.model.IModel<org.cast.cwm.data.Period>)
 	 */
-	public ScoreCounts getScoreCountsForStudentsForPrompt(IModel<Prompt> mPrompt) {
-		return countScores("students", getStudentScoresForPrompt(mPrompt)); 
-	}
-
-	private ScoreCounts countScores(String context, List<Integer> scores) {
-		int countCorrect = 0;
-		int countIncorrect = 0;
-		int countUnscored = 0;
-		for (Integer score: scores) {
-			if (score == null) {
-				countUnscored++;
-			}
-			else if (score.equals(INCORRECT_RESPONSE)) {
-				countIncorrect++;
-			}
-			else {
-				countCorrect++;
-			}
-		}
-		return new ScoreCounts(context, countCorrect, countIncorrect, countUnscored, scores.size());
-	}
-
 	@SuppressWarnings("unchecked")
-	private List<Integer> getPromptScoresForCollectionForStudent(String collectionName, IModel<User> mUser) {
-		Query q = Databinder.getHibernateSession().createSQLQuery(
-				"select max(responsedata.score) as score from prompt, response, responsedata " + 
-				" 	where prompt.collectionname = :collectionName " +
-				" 	and prompt.type = 'SINGLE_SELECT' " +
-				" 	and response.prompt_id = prompt.id " +
-				" 	and response.user_id = :userId " +
-				" 	and response.responsedata_id = responsedata.id " + 
-				" 	and response.valid = 't' " +
-				" group by prompt.id " +
-			
-				"union all " +
-			
-				"select max(response.score) as score from prompt, response " + 
-				" 	where prompt.collectionname = :collectionName " +
-				" 	and prompt.type = 'RESPONSEAREA' " +
-				" 	and response.prompt_id = prompt.id " +
-				" 	and response.user_id = :userId " +
-				" 	and response.valid = 't' " + 
-				" group by prompt.id");
-		q.setString("collectionName", collectionName);
-		q.setLong("userId", mUser.getObject().getId());
-		return q.list();
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Integer> getStudentScoresForPrompt(IModel<Prompt> mPrompt) {
-		Query q = Databinder.getHibernateSession().createSQLQuery(getStudentScoresForPromptQueryString(mPrompt));
-		q.setLong("promptId", mPrompt.getObject().getId());
-		return q.list();
-	}
-
-	private String getStudentScoresForPromptQueryString(IModel<Prompt> mPrompt) {
-		if (isChoicePrompt(mPrompt)) {
-			return "select  max(responsedata.score) as score from response join responsedata" + 
-			   " on response.prompt_id = :promptId" +
-			   " and response.responsedata_id = responsedata.id" +
-			   " and response.valid = 't'" +
-			   " group by response.user_id";
-		}
-		else {
-			return "select  max(response.score) as score from response" + 
-			   " where response.prompt_id = :promptId" +
-			   " and response.valid = 't'" +
-			   " group by response.user_id";
-		}
-	}
-
-	private boolean isChoicePrompt(IModel<Prompt> mPrompt) {
-		ISIPrompt prompt = (ISIPrompt) mPrompt.getObject();
-		return prompt.getType() == PromptType.SINGLE_SELECT;
+	public IModel<List<ISIResponse>> getPeriodResponsesForPrompt(IModel<Prompt> mPrompt, IModel<Period> mPeriod) {
+		Criteria criteria = Databinder.getHibernateSession()
+				.createCriteria(ISIResponse.class)
+				.createAlias("user", "user")
+				.createAlias("user.periods", "p" )
+				.add(Restrictions.eq("p.id", mPeriod.getObject().getId()))
+				.add(Restrictions.eq("prompt", mPrompt.getObject()))
+				.add(Restrictions.eq("valid", true))
+				.setCacheable(true)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return new ListModel<ISIResponse>(criteria.list());
 	}
 
 }

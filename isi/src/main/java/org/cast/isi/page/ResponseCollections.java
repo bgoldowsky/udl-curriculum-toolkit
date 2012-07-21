@@ -143,7 +143,8 @@ public class ResponseCollections extends ISIStandardPage {
 	}
 
 	private ScoreCounts getScoreCounts() {
-		return responseService.getScoreCountsForCollectionForStudent(paramCollectionName, mUser);
+		IModel<List<ISIResponse>> responses =  responseService.getAllResponsesForCollectionByStudent(paramCollectionName, mUser);
+		return ScoreCounts.forResponses("questions", responses);
 	}
 
 	private boolean haveCollections(List<String> listNames) {
