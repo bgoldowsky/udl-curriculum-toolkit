@@ -57,18 +57,20 @@ public abstract class SectionCompleteTogglePanel extends Panel implements ISecti
 	
 	@Getter
 	protected ContentLoc sectionContentLocation;
+	protected ContentLoc pageContentLocation;
 
 	public SectionCompleteTogglePanel(String id, IModel<XmlSection> mSection, IModel<User> mTargetUser) {
 		super(id);
 		this.mSection = mSection;
 		this.mTargetUser = mTargetUser;
+		this.pageContentLocation = getContentLoc(getISIXmlSection());
 		this.sectionContentLocation = getContentLoc(getSectionAncestor(getISIXmlSection()));
 		setOutputMarkupId(true);
 	}
 	
 	@Override
 	public void onConfigure() {
-		setVisible(visibilityEnabled && featureService.isSectionToggleTextLinksOn());
+		setVisible(visibilityEnabled && featureService.isSectionToggleTextLinksOn() && isLastPageInSection());
 		super.onConfigure();
 	}
 	
@@ -83,6 +85,15 @@ public abstract class SectionCompleteTogglePanel extends Panel implements ISecti
 		addOrReplace(getCompletedImage("doneImage", showCompletedImage()));
 		addOrReplace(new Label("instructions", getInstructions()));
 		super.onBeforeRender();
+	}
+
+	private boolean isLastPageInSection() {
+		ISIXmlSection section = getSection();
+		return (section != null) && (section.isLastPageInSection());
+	}
+
+	private ISIXmlSection getSection() {
+		return pageContentLocation.getSection();
 	}
 
 	/**
