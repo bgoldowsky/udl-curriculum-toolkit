@@ -39,6 +39,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
@@ -195,7 +196,7 @@ public class ResponseCollections extends ISIStandardPage {
 		// Text associated with Prompt
 		rvPromptList.add(factory.makeQuestionTextComponent("question", prompt));
 		
-		rvPromptList.add(makeResponseListView(responses));
+		rvPromptList.add(makeResponseListView(prompt, responses));
 		return rvPromptList;
 	}
 
@@ -233,13 +234,20 @@ public class ResponseCollections extends ISIStandardPage {
 		return new ArrayList<String>();
 	}
 
-	private Component makeResponseListView(List<ISIResponse> responses) {
+	private Component makeResponseListView(final ISIPrompt prompt, List<ISIResponse> responses) {
 		return new ListView<ISIResponse>("responseList", responses) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void populateItem(ListItem<ISIResponse> item) {
 				item.add(factory.makeResponseViewComponent("response", item.getModel()));
+				// Link back to content
+				BookmarkablePageLink<ISIStandardPage> editLink = new SectionLinkFactory().linkTo(
+						"editLink",
+						prompt.getContentElement().getContentLocObject().getSection(),
+						prompt.getContentElement().getXmlId());
+				editLink.add(new ClassAttributeModifier("sectionLink"));
+				item.add(editLink);
 			}
 
 		};
