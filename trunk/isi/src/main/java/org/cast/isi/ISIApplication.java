@@ -78,10 +78,8 @@ import org.cast.cwm.indira.FileResourceManager;
 import org.cast.cwm.indira.IndiraImage;
 import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.indira.IndiraMarkupParserFactory;
-import org.cast.cwm.service.CwmService;
 import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.HighlightService;
-import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.service.IResponseService;
 import org.cast.cwm.service.SiteService;
 import org.cast.cwm.tag.TagService;
@@ -110,9 +108,12 @@ import org.cast.isi.page.PeriodResponsePage;
 import org.cast.isi.page.TeacherNotesPopup;
 import org.cast.isi.page.Whiteboard;
 import org.cast.isi.panel.AbstractNavBar;
+import org.cast.isi.panel.DefaultHeaderPanel;
+import org.cast.isi.panel.DefaultNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.HeaderPanel;
+import org.cast.isi.panel.TeacherHeaderPanel;
 import org.cast.isi.service.FeatureService;
 import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
@@ -1160,17 +1161,26 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 	}
 	
-	/*======================
-	 *== Abstract Methods ==
-	 *======================
-	 */
-	
 	/**
 	 * Returns the header and footer panel to be used on pages for this application.
 	 * @return
 	 */
-	public abstract HeaderPanel getHeaderPanel(String id, PageParameters parameters);
-	public abstract FooterPanel getFooterPanel(String id, PageParameters parameters);
-	public abstract AbstractNavBar<?> getNavBar(String id, IModel<? extends XmlSection> sec, boolean teacher); // think I need a type here
+	public HeaderPanel getHeaderPanel(String id, PageParameters parameters) {
+//		the header panel expects the application to add buttons		
+		if (Role.TEACHER.equals(CwmSession.get().getUser().getRole()))
+			return new TeacherHeaderPanel(id, parameters);
+		else
+			return new DefaultHeaderPanel(id, parameters);
+	}
+
+	public FooterPanel getFooterPanel(String id, PageParameters parameters) {
+		return new FooterPanel(id, parameters);
+	}
+
+	@SuppressWarnings("unchecked")
+	public AbstractNavBar<?> getNavBar(String id, IModel<? extends XmlSection> sec, boolean teacher) {
+		return new DefaultNavBar(id, (IModel<XmlSection>) sec, teacher);
+	}
+
 		
 }
