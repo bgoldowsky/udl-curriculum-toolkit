@@ -27,9 +27,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.xml.XmlSection;
-import org.cast.example.panel.ExampleHeaderPanel;
-import org.cast.example.panel.ExampleNavBar;
-import org.cast.example.panel.TeacherHeaderPanel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.page.AdminHome;
 import org.cast.isi.page.ISIStandardPage;
@@ -79,32 +76,12 @@ public class ExampleApplication extends ISIApplication {
 	}
 
 	@Override
-	public HeaderPanel getHeaderPanel(String id, PageParameters parameters) {
-//		the header panel expects the application to add buttons		
-		if (Role.TEACHER.equals(CwmSession.get().getUser().getRole()))
-			return new TeacherHeaderPanel(id, parameters);
-		else
-			return new ExampleHeaderPanel(id, parameters);
-	}
-
-	@Override
 	public Class<? extends WebPage> getHomePage(Role role) {
 		if (role.equals(Role.ADMIN) || role.equals(Role.RESEARCHER)) 
 			return AdminHome.class;
 		if (role.equals(Role.TEACHER) || role.equals(Role.STUDENT))
 			return getTocPageClass(role);
 		return getSignInPageClass();
-	}
-
-	@Override
-	public FooterPanel getFooterPanel(String id, PageParameters parameters) {
-		return new FooterPanel(id, parameters);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public AbstractNavBar<?> getNavBar(String id, IModel<? extends XmlSection> sec, boolean teacher) {
-		return new ExampleNavBar(id, (IModel<XmlSection>) sec, teacher);
 	}
 
 	@Override
