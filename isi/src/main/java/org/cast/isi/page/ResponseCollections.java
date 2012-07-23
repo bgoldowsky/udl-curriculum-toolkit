@@ -43,6 +43,7 @@ import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
+import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISIApplication;
@@ -112,7 +113,7 @@ public class ResponseCollections extends ISIStandardPage {
 			add(new Label("collectionTitle", paramCollectionName));
 		}
 						
-		List<String> listNames = getCollectionNames();
+		List<String> listNames = getCollectionNames(mUser);
 		
 		// components on the left side
 		add(makeCollectionNameRepeater(listNames));
@@ -142,6 +143,16 @@ public class ResponseCollections extends ISIStandardPage {
 		}
 		
 	}
+
+	@Override
+	public void reloadForPeriodStudentChange(final PageParameters parameters) {
+		PageParameters newParams = new PageParameters(parameters);
+		IModel<User> targetUserModel = ISISession.get().getTargetUserModel();
+		List<String> collectionNames = getCollectionNames(targetUserModel);
+		if (!(collectionNames.contains(paramCollectionName)))
+			newParams.remove("name");
+		super.reloadForPeriodStudentChange(newParams);
+	}			
 
 	private ScoreCounts getScoreCounts() {
 		IModel<List<ISIResponse>> responses =  responseService.getAllResponsesForCollectionByStudent(paramCollectionName, mUser);
@@ -227,9 +238,9 @@ public class ResponseCollections extends ISIStandardPage {
 		return bpl;
 	}
 
-	private List<String> getCollectionNames() {
-		if (mUser.getObject() != null) {
-			return responseService.getResponseCollectionNames(mUser);
+	private List<String> getCollectionNames(IModel<User> userModel) {
+		if (userModel.getObject() != null) {
+			return responseService.getResponseCollectionNames(userModel);
 		}
 		return new ArrayList<String>();
 	}

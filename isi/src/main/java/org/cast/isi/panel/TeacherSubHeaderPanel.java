@@ -27,6 +27,7 @@ import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Role;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
+import org.cast.isi.page.ISIStandardPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,8 +79,10 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 
 			@Override
 			protected void onFormSubmit() {
-				setResponsePage(getPage().getClass(), parameters);								
-			}			
+				ISIStandardPage currentPage = (ISIStandardPage) getPage();
+				currentPage.reloadForPeriodStudentChange(parameters);								
+			}
+
 		};    	
 		add(periodStudentSelectPanel);
 		periodStudentSelectPanel.setOutputMarkupId(true);

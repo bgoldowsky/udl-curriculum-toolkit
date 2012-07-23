@@ -135,5 +135,10 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		}
 		
 	}
+
+	public void reloadForPeriodStudentChange(final PageParameters parameters) {
+		setResponsePage(getPage().getClass(), parameters);
+	}			
+
 	
 }
