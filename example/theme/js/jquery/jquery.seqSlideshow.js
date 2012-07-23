@@ -20,6 +20,23 @@
         // Add carent placeholders
         this.caretHolder = $('<span class="caret"></span>');
         $tabs.find(".ui-tabs-nav li").append(this.caretHolder);
+        
+        // Bind a click log event to the tabs
+        $tabs.find("li.ui-state-default a").each(function() {
+            var slideShowLink = $(this);
+
+        	slideShowLink.bind("click", function(e) {
+            	// get the id of the parent with the class equal slideshow 
+            	var slideshowId = slideShowLink.parents('.slideshow:first').attr('id');
+
+            	// remove the # 
+            	var tempCurrentSlide = slideShowLink.attr('href');
+            	var currentSlideId = slideShowLink.attr('href').substring(1, tempCurrentSlide.length);
+
+            	logJsEvent("id=" + slideshowId + ",slideId=" + currentSlideId + ",linkId=" + slideShowLink.attr("id"), "", "slideshow");
+                return false;
+            });
+        });
 
         // Add previous/next buttons
         this.navbtns = $('<li class="slideshowNav" style="float: right;"><a href="#" class="slideshowPrev">' + lang['DSLIDE_PREV'] + '</a> <a href="#" class="slideshowNext">' + lang['DSLIDE_NEXT'] + '</a></li>');
@@ -30,7 +47,6 @@
         $tabs.find(".ui-tabs-nav a").each(function()  {
             $(this).addClass("button");
         });
-
 
         // Fires when tab is selected (clicked) - does not fire on current tab
         $tabs.bind( "tabsshow", function(e, ui) {
@@ -100,7 +116,7 @@
     	var currentSlideId = tempCurrentSlide.substring(1, tempCurrentSlide.length);
 
     	// listener has been set up for this event call found in functions.js
-    	logJsEvent("id=" + slideshowId + ",slideId=" + currentSlideId + ",state=" + buttonType, "", "slideshow");
+    	logJsEvent("id=" + slideshowId + ",slideId=" + currentSlideId + ",linkId=" + buttonType, "", "slideshow");
 
     };
 
