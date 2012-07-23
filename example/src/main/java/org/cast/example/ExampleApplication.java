@@ -19,22 +19,16 @@
  */
 package org.cast.example;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.Role;
-import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.page.AdminHome;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.Reading;
 import org.cast.isi.page.TeacherReading;
-import org.cast.isi.panel.AbstractNavBar;
-import org.cast.isi.panel.FooterPanel;
-import org.cast.isi.panel.HeaderPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
