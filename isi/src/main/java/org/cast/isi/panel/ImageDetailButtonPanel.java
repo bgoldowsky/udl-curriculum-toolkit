@@ -47,7 +47,7 @@ public class ImageDetailButtonPanel extends ISIPanel{
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				EventService.get().saveEvent("image:" + (expand ? "zoom:detail" : "detail"), imageId, ((ISIBasePage) getPage()).getPageName());
+				EventService.get().saveEvent("image:" + (expand ? "zoom:detail" : "detail"), "imageId=" + imageId, ((ISIBasePage) getPage()).getPageName());
 			}
 			
 			@Override
