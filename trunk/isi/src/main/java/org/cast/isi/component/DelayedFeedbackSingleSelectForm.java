@@ -105,8 +105,7 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 	
 	@Override
 	protected void onBeforeRender() {
-		if (isComplete()  && isLockResponse())
-			setEnabled(false);
+		setEnabled(!((isComplete()  && isLockResponse())));
 		super.onBeforeRender();
 	}
 
