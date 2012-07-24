@@ -378,4 +378,13 @@ public class ISIXmlSection extends XmlSection {
 		return (attributeValue != null) && (attributeValue.contains(checkValue));
 	}
 
+	public boolean hasSuperSections() {
+		for (XmlSection child: getChildren()) {
+			ISIXmlSection isiSection = (ISIXmlSection) child;
+			if (isiSection.isSuperSection())
+				return true;
+		}
+		return false;
+	}
+
 }
