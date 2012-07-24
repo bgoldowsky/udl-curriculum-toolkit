@@ -25,6 +25,7 @@ import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISISession;
+import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.service.ISectionService;
 
@@ -48,6 +49,8 @@ public class SingleSelectDelayMessage extends WebMarkupContainer {
 	
 	private String location;
 
+	private IModel<XmlSection> currentSectionModel;
+
 	/**
 	 * Construct with the model of the current section and the specified user;
 	 * @param id
@@ -57,6 +60,7 @@ public class SingleSelectDelayMessage extends WebMarkupContainer {
 	public SingleSelectDelayMessage(String id, IModel<XmlSection> currentSectionModel, IModel<User> mUser) {
 		super(id);
 		location = new ContentLoc(currentSectionModel.getObject()).getLocation();
+		this.currentSectionModel = currentSectionModel;
 		this.mUser = mUser;
 	}
 	
@@ -87,7 +91,8 @@ public class SingleSelectDelayMessage extends WebMarkupContainer {
 	}
 
 	private boolean isReviewed() {
-		return nullSafeBoolean(sectionService.sectionIsReviewed(getUser(), location));			
+		boolean sectionIsReviewed = sectionService.sectionIsReviewed(getUser(), (ISIXmlSection) currentSectionModel.getObject());
+		return sectionIsReviewed;			
 	}
 
 	private User getUser() {
@@ -96,7 +101,4 @@ public class SingleSelectDelayMessage extends WebMarkupContainer {
 		return mUser.getObject();
 	}	
 
-	private boolean nullSafeBoolean(Boolean b) {
-		return (b != null) && b;
-	}
 }
