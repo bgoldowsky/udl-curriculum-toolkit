@@ -64,7 +64,8 @@ public class QuestionPopup extends ISIBasePage {
 		PromptModel mPrompt = new PromptModel(question.getPrompt());
 		ResponseList responseList = new ResponseList("responses", mPrompt, questionsMetadata, null, null);
 		add(responseList);
-		responseList.setContext("questions");
+		String context = "questions" + (isTeacher ? ".teacher" : ""  );
+		responseList.setContext(context);
 		responseList.setAllowNotebook(false);
 		responseList.setAllowWhiteboard(false);
 		responseList.setAllowEdit(!isTeacher);
