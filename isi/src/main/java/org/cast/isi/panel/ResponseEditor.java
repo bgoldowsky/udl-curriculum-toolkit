@@ -49,6 +49,7 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
+import org.cast.cwm.service.EventService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
@@ -218,6 +219,12 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 	@Override
 	protected void onDelete(final AjaxRequestTarget target) {
+	}
+
+	@Override
+	protected void onStarterAdded(AjaxRequestTarget target) {
+		EventService.get().saveEvent("starterAdded", "promptId=" + prompt.getObject().getId().toString(), getPageName());
+		super.onStarterAdded(target);
 	}
 
 	@Override
