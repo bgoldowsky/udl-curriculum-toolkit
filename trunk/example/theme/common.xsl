@@ -420,7 +420,7 @@
 						    <!-- want this toggle when the image hasCaptions (more than one caption or a prodnote) -->
 					       	<xsl:if test="$addImageToggle = 'true'">
 			                    <div class="collapseBox">
-			                        <h5 wicket:id="imgDetailToggleHeader" src="{@src}">More Information</h5>
+			                        <h5 wicket:id="imgDetailToggleHeader" src="{@src}" imageId="{@id}">More Information</h5>
 			                        <div class="collapseBody">
 			                        <xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][position()&gt;1]" mode="caption"/>
 						       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>
@@ -498,7 +498,7 @@
 					    <!-- want this toggle when the image hasCaptions (more than one caption or a prodnote) -->
 				       	<xsl:if test="$addImageToggle = 'true'">
 		                    <div class="collapseBox">
-				                <h5 wicket:id="imgToggleHeader" src="{@src}">More Information</h5>
+				                <h5 wicket:id="imgToggleHeader" src="{@src}" imageId="{@id}">More Information</h5>
 		                        <div class="collapseBody">
 		                        <xsl:apply-templates select="../dtb:caption[@imgref=current()/@id][position()&gt;1]" mode="caption"/>
 					       		<xsl:apply-templates select="../dtb:prodnote[@imgref=current()/@id]" mode="prodnote"/>

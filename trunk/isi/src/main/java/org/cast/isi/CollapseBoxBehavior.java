@@ -39,6 +39,7 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 	private static final long serialVersionUID = 1L;
 	private String type;
 	private String pageName;
+	private String detail;
 
 	/**
 	 * A constructor.  The event is the Ajax Event (e.g. 'onclick') and the type
@@ -55,6 +56,14 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 		this.type = type;
 		this.pageName = pageName;
 	}
+
+	public CollapseBoxBehavior(String event, String type, String pageName, String detail) {
+		super(event);
+		this.type = type;
+		this.pageName = pageName;
+		this.detail = detail;
+	}	
+
 	
 	@Override
 	protected CharSequence generateCallbackScript(CharSequence partialCall) {
@@ -69,6 +78,10 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 	@Override
 	protected void onEvent(AjaxRequestTarget target) {
 		String action = RequestCycle.get().getRequest().getParameter("action");
+		action = "state=" + action;
+		if (!(detail == null || detail.isEmpty())) {
+			action += "," + detail;
+		}
 		EventService.get().saveEvent("toggle:" + type, action, pageName);
 	}
 	

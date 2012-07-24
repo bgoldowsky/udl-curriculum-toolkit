@@ -524,6 +524,7 @@ public class ISIXmlComponent extends XmlComponent {
 				|| wicketId.startsWith("imgDetailToggleHeader")
 				|| wicketId.startsWith("objectToggleHeader")) {
 			// long description header for toggle area
+
 			String src = elt.getAttribute("src");
 
 			// remove everything but the name of the media
@@ -531,23 +532,27 @@ public class ISIXmlComponent extends XmlComponent {
 			src = src.substring(lastIndex, src.length());
 
 			Label label;
-			String eventType = null;
-			if (wicketId.startsWith("imgToggleHeader")) {
+			String eventType = "ld";
+			String detail = null;
+			if (wicketId.startsWith("img")) {
 				label = new Label(wicketId, new ResourceModel("imageLongDescription.toggleHeading",	"image information"));
-				eventType = "ld:" + src;
-			} else if (wicketId.startsWith("imgDetailToggleHeader")) {
-				label = new Label(wicketId, new ResourceModel("imageLongDescription.toggleHeading",	"image information"));
-				eventType = "ld:detail:" + src;
+				String imageId = elt.getAttribute("imageId");
+				detail = "imageId=" + imageId;
+				label.add(new AttributeRemover("imageId"));
+				if (wicketId.startsWith("imgDetailToggleHeader")) {
+					label = new Label(wicketId, new ResourceModel("imageLongDescription.toggleHeading",	"image information"));
+					detail = detail + ",context=detail";
+				}
 			} else { // video or mp3 files
 				if (src.contains(".mp3")) {
 					label = new Label(wicketId, new ResourceModel("audioLongDescription.toggleHeading",	"more audio information"));
 				} else {
 					label = new Label(wicketId, new ResourceModel("videoLongDescription.toggleHeading",	"more video information"));
 				}
-				eventType = "ld:" + src;
+				detail = "src=" + src;
 			}
 
-			label.add(new CollapseBoxBehavior("onclick", eventType, ((ISIBasePage) getPage()).getPageName()));
+			label.add(new CollapseBoxBehavior("onclick", eventType, ((ISIBasePage) getPage()).getPageName(), detail));
 			label.add(new AttributeRemover("src"));
 			return label;
 			
