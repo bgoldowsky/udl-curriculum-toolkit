@@ -53,6 +53,8 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.link.PopupSettings;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
@@ -210,6 +212,11 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected String rssFeedUrl;
 	@Getter protected int maxRssFeedItems;
 	
+	// navbar section icons types from the config file
+	@Getter protected String navbarSectionIconsTeacher = "status";
+	@Getter protected String navbarSectionIconsStudent = "class";
+
+
 	// Service Classes and Plugins
 	@Getter @Setter protected Glossary glossary;
 	@Getter @Setter protected ISITagLinkBuilder tagLinkBuilder = new ISITagLinkBuilder();
@@ -428,6 +435,9 @@ public abstract class ISIApplication extends CwmApplication {
 		rssFeedOn = setBooleanProperty("isi.rssFeed.isOn", rssFeedOn);
 		emailOn = setBooleanProperty("isi.email.isOn", emailOn);
 		selfRegisterOn = setBooleanProperty("isi.selfRegister.isOn", selfRegisterOn);
+		
+		navbarSectionIconsTeacher = setStringProperty("isi.navbar.sectionIcons.teacher", navbarSectionIconsTeacher);
+		navbarSectionIconsStudent = setStringProperty("isi.navbar.sectionIcons.student", navbarSectionIconsStudent);
 
 		String urlValue = appProperties.getProperty("app.url");
 		if (urlValue != null) {
@@ -474,6 +484,16 @@ public abstract class ISIApplication extends CwmApplication {
 		log.debug("Finished configuring ISI Application Properties");
 	}
 
+	private String setStringProperty(String property, String defaultPropertyValue) {
+		String propertyValue =  appProperties.getProperty(property);
+		if (propertyValue != null) {
+			log.info("Value of {} is  = {}", property, propertyValue);
+			return propertyValue.trim();
+		}
+		log.info("Value of {} is = {}", property, defaultPropertyValue);
+		return defaultPropertyValue; 
+	}
+	
 	protected Boolean setBooleanProperty(String property, boolean defaultPropertyValue) {
 		String propertyValue =  appProperties.getProperty(property);
 		if (propertyValue != null) {
@@ -1064,6 +1084,87 @@ public abstract class ISIApplication extends CwmApplication {
 		return new IndiraImageComponent(wicketId, new Model<IndiraImage>(ii));
 	}
 	
+	public WebComponent teacherStatusIconFor(ISIXmlSection section, SectionStatus sectionStatus) {
+		String imageName = "";
+		String alt = "";
+		IModel<ISIXmlSection> sectionModel = new Model<ISIXmlSection>(section);
+		String sectionTitle = section.getTitle();
+		IndiraImage ii = null;
+		
+		// if there is no sectionStatus record then student hasn't finished this section
+		if (sectionStatus == null) {
+			imageName = "status_incomplete";
+			alt = formatAltString(
+					"isi.sectionStatusIconAlt.incomplete", 
+					"%s is incomplete", 
+					sectionModel);
+		} else if (sectionStatus.getUnreadStudentMessages() > 0) {
+			imageName = "status_message";
+			alt = formatAltString(
+					"isi.sectionStatusIconAlt.newfeedback", 
+					"%s has new feedback from student", 
+					sectionModel);
+		} else if (!sectionStatus.getCompleted()) {
+			imageName = "status_incomplete";
+			alt = formatAltString(
+					"isi.sectionStatusIconAlt.incomplete", 
+					"%s is incomplete", 
+					sectionModel);
+		} else if (sectionStatus.getReviewed()) {
+			imageName = "status_reviewed";
+			alt = formatAltString(
+					"isi.sectionStatusIconAlt.reviewed", 
+					"%s has been reviewed", 
+					sectionModel);
+		} else {
+			imageName = "status_ready";
+			alt = formatAltString(
+					"isi.sectionStatusIconAlt.ready", 
+					"%s is ready for review", 
+					sectionModel);
+		}
+		ii = IndiraImage.get("img/icons/" + imageName + ".png");
+		IndiraImageComponent icon = new IndiraImageComponent("icon", new Model<IndiraImage>(ii));
+		icon.add(new SimpleAttributeModifier("alt", alt));
+		icon.add(new SimpleAttributeModifier("title", alt));
+		return icon;
+	}
+	
+	public WebComponent studentStatusIconFor(ISIXmlSection section, SectionStatus sectionStatus) {
+		String imageName = "";
+		String alt = "";
+		IModel<ISIXmlSection> sectionModel = new Model<ISIXmlSection>(section);
+		IndiraImage ii = null;
+		
+		if ((sectionStatus == null) || (!sectionStatus.getCompleted())) {
+			imageName = "status_incomplete";
+			alt = formatAltString(
+					"isi.sectionStatusIconAlt.incomplete", 
+					"%s is incomplete", 
+					sectionModel);
+		} else {
+			imageName = "status_complete";
+			alt = formatAltString(
+					"isi.sectionStatusIconAlt.complete", 
+					"%s is completed", 
+					sectionModel);
+		}
+		ii = IndiraImage.get("img/icons/" + imageName + ".png");
+		IndiraImageComponent icon = new IndiraImageComponent("icon", new Model<IndiraImage>(ii));
+		icon.add(new SimpleAttributeModifier("alt", alt));
+		icon.add(new SimpleAttributeModifier("title", alt));
+		return icon;
+	}
+	private String formatAltString(String propertyKey, String defaultFormat, IModel<ISIXmlSection> sectionModel) {
+		return new StringResourceModel(
+				propertyKey, 
+				sectionModel, 
+				String.format(
+						defaultFormat, 
+						sectionModel.getObject().getTitle())
+				).getString();
+	}
+		
 	/*============================
 	 *== Static Support Methods ==
 	 *===========================+
@@ -1097,8 +1198,7 @@ public abstract class ISIApplication extends CwmApplication {
 		icon.add(new SimpleAttributeModifier("title", alt));
 		return icon;
 	}
-	
-		
+
 	/*=========================
 	 *== Static Link Classes ==
 	 *=========================

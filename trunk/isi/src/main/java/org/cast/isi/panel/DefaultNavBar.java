@@ -22,10 +22,13 @@ package org.cast.isi.panel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
@@ -54,10 +57,8 @@ import com.google.inject.Inject;
  * by clicking on its icon.
  */
 public class DefaultNavBar extends AbstractNavBar<XmlSection> {
-	private static final long serialVersionUID = 1L;
 
-	@Inject
-	private ISectionService sectionService;
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Construct nav bar based on a certain page that is currently being displayed.
@@ -82,7 +83,8 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 		 **************************/
 		RepeatingView superSectionRepeater = new RepeatingView("superSectionRepeater");
 		add(superSectionRepeater);
-		
+
+		SectionIconFactory iconFactory = SectionIconFactory.getIconFactory(teacher);
 		// Determine if there is a super-section level, or if we just have a list of regular sections 
 		if (!((ISIXmlSection)rootSection.getChild(0)).isSuperSection()) {
 			
@@ -90,7 +92,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 			WebMarkupContainer container = new WebMarkupContainer(superSectionRepeater.newChildId());
 			superSectionRepeater.add(container);
 			container.add(new EmptyPanel("superSectionTitle"));
-			container.add(new SectionRepeater("sectionRepeater", rootSection.getChildren(), currentSection, teacher));
+			container.add(new SectionRepeater("sectionRepeater", rootSection.getChildren(), currentSection, teacher, iconFactory));
 		
 		} else {
 			// We do have supersections
@@ -110,7 +112,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 					sections = superSection.getChildren();
 				}
 
-				superSectionContainer.add (new SectionRepeater("sectionRepeater", sections, currentSection, teacher));
+				superSectionContainer.add (new SectionRepeater("sectionRepeater", sections, currentSection, teacher, iconFactory));
 			}
 		}
 	
@@ -145,7 +147,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 
 		private static final long serialVersionUID = 1L;
 
-		public SectionRepeater(String id, Iterable<XmlSection> sections, XmlSection currentSection, boolean teacher) {
+		public SectionRepeater(String id, Iterable<XmlSection> sections, XmlSection currentSection, boolean teacher, SectionIconFactory iconFactory) {
 			super(id);
 
 			for(XmlSection s : sections) {
@@ -159,16 +161,9 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 					link.setEnabled(false);
 					link.add(new ClassAttributeModifier("current"));
 				}
+				
+				link.add(iconFactory.getIconFor(section));
 
-				// if this is a teacher then display the section status
-				if (teacher) {
-					IModel<User> mTargetUser = ISISession.get().getTargetUserModel();
-					SectionStatus stat = sectionService.getSectionStatus(mTargetUser.getObject(), section);
-					link.add(ISIApplication.statusIconFor(stat));					
-				} else {
-					link.add(ISIApplication.get().iconFor(section, ""));
-				}
-					
 				sectionContainer.add(link);
 				sectionContainer.add(new WebMarkupContainer("current").setVisible(current));
 			}
@@ -177,5 +172,99 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 		
 	}
 	
+	public static abstract class SectionIconFactory {
+
+		private static final String ICON_TYPE_CLASS = "class";
+		private static final String ICON_TYPE_STATUS = "status";
+		
+		@Inject
+		protected ISectionService sectionService;
+
+		public SectionIconFactory() {
+			InjectorHolder.getInjector().inject(this);
+		}
+		
+		public static SectionIconFactory getIconFactory(boolean teacher) {
+			IModel<User> targetUserModel = ISISession.get().getTargetUserModel();
+			if (teacher) {
+				String type = ISIApplication.get().getNavbarSectionIconsTeacher();
+				if (ICON_TYPE_STATUS.equals(type)) {
+					return new TeacherStatusSectionIconFactory(targetUserModel);
+				}
+				else if (ICON_TYPE_CLASS.equals(type)) {
+					return new ClassSectionIconFactory();
+				}
+				else  {
+					return new NullSectionIconFactory();
+				}
+			}
+			else {
+				String type = ISIApplication.get().getNavbarSectionIconsStudent();
+				if (ICON_TYPE_STATUS.equals(type)) {
+					return new StudentStatusSectionIconFactory(targetUserModel);
+				}
+				else if (ICON_TYPE_CLASS.equals(type)) {
+					return new ClassSectionIconFactory();
+				}
+				else {
+					return new NullSectionIconFactory();
+				}
+			}
+		}
+
+		public abstract Component getIconFor(ISIXmlSection section);
+
+		public static class NullSectionIconFactory extends SectionIconFactory {
+
+			@Override
+			public Component getIconFor(ISIXmlSection section) {
+				return new Image("icon").setVisible(false);
+			}
+
+		}
+
+		public static class ClassSectionIconFactory extends SectionIconFactory {
+
+			@Override
+			public Component getIconFor(ISIXmlSection section) {
+				return ISIApplication.get().iconFor(section, "");
+			}
+
+		}
+
+		public static class StudentStatusSectionIconFactory extends SectionIconFactory {
+
+			private IModel<User> targetUserModel;
+
+			public StudentStatusSectionIconFactory(IModel<User> targetUserModel) {
+				this.targetUserModel = targetUserModel;
+			}
+
+			@Override
+			public Component getIconFor(ISIXmlSection section) {
+				SectionStatus stat = sectionService.getSectionStatus(targetUserModel.getObject(), section);
+				return ISIApplication.get().studentStatusIconFor(section, stat);					
+			}
+
+		}
+
+		public static class TeacherStatusSectionIconFactory extends SectionIconFactory {
+
+			private IModel<User> targetUserModel;
+
+			public TeacherStatusSectionIconFactory(IModel<User> targetUserModel) {
+				this.targetUserModel = targetUserModel;
+			}
+
+			@Override
+			public Component getIconFor(ISIXmlSection section) {
+				SectionStatus stat = sectionService.getSectionStatus(targetUserModel.getObject(), section);
+				return ISIApplication.get().teacherStatusIconFor(section, stat);					
+			}
+
+		}
+
+	}
+
 	
 }
