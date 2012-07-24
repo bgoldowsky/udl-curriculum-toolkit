@@ -19,7 +19,6 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -172,7 +171,8 @@ public class MyQuestions extends ISIStandardPage {
 			add(responseButtons);
 
 			ResponseList responseList = new ResponseList("responseList", mPrompt, questionsMetadata, loc);
-			responseList.setContext("questions");
+			String context = "questions" + (isTeacher ? ".teacher" : ""  );
+			responseList.setContext(context);
 			responseList.setAllowEdit(!isTeacher);
 			responseList.setAllowNotebook(false);
 			responseList.setAllowWhiteboard(false);
