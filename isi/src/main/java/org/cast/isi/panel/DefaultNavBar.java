@@ -86,34 +86,11 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 
 		SectionIconFactory iconFactory = SectionIconFactory.getIconFactory(teacher);
 		// Determine if there is a super-section level, or if we just have a list of regular sections 
-		if (!((ISIXmlSection)rootSection.getChild(0)).isSuperSection()) {
-			
-			// Simple case - no supersection.  Create a single container and put sections into it.
-			WebMarkupContainer container = new WebMarkupContainer(superSectionRepeater.newChildId());
-			superSectionRepeater.add(container);
-			container.add(new EmptyPanel("superSectionTitle"));
-			container.add(new SectionRepeater("sectionRepeater", rootSection.getChildren(), currentSection, teacher, iconFactory));
-		
-		} else {
-			// We do have supersections
-			for (XmlSection ss: rootSection.getChildren()) {
-				ISIXmlSection superSection = (ISIXmlSection) ss;
-				WebMarkupContainer superSectionContainer = new WebMarkupContainer(superSectionRepeater.newChildId());
-				superSectionRepeater.add(superSectionContainer);
-
-				superSectionContainer.add(new Label("superSectionTitle", superSection.getTitle()));
-
-				List<XmlSection> sections;
-				// Use Supersection children, or supersection itself if there are no children.
-				if (!superSection.hasChildren()) {
-					sections = new ArrayList<XmlSection>();
-					sections.add(superSection);
-				} else {
-					sections = superSection.getChildren();
-				}
-
-				superSectionContainer.add (new SectionRepeater("sectionRepeater", sections, currentSection, teacher, iconFactory));
-			}
+		if (rootSection.hasSuperSections()) {
+			addSuperSections(currentSection, rootSection, superSectionRepeater, iconFactory);
+		} 
+		else {
+			addSimpleSections(currentSection, rootSection, superSectionRepeater, iconFactory);
 		}
 	
 		// Current Section's Page Repeater with prev/next
@@ -130,7 +107,41 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 		// Chapter Title (xml level 1)
 		add(new Label("title", rootSection.getTitle()));		
 	}
-	
+
+	private void addSimpleSections(ISIXmlSection currentSection,
+			ISIXmlSection rootSection, RepeatingView superSectionRepeater,
+			SectionIconFactory iconFactory) {
+		// Simple case - no supersection.  Create a single container and put sections into it.
+		WebMarkupContainer container = new WebMarkupContainer(superSectionRepeater.newChildId());
+		superSectionRepeater.add(container);
+		container.add(new EmptyPanel("superSectionTitle"));
+		container.add(new SectionRepeater("sectionRepeater", rootSection.getChildren(), currentSection, iconFactory));
+	}
+
+	private void addSuperSections(ISIXmlSection currentSection,
+			ISIXmlSection rootSection, RepeatingView superSectionRepeater,
+			SectionIconFactory iconFactory) {
+		// We do have supersections
+		for (XmlSection ss: rootSection.getChildren()) {
+			ISIXmlSection superSection = (ISIXmlSection) ss;
+			WebMarkupContainer superSectionContainer = new WebMarkupContainer(superSectionRepeater.newChildId());
+			superSectionRepeater.add(superSectionContainer);
+
+			superSectionContainer.add(new Label("superSectionTitle", superSection.getTitle()));
+
+			List<XmlSection> sections;
+			// Use Supersection children, or supersection itself if there are no children.
+			if (!superSection.hasChildren()) {
+				sections = new ArrayList<XmlSection>();
+				sections.add(superSection);
+			} else {
+				sections = superSection.getChildren();
+			}
+
+			superSectionContainer.add (new SectionRepeater("sectionRepeater", sections, currentSection, iconFactory));
+		}
+	}
+
 	public void renderHead(final IHeaderResponse response) {
 		// Nav Bar Tool Tips
 		// NOTE: Based on unstable, 2.0 version.  If replacing, take note of CSS style changes as well!
@@ -147,7 +158,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 
 		private static final long serialVersionUID = 1L;
 
-		public SectionRepeater(String id, Iterable<XmlSection> sections, XmlSection currentSection, boolean teacher, SectionIconFactory iconFactory) {
+		public SectionRepeater(String id, Iterable<XmlSection> sections, XmlSection currentSection, SectionIconFactory iconFactory) {
 			super(id);
 
 			for(XmlSection s : sections) {
