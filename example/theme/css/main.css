@@ -1214,3 +1214,19 @@ hr {
     color: #FFFFFF;
     margin-right: 5px;
 }
+
+/*================================================================*/
+/* Clearing Items */
+
+.clearfix {
+    display: inline-block;
+}
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    overflow: hidden;
+    visibility: hidden;
+}
+*:first-child+html .clearfix { zoom: 1; display: block; } /* IE7 */
