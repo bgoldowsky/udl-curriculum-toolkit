@@ -20,7 +20,6 @@
 
 package org.cast.isi.component;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import lombok.Getter;
@@ -34,13 +33,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
+import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISIDateLabel;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.panel.ISectionCompleteToggleListener;
-import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
@@ -53,55 +52,46 @@ import com.google.inject.Inject;
  *
  */
 @Slf4j
-public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements ISectionCompleteToggleListener, ISingleSelectItemChangeListener {
+public abstract class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements ISectionCompleteToggleListener, ISingleSelectItemChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	private ISectionService sectionService;
+	protected ISectionService sectionService;
 
 	@Getter
-	private String location;
+	protected String location;
 	
 	@Getter 
 	@Setter
-	private boolean showDateTime = false;
+	protected boolean showDateTime = false;
 	
-	private boolean lockResponse;
+	protected boolean lockResponse;
 	
-	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt, IModel<XmlSection> currentSectionModel) {
+	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt) {
+		super(id, mcPrompt);
+	}
+
+	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt,
+			IModel<User> userModel, IModel<User> targetUserModel) {
+		super(id, mcPrompt, userModel, targetUserModel);
+	}
+
+	public DelayedFeedbackSingleSelectForm(String id, IModel<Prompt> mcPrompt,
+			IModel<XmlSection> currentSectionModel) {
 		super(id, mcPrompt);
 		ISIXmlSection section = getIsiXmlSection(currentSectionModel);
 		location = new ContentLoc(section.getSectionAncestor()).getLocation();
 		lockResponse = (section != null) && section.isLockResponse();
 	}
 	
-	private ISIXmlSection getIsiXmlSection(IModel<XmlSection> model) {
-		
-		XmlSection section = model.getObject();
-		if ((section == null) || (!(section instanceof ISIXmlSection)))
-			return null;
-		return (ISIXmlSection) section;
-	}
-
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
 		if (mResponse.getObject() == null)
 			mResponse = responseService.newSingleSelectResponse(mTargetUser, getModel());
-		add(new StudentScorePanel("mcScore", Arrays.asList(mResponse)){
-
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public boolean isVisible() {
-				return isReviewed();
-			}
-		});
 		add(new ResponseModelRadioGroup("radioGroup", mResponse));
 	}
-	
 	
 	@Override
 	protected void onBeforeRender() {
@@ -109,20 +99,28 @@ public class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements
 		super.onBeforeRender();
 	}
 
-	private boolean isLockResponse() {
+	protected boolean isLockResponse() {
 		return lockResponse;
 	}
 
-	private boolean isComplete() {
+	protected boolean isComplete() {
 		return nullSafeBoolean(sectionService.sectionIsCompleted(getUser(), location));
 	}
 
-	private boolean isReviewed() {
+	protected boolean isReviewed() {
 		return nullSafeBoolean(sectionService.sectionIsReviewed(getUser(), location));			
 	}
 
 	private boolean nullSafeBoolean(Boolean b) {
 		return (b != null) && b;
+	}
+
+	private ISIXmlSection getIsiXmlSection(IModel<XmlSection> model) {
+		
+		XmlSection section = model.getObject();
+		if ((section == null) || (!(section instanceof ISIXmlSection)))
+			return null;
+		return (ISIXmlSection) section;
 	}
 
 	public void onSelectionChanged(AjaxRequestTarget target, SingleSelectItem selectedItem) {
