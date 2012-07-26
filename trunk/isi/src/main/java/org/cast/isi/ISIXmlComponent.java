@@ -67,9 +67,12 @@ import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
 import org.cast.isi.component.AnnotatedImageComponent;
-import org.cast.isi.component.DelayedFeedbackSingleSelectForm;
+import org.cast.isi.component.DelayedFeedbackSingleSelectView;
 import org.cast.isi.component.HotSpotComponent;
 import org.cast.isi.component.ImmediateFeedbackSingleSelectForm;
+import org.cast.isi.component.ImmediateFeedbackSingleSelectView;
+import org.cast.isi.component.ScoredDelayedFeedbackSingleSelectForm;
+import org.cast.isi.component.ScoredImmediateFeedbackSingleSelectForm;
 import org.cast.isi.component.SectionCompleteImageContainer;
 import org.cast.isi.component.SingleSelectDelayMessage;
 import org.cast.isi.component.SingleSelectItem;
@@ -357,9 +360,7 @@ public class ISIXmlComponent extends XmlComponent {
 		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_delay_")) {
-			DelayedFeedbackSingleSelectForm form = makeDelayedResponseForm(wicketId, elt);
-			form.setShowDateTime(true);
-			return form;
+			return makeDelayedResponseForm(wicketId, elt);
 		// buttons for viewing in whiteboard and notebook
 		} else if (wicketId.startsWith("viewActions")) {
 			IModel<Prompt> mPrompt = getPrompt(elt, PromptType.SINGLE_SELECT);
@@ -367,17 +368,14 @@ public class ISIXmlComponent extends XmlComponent {
 			ResponseViewActionsPanel component = new ResponseViewActionsPanel(wicketId, promptId);
 			component.add(new AttributeRemover("rgid", "title", "group", "type"));
 			return component;
+			// A single-select, multiple choice disabled form.  MultipleChoiceItems will be added to a RadioGroup
+			// child of this form.  
 		} else if (wicketId.startsWith("select1_view_immediate")) {
-			Component form = makeImmediateResponseForm(wicketId, elt);
-			form.setEnabled(false);
-			return form;
-		// A single-select, multiple choice form.  MultipleChoiceItems will be added to a RadioGroup
+			return makeImmediateResponseView(wicketId, elt);
+		// A single-select, multiple choice disabled form.  MultipleChoiceItems will be added to a RadioGroup
 		// child of this form.  
 		} else if (wicketId.startsWith("select1_view_delay")) {
-			DelayedFeedbackSingleSelectForm form = makeDelayedResponseForm(wicketId, elt);
-			form.setEnabled(false);
-			form.setShowDateTime(false);
-			return form;
+			return makeDelayedResponseView(wicketId, elt);
 		// A multiple choice radio button. Stores a "correct" value. This is
 		// added to a generic RadioGroup in a SingleSelectForm.
 		} else if (wicketId.startsWith("selectItem_")) {
@@ -649,19 +647,36 @@ public class ISIXmlComponent extends XmlComponent {
 		return builder.toString();
 	}
 	
-	private DelayedFeedbackSingleSelectForm makeDelayedResponseForm(final String wicketId,
+	private ScoredDelayedFeedbackSingleSelectForm makeDelayedResponseForm(final String wicketId,
 			final Element elt) {
 		ISIXmlSection section = getISIXmlSection();
 		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
-		DelayedFeedbackSingleSelectForm selectForm = new DelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
+		ScoredDelayedFeedbackSingleSelectForm selectForm = new ScoredDelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
+		selectForm.setShowDateTime(true);
 		return selectForm;
 	}
 	
 	private Component makeImmediateResponseForm(final String wicketId,
 			final Element elt) {
-		Component selectForm = new ImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
-			//selectForm.setDisabledOnCorrect(true);
+		Component selectForm = new ScoredImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
+		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
+		return selectForm;
+	}
+	
+	private Component makeDelayedResponseView(final String wicketId,
+			final Element elt) {
+		ISIXmlSection section = getISIXmlSection();
+		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
+		DelayedFeedbackSingleSelectView component = new DelayedFeedbackSingleSelectView(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
+		component.add(new AttributeRemover("rgid", "title", "group", "type"));
+		component.setShowDateTime(false);
+		return component;
+	}
+	
+	private Component makeImmediateResponseView(final String wicketId,
+			final Element elt) {
+		ImmediateFeedbackSingleSelectForm selectForm = new ImmediateFeedbackSingleSelectView(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 		return selectForm;
 	}

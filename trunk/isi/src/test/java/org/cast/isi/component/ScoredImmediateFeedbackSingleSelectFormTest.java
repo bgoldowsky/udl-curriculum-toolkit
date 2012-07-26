@@ -41,7 +41,7 @@ import org.cast.isi.service.ISectionService;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ImmediateFeedbackSingleSelectFormTest {
+public class ScoredImmediateFeedbackSingleSelectFormTest {
 
 	private Map<Class<? extends Object>,Object> injectionMap;
 	private ISectionService sectionService;
@@ -69,8 +69,8 @@ public class ImmediateFeedbackSingleSelectFormTest {
 	
 	@Test
 	public void canRender() {
-		wicketTester.startPanel(new TestPanelSource(new ImmediateFeedbackSingleSelectForm("component", promptModel, userModel, targetUserModel)));
-		wicketTester.assertComponent("panel:component", ImmediateFeedbackSingleSelectForm.class);
+		wicketTester.startPanel(new TestPanelSource(new ScoredImmediateFeedbackSingleSelectForm("component", promptModel, userModel, targetUserModel)));
+		wicketTester.assertComponent("panel:component", ScoredImmediateFeedbackSingleSelectForm.class);
 	}
 	
 	private void setupInjectedServices() {

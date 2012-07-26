@@ -66,9 +66,7 @@ public class ImmediateFeedbackSingleSelectForm extends SingleSelectForm {
 		super.onInitialize();
 		if (mResponse.getObject() == null)
 			mResponse = responseService.newSingleSelectResponse(mTargetUser, getModel());
-		
-		add(new SingleSelectScoreIndicator("mcScore", mResponse));
-		
+				
 		RadioGroup<String> radioGroup = new RadioGroup<String>("radioGroup", new Model<String>(mResponse.getObject().getText()));
 		add(radioGroup);
 
