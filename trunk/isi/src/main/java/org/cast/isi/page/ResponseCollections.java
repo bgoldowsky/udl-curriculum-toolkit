@@ -71,16 +71,15 @@ import com.google.inject.Inject;
 @AuthorizeInstantiation("STUDENT")
 public class ResponseCollections extends ISIStandardPage {
 	
-	private String paramCollectionName = null; // The name of the ResponseCollection currently being displayed
-	private String pageTitleEnd;
-	private UserModel mUser;
-	private boolean isTeacher = false;
+	protected String paramCollectionName = null; // The name of the ResponseCollection currently being displayed
+	protected String pageTitleEnd;
+	protected UserModel mUser;
+	protected boolean isTeacher = false;
 	
 	@Inject
-	private IISIResponseService responseService;
+	protected IISIResponseService responseService;
 	
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(ResponseCollections.class);
+	protected static final Logger log = LoggerFactory.getLogger(ResponseCollections.class);
 	protected static ResponseMetadata responseMetadata = new ResponseMetadata();
 	static {
 		responseMetadata.addType("HTML");
@@ -154,20 +153,20 @@ public class ResponseCollections extends ISIStandardPage {
 		super.reloadForPeriodStudentChange(newParams);
 	}			
 
-	private ScoreCounts getScoreCounts() {
+	protected ScoreCounts getScoreCounts() {
 		IModel<List<ISIResponse>> responses =  responseService.getAllResponsesForCollectionByStudent(paramCollectionName, mUser);
 		return ScoreCounts.forResponses("questions", responses);
 	}
 
-	private boolean haveCollections(List<String> listNames) {
+	protected boolean haveCollections(List<String> listNames) {
 		return (listNames != null) && !(listNames.isEmpty());
 	}
 
-	private boolean haveSelectedCollection() {
+	protected boolean haveSelectedCollection() {
 		return StringUtils.isNotEmpty(paramCollectionName);
 	}
 
-	private RepeatingView makePromptResponseRepeater(String id) {
+	protected RepeatingView makePromptResponseRepeater(String id) {
 		RepeatingView rvPromptResponseList = new RepeatingView(id);
 		for (ISIPrompt prompt : responseService.getResponseCollectionPrompts(mUser, paramCollectionName)) {
 			rvPromptResponseList.add(makePromptContainer(rvPromptResponseList.newChildId(), prompt));
@@ -175,7 +174,7 @@ public class ResponseCollections extends ISIStandardPage {
 		return rvPromptResponseList;
 	}
 
-	private RepeatingView makeCollectionNameRepeater(List<String> listNames) {
+	protected RepeatingView makeCollectionNameRepeater(List<String> listNames) {
 		RepeatingView rvCollectionList = new RepeatingView("collectionList");
 		
 		for (String collectionName : listNames) {
@@ -186,7 +185,7 @@ public class ResponseCollections extends ISIStandardPage {
 		return rvCollectionList;
 	}
 
-	private WebMarkupContainer makePromptContainer(String newChildId, ISIPrompt prompt) {
+	protected WebMarkupContainer makePromptContainer(String newChildId, ISIPrompt prompt) {
 		WebMarkupContainer rvPromptList = new WebMarkupContainer(newChildId);
 		
 		ISIXmlSection section = getSection(prompt);
@@ -211,7 +210,7 @@ public class ResponseCollections extends ISIStandardPage {
 		return rvPromptList;
 	}
 
-	private List<IModel<Response>> getModels(List<ISIResponse> responses) {
+	protected List<IModel<Response>> getModels(List<ISIResponse> responses) {
 		List<IModel<Response>> result = new ArrayList<IModel<Response>>();
 		for (ISIResponse response: responses) {
 			result.add(new HibernateObjectModel<Response>(response));
@@ -219,11 +218,11 @@ public class ResponseCollections extends ISIStandardPage {
 		return result;
 	}
 
-	private ISIXmlSection getSection(ISIPrompt prompt) {
+	protected ISIXmlSection getSection(ISIPrompt prompt) {
 		return prompt.getContentElement().getContentLocObject().getSection();
 	}
 
-	private BookmarkablePageLink<Page> makeCollectionLink(String collectionName) {
+	protected BookmarkablePageLink<Page> makeCollectionLink(String collectionName) {
 		BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>("link", ISIApplication.get().getResponseCollectionsPageClass())
 										.setParameter("name", collectionName);
 		bpl.add(new Label("name", collectionName));
@@ -238,14 +237,14 @@ public class ResponseCollections extends ISIStandardPage {
 		return bpl;
 	}
 
-	private List<String> getCollectionNames(IModel<User> userModel) {
+	protected List<String> getCollectionNames(IModel<User> userModel) {
 		if (userModel.getObject() != null) {
 			return responseService.getResponseCollectionNames(userModel);
 		}
 		return new ArrayList<String>();
 	}
 
-	private Component makeResponseListView(final ISIPrompt prompt, List<ISIResponse> responses) {
+	protected Component makeResponseListView(final ISIPrompt prompt, List<ISIResponse> responses) {
 		return new ListView<ISIResponse>("responseList", responses) {
 			private static final long serialVersionUID = 1L;
 
@@ -264,7 +263,7 @@ public class ResponseCollections extends ISIStandardPage {
 		};
 	}
 
-	private List<ISIResponse> getResponsesFor(ISIPrompt prompt) {
+	protected List<ISIResponse> getResponsesFor(ISIPrompt prompt) {
 		return responseService.getAllResponsesForPromptByStudent(new PromptModel(prompt), mUser);
 	}
 

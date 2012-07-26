@@ -641,6 +641,23 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		q.setCacheable(true);
 		return q.list();
 	}
+
+	
+	/**
+	 * Generate the prompts for this user's responseCollections
+	 * @param mUser
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ISIPrompt> getResponseCollectionNamePrompts(IModel<User> mUser) {
+	
+		Query q = Databinder.getHibernateSession().createQuery("select p " +
+				"from ISIPrompt p join p.responses r where p.collectionName is not null and p.collectionName!='' and r.valid='true' and r.user.id=:userId"); 
+		q.setLong("userId", mUser.getObject().getId());
+		q.setCacheable(true);
+		return q.list();
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IISIResponseService#getResponseCollectionPrompts(org.apache.wicket.model.IModel<org.cast.cwm.data.User>, java.lang.String)
