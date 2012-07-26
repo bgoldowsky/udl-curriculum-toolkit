@@ -28,6 +28,7 @@ import java.util.TreeMap;
 
 import lombok.Getter;
 import net.databinder.hib.Databinder;
+import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
@@ -51,6 +52,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
+import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.xml.XmlDocument;
@@ -67,6 +69,7 @@ import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.RemoveDialog;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseList;
+import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.service.IISIResponseService;
 import org.hibernate.LockOptions;
 import org.slf4j.Logger;
@@ -285,12 +288,23 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 			link.add(new ClassAttributeModifier("sectionLink"));
 			promptGroup.add(link);
 
+			// Show the score
+			promptGroup.add(new StudentScorePanel("responseScore", getModels(entry.getValue())));
+
 			// Text associated with Prompt
 			promptGroup.add(factory.makeQuestionTextComponent("question", currentPrompt));
 
 			// The list of responses under this prompt
 			promptGroup.add(makeResponseListView(entry));
 		}
+	}
+
+	private List<IModel<Response>> getModels(List<ISIResponse> responses) {
+		List<IModel<Response>> result = new ArrayList<IModel<Response>>();
+		for (ISIResponse response: responses) {
+			result.add(new HibernateObjectModel<Response>(response));
+		}
+		return result;
 	}
 
 

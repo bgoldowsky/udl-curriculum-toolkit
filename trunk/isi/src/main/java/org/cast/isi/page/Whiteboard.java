@@ -56,6 +56,7 @@ import org.cast.isi.ResponseViewerFactory;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.panel.RemoveDialog;
+import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.service.IISIResponseService;
 import org.hibernate.LockOptions;
 import org.slf4j.Logger;
@@ -166,7 +167,11 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 				RepeatingView questionListing = new RepeatingView("questionListing");
 				pageItem.add(questionListing);
 
-				for (ISIPrompt isiprompt : responseMap.get(sec).keySet()) {
+				SortedMap<ISIPrompt, List<ISIResponse>> promptResponseMap = responseMap.get(sec);
+
+				for (ISIPrompt isiprompt : promptResponseMap.keySet()) {
+					List<ISIResponse> responseList = promptResponseMap.get(isiprompt);
+
 					WebMarkupContainer questionItem = new WebMarkupContainer(questionListing.newChildId());
 					questionItem.setOutputMarkupId(true);
 					questionListing.add(questionItem);
@@ -175,11 +180,14 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 					titleLink.add(ISIApplication.get().iconFor(sec.getSectionAncestor(), ""));
 					questionItem.add(titleLink);
 
+
+					questionItem.add(new StudentScorePanel("responseScore", getModels(responseList)));
+
 					questionItem.add(factory.makeQuestionTextComponent("questionText", isiprompt));
 					RepeatingView responses = new RepeatingView("responseListing");
 					questionItem.add(responses);
 
-					for (ISIResponse response : responseMap.get(sec).get(isiprompt)) {
+					for (ISIResponse response : responseList) {
 						WebMarkupContainer responseItem = new WebMarkupContainer(responses.newChildId());
 						responseItem.setOutputMarkupId(true);
 						responses.add(responseItem);
@@ -212,6 +220,14 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 				}
 			}
 		}
+	}
+
+	private List<IModel<Response>> getModels(List<ISIResponse> responses) {
+		List<IModel<Response>> result = new ArrayList<IModel<Response>>();
+		for (ISIResponse response: responses) {
+			result.add(new HibernateObjectModel<Response>(response));
+		}
+		return result;
 	}
 
 	/**
