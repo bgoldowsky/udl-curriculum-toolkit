@@ -197,6 +197,8 @@ public interface IISIResponseService extends IResponseService {
 
 	List<String> getResponseCollectionNames(IModel<User> mUser);
 
+	List<ISIPrompt> getResponseCollectionNamePrompts(IModel<User> mUser);
+
 	List<ISIPrompt> getResponseCollectionPrompts(IModel<User> mUser,
 			String collectionName);
 
