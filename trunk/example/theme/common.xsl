@@ -571,7 +571,7 @@
 						title="{ancestor-or-self::dtb:responsegroup/@title}"
 						group="{ancestor-or-self::dtb:responsegroup/@group}"
 						class="subactivity">					
-						<div class="responseBar">
+						<div wicket:id="shy" class="responseBar">
 							<div class="responseLeft"><!-- empty --></div>
 							<div class="responseRight">
 								<!-- helper links -->
@@ -616,7 +616,7 @@
 						title="{ancestor-or-self::dtb:responsegroup/@title}"
 						group="{ancestor-or-self::dtb:responsegroup/@group}"
 						class="subactivity">					
-						<div class="responseBar">
+						<div wicket:id="shy" class="responseBar">
 							<div class="responseLeft"><!-- empty --></div>
 							<div class="responseRight">
 								<!-- helper links -->
