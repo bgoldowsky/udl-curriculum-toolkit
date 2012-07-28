@@ -187,6 +187,10 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 		return role.name().toLowerCase();
 	}
 	
+	public boolean isVisible() {
+		return (role.equals(Role.TEACHER) || !messageList.isEmpty());
+	}
+	
 	public String getState() {
 		if (messageList.isEmpty())
 			return "empty";
