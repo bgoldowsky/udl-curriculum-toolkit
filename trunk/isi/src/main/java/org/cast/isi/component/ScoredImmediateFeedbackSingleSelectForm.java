@@ -20,6 +20,7 @@
 package org.cast.isi.component;
 
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.components.ShyContainer;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.User;
 import org.cast.isi.panel.SingleSelectScoreIndicator;
@@ -50,7 +51,10 @@ public class ScoredImmediateFeedbackSingleSelectForm extends ImmediateFeedbackSi
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		add(new SingleSelectScoreIndicator("mcScore", mResponse));
+		SingleSelectScoreIndicator scoreIndicator = new SingleSelectScoreIndicator("mcScore", mResponse);
+		ShyContainer container = new ShyContainer("shy");
+		container.add(scoreIndicator);
+		add(container);
 	}
 	
 	

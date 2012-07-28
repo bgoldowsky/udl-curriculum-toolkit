@@ -48,6 +48,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.components.DeployJava;
+import org.cast.cwm.components.ShyContainer;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
@@ -616,10 +617,10 @@ public class ISIXmlComponent extends XmlComponent {
 			String id = elt.getAttribute("id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			return new SectionCompleteImageContainer(wicketId, currentSectionModel);
-			
 		} else if (wicketId.startsWith("itemSummary_")) {
 			return new SingleSelectSummaryXmlComponentHandler().makeComponent(wicketId, elt, getModel());
-							
+		} else if (wicketId.startsWith("shy")) {
+			return new ShyContainer(wicketId);
 		} else {
 			return super.getDynamicComponent(wicketId, elt);
 		}

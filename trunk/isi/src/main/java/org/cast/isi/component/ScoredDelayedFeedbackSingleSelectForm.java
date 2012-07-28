@@ -24,6 +24,7 @@ import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.components.ShyContainer;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.panel.StudentScorePanel;
@@ -50,7 +51,7 @@ public class ScoredDelayedFeedbackSingleSelectForm extends DelayedFeedbackSingle
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		add(new StudentScorePanel("mcScore", Arrays.asList(mResponse)){
+		StudentScorePanel studentScorePanel = new StudentScorePanel("mcScore", Arrays.asList(mResponse)){
 
 			private static final long serialVersionUID = 1L;
 			
@@ -58,7 +59,10 @@ public class ScoredDelayedFeedbackSingleSelectForm extends DelayedFeedbackSingle
 			public boolean isVisible() {
 				return isReviewed();
 			}
-		});
+		};
+		ShyContainer container = new ShyContainer("shy");		
+		container.add(studentScorePanel);
+		add(container);
 	}
 	
 	
