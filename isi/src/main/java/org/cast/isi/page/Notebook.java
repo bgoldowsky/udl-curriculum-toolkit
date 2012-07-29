@@ -187,8 +187,9 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		ChoiceRenderer<XmlSection> renderer = new ChoiceRenderer<XmlSection>("title");
 		chapterChoice = new DropDownChoice<XmlSection>("chapterChoice", new XmlSectionModel(currentChapterLoc.getSection()), mChapterList, renderer);
 		chapterChoice.add(new SimpleAttributeModifier("autocomplete", "off"));
+		chapterChoice.add(new SimpleAttributeModifier("ignore", "true"));
 
-		Form<Void> chapterSelectForm = new Form<Void>("chapterSelectForm") {
+		Form<XmlSection> chapterSelectForm = new Form<XmlSection>("chapterSelectForm") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
