@@ -152,6 +152,10 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	public synchronized IModel<Prompt> genericGetOrCreatePrompt(PromptType type, ContentLoc loc, String xmlId, IModel<User> targetUser, String identifier, String collectionName) {
 
+		//TODO: Do we need this for other fields?
+		if ("".equals(collectionName))
+			collectionName = null;
+
 		IModel<ContentElement> ce = getOrCreateContentElement(loc, xmlId);
 		
 		Criteria c = Databinder.getHibernateSession().createCriteria(ISIPrompt.class)
