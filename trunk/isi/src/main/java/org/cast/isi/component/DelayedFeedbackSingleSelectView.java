@@ -23,8 +23,7 @@ import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.xml.XmlSection;
 
-public class DelayedFeedbackSingleSelectView extends
-		DelayedFeedbackSingleSelectForm {
+public class DelayedFeedbackSingleSelectView extends DelayedFeedbackSingleSelectForm {
 
 	private static final long serialVersionUID = 1L;
 

@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -38,7 +39,7 @@ import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
 
-public abstract class SectionCompleteTogglePanel extends Panel implements ISectionCompleteToggleListener {
+public abstract class SectionCompleteTogglePanel extends Panel implements ISectionStatusChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -118,7 +119,12 @@ public abstract class SectionCompleteTogglePanel extends Panel implements ISecti
 		super.onDetach();
 	}
 	
-	public String getLocation() {
+	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
+		if (location.equals(getLocation()))
+			target.addComponent(this);
+	}
+	
+	protected String getLocation() {
 		return sectionContentLocation.getLocation();
 	}
 
