@@ -163,8 +163,8 @@
   		<a wicket:id="glossword" onclick="return togglespan(this);" class="glossary" href="#">
         	<xsl:apply-templates/>
    		</a>
-   		<xsl:text> </xsl:text>
    		<span class="inlineGlossary" style="display:none">
+		   		<xsl:text> </xsl:text>
 	   			<span wicket:id="glossdef" word="{@entryId}">definition will be inserted here</span>
   				<xsl:text> </xsl:text>
    				<a wicket:id="glosslink" word="{@entryId}">(more)</a>
