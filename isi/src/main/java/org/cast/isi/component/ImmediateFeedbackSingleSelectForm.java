@@ -35,7 +35,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.User;
 import org.cast.isi.page.ISIBasePage;
-import org.cast.isi.panel.SingleSelectScoreIndicator;
 
 
 /**

@@ -19,11 +19,13 @@
  */
 package org.cast.isi.panel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -43,9 +45,6 @@ import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.SectionStatus;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
-import org.cast.isi.panel.AbstractNavBar;
-import org.cast.isi.panel.PageNavPanel;
-import org.cast.isi.panel.QuickFlipForm;
 import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
@@ -56,9 +55,10 @@ import com.google.inject.Inject;
  * Structure above the section level may also be shown.  Allows navigation to any section
  * by clicking on its icon.
  */
-public class DefaultNavBar extends AbstractNavBar<XmlSection> {
+public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectionStatusChangeListener {
 
 	private static final long serialVersionUID = 1L;
+	private SectionIconFactory iconFactory;
 
 	/**
 	 * Construct nav bar based on a certain page that is currently being displayed.
@@ -69,32 +69,16 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 	public DefaultNavBar(String id, IModel<XmlSection> mCurrentPage, boolean teacher) {
 		super(id, mCurrentPage);
 		setOutputMarkupId(true);
+		iconFactory = SectionIconFactory.getIconFactory(teacher);
 
 		if (mCurrentPage == null) {
-			mCurrentPage = new XmlSectionModel(ISIApplication.get().getPageNum(1));
+			setModel(new XmlSectionModel(ISIApplication.get().getPageNum(1)));
 		}
-		ISIXmlSection currentPage =  (ISIXmlSection) mCurrentPage.getObject();
-		ISIXmlSection currentSection = currentPage.getSectionAncestor(); // May be the current page or an ancestor
-		
-		ISIXmlSection rootSection = ISIXmlSection.getRootSection(currentSection);
 
-		/**************************
-		 * Super Section Repeater *
-		 **************************/
-		RepeatingView superSectionRepeater = new RepeatingView("superSectionRepeater");
-		add(superSectionRepeater);
-
-		SectionIconFactory iconFactory = SectionIconFactory.getIconFactory(teacher);
-		// Determine if there is a super-section level, or if we just have a list of regular sections 
-		if (rootSection.hasSuperSections()) {
-			addSuperSections(currentSection, rootSection, superSectionRepeater, iconFactory);
-		} 
-		else {
-			addSimpleSections(currentSection, rootSection, superSectionRepeater, iconFactory);
-		}
+		ISIXmlSection rootSection = ISIXmlSection.getRootSection(getCurrentSection());
 	
 		// Current Section's Page Repeater with prev/next
-		PageNavPanel pageNavPanelTop = new PageNavPanel("pageNavPanelTop", mCurrentPage);
+		PageNavPanel pageNavPanelTop = new PageNavPanel("pageNavPanelTop", getModel());
 		add(pageNavPanelTop);
 		
 		
@@ -108,6 +92,40 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 		add(new Label("title", rootSection.getTitle()));		
 	}
 
+	@Override
+	public void onBeforeRender() {
+		ISIXmlSection currentSection = getCurrentSection();
+		ISIXmlSection rootSection = ISIXmlSection.getRootSection(currentSection);
+
+		/**************************
+		 * Super Section Repeater *
+		 **************************/
+		RepeatingView superSectionRepeater = new RepeatingView("superSectionRepeater");
+		addOrReplace(superSectionRepeater);
+
+		// Determine if there is a super-section level, or if we just have a list of regular sections 
+		if (rootSection.hasSuperSections()) {
+			addSuperSections(currentSection, rootSection, superSectionRepeater, iconFactory);
+		} 
+		else {
+			addSimpleSections(currentSection, rootSection, superSectionRepeater, iconFactory);
+		}
+		super.onBeforeRender();
+		
+	}
+
+	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
+		// refresh on section complete change for any section
+		// TODO: We really should only have to refresh the icon and link for the changed section, not the whole navbar.
+		target.addComponent(this);
+	}
+	
+	private ISIXmlSection getCurrentSection() {
+		ISIXmlSection currentPage =  (ISIXmlSection) getModelObject();
+		 // May be the current page or an ancestor
+		return currentPage.getSectionAncestor();
+	}
+	
 	private void addSimpleSections(ISIXmlSection currentSection,
 			ISIXmlSection rootSection, RepeatingView superSectionRepeater,
 			SectionIconFactory iconFactory) {
@@ -154,7 +172,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 	 * Render an icon for each item in the given list of sections.
 	 *
 	 */
-	protected class SectionRepeater extends RepeatingView {
+	protected class SectionRepeater extends RepeatingView  {
 
 		private static final long serialVersionUID = 1L;
 
@@ -183,8 +201,10 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 		
 	}
 	
-	public static abstract class SectionIconFactory {
+	public static abstract class SectionIconFactory implements Serializable {
 
+		private static final long serialVersionUID = 1L;
+		
 		private static final String ICON_TYPE_CLASS = "class";
 		private static final String ICON_TYPE_STATUS = "status";
 		
@@ -227,6 +247,8 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 
 		public static class NullSectionIconFactory extends SectionIconFactory {
 
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Component getIconFor(ISIXmlSection section) {
 				return new Image("icon").setVisible(false);
@@ -236,6 +258,8 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 
 		public static class ClassSectionIconFactory extends SectionIconFactory {
 
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Component getIconFor(ISIXmlSection section) {
 				return ISIApplication.get().iconFor(section, "");
@@ -244,6 +268,8 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 		}
 
 		public static class StudentStatusSectionIconFactory extends SectionIconFactory {
+
+			private static final long serialVersionUID = 1L;
 
 			private IModel<User> targetUserModel;
 
@@ -261,6 +287,8 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 
 		public static class TeacherStatusSectionIconFactory extends SectionIconFactory {
 
+			private static final long serialVersionUID = 1L;
+			
 			private IModel<User> targetUserModel;
 
 			public TeacherStatusSectionIconFactory(IModel<User> targetUserModel) {
@@ -277,5 +305,4 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> {
 
 	}
 
-	
 }

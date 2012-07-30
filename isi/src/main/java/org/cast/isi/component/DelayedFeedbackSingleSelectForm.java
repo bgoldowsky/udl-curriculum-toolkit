@@ -39,7 +39,7 @@ import org.cast.isi.ISIDateLabel;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.page.ISIBasePage;
-import org.cast.isi.panel.ISectionCompleteToggleListener;
+import org.cast.isi.panel.ISectionStatusChangeListener;
 import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
@@ -52,7 +52,7 @@ import com.google.inject.Inject;
  *
  */
 @Slf4j
-public abstract class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements ISectionCompleteToggleListener, ISingleSelectItemChangeListener {
+public abstract class DelayedFeedbackSingleSelectForm extends SingleSelectForm implements ISectionStatusChangeListener, ISingleSelectItemChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -83,6 +83,11 @@ public abstract class DelayedFeedbackSingleSelectForm extends SingleSelectForm i
 		ISIXmlSection section = getIsiXmlSection(currentSectionModel);
 		location = new ContentLoc(section.getSectionAncestor()).getLocation();
 		lockResponse = (section != null) && section.isLockResponse();
+	}
+	
+	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
+		if (location.equals(getLocation()))
+			target.addComponent(this);
 	}
 	
 	@Override

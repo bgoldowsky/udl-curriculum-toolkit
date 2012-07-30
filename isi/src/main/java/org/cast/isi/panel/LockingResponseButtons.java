@@ -19,6 +19,7 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.ResponseMetadata;
@@ -30,7 +31,7 @@ import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
 
-public class LockingResponseButtons extends ResponseButtons implements ISectionCompleteToggleListener {
+public class LockingResponseButtons extends ResponseButtons implements ISectionStatusChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -52,6 +53,11 @@ public class LockingResponseButtons extends ResponseButtons implements ISectionC
 		setVisible(!(isTeacher() || isCompleteAndLocked()));
 	}
 
+	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
+		if (location.equals(getLocation()))
+			target.addComponent(this);
+	}
+	
 	public String getLocation() {
 		ISIXmlSection sectionAncestor = loc.getSection().getSectionAncestor();
 		return sectionAncestor.getContentLoc().getLocation();

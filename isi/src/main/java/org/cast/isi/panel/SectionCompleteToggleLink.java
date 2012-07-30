@@ -34,7 +34,7 @@ import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
 
-public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> implements ISectionCompleteToggleListener {
+public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> implements ISectionStatusChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -98,8 +98,17 @@ public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> imp
 		return targetUserModel.getObject();
 	}
 
+	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
+		if (shouldRefreshFor(location))
+			target.addComponent(this);
+	}
+	
 	public String getLocation() {
 		return sectionContentLocation.getLocation();
+	}
+
+	public boolean shouldRefreshFor(String location) {
+		return location.equals(getLocation());
 	}
 
 	protected ISIXmlSection getSection() {
@@ -130,12 +139,10 @@ public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> imp
 	public void notifyListeners(final AjaxRequestTarget target) {
 		final String location = getLocation();
 		if ((target != null) && (location != null)) {
-			getPage().visitChildren(ISectionCompleteToggleListener.class, new IVisitor<Component>() {
+			getPage().visitChildren(ISectionStatusChangeListener.class, new IVisitor<Component>() {
 				public Object component(Component component) {
-					ISectionCompleteToggleListener listener = (ISectionCompleteToggleListener) component;
-					String listenerLocation = listener.getLocation();
-					if (listenerLocation.equals(location))
-						target.addComponent(component);
+					ISectionStatusChangeListener listener = (ISectionStatusChangeListener) component;
+					listener.onSectionCompleteChange(target, location);
 					return CONTINUE_TRAVERSAL;
 				}
 

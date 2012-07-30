@@ -23,8 +23,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
-import org.cast.cwm.glossary.IGlossaryEntry;
 import org.cast.cwm.service.EventService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.page.ISIStandardPage;

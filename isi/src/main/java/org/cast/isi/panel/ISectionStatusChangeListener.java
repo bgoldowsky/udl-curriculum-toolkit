@@ -19,15 +19,17 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+
 
 /**
- * Interface to be implemented by sections that should be refresh after a section is marked complete. 
+ * Interface to be implemented by components that need to react to a change in section status 
  * 
  * @author Don Roby
  *
  */
-public interface ISectionCompleteToggleListener {
+public interface ISectionStatusChangeListener {
 
-	String getLocation();
+	void onSectionCompleteChange(AjaxRequestTarget target, String location);
 	
 }
