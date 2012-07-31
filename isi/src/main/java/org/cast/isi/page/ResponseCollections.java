@@ -55,6 +55,7 @@ import org.cast.isi.data.ISIResponse;
 import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.panel.ResponseCollectionSummary;
 import org.cast.isi.panel.StudentScorePanel;
+import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,9 @@ public class ResponseCollections extends ISIStandardPage {
 	
 	@Inject
 	protected IISIResponseService responseService;
+	
+	@Inject
+	protected IFeatureService featureService;
 	
 	protected static final Logger log = LoggerFactory.getLogger(ResponseCollections.class);
 	protected static ResponseMetadata responseMetadata = new ResponseMetadata();
@@ -133,7 +137,7 @@ public class ResponseCollections extends ISIStandardPage {
 		}
 		
 		if (haveSelectedCollection()) {
-			add(new ResponseCollectionSummary("promptResponseSummary", getScoreCounts()));
+			add(makeSummary("promptResponseSummary"));
 			add(makePromptResponseRepeater("promptResponseRepeater"));
 		}
 		else {
@@ -152,6 +156,12 @@ public class ResponseCollections extends ISIStandardPage {
 			newParams.remove("name");
 		super.reloadForPeriodStudentChange(newParams);
 	}			
+
+	protected Component makeSummary(String id) {
+		if (featureService.isCollectionsScoreSummaryOn())
+			return new ResponseCollectionSummary(id, getScoreCounts());
+		else return new EmptyPanel(id);
+	}
 
 	protected ScoreCounts getScoreCounts() {
 		IModel<List<ISIResponse>> responses =  responseService.getAllResponsesForCollectionByStudent(paramCollectionName, mUser);

@@ -23,6 +23,7 @@ import java.util.List;
 
 import lombok.Getter;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -33,6 +34,7 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -54,6 +56,7 @@ import org.cast.isi.data.PromptType;
 import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.panel.PeriodResponseListPanel;
 import org.cast.isi.panel.ResponseCollectionSummary;
+import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +79,9 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 	
 	@Inject
 	private IISIResponseService responseService;
+
+	@Inject
+	private IFeatureService featureService;
 
 	protected static final Logger log = LoggerFactory.getLogger(PeriodResponsePage.class);
 
@@ -121,12 +127,18 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		link.add(new ClassAttributeModifier("sectionLink"));
 		add(link);
 		add(ISIApplication.get().iconFor(prompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(), ""));		
-		add(new ResponseCollectionSummary("promptResponseSummary", getScoreCounts(mPrompt)));
+		add(makeSummary("promptResponseSummary", mPrompt));
 		
 		// Add the text associated with Prompt
 		add(factory.makeQuestionTextComponent("question", prompt));
 		
 		addDetailsPanel(mPrompt);
+	}
+
+	private Component makeSummary(String id, IModel<Prompt> mPrompt) {
+		if (featureService.isCompareScoreSummaryOn())
+			return new ResponseCollectionSummary(id, getScoreCounts(mPrompt));
+		else return new EmptyPanel(id);
 	}
 	
 	private ScoreCounts getScoreCounts(IModel<Prompt> mPrompt) {
