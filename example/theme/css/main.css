@@ -705,9 +705,6 @@ ul li, ol li {
 .tocIcons img {
     vertical-align: middle;
 }
-.tocIcons span {
-    display: none;
-}
 
 .tocIcons img.sectionIcon {
 	float:right;
