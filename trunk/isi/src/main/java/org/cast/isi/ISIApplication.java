@@ -188,6 +188,9 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean tocSectionTogglesOn = true;
 	@Getter protected boolean tocSectionCompleteIconsOn = false;
 	@Getter protected boolean tocSectionIncompleteIconsOn = false;
+	@Getter protected boolean collectionsScoreSummaryOn = false;
+	@Getter protected boolean compareScoreSummaryOn = false;
+
 	
 	@Getter protected String glossaryLinkType = DEFAULT_GLOSSARY_TYPE;
 	@Getter protected boolean useAuthoredResponseType = false; // false for backwards compatibility
@@ -434,6 +437,8 @@ public abstract class ISIApplication extends CwmApplication {
 		rssFeedOn = setBooleanProperty("isi.rssFeed.isOn", rssFeedOn);
 		emailOn = setBooleanProperty("isi.email.isOn", emailOn);
 		selfRegisterOn = setBooleanProperty("isi.selfRegister.isOn", selfRegisterOn);
+		collectionsScoreSummaryOn = setBooleanProperty("isi.collectionsScoreSummary.isOn", collectionsScoreSummaryOn);
+		compareScoreSummaryOn = setBooleanProperty("isi.compareScoreSummary.isOn", compareScoreSummaryOn);
 		
 		navbarSectionIconsTeacher = setStringProperty("isi.navbar.sectionIcons.teacher", navbarSectionIconsTeacher);
 		navbarSectionIconsStudent = setStringProperty("isi.navbar.sectionIcons.student", navbarSectionIconsStudent);

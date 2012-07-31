@@ -83,4 +83,12 @@ public class FeatureService implements IFeatureService {
 		return ISIApplication.get().isTocSectionIncompleteIconsOn();
 	}
 
+	public boolean isCollectionsScoreSummaryOn() {
+		return ISIApplication.get().isCollectionsScoreSummaryOn();
+	}
+
+	public boolean isCompareScoreSummaryOn() {
+		return ISIApplication.get().isCompareScoreSummaryOn();
+	}
+
 }

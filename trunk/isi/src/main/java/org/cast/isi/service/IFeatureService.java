@@ -36,4 +36,7 @@ public interface IFeatureService {
 	boolean isTocSectionTogglesOn();
 	boolean isTocSectionCompleteIconsOn();
 	boolean isTocSectionIncompleteIconsOn();
+	boolean isCollectionsScoreSummaryOn();
+	boolean isCompareScoreSummaryOn();
+
 }
