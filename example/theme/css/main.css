@@ -417,6 +417,10 @@ ul li, ol li {
     font-size: 0.9em;
 }
 
+.pageNavLeft .button {
+    vertical-align: middle;
+}
+
 .pageNavRight {
     position: absolute;
     top: 5px;
@@ -700,7 +704,10 @@ ul li, ol li {
 
 .tocIcons {
     float: left;
-    width: 3.5em;
+    width: 3.7em;
+}
+.tocIcons .button {
+    vertical-align: middle;
 }
 .tocIcons img {
     vertical-align: middle;
@@ -708,11 +715,11 @@ ul li, ol li {
 
 .tocIcons img.sectionIcon {
 	float:right;
-	padding-right: 0.7em;
+	padding-right: 0.5em;
 }
 
 .tocPageLinks {
-    margin-left: 3.5em;
+    margin-left: 3.7em;
 }
 
 .tocList li.current {
