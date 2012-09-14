@@ -373,6 +373,7 @@ $(window).ready(function() {
 
 $(window).load(function() {
     resizeCaptions();
+    thtLocate();
 });
 
 $(window).resize(function() {
