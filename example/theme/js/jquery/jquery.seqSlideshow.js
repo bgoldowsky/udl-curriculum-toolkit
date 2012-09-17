@@ -69,7 +69,7 @@
             });
         } else {
             // Enable button
-            prevBtn.attr("disabled", "").removeClass("off");
+        	prevBtn.removeAttr("disabled").removeClass("off");
             prevBtn.unbind("click");
             prevBtn.bind("click", function(e) {
                 n.tabs('select', i - 1);
@@ -89,7 +89,7 @@
             });
         } else {
             // Enable button
-            nextBtn.attr("disabled", "").removeClass("off");
+        	nextBtn.removeAttr("disabled").removeClass("off");
             nextBtn.unbind("click");
             nextBtn.bind("click", function(e) {
                 n.tabs('select', i + 1);
