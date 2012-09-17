@@ -63,7 +63,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 		response.renderCSSReference(new ResourceReference("/css/annotation.css"));
 		// The js call that will set up the annotated image.  The hotSpotString contains all the information
 		// needed for the annotated image.
-		response.renderOnDomReadyJavascript("{$(\"#" + annotatedImageComponentId + "\").annotateImage({" +
+		response.renderOnLoadJavascript("{$(\"#" + annotatedImageComponentId + "\").annotateImage({" +
 	        "viewAnnotations: true, " +
             "editable: false, " +
             "useAjax: false, " +
