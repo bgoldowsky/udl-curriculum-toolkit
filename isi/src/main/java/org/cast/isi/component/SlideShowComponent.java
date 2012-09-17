@@ -55,6 +55,6 @@ public class SlideShowComponent extends WebMarkupContainer implements IHeaderCon
 		response.renderCSSReference(new ResourceReference("/css/slideshow.css"));
 
 		// The js call that will set up the slideshow component.
-		response.renderOnDomReadyJavascript("{$(\"#" + slideShowId + "\").seqSlideshow();}");
+		response.renderOnLoadJavascript("{$(\"#" + slideShowId + "\").seqSlideshow();}");
 	}
 }
