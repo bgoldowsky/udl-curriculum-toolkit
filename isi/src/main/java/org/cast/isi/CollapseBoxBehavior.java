@@ -22,7 +22,9 @@ package org.cast.isi;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
+
+import com.google.inject.Inject;
 
 /**
  * A behavior that can be attached to any wicket component that is inside a css styled 'collapseBox'.  
@@ -40,6 +42,9 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 	private String type;
 	private String pageName;
 	private String detail;
+
+	@Inject
+	private IEventService eventService;
 
 	/**
 	 * A constructor.  The event is the Ajax Event (e.g. 'onclick') and the type
@@ -82,7 +87,7 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 		if (!(detail == null || detail.isEmpty())) {
 			action += "," + detail;
 		}
-		EventService.get().saveEvent("toggle:" + type, action, pageName);
+		eventService.saveEvent("toggle:" + type, action, pageName);
 	}
 	
 }

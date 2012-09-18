@@ -28,8 +28,8 @@ import net.databinder.hib.Databinder;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
-import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.ICwmService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.SectionStatus;
@@ -47,6 +47,9 @@ public class SectionService implements ISectionService {
 
 	@Inject
 	private ICwmService cwmService;
+
+	@Inject
+	private IEventService eventService;
 
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.ISectionService#getSectionStatus(org.cast.cwm.data.User, java.lang.String)
@@ -166,7 +169,7 @@ public class SectionService implements ISectionService {
 			stat.setReviewed(complete);
 		}
 		cwmService.flushChanges();
-		EventService.get().saveEvent("section:" + (complete ? "done" : "not done"), null, loc.getLocation());
+		eventService.saveEvent("section:" + (complete ? "done" : "not done"), null, loc.getLocation());
 		return stat;
 	}
 	
@@ -248,7 +251,7 @@ public class SectionService implements ISectionService {
 			stat.setReviewed(reviewed);
 		}
 		cwmService.flushChanges();
-		EventService.get().saveEvent("section:" + (reviewed ? "reviewed" : "not reviewed"), null, loc.getLocation());
+		eventService.saveEvent("section:" + (reviewed ? "reviewed" : "not reviewed"), null, loc.getLocation());
 		return stat;
 	}
 	
@@ -267,7 +270,7 @@ public class SectionService implements ISectionService {
 			stat.setReviewed(!reviewed);
 		}
 		cwmService.flushChanges();
-		EventService.get().saveEvent("section:" + (stat.getReviewed() ? "reviewed" : "not reviewed"), null, loc.getLocation());
+		eventService.saveEvent("section:" + (stat.getReviewed() ? "reviewed" : "not reviewed"), null, loc.getLocation());
 		return stat;
 	}
 

@@ -34,15 +34,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import net.databinder.hib.Databinder;
-
-import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.validator.AbstractValidator;
 import org.cast.cwm.data.PersistedObject;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.User;
-import org.cast.isi.ISISession;
-import org.cast.isi.service.QuestionService;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -105,30 +99,5 @@ public class Question extends PersistedObject {
 //			this.setName("question_" + owner.getId() + "_" +  ISIApplication.get().getQuestionService().getNumQuestions(owner));
 	}
 	
-	public static class QuestionNameValidator extends AbstractValidator<String> {
-		
-		private Long questionId;
-		private static final long serialVersionUID = 1L;
-		
-		public QuestionNameValidator(Question question) {
-			super();
-			if (question != null)
-				this.questionId = question.getId();
-			else
-				questionId = 0L;
-		}
-
-		@Override
-		protected void onValidate(IValidatable<String> validatable) {
-			String questionText = validatable.getValue();
-			Question other = QuestionService.get().getByTextAndStudent(questionText, ISISession.get().getUser());
-			if (other != null && !other.getId().equals(questionId)) {
-				error(validatable);
-			} else {
-				Databinder.getHibernateSession().evict(other); // Evict "other" person in case they are the same object
-			}
-		}
-
-	}	
 }
 

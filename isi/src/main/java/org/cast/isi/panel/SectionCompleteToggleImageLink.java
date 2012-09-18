@@ -19,8 +19,8 @@
  */
 package org.cast.isi.panel;
 
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.component.DoneImage;
@@ -70,7 +70,7 @@ public abstract class SectionCompleteToggleImageLink extends SectionCompleteTogg
 		super.onBeforeRender();
 	}
 
-	protected Image getImage() {
+	protected Icon getImage() {
 		if (isComplete())
 			return new DoneImage("doneImg");
 		else return new NotDoneImage("doneImg");

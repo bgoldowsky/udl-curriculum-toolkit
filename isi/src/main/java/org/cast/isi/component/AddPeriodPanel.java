@@ -39,13 +39,15 @@ import org.apache.wicket.model.PropertyModel;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.validator.UniqueDataFieldValidator;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.SiteService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISISession;
 import org.cast.isi.panel.PeriodStudentSelectPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * Panel used by a teacher to add a new Period for the current Site.  Teacher is 
@@ -61,6 +63,9 @@ public class AddPeriodPanel extends Panel {
 	private static final Logger log = LoggerFactory.getLogger(AddPeriodPanel.class);
 	protected NewPeriodForm newPeriodForm;
 	private String addPeriodPanelMarkupId;
+
+	@Inject
+	private IEventService eventService;
 
 	public AddPeriodPanel(String wicketId) {
 		super(wicketId);
@@ -158,7 +163,7 @@ public class AddPeriodPanel extends Panel {
 			user.getPeriods().add(period);
 			Databinder.getHibernateSession().update(user);
 			
-			EventService.get().saveEvent("period:addPeriod", String.valueOf(getModelObject().getId()) + " added by userid " + String.valueOf(user.getId()), null);
+			eventService.saveEvent("period:addPeriod", String.valueOf(getModelObject().getId()) + " added by userid " + String.valueOf(user.getId()), null);
 		}
 	}
 }

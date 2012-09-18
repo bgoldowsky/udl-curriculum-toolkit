@@ -22,13 +22,18 @@ package org.cast.isi.panel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.page.ISIBasePage;
+
+import com.google.inject.Inject;
 
 public class AgentLink extends SidebarDialog {
 	private static final long serialVersionUID = 1L;
 	private String responseAreaId;
 	private String title;
+
+	@Inject
+	private IEventService eventService;
 
 	public AgentLink(String id, final String title, final String responseAreaId) {
 		super(id, title, null);
@@ -47,6 +52,6 @@ public class AgentLink extends SidebarDialog {
 	
 	@Override
 	protected void logOpenEvent(AjaxRequestTarget target) {
-		EventService.get().saveEvent("dialog:agent", title + ":" + responseAreaId, ((ISIBasePage) getPage()).getPageName());
+		eventService.saveEvent("dialog:agent", title + ":" + responseAreaId, ((ISIBasePage) getPage()).getPageName());
 	}
 }

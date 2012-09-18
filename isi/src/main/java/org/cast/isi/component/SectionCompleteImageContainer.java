@@ -20,8 +20,8 @@
 package org.cast.isi.component;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISISession;
@@ -60,8 +60,8 @@ public class SectionCompleteImageContainer extends WebMarkupContainer {
 		super.onBeforeRender();
 	}
 
-	protected Image getImage() {
-		Image image;
+	protected Icon getImage() {
+		Icon image;
 		if (isComplete()) {
 			image = new DoneImage("doneImg");
 			image.setVisible(featureService.isTocSectionCompleteIconsOn());

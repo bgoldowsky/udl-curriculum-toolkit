@@ -30,7 +30,9 @@ import org.apache.wicket.model.util.ListModel;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.isi.data.Question;
-import org.cast.isi.service.QuestionService;
+import org.cast.isi.service.IQuestionService;
+
+import com.google.inject.Inject;
 
 /**
  * Show the user's list of Question objects, with various markup to show
@@ -45,6 +47,9 @@ class QuestionListView extends ListView<Question> {
 	PopupSettings popupSettings;
 	Long userId;
 	
+	@Inject
+	protected IQuestionService questionService;
+
 	private static final long serialVersionUID = 1L;
 
 	public QuestionListView (String id, Class<? extends WebPage>linkPage, PopupSettings popupSettings, Question current, Long userId) {
@@ -62,7 +67,7 @@ class QuestionListView extends ListView<Question> {
 
 	void doQuery() {
 		// TODO: This won't get detached when used in this manner.
-		setModel(new ListModel<Question>(QuestionService.get().getQuestionsByUser(userId)));		
+		setModel(new ListModel<Question>(questionService.getQuestionsByUser(userId)));		
 	}
 
 	@Override

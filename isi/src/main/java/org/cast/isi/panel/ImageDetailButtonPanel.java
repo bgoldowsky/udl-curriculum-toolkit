@@ -19,13 +19,14 @@
  */
 package org.cast.isi.panel;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.markup.html.image.Image;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.components.Icon;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.page.ISIBasePage;
+
+import com.google.inject.Inject;
 
 /**
  * Displays a magnifier button when a larger image is present for a thumbnail. Creates js
@@ -38,7 +39,10 @@ public class ImageDetailButtonPanel extends ISIPanel{
 
 	private static final long serialVersionUID = 1L;
 
-	public ImageDetailButtonPanel(String panelId, final String imageId, final boolean expand) {
+	@Inject
+	private IEventService eventService;
+
+	public ImageDetailButtonPanel(String panelId, final String imageId) {
 		super(panelId);
 		
 		AjaxFallbackLink<Void> link = new AjaxFallbackLink<Void>("link") {
@@ -47,7 +51,7 @@ public class ImageDetailButtonPanel extends ISIPanel{
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				EventService.get().saveEvent("image:" + (expand ? "zoom:detail" : "detail"), "imageId=" + imageId, ((ISIBasePage) getPage()).getPageName());
+				eventService.saveEvent("image:" + "zoom:detail", "imageId=" + imageId, ((ISIBasePage) getPage()).getPageName());
 			}
 			
 			@Override
@@ -71,10 +75,7 @@ public class ImageDetailButtonPanel extends ISIPanel{
 			}
 		};
 		
-		if (expand)
-			link.add(new Image("image", new ResourceReference("/img/icons/expand_image.png")));
-		else  // this is no longer used as long description is now put into a toggle area below image.
-			link.add(new Image("image", new ResourceReference("/img/icons/info.png")));
+		link.add(new Icon("image", "img/icons/expand_image.png"));
 		add(link);
 	}
 

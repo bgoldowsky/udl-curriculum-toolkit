@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.xml.XmlSectionModel;
+import org.cast.isi.page.ISIBasePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -59,8 +60,9 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 	}
 
 	public void renderHead(IHeaderResponse response) {
-		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery.annotate.js"));
-		response.renderCSSReference(new ResourceReference("/css/annotation.css"));
+		// FIXME: this is dependent on the named JS/CSS file being supplied by the application in the expected location.
+		ISIBasePage.renderThemeJS(response, "js/jquery/jquery.annotate.js");
+		ISIBasePage.renderThemeCSS(response, "css/annotation.css");
 		// The js call that will set up the annotated image.  The hotSpotString contains all the information
 		// needed for the annotated image.
 		response.renderOnLoadJavascript("{$(\"#" + annotatedImageComponentId + "\").annotateImage({" +

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -125,8 +124,8 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 	}
 	
 	public void renderHead(IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/glossary.css"));
-		response.renderCSSReference(new ResourceReference("/css/window_print.css"), "print");
+		renderThemeCSS(response, "css/glossary.css");
+		renderThemeCSS(response, "css/window_print.css", "print");
 		super.renderHead(response);
 		response.renderOnLoadJavascript("bindSectionOpenerLinks()");		
 	}

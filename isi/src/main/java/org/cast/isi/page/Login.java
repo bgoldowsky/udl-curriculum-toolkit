@@ -26,7 +26,6 @@ import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -43,14 +42,19 @@ import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Site;
 import org.cast.cwm.data.User;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 public class Login extends ISIBasePage implements IHeaderContributor {
 	static final Logger log = LoggerFactory.getLogger(Login.class);
+
+	@Inject
+	private IEventService eventService;
 
 	@SuppressWarnings("unchecked")
 	public Login(PageParameters params) {
@@ -113,7 +117,6 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 			ISISession session = ISISession.get();
 			if(session.signIn((String)username.getModelObject(), (String)password.getModelObject())){
 
-				EventService eventService = EventService.get();
 				eventService.createLoginSession(getRequest());
 				eventService.saveLoginEvent();
 				
@@ -149,8 +152,8 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 	
 	@Override
 	public void renderHead(final IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/login.css"));
-		response.renderCSSReference(new ResourceReference("/css/main.css"));
+		renderThemeCSS(response, "css/login.css");
+		renderThemeCSS(response, "css/main.css");
 		super.renderHead(response);
 	}
 

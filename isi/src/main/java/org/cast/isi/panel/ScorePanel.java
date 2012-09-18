@@ -25,14 +25,9 @@ import java.util.List;
 
 import net.databinder.models.hib.HibernateObjectModel;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.cast.cwm.data.Response;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.PromptType;
@@ -103,20 +98,6 @@ public abstract class ScorePanel extends Panel {
 			result.add(model.getObject());
 		}
 		return result;
-	}
-
-	//TODO: Can we use ScoreIcon instead or make a common superclass?
-	public class Icon extends Image {
-
-		private static final long serialVersionUID = 1L;
-
-		public Icon(String id, String imageFile, String altText) {
-			super(id);
-			setImageResourceReference(new ResourceReference(Application.class, imageFile));
-			add(new AttributeModifier("alt", true, new Model<String>(altText)));
-			add(new AttributeModifier("title", true, new Model<String>(altText)));
-		}
-
 	}
 
 }

@@ -60,7 +60,7 @@ import org.cast.cwm.indira.FileResourceManager;
 import org.cast.cwm.mediaplayer.AudioPlayerPanel;
 import org.cast.cwm.mediaplayer.FlashAppletPanel;
 import org.cast.cwm.mediaplayer.MediaPlayerPanel;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.cwm.xml.ICacheableModel;
 import org.cast.cwm.xml.IXmlPointer;
 import org.cast.cwm.xml.TransformResult;
@@ -127,6 +127,9 @@ public class ISIXmlComponent extends XmlComponent {
 	@Getter @Setter private ResponseFeedbackPanel responseFeedbackPanel;
 	@Getter @Setter protected boolean inGlossary = false;
 	protected boolean isTeacher = false;
+
+	@Inject
+	private IEventService eventService;
 
 	public ISIXmlComponent(String id, ICacheableModel<? extends IXmlPointer> rootEntry, String transformName) {
 		super(id, rootEntry, transformName);
@@ -278,7 +281,7 @@ public class ISIXmlComponent extends XmlComponent {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void onPlay (String status) {
-					EventService.get().saveEvent("video:view", wicketId.substring("videoplayer_".length()) + " - " + status, contentPage);
+					eventService.saveEvent("video:view", wicketId.substring("videoplayer_".length()) + " - " + status, contentPage);
 				}
 			};
 
@@ -514,7 +517,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("imageDetailButton_")) {
 			// for thumbnail images only - no longer for more info
-			return new ImageDetailButtonPanel(wicketId, wicketId.substring("imageDetailButton_".length()), true);
+			return new ImageDetailButtonPanel(wicketId, wicketId.substring("imageDetailButton_".length()));
 //  		We may want to put some of this back, but for now assuming that any time XSLT requests an image detail button we'll put one in.
 //			if (contentPage == null && !inGlossary) // Don't do imageDetails on non-content pages (e.g. the Table of Contents)
 //				return new WebMarkupContainer(wicketId).setVisible(false);
@@ -585,7 +588,7 @@ public class ISIXmlComponent extends XmlComponent {
 				@Override
 				public void onClick(AjaxRequestTarget target) {
 					target.prependJavascript("$('#iScienceVideo-" + wicketId.substring("iScienceLink-".length()) + "').jqmShow();");
-					EventService.get().saveEvent("iscience:view", "Video #" + wicketId.substring("iScienceLink-".length()), ((ISIBasePage) getPage()).getPageName());
+					eventService.saveEvent("iscience:view", "Video #" + wicketId.substring("iScienceLink-".length()), ((ISIBasePage) getPage()).getPageName());
 				}
 			};
 

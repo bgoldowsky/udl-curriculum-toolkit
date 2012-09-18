@@ -64,8 +64,8 @@ import org.cast.cwm.data.validator.UniqueDataFieldValidator;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator.Field;
 import org.cast.cwm.data.validator.UniqueUserInPeriodValidator;
-import org.cast.cwm.service.CwmService;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.ICwmService;
+import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISISession;
 import org.cast.isi.component.AddPeriodPanel;
@@ -101,7 +101,12 @@ public class ManageClasses extends ISIStandardPage {
 	@Inject
 	private IISIResponseService responseService;
 	
+	@Inject
+	private IEventService eventService;
 	
+	@Inject
+	private ICwmService cwmService;
+
 	public ManageClasses(final PageParameters param) {
 		super(param);
 
@@ -292,8 +297,8 @@ public class ManageClasses extends ISIStandardPage {
 				currentUser.getPeriods().clear();
 				currentUser.getPeriods().add(newPeriod);
 				
-				CwmService.get().flushChanges();
-				EventService.get().saveEvent("student:periodmove", "Student: " + currentUser.getId() + 
+				cwmService.flushChanges();
+				eventService.saveEvent("student:periodmove", "Student: " + currentUser.getId() + 
 						"; From PeriodId " + currentPeriod.getId() + " to PeriodId " + newPeriod.getId(), getPageName());
 			}	
 
@@ -520,11 +525,11 @@ public class ManageClasses extends ISIStandardPage {
 			}
 			
 			// Store changes to the database
-			CwmService.get().flushChanges();
+			cwmService.flushChanges();
 
 			// Log event
 			String eventType = isNewStudent ? "student:create" : "student:modify";
-			EventService.get().saveEvent(eventType, String.valueOf(student.getId()), getPageName()); 
+			eventService.saveEvent(eventType, String.valueOf(student.getId()), getPageName()); 
 		}
 	}
 	
@@ -587,8 +592,8 @@ public class ManageClasses extends ISIStandardPage {
 		
 		@Override
 		protected void onSubmit() {
-			CwmService.get().flushChanges();
-			EventService.get().saveEvent("period:namechange", String.valueOf(getModelObject().getId()), getPageName());
+			cwmService.flushChanges();
+			eventService.saveEvent("period:namechange", String.valueOf(getModelObject().getId()), getPageName());
 		}
 	}
 

@@ -47,8 +47,8 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.AjaxDeletePersistedObjectDialog;
-import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.ICwmService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.page.ISIStandardPage;
@@ -75,6 +75,9 @@ public class ResponseFeedbackPanel extends ISIPanel {
 
 	@Inject
 	private ISectionService sectionService;
+
+	@Inject
+	private IEventService eventService;
 
 	public ResponseFeedbackPanel(String id) {
 		super(id);
@@ -109,7 +112,7 @@ public class ResponseFeedbackPanel extends ISIPanel {
 				m.setVisible(true);
 				Databinder.getHibernateSession().save(m);
 				cwmService.flushChanges();
-				EventService.get().saveEvent("message:sent", String.valueOf(m.getId()), ((ISIStandardPage) getPage()).getPageName());
+				eventService.saveEvent("message:sent", String.valueOf(m.getId()), ((ISIStandardPage) getPage()).getPageName());
 			}
 			
 			@Override

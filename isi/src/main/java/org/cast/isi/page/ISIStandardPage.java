@@ -24,7 +24,6 @@ import lombok.Setter;
 import net.databinder.auth.hib.AuthDataSession;
 
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
@@ -105,7 +104,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	}
 	
 	public void renderHead(final IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/main.css"));
+		renderThemeCSS(response, "css/main.css");
 		super.renderHead(response);		
 	}
 	

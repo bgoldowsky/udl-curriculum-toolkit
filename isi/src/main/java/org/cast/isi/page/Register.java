@@ -55,7 +55,7 @@ import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.FeedbackBorder;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator.Field;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.SiteService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISIApplication;
@@ -63,6 +63,8 @@ import org.cast.isi.ISISession;
 import org.cast.isi.service.ISIEmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * This page enables anonymous user creation.  User must provide some basic validated
@@ -77,6 +79,9 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 	
 	boolean success = false; // has a successful registration already happened?
 	protected String studentPassword;
+
+	@Inject
+	private IEventService eventService;
 
 	public Register(PageParameters params) {
 		super(params);
@@ -101,7 +106,6 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			if (user != null && params.getString("key").equals(user.getSecurityToken())) {
 				UserService.get().confirmUser(user);
 				ISISession.get().signIn(user, false);
-				EventService eventService = EventService.get();
 				eventService.createLoginSession(getRequest());
 				eventService.saveEvent("user:created", null, null);
 				eventService.saveLoginEvent();

@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISISession;
@@ -77,7 +78,7 @@ public class StudentScorePanel extends ScorePanel {
 
 		private NotGotItButton(String id) {
 			super(id);
-			add(new Icon("icon", "/img/icons/response_negative.png", "Didn't get it"));
+			add(new Icon("icon", "img/icons/response_negative.png", "Didn't get it"));
 		}
 
 		@Override
@@ -91,7 +92,7 @@ public class StudentScorePanel extends ScorePanel {
 
 		private GotItButton(String id) {
 			super(id);
-			add(new Icon("icon", "/img/icons/response_positive.png", "Got it!"));
+			add(new Icon("icon", "img/icons/response_positive.png", "Got it!"));
 		}
 
 		@Override

@@ -23,14 +23,19 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.page.ISIStandardPage;
+
+import com.google.inject.Inject;
 
 public class MiniGlossaryLink extends AjaxLink<String>{
 
 	private static final long serialVersionUID = 1L;
 	private MiniGlossaryModal glossaryModal;
+
+	@Inject
+	private IEventService eventService;
 
 	public MiniGlossaryLink(String id, IModel<String> model, MiniGlossaryModal glossaryModal) {
 		super(id, model);
@@ -51,7 +56,7 @@ public class MiniGlossaryLink extends AjaxLink<String>{
 		glossaryModal.getDialog().setVerticalReferencePointId(this.getMarkupId());
 		target.addComponent(glossaryModal);
 		target.appendJavascript(glossaryModal.getDialog().getOpenString());
-		EventService.get().saveEvent("miniglossary:view", getModelObject(), ((ISIStandardPage) getPage()).getPageName());
+		eventService.saveEvent("miniglossary:view", getModelObject(), ((ISIStandardPage) getPage()).getPageName());
 	}
 
 }

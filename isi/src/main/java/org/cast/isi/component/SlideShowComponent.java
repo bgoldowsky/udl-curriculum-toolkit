@@ -19,10 +19,10 @@
  */
 package org.cast.isi.component;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.cast.isi.page.ISIBasePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -51,8 +51,9 @@ public class SlideShowComponent extends WebMarkupContainer implements IHeaderCon
 	}
 
 	public void renderHead(IHeaderResponse response) {
-		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery.seqSlideshow.js"));
-		response.renderCSSReference(new ResourceReference("/css/slideshow.css"));
+		// FIXME: this is dependent on the named CSS file being supplied by the application in the expected location.
+		ISIBasePage.renderThemeJS(response, "js/jquery/jquery.seqSlideshow.js");
+		ISIBasePage.renderThemeCSS(response, "css/slideshow.css");
 
 		// The js call that will set up the slideshow component.
 		response.renderOnLoadJavascript("{$(\"#" + slideShowId + "\").seqSlideshow();}");

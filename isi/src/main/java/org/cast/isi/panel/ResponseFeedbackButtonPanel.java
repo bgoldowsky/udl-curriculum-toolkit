@@ -38,7 +38,7 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.indira.IndiraImage;
 import org.cast.cwm.indira.IndiraImageComponent;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.page.ISIStandardPage;
@@ -64,6 +64,9 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 	private List<FeedbackMessage> unreadTeacherMessages = new ArrayList<FeedbackMessage>();
 	private List<FeedbackMessage> messageList;
 	private IndiraImageComponent button;
+
+	@Inject
+	private IEventService eventService;
 
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ResponseFeedbackButtonPanel.class);
@@ -123,7 +126,7 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 				}
 				responseFeedbackPanel.clearFeedbackMessageForm();
 				responseFeedbackPanel.setCallingButton(ResponseFeedbackButtonPanel.this);
-				EventService.get().saveEvent("messagepanel:view", promptM.getObject().toString(), ((ISIStandardPage) getPage()).getPageName());
+				eventService.saveEvent("messagepanel:view", promptM.getObject().toString(), ((ISIStandardPage) getPage()).getPageName());
 				if (target != null) {
 					target.addComponent(responseFeedbackPanel);
 					target.addComponent(this);

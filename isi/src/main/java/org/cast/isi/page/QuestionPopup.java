@@ -31,7 +31,9 @@ import org.cast.isi.ISISession;
 import org.cast.isi.data.Question;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.service.QuestionService;
+import org.cast.isi.service.IQuestionService;
+
+import com.google.inject.Inject;
 
 /**
  * This popup window shows all the responses to a given question passed in
@@ -45,10 +47,13 @@ public class QuestionPopup extends ISIBasePage {
 
 	protected boolean isTeacher;
 	
+	@Inject
+	protected IQuestionService questionService;
+
 	public QuestionPopup (final PageParameters param) {
 		super(param);
 		setQuestionsMetadata(questionsMetadata);
-		setDefaultModel(QuestionService.get().getQuestionModelById(param.getLong("question")));	
+		setDefaultModel(questionService.getQuestionModelById(param.getLong("question")));	
 		Question question = (Question) getDefaultModelObject();
 		add(new Label("pageTitle", ISIApplication.get().getPageTitleBase() + " :: " + question.getText()));
 		add(new Label("question", question.getText()));
