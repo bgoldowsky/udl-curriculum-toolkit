@@ -21,6 +21,7 @@ package org.cast.isi.panel;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.util.tester.TagTester;
 import org.cast.cwm.components.Icon;
 import org.junit.Test;
 
@@ -55,8 +57,8 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(false);
 		startWicket();
-		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		wicketTester.assertAttribute("Should have alt=\"Not Finished\"", "Not Finished", image, "alt");
+		TagTester imageTag = wicketTester.getTagByWicketId("doneImg");
+		assertTrue("Should have alt=\"Not Finished\"", imageTag.getAttributeIs("alt", "Not Finished"));
 	}
 
 	@Test
@@ -64,8 +66,8 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(false);
 		startWicket();
-		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		wicketTester.assertAttribute("Should have title=\"Not Finished\"", "Not Finished", image, "title");
+		TagTester imageTag = wicketTester.getTagByWicketId("doneImg");
+		assertTrue("Should have title=\"Not Finished\"", imageTag.getAttributeIs("title", "Not Finished"));
 	}
 
 	@Test
@@ -73,8 +75,8 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(true);
 		startWicket();
-		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		assertThat((String) image.getDefaultModelObject(), equalTo("/img/icons/check_done.png"));
+		TagTester imageTag = wicketTester.getTagByWicketId("doneImg");
+		assertThat(imageTag.getAttribute("src"), equalTo("../img/icons/check_done.png"));
 	}
 
 	@Test
@@ -82,8 +84,8 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(true);
 		startWicket();
-		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		wicketTester.assertAttribute("Should have alt=\"Finished\"", "Finished", image, "alt");
+		TagTester imageTag = wicketTester.getTagByWicketId("doneImg");
+		assertTrue("Should have alt=\"Finished\"", imageTag.getAttributeIs("alt", "Finished"));
 	}
 
 	@Test
@@ -91,8 +93,8 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(true);
 		startWicket();
-		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		wicketTester.assertAttribute("Should have title=\"Finished\"", "Finished", image, "title");
+		TagTester imageTag = wicketTester.getTagByWicketId("doneImg");
+		assertTrue("Should have title=\"Finished\"", imageTag.getAttributeIs("title", "Finished"));
 	}
 
 	@Test

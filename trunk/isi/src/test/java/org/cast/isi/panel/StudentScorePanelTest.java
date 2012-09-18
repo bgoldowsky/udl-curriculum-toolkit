@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.ITestPanelSource;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
@@ -82,7 +82,7 @@ public class StudentScorePanelTest {
 	public void gotItButtonHasIcon() {
 		setResponseScores(1);
 		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:gotItButton:icon", Image.class);
+		wicketTester.assertComponent("panel:gotItButton:icon", Icon.class);
 	}
 	
 	@Test
@@ -111,7 +111,7 @@ public class StudentScorePanelTest {
 	public void notGotItButtonHasIcon() {
 		setResponseScores(0);
 		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:notGotItButton:icon", Image.class);
+		wicketTester.assertComponent("panel:notGotItButton:icon", Icon.class);
 	}
 	
 	@Test

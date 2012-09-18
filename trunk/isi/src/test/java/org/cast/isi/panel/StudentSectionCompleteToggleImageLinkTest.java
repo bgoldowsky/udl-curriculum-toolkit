@@ -21,11 +21,12 @@ package org.cast.isi.panel;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.util.tester.TagTester;
 import org.junit.Test;
 
 public class StudentSectionCompleteToggleImageLinkTest extends SectionCompleteToggleImageLinkTestCase {
@@ -40,24 +41,24 @@ public class StudentSectionCompleteToggleImageLinkTest extends SectionCompleteTo
 	public void hasCorrectImageWhenComplete() {
 		sectionStatus.setCompleted(true);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		assertThat((String) image.getDefaultModelObject(), equalTo("/img/icons/check_done.png"));
+		TagTester image = wicketTester.getTagByWicketId("doneImg");
+		assertThat(image.getAttribute("src"), equalTo("../img/icons/check_done.png"));
 	}
 
 	@Test
 	public void imageHasCorrectAltTagWhenComplete() {
 		sectionStatus.setCompleted(true);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		wicketTester.assertAttribute("Should have alt=\"Finished\"", "Finished", image, "alt");
+		TagTester image = wicketTester.getTagByWicketId("doneImg");
+		assertTrue("Should have alt=\"Finished\"", image.getAttributeIs("alt", "Finished"));
 	}
 
 	@Test
 	public void imageHasCorrectTitleTagWhenComplete() {
 		sectionStatus.setCompleted(true);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		wicketTester.assertAttribute("Should have title=\"Finished\"", "Finished", image, "title");
+		TagTester image = wicketTester.getTagByWicketId("doneImg");
+		assertTrue("Should have title=\"Finished\"", image.getAttributeIs("title", "Finished"));
 	}
 
 	@Test
