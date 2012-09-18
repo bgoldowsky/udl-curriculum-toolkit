@@ -24,8 +24,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.util.tester.TagTester;
+import org.cast.cwm.components.Icon;
 import org.junit.Test;
 
 public abstract class SectionCompleteToggleImageLinkTestCase extends SectionCompleteToggleLinkTestCase {
@@ -33,31 +34,31 @@ public abstract class SectionCompleteToggleImageLinkTestCase extends SectionComp
 	@Test
 	public void hasImage() {
 		startWicket();
-		wicketTester.assertComponent("panel:component:doneImg", Image.class);
+		wicketTester.assertComponent("panel:component:doneImg", Icon.class);
 	}
 	
 	@Test
 	public void hasCorrectImageWhenIncomplete() {
 		sectionStatus.setCompleted(false);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		assertThat((String) image.getDefaultModelObject(), equalTo("/img/icons/check_notdone.png"));
+		TagTester imageTag = wicketTester.getTagByWicketId("doneImg");
+		assertThat(imageTag.getAttribute("src"), equalTo("../img/icons/check_notdone.png"));
 	}
 
 	@Test
 	public void imageHasCorrectAltTagWhenIncomplete() {
 		sectionStatus.setCompleted(false);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		wicketTester.assertAttribute("Should have alt=\"Not Finished\"", "Not Finished", image, "alt");
+		TagTester imageTag = wicketTester.getTagByWicketId("doneImg");
+		assertThat(imageTag.getAttribute("alt"), equalTo("Not Finished"));
 	}
 
 	@Test
 	public void imageHasCorrectTitleTagWhenIncomplete() {
 		sectionStatus.setCompleted(false);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		wicketTester.assertAttribute("Should have title=\"Not Finished\"", "Not Finished", image, "title");
+		TagTester imageTag = wicketTester.getTagByWicketId("doneImg");
+		assertThat(imageTag.getAttribute("title"), equalTo("Not Finished"));
 	}
 	
 	@Test
