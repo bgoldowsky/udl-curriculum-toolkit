@@ -53,7 +53,6 @@ import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
-import org.cast.isi.data.Question.QuestionNameValidator;
 import org.cast.isi.panel.HighlightControlPanel;
 import org.cast.isi.panel.MiniGlossaryModal;
 import org.cast.isi.panel.PageNavPanel;
@@ -63,7 +62,8 @@ import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.StudentSectionCompleteTogglePanel;
 import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
-import org.cast.isi.service.QuestionService;
+import org.cast.isi.service.IQuestionService;
+import org.cast.isi.validator.QuestionNameValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +83,9 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	protected IModel<Prompt> mNotesPrompt;
 	protected ResponseMetadata pageNotesMetadata = new ResponseMetadata();
 	protected boolean showSectionToggleTextLink;
+
+	@Inject
+	protected IQuestionService questionService;
 
 	@Inject
 	protected IISIResponseService responseService;
@@ -292,7 +295,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 					if (!Strings.isEmpty(qstr)) {
 						if (qstr.length() > 250)
 							qstr = qstr.substring(0, 250);
-						QuestionService.get().createQuestion(new UserModel(mTargetUser.getObject()), qstr, getPageName());
+						questionService.createQuestion(new UserModel(mTargetUser.getObject()), qstr, getPageName());
 						questionList.doQuery();
 						target.addComponent(questionContainer);
 						target.addComponent(NewQuestionForm.this);

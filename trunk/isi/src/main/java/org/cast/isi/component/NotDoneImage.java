@@ -19,22 +19,14 @@
  */
 package org.cast.isi.component;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.html.image.Image;
+import org.cast.cwm.components.Icon;
 
-public class NotDoneImage extends Image {
+public class NotDoneImage extends Icon {
 
 	private static final long serialVersionUID = 1L;
 
 	public NotDoneImage(String id) {
-		super(id, "/img/icons/check_notdone.png");
-		addAttribute(this, "alt", "Not Finished");
-		addAttribute(this, "title", "Not Finished");
-	}
-
-	private void addAttribute(Component component, String name, String value) {
-		component.add(new SimpleAttributeModifier(name, value));
+		super(id, "img/icons/check_notdone.png", "Not Finished");
 	}
 
 }

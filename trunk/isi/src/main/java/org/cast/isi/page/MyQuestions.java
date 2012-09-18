@@ -48,12 +48,14 @@ import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.Question;
-import org.cast.isi.data.Question.QuestionNameValidator;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseList;
-import org.cast.isi.service.QuestionService;
+import org.cast.isi.service.IQuestionService;
+import org.cast.isi.validator.QuestionNameValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 
 /**  
@@ -76,6 +78,9 @@ public class MyQuestions extends ISIStandardPage {
 	private boolean isTeacher = false;
 	protected ResponseMetadata questionsMetadata;
 
+	@Inject
+	protected IQuestionService questionService;
+
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(MyQuestions.class);
 
@@ -96,7 +101,7 @@ public class MyQuestions extends ISIStandardPage {
 
 		selectedQuestion = null;
 		Long questionId = parameters.getLong("question", -1);
-		mSelectedQuestion = QuestionService.get().getQuestionModelById(questionId);
+		mSelectedQuestion = questionService.getQuestionModelById(questionId);
 		if (questionId != -1) {
 			selectedQuestion = mSelectedQuestion.getObject();
 			if (!selectedQuestion.getActive()) {
@@ -211,7 +216,7 @@ public class MyQuestions extends ISIStandardPage {
 					if (!Strings.isEmpty(qstr)) {
 						if (qstr.length() > 250)
 							qstr = qstr.substring(0, 250);
-						QuestionService.get().createQuestion(mUser, qstr, getPageName());
+						questionService.createQuestion(mUser, qstr, getPageName());
 						questionLister.doQuery();
 						target.addComponent(questionContainer);
 						target.addComponent(NewQuestionForm.this);
@@ -294,7 +299,7 @@ public class MyQuestions extends ISIStandardPage {
 
 				@Override
 				protected void deleteObject() {
-					QuestionService.get().deleteQuestion(getModel(), getPageName());
+					questionService.deleteQuestion(getModel(), getPageName());
 					questionLister.doQuery();
 					setResponsePage(ISIApplication.get().getMyQuestionsPageClass());
 				}
@@ -307,7 +312,7 @@ public class MyQuestions extends ISIStandardPage {
 		@Override
 		protected void onSubmit() {
 			super.onSubmit();
-			QuestionService.get().updateQuestion(selectedQuestion, getPageName());
+			questionService.updateQuestion(selectedQuestion, getPageName());
 		}
 	}	
 

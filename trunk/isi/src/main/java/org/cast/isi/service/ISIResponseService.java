@@ -40,7 +40,7 @@ import org.cast.cwm.data.ResponseData;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.ResponseService;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISISession;
@@ -64,6 +64,8 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 
 /**
  * Methods for teacher administrative duties: Flagging students, creating class messages, etc.
@@ -77,6 +79,9 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ISIResponseService.class);
 	
+	@Inject
+	private IEventService eventService;
+
 	protected ISIResponseService() {/* Protected Constructor - use injection */}
 	
 	public static ISIResponseService get() {
@@ -304,7 +309,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		}
 		Databinder.getHibernateSession().save(m);
 		cwmService.flushChanges();
-		EventService.get().saveEvent("classmessage:create", "Period Id: " + p.getId() + " Message Id: " + m.getId(), null);		
+		eventService.saveEvent("classmessage:create", "Period Id: " + p.getId() + " Message Id: " + m.getId(), null);		
 	}
 	
 	/* (non-Javadoc)
@@ -331,7 +336,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		if (m != null) {
 			m.setCurrent(false);
 			cwmService.flushChanges();
-			EventService.get().saveEvent("classmessage:delete", "Period Id: " + p.getId() + " Message Id: " + m.getId(), null);
+			eventService.saveEvent("classmessage:delete", "Period Id: " + p.getId() + " Message Id: " + m.getId(), null);
 		}
 	}
 
@@ -380,7 +385,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 			note = "off";
 		}
 		cwmService.flushChanges();
-		EventService.get().saveEvent("flag", note, null);
+		eventService.saveEvent("flag", note, null);
 	}
 	
 	/* (non-Javadoc)
@@ -452,7 +457,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		feedbackMessage.setVisible(false);
 		Databinder.getHibernateSession().update(feedbackMessage);
 		cwmService.flushChanges();
-		EventService.get().saveEvent("feedback:delete", "Message Id: " + feedbackMessage.getId(), null);
+		eventService.saveEvent("feedback:delete", "Message Id: " + feedbackMessage.getId(), null);
 	}
 
 	/* (non-Javadoc)
@@ -463,7 +468,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		Databinder.getHibernateSession().update(feedbackMessage);
 		cwmService.flushChanges();
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
-		EventService.get().saveEvent("message:view", "Message Id: " + String.valueOf(feedbackMessage.getId()), pageName);
+		eventService.saveEvent("message:view", "Message Id: " + String.valueOf(feedbackMessage.getId()), pageName);
 	}
 
 	/* (non-Javadoc)
@@ -585,7 +590,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 			r.setInWhiteboard(false);
 			r.setWhiteboardInsertTime(null);
 		}
-		EventService.get().saveEvent("whiteboard:clear", "Period: "+p.getId(), null);
+		eventService.saveEvent("whiteboard:clear", "Period: "+p.getId(), null);
 		cwmService.flushChanges();
 	}
 
@@ -596,7 +601,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		resp.setInWhiteboard(true);
 		resp.setWhiteboardInsertTime(new Date());
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
-		EventService.get().saveEvent("whiteboard:add", String.valueOf(resp.getId()), pageName);
+		eventService.saveEvent("whiteboard:add", String.valueOf(resp.getId()), pageName);
 		cwmService.flushChanges();
 	}
 	
@@ -607,7 +612,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		resp.setInWhiteboard(false);
 		resp.setWhiteboardInsertTime(null);
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
-		EventService.get().saveEvent("whiteboard:remove", String.valueOf(resp.getId()), pageName);
+		eventService.saveEvent("whiteboard:remove", String.valueOf(resp.getId()), pageName);
 		cwmService.flushChanges();
 	}
 
@@ -618,7 +623,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		resp.setInNotebook(true);
 		resp.setNotebookInsertTime(new Date());
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
-		EventService.get().saveEvent("notebook:add", String.valueOf(resp.getId()), pageName);
+		eventService.saveEvent("notebook:add", String.valueOf(resp.getId()), pageName);
 		cwmService.flushChanges();
 	}
 
@@ -629,7 +634,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		resp.setInNotebook(false);
 		resp.setNotebookInsertTime(null);
 		String pageName = page instanceof ISIBasePage ? ((ISIBasePage)page).getPageName() : null;
-		EventService.get().saveEvent("notebook:remove", String.valueOf(resp.getId()), pageName);
+		eventService.saveEvent("notebook:remove", String.valueOf(resp.getId()), pageName);
 		cwmService.flushChanges();
 	}
 

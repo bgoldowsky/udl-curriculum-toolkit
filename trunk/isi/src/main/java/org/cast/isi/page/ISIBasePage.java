@@ -22,15 +22,19 @@ package org.cast.isi.page;
 import lombok.Getter;
 
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.util.string.UrlUtils;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.service.JavascriptService;
 import org.cast.cwm.data.behavior.JsEventLoggingBehavior;
 import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISIApplication;
+
+import com.google.inject.Inject;
 
 /**
  * Subclasses of this page will automatically log an event via the
@@ -42,11 +46,11 @@ import org.cast.isi.ISIApplication;
  */
 public abstract class ISIBasePage extends WebPage implements IHeaderContributor {
 	
-//	public ISIBasePage() {
-//		super();
-//	}
 	@Getter protected String pageTitle = ISIApplication.get().getPageTitleBase() + " :: Default Page Title";
 	
+	@Inject
+	private IEventService eventService;
+
 	public ISIBasePage(final PageParameters param) {
 		super(param);
 		
@@ -65,22 +69,22 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 	protected void onBeforeRender() {
 		super.onBeforeRender();
 		if (CwmSession.get().getUser() != null) {
-			EventService.get().saveEvent("pageview:" + getPageType(), getPageViewDetail(), getPageName());
+			eventService.saveEvent("pageview:" + getPageType(), getPageViewDetail(), getPageName());
 		}		
 	}
 	
 	public void renderHead(final IHeaderResponse response) {
 		JavascriptService.get().includeJQuery(response);
-		response.renderJavascriptReference(new ResourceReference("/js/lang/en.js"));
-		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery.form.js"));
-		response.renderJavascriptReference(new ResourceReference("/js/functions.js"));
-		response.renderJavascriptReference(new ResourceReference("/js/jquery/jquery-ui-1.8.16.custom.min.js"));
+		renderThemeJS(response, "js/lang/en.js");
+		renderThemeJS(response, "js/jquery/jquery.form.js");
+		renderThemeJS(response, "js/functions.js");
+		renderThemeJS(response, "js/jquery/jquery-ui-1.8.16.custom.min.js");
 	
-		response.renderCSSReference(new ResourceReference("/css/toolbar.css"));
-		response.renderCSSReference(new ResourceReference("/css/buttons.css"));
-		response.renderCSSReference(new ResourceReference("/css/boxes.css"));
-		response.renderCSSReference(new ResourceReference("/css/modal.css"));
-		response.renderCSSReference(new ResourceReference("/css/theme.css"));
+		renderThemeCSS(response, "css/toolbar.css");
+		renderThemeCSS(response, "css/buttons.css");
+		renderThemeCSS(response, "css/boxes.css");
+		renderThemeCSS(response, "css/modal.css");
+		renderThemeCSS(response, "css/theme.css");
 
 		// if MathML is configured on, then link out to the MathJax site
 		if (ISIApplication.get().isMathMLOn()) {
@@ -101,6 +105,18 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 
 	public boolean hasMiniGlossary() {
 		return false;
+	}
+
+	public static void renderThemeCSS(IHeaderResponse response, String fileName) {
+		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()));
+	}
+
+	public static void renderThemeCSS(IHeaderResponse response, String fileName, String media) {
+		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()), media);
+	}
+
+	public static void renderThemeJS(IHeaderResponse response, String fileName) {
+		response.renderJavascriptReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()));
 	}
 
 	/**

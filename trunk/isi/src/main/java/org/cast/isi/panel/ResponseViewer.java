@@ -24,14 +24,13 @@ import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.cast.cwm.components.ClassAttributeModifier;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.components.ShyLabel;
 import org.cast.cwm.data.Response;
 import org.cast.isi.ISIApplication;
@@ -96,7 +95,7 @@ public class ResponseViewer extends org.cast.cwm.data.component.ResponseViewer {
 //		} else {
 			sectionLink = new BookmarkablePageLink<ISIStandardPage>("sectionLink", ISIApplication.get().getHomePage());
 			sectionLink.add(new Label("sectionTitle", "Home"));
-			sectionIcon = new Image("icon", new ResourceReference("/img/icons/home_small.png"));
+			sectionIcon = new Icon("icon", "img/icons/home_small.png");
 //		}
 
 			sectionLink.add(new ClassAttributeModifier("sectionLink"));

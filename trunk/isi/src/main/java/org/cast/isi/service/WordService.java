@@ -25,12 +25,15 @@ import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateListModel;
 import net.databinder.models.hib.HibernateObjectModel;
 
+import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.CwmService;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.data.WordCard;
 import org.cast.isi.data.builder.WordCardsQuery;
+
+import com.google.inject.Inject;
 
 /**
  * Methods to interface with the database representations of WordCards, WordConnections, etc.
@@ -40,6 +43,13 @@ import org.cast.isi.data.builder.WordCardsQuery;
 public class WordService  {
 	
 	private static WordService INSTANCE = new WordService();
+	
+	@Inject
+	private IEventService eventService;
+
+	public WordService () {
+		InjectorHolder.getInjector().inject(this);
+	}
 	
 	public static WordService get() { return INSTANCE; }
 
@@ -63,7 +73,7 @@ public class WordService  {
 		wc.setGlossaryWord(inGlossary);
 		Databinder.getHibernateSession().save(wc);
 		CwmService.get().flushChanges();
-		EventService.get().saveEvent("wordcard:create", word, "glossary");
+		eventService.saveEvent("wordcard:create", word, "glossary");
 		cardModel.setObject(wc);
 		return cardModel;
 	}

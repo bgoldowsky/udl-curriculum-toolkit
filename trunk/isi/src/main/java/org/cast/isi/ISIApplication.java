@@ -64,6 +64,7 @@ import org.apache.wicket.util.time.Time;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.CwmPopupSettings;
+import org.cast.cwm.components.ImageUrlCodingStrategy;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.ResponseMetadata;
@@ -79,8 +80,8 @@ import org.cast.cwm.indira.FileResourceManager;
 import org.cast.cwm.indira.IndiraImage;
 import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.indira.IndiraMarkupParserFactory;
-import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.HighlightService;
+import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.IResponseService;
 import org.cast.cwm.service.SiteService;
 import org.cast.cwm.tag.TagService;
@@ -120,7 +121,9 @@ import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ILinkPropertiesService;
 import org.cast.isi.service.IPageClassService;
+import org.cast.isi.service.IQuestionService;
 import org.cast.isi.service.ISIEmailService;
+import org.cast.isi.service.ISIEventService;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.cast.isi.service.LinkPropertiesService;
@@ -128,7 +131,6 @@ import org.cast.isi.service.PageClassService;
 import org.cast.isi.service.QuestionService;
 import org.cast.isi.service.SectionService;
 import org.hibernate.Session;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -223,7 +225,6 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter @Setter protected Glossary glossary;
 	@Getter @Setter protected ISITagLinkBuilder tagLinkBuilder = new ISITagLinkBuilder();
 	@Getter @Setter protected ISITagLinkBuilder tagPopupLinkBuilder = null;
-	@Getter @Setter protected QuestionService questionService = new QuestionService();
 	
 	protected String[] studentContentFiles;
 	@Getter protected XmlDocumentList studentContent = new XmlDocumentList();
@@ -280,6 +281,8 @@ public abstract class ISIApplication extends CwmApplication {
    			binder.bind(IPageClassService.class).to(PageClassService.class).in(Scopes.SINGLETON);
    			binder.bind(IFeatureService.class).to(FeatureService.class).in(Scopes.SINGLETON);
    			binder.bind(ILinkPropertiesService.class).to(LinkPropertiesService.class).in(Scopes.SINGLETON);
+   			binder.bind(IEventService.class).to(ISIEventService.class).in(Scopes.SINGLETON);
+   			binder.bind(IQuestionService.class).to(QuestionService.class);
     		}
         });
         return modules;
@@ -287,8 +290,6 @@ public abstract class ISIApplication extends CwmApplication {
 	
 	protected void init() {
 		log.debug("Starting ISI Application Init");
-		
-		EventService.get().setEventClass(ISIEvent.class);
 
 		// Set xml content Section and Page based on property file - these have to be set before
 		// the super.init is called
@@ -396,7 +397,7 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 	
 	@Override
-	protected void configureHibernate(AnnotationConfiguration ac) {
+	protected void configureHibernate(@SuppressWarnings("deprecation") org.hibernate.cfg.AnnotationConfiguration ac) {
 		super.configureHibernate(ac);
 		
 		Configuration c = ac;
@@ -731,6 +732,11 @@ public abstract class ISIApplication extends CwmApplication {
 	@Override
 	protected void configureMountPaths() {
 		super.configureMountPaths();
+		
+		mount(new ImageUrlCodingStrategy("css"));
+		mount(new ImageUrlCodingStrategy("img"));
+		mount(new ImageUrlCodingStrategy("js"));
+
 		mount(new QueryStringUrlCodingStrategy("login", getSignInPageClass()));
 		mount(new QueryStringUrlCodingStrategy("home", getStudentTOCPageClass()));
 		mount(new QueryStringUrlCodingStrategy("thome", getTeacherTOCPageClass()));
@@ -750,7 +756,6 @@ public abstract class ISIApplication extends CwmApplication {
 		mount(new QueryStringUrlCodingStrategy("register", getRegisterPageClass()));
 		mount(new QueryStringUrlCodingStrategy("reset", getForgotPasswordPageClass()));
 		mount(new QueryStringUrlCodingStrategy("password", getPasswordPageClass()));
-		
 	}
 	
 	
@@ -1092,7 +1097,6 @@ public abstract class ISIApplication extends CwmApplication {
 		String imageName = "";
 		String alt = "";
 		IModel<ISIXmlSection> sectionModel = new Model<ISIXmlSection>(section);
-		String sectionTitle = section.getTitle();
 		IndiraImage ii = null;
 		
 		// if there is no sectionStatus record then student hasn't finished this section

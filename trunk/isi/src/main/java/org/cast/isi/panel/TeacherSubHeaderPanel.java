@@ -63,7 +63,7 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 			@Override
 			protected void onPeriodUpdate(AjaxRequestTarget target) {
 				teacherNotesLink.setEnabled(false);
-				studentFlagPanel.setUser(null); // Set Flag to no student
+				studentFlagPanel.setmUser(null); // Set Flag to no student
 				studentFlagPanel.setEnabled(false);
 				if (target != null) {
 					target.addComponent(studentFlagPanel);
@@ -99,7 +99,7 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 		add(teacherNotesLink);
 
 		// Student Flag Panel for the current student
-		studentFlagPanel = new StudentFlagPanel("studentFlagPanel", ISISession.get().getStudent(), null, "/img/icons/flag") {
+		studentFlagPanel = new StudentFlagPanel("studentFlagPanel", ISISession.get().getStudent(), null) {
 			private static final long serialVersionUID = 1L;
 
 			@Override

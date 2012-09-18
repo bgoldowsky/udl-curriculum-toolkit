@@ -30,36 +30,32 @@ import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.CwmService;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.data.Question;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.classic.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class QuestionService {
-	private static QuestionService instance = new QuestionService();
-	private static final Logger log = LoggerFactory.getLogger(QuestionService.class);
-	
-	public static QuestionService get() {
-		return instance;
-	}
-	
-	/**
-	 * Get all of the questions for this user.
-	 * Questions could be owned by the user or have a null owner
-	 * indicating they are used by all users.	 *
+import com.google.inject.Inject;
+
+public class QuestionService implements IQuestionService {
+
+	@Inject
+	private IEventService eventService;
+
+	@Inject
+	private CwmService cwmService;
+
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IQuestionService#getQuestionsByUser(long)
 	 */
 	public List<Question> getQuestionsByUser (long userId) {
 		Query q = Databinder.getHibernateSession()
 			.createQuery("from Question q where (q.owner=:userId or q.owner is null) and active=true order by q.owner desc")
 			.setLong("userId", userId)
 			.setCacheable(true);
+		@SuppressWarnings("unchecked")
 		List<Question> questions = q.list();
 		Set<Question> set = new LinkedHashSet<Question>(questions);
 		questions.clear();
@@ -67,22 +63,15 @@ public class QuestionService {
 		return questions;		
 	}
 	
-	/**
-	 * Get question by id
-	 */
-//	public Question getQuestionById (long id) {
-//		return (Question) Databinder.getHibernateSession().get(Question.class, id);
-//	}
-
-	/**
-	 * Get question model by id
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IQuestionService#getQuestionModelById(long)
 	 */
 	public HibernateObjectModel<Question> getQuestionModelById (long id) {
 		return new HibernateObjectModel<Question>(Question.class, id);
 	}
 	
-	/**
-	 * Create the new question and associated prompt
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IQuestionService#createQuestion(org.cast.cwm.data.models.UserModel, java.lang.String, java.lang.String)
 	 */
 	public void createQuestion(UserModel mOwner, String text, String pageName) {
 		Session session = Databinder.getHibernateSession();
@@ -90,12 +79,12 @@ public class QuestionService {
 		ISIPrompt prompt = new ISIPrompt(PromptType.MY_QUESTIONS);
 		if (mOwner != null) { 
 			prompt.setTargetUser(mOwner.getObject());
-			EventService.get().saveEvent("question:create", text, pageName);
+			eventService.saveEvent("question:create", text, pageName);
 		}
 		session.save(prompt);	
 		question.setPrompt(prompt);
 		session.save(question);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 	}
 		
 	/**
@@ -115,13 +104,8 @@ public class QuestionService {
 //		return (Integer) c.uniqueResult();		
 //	}
 	
-	/**
-	 * Return a single Question with the specified text value and author.  Useful for checking to see
-	 * if a user has already created a question with that text.
-	 * 
-	 * @param text
-	 * @param user
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IQuestionService#getByTextAndStudent(java.lang.String, org.cast.cwm.data.User)
 	 */
 	public Question getByTextAndStudent(String text, User user) {
 		Query q = Databinder.getHibernateSession().createQuery("From Question q where q.owner=:user and q.text=:text and active=true");
@@ -130,22 +114,27 @@ public class QuestionService {
 		return (Question) q.uniqueResult();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IQuestionService#deleteQuestion(org.apache.wicket.model.IModel, java.lang.String)
+	 */
 	public void deleteQuestion (IModel<Question> mQuestion, String pageName) {
 		Question q = mQuestion.getObject();
 		q.setActive(false);
-		Session session = Databinder.getHibernateSession();
 		Databinder.getHibernateSession().update(q);
-		CwmService.get().flushChanges();			
-		EventService.get().saveEvent("question:delete", q.getText() 
+		cwmService.flushChanges();			
+		eventService.saveEvent("question:delete", q.getText() 
 				+ " (" + q.getId() + ")", pageName);	
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IQuestionService#updateQuestion(org.cast.isi.data.Question, java.lang.String)
+	 */
 	public void updateQuestion (Question question, String pageName) {
 		Question q = question;
-		Session session = Databinder.getHibernateSession();
 		Databinder.getHibernateSession().update(q);
-		CwmService.get().flushChanges();			
-		EventService.get().saveEvent("question:namechange", question.getText() 
+		cwmService.flushChanges();			
+		eventService.saveEvent("question:namechange", question.getText() 
 				+ " (" + question.getId() + ")", pageName);	
-		}
+	}
+
 }

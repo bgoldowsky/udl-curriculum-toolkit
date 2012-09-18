@@ -27,6 +27,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.service.ICwmService;
 
@@ -81,7 +82,7 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 
 		private GotItButton(String id) {
 			super(id);
-			add(new Icon("icon", "/img/icons/response_positive.png", getAltText()));
+			add(new Icon("icon", "img/icons/response_positive.png", getAltText()));
 			if (isMarkedCorrect()) 
 				add(new AttributeAppender("class", new Model<String>("current"), " "));
 		}
@@ -109,7 +110,7 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 
 		private NotGotItButton(String id) {
 			super(id);
-			add(new Icon("icon", "/img/icons/response_negative.png", getAltText()));
+			add(new Icon("icon", "img/icons/response_negative.png", getAltText()));
 			if (isMarkedIncorrect()) 
 				add(new AttributeAppender("class", new Model<String>("current"), " "));
 		}

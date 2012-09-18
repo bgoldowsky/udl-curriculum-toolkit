@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.image.Image;
+import org.cast.cwm.components.Icon;
 import org.junit.Test;
 
 public class TeacherSectionCompleteToggleImageLinkTest extends
@@ -45,8 +46,8 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(false);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
-		assertThat((String) image.getDefaultModelObject(), equalTo("/img/icons/check_notdone.png"));
+		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
+		assertThat((String) image.getmImagePath().getObject(), equalTo("img/icons/check_notdone.png"));
 	}
 
 	@Test
@@ -54,7 +55,7 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(false);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
+		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
 		wicketTester.assertAttribute("Should have alt=\"Not Finished\"", "Not Finished", image, "alt");
 	}
 
@@ -63,7 +64,7 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(false);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
+		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
 		wicketTester.assertAttribute("Should have title=\"Not Finished\"", "Not Finished", image, "title");
 	}
 
@@ -72,7 +73,7 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(true);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
+		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
 		assertThat((String) image.getDefaultModelObject(), equalTo("/img/icons/check_done.png"));
 	}
 
@@ -81,7 +82,7 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(true);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
+		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
 		wicketTester.assertAttribute("Should have alt=\"Finished\"", "Finished", image, "alt");
 	}
 
@@ -90,7 +91,7 @@ public class TeacherSectionCompleteToggleImageLinkTest extends
 		sectionStatus.setCompleted(true);
 		sectionStatus.setReviewed(true);
 		startWicket();
-		Image image = (Image) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
+		Icon image = (Icon) wicketTester.getComponentFromLastRenderedPage("panel:component:doneImg");
 		wicketTester.assertAttribute("Should have title=\"Finished\"", "Finished", image, "title");
 	}
 

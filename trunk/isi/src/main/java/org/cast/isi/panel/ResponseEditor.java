@@ -49,13 +49,15 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wicket.contrib.tinymce.settings.TinyMCESettings;
+
+import com.google.inject.Inject;
 
 public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
@@ -73,6 +75,9 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 	protected static TinyMCESettings tinyMCESettings = null;
 	
 	protected FeedbackPanel feedback;
+
+	@Inject
+	private IEventService eventService;
 
 	private final static Logger log = LoggerFactory.getLogger(ResponseEditor.class);	
 	private static final long serialVersionUID = 1L;
@@ -223,7 +228,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 	@Override
 	protected void onStarterAdded(AjaxRequestTarget target) {
-		EventService.get().saveEvent("starterAdded", "promptId=" + prompt.getObject().getId().toString(), getPageName());
+		eventService.saveEvent("starterAdded", "promptId=" + prompt.getObject().getId().toString(), getPageName());
 		super.onStarterAdded(target);
 	}
 

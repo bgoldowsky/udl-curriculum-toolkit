@@ -43,11 +43,13 @@ import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.FeedbackBorder;
 import org.cast.cwm.data.validator.CorrectPasswordValidator;
-import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISIApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * When a user forgets their password, they are emailed a link to this page where
@@ -58,6 +60,9 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 
 	private boolean haveKey = false;
 	
+	@Inject
+	private IEventService eventService;
+
 	static final Logger log = LoggerFactory.getLogger(Password.class);
 
 	public Password(PageParameters params) {
@@ -149,7 +154,7 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 			info("Password changed.");
 			fields.setVisible(false); // don't show form when confirming success
 			if (CwmSession.get().isSignedIn())
-				EventService.get().saveEvent("user:change password", null, null); // TODO - do we care about this? If so, make it work for non-logged-in case.
+				eventService.saveEvent("user:change password", null, null); // TODO - do we care about this? If so, make it work for non-logged-in case.
 		}
 	}
 

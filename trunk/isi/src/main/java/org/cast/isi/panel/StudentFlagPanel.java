@@ -21,14 +21,15 @@ package org.cast.isi.panel;
 
 import java.util.HashMap;
 
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ResourceReference;
+import net.databinder.models.hib.HibernateObjectModel;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 import org.cast.cwm.components.ClassAttributeModifier;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISISession;
@@ -43,8 +44,7 @@ import org.cast.isi.service.ISIResponseService;
 public class StudentFlagPanel extends Panel {
 	
 	private static final long serialVersionUID = 1L;
-	// TODO: This should be a model!!!
-	private User person;
+	private IModel<User> mUser;
 	private String imagePrefix;
 	private boolean isFlagged = false;
 
@@ -58,7 +58,7 @@ public class StudentFlagPanel extends Panel {
 	 */
 	public StudentFlagPanel(String id, User person, HashMap<Long, Boolean> flagList, String imagePrefix) {
 		super(id);
-		this.person = person;
+		this.mUser = new HibernateObjectModel<User>(person);
 		this.imagePrefix = imagePrefix;
 		if (flagList == null)
 			this.setFlagged(ISIResponseService.get().isFlagged(person));
@@ -71,28 +71,33 @@ public class StudentFlagPanel extends Panel {
 		draw();
 
 	}
-	
+
+	/**
+	 * Creates a flag panel with the standard image.
+	 * @param id
+	 * @param person
+	 * @param list
+	 */
 	public StudentFlagPanel(String id, User person, HashMap<Long, Boolean> list) {
-		this(id, person, list, "/img/icons/flag");
+		this(id, person, list, "img/icons/flag");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void draw() {
 		
-		AjaxFallbackLink flagLink = new AjaxFallbackLink("flag-link") {
+		AjaxFallbackLink<Void> flagLink = new AjaxFallbackLink<Void>("flag-link") {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick(final AjaxRequestTarget target) {
-				if (person != null) {
-					ISIResponseService.get().toggleFlag(person);
+				if (mUser != null) {
+					ISIResponseService.get().toggleFlag(mUser.getObject());
 					if(target != null) {
 						getPage().visitChildren(StudentFlagPanel.class, new IVisitor<StudentFlagPanel>() {
 							
 							public Object component(StudentFlagPanel component) {
-								User p = component.getUser();
-								if (p != null && p.equals(getUser())) {
+								IModel<User> mOtherUser = component.getmUser();
+								if (mOtherUser!=null && mOtherUser.getObject()!=null && mOtherUser.getObject().equals(mUser.getObject())) {
 									component.toggleFlag();
 									target.addComponent(component);
 								}
@@ -105,41 +110,37 @@ public class StudentFlagPanel extends Panel {
 				}
 			}
 		};
-    	if (person == null) {
+    	if (mUser == null) {
     		flagLink.add(new ClassAttributeModifier("off"));
     	}
 		
+    	Icon flagImage = new Icon("flag-image", 
+    			new AbstractReadOnlyModel<String>() {
+    		private static final long serialVersionUID = 1L;
+    		@Override
+    		public String getObject() {
+    			if (isFlagged())
+    				return (imagePrefix + "_on.png");
+    			else
+    				return (imagePrefix + "_off.png");
+    		}
+    	}, 
+
+    	new AbstractReadOnlyModel<String>() {
+    		private static final long serialVersionUID = 1L;
+    		@Override
+    		public String getObject() {
+    			if (mUser == null || mUser.getObject() == null) {
+    				return "No Student Selected";
+    			} else if (isFlagged()) {
+    				return mUser.getObject().getFullName() + " is flagged";
+    			} else {
+    				return mUser.getObject().getFullName() + " is not flagged";
+    			}
+    		}
+
+    	}, null);
 		
-		Image flagImage = new Image("flag-image", new AbstractReadOnlyModel<ResourceReference>() {
-
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public ResourceReference getObject() {
-				if (isFlagged())
-					return new ResourceReference(imagePrefix + "_on.png");
-				else
-					return new ResourceReference(imagePrefix + "_off.png");
-			}
-			
-		});
-		
-		flagImage.add(new AttributeModifier("title", true, new AbstractReadOnlyModel<String>() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String getObject() {
-				if (person == null) {
-					return "No Student Selected";
-				} else if (isFlagged()) {
-					return person.getFullName() + " is flagged";
-				} else {
-					return person.getFullName() + " is not flagged";
-				}
-			}
-			
-		}));
 		flagLink.add(flagImage);
 		add(flagLink);
 	}
@@ -151,15 +152,6 @@ public class StudentFlagPanel extends Panel {
 	}
 	
 	// Cache the flag for each person so related flags do not make repeated database calls
-	
-	public User getUser() {
-		return person;
-	}
-
-	public void setUser(User person) {
-		this.person = person;
-	}
-
 	public void setFlagged(boolean isFlagged) {
 		this.isFlagged = isFlagged;
 	}
@@ -170,6 +162,14 @@ public class StudentFlagPanel extends Panel {
 	
 	public void toggleFlag() {
 		this.isFlagged = !isFlagged;
+	}
+	
+	public IModel<User> getmUser() {
+		return mUser;
+	}
+	
+	public void setmUser(IModel<User> mUser) {
+		this.mUser = mUser;
 	}
 
 }
