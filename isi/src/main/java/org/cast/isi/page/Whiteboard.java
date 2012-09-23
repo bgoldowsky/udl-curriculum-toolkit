@@ -247,11 +247,15 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 
 			ISIPrompt prompt = ((ISIPrompt)r.getPrompt());
 			ISIXmlSection section = prompt.getContentElement().getContentLocObject().getSection();
-			if (!responseMap.containsKey(section))
-				responseMap.put(section, new TreeMap<ISIPrompt, List<ISIResponse>>());
-			if (!responseMap.get(section).containsKey(prompt))
-				responseMap.get(section).put(prompt, new ArrayList<ISIResponse>());
-			responseMap.get(section).get(prompt).add(r);
+			if (section != null) {
+				if (!responseMap.containsKey(section))
+					responseMap.put(section, new TreeMap<ISIPrompt, List<ISIResponse>>());
+				if (!responseMap.get(section).containsKey(prompt))
+					responseMap.get(section).put(prompt, new ArrayList<ISIResponse>());
+				responseMap.get(section).get(prompt).add(r);
+			} else {
+				log.error("Whiteboard contained non-existent content item: {}", prompt);
+			}
 		}
 		if (log.isDebugEnabled()) {
 			for (ISIXmlSection loc : responseMap.keySet()) {

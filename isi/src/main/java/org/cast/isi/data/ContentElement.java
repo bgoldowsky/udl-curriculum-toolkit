@@ -53,7 +53,7 @@ import org.w3c.dom.Node;
 @GenericGenerator(name="my_generator", strategy = "org.cast.cwm.CwmIdGenerator")
 @Getter 
 @Setter
-@ToString(of={"id"})
+@ToString(of={"id", "contentLocation", "xmlId"})
 public class ContentElement extends PersistedObject implements Comparable<ContentElement> {
 
 	private static final long serialVersionUID = 1L;
@@ -120,4 +120,5 @@ public class ContentElement extends PersistedObject implements Comparable<Conten
 			return -1;
 		throw new RuntimeException ("Could not determine ordering of content elements");
 	}
+	
 }
