@@ -88,7 +88,6 @@ import com.google.inject.Inject;
 public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(Notebook.class);
 
 	boolean isTeacher = false;
@@ -248,13 +247,17 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 			// check if the response is a child of the current chapter, if so add it to the response map
 			ISIPrompt prompt = (ISIPrompt) r.getPrompt();
 			ISIXmlSection promptSection = new ContentLoc(prompt.getContentElement().getContentLocation()).getSection();
-
-			if (currentChapterSection.isAncestorOf(promptSection)) {
-				if (responseMap.containsKey(r.getPrompt()))
-					responseMap.get(r.getPrompt()).add(r);
-				else
-					responseMap.put((ISIPrompt) r.getPrompt(), new ArrayList<ISIResponse>(Arrays.asList(r)));
-			}						
+			
+			if (promptSection != null) {
+				if (currentChapterSection.isAncestorOf(promptSection)) {
+					if (responseMap.containsKey(r.getPrompt()))
+						responseMap.get(r.getPrompt()).add(r);
+					else
+						responseMap.put((ISIPrompt) r.getPrompt(), new ArrayList<ISIResponse>(Arrays.asList(r)));
+				}
+			} else {
+				log.error("Notebook contained content item that no longer exists: {}", prompt);
+			}
 		}		
 	}
 
