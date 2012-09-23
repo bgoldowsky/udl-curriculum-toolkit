@@ -22,6 +22,7 @@ package org.cast.isi;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.injection.web.InjectorHolder;
 import org.cast.cwm.service.IEventService;
 
 import com.google.inject.Inject;
@@ -45,7 +46,7 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 
 	@Inject
 	private IEventService eventService;
-
+	
 	/**
 	 * A constructor.  The event is the Ajax Event (e.g. 'onclick') and the type
 	 * is the name of the component that will be stored in the database (e.g. 'pagenotes').
@@ -57,18 +58,23 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 	 * @param pageName the name of the content page
 	 */
 	public CollapseBoxBehavior(String event, String type, String pageName) {
-		super(event);
+		this(event);
 		this.type = type;
 		this.pageName = pageName;
 	}
 
 	public CollapseBoxBehavior(String event, String type, String pageName, String detail) {
-		super(event);
+		this(event);
 		this.type = type;
 		this.pageName = pageName;
 		this.detail = detail;
 	}	
 
+	/** Public constructors call this to do essential setup. */
+	private CollapseBoxBehavior(final String event) {
+		super(event);
+		InjectorHolder.getInjector().inject(this);
+	}
 	
 	@Override
 	protected CharSequence generateCallbackScript(CharSequence partialCall) {
