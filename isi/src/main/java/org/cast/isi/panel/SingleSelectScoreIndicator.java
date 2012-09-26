@@ -43,23 +43,20 @@ public class SingleSelectScoreIndicator extends Panel {
 		super(id, model);
 		add(new ScoreIcon("icon", model));
 		add(new Label("text", new PropertyModel<String>(model, "triesOrdinal")).setVisibilityAllowed(showTryCount));
+		setOutputMarkupId(true);
+		setOutputMarkupPlaceholderTag(true);
 	}
 	
 	@Override
-	protected void onBeforeRender() {
+	protected void onConfigure() {
 		// Score indicator is visible only if the response has been scored.
 		setVisible(getModel().getObject() != null && getModel().getObject().getScore() != null);
-		super.onBeforeRender();
+		super.onConfigure();
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	IModel<Response> getModel() {
 		return (IModel<Response>) getDefaultModel();
 	}
 
-	@Override
-	// Required in order to set visibility in onBeforeRender
-	protected boolean callOnBeforeRenderIfNotVisible() {
-	   return true;
-	}
 }
