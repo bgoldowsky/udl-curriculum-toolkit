@@ -227,10 +227,14 @@
          <!-- embedded movie -->
 		 <xsl:call-template name="videotag" />
 	   </xsl:when>
+	   
+	   <xsl:when test="contains(@src, '.swf')">
+	     <div wicket:id="swf_" src="{@src}" width="100" height="100"></div>
+	   </xsl:when>
                    
  	   <xsl:otherwise>
  	     <!-- unknown object type -->
-         <div wicket:id="object_" appletname="{@src}"  width="{@width}" height="{@height}" id="{@id}">
+         <div wicket:id="object_" src="{@src}"  width="{@width}" height="{@height}" id="{@id}">
            <xsl:apply-templates/>
          </div>
 		 <xsl:call-template name="objectCaption" />
