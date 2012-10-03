@@ -36,8 +36,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.components.ClassAttributeModifier;
-import org.cast.cwm.indira.IndiraImage;
-import org.cast.cwm.indira.IndiraImageComponent;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
@@ -198,21 +197,16 @@ public class StudentToc extends ISIStandardPage {
 	 * @return the appropriate image component for the 'completed' parameter
 	 */
 	public Component getCompletedImage(String id, IModel<XmlSection> model) {
-		IndiraImageComponent image = new IndiraImageComponent(id);
 		ISIXmlSection currentSection = (ISIXmlSection) model.getObject();
 		
 		Boolean isComplete = sectionService.getSectionStatusMap(getUser()).get(new ContentLoc(currentSection).getLocation());
 
 		if (isComplete == null)
 			isComplete = false;
-		
-		if (isComplete) {
-			image.setDefaultModelObject(IndiraImage.get("img/icons/check_done.png"));
-			image.setTitleText("Section Completed");
-			image.setAltText("Section Completed");
-		} else {
+
+		Icon image = new Icon("img/icons/check_done.png", "Section Completed");
+		if (!isComplete)
 			image.setVisible(false);
-		}
 		return image;
 	}
 	

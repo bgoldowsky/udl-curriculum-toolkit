@@ -212,7 +212,7 @@ public class TeacherToc extends ISIStandardPage {
 									}
 								};
 
-								link.add(ISIApplication.statusIconFor(getUserSectionStatus(student, sec)));
+								link.add(ISIApplication.get().teacherStatusIconFor(sec, getUserSectionStatus(student, sec)));
 								sectionItem.add(link);
 							}
 						});

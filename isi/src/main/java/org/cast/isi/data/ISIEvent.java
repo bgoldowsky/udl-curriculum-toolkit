@@ -25,6 +25,7 @@ import javax.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.apache.wicket.RequestCycle;
 import org.cast.cwm.data.Event;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISISession;
@@ -49,8 +50,9 @@ public class ISIEvent extends Event {
 	@Override
 	public void setDefaultValues() {
 		super.setDefaultValues();
-		User targetStudent = ISISession.get().getStudent();
-		if (targetStudent != null)
-			target = targetStudent;
+		// Set target student if not already set
+		// Check RequestCycle since after timeout, trying to get session leads to an error
+		if (target==null && RequestCycle.get() != null)
+			target = ISISession.get().getStudent();
 	}
 }

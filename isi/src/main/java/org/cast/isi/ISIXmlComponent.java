@@ -55,8 +55,6 @@ import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
-import org.cast.cwm.indira.FileResource;
-import org.cast.cwm.indira.FileResourceManager;
 import org.cast.cwm.mediaplayer.AudioPlayerPanel;
 import org.cast.cwm.mediaplayer.FlashAppletPanel;
 import org.cast.cwm.mediaplayer.MediaPlayerPanel;
@@ -183,10 +181,14 @@ public class ISIXmlComponent extends XmlComponent {
 				}
 			}
 			if(archive != null) {
+				
+				String jarUrl = RequestCycle.get().urlFor(getRelativeRef(archive+".jar")).toString();
+				String dataUrl = RequestCycle.get().urlFor(getRelativeRef(dataFile)).toString();
+
 				DeployJava dj = new DeployJava(wicketId);
-				dj.setArchive(FileResourceManager.get().getUrl(archive+".jar"));
+				dj.setArchive(jarUrl);
 				dj.setCode(elt.getAttribute("src"));
-				dj.addParameter("dataFile", FileResourceManager.get().getUrl(dataFile));
+				dj.addParameter("dataFile", dataUrl);
 				return dj;
 			}
 			return super.getDynamicComponent(wicketId, elt);
@@ -326,8 +328,9 @@ public class ISIXmlComponent extends XmlComponent {
 			return player;
 
 		} else if (wicketId.startsWith("swf_")) {
-			return new FlashAppletPanel(wicketId,
-					new ResourceReference(FileResource.class, elt.getAttribute("src"), null, null),
+			
+			ResourceReference swfRef = getRelativeRef(elt.getAttribute("src"));
+			return new FlashAppletPanel(wicketId, swfRef,
 					Integer.valueOf(elt.getAttribute("width")),
 					Integer.valueOf(elt.getAttribute("height")),
 					"");

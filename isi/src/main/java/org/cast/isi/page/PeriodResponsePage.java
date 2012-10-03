@@ -126,7 +126,7 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		link.add(new Label("title", prompt.getContentElement().getContentLocObject().getSection().getTitle()));
 		link.add(new ClassAttributeModifier("sectionLink"));
 		add(link);
-		add(ISIApplication.get().iconFor(prompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(), ""));		
+		add(ISIApplication.get().iconFor(prompt.getContentElement().getContentLocObject().getSection().getSectionAncestor()));		
 		add(makeSummary("promptResponseSummary", mPrompt));
 		
 		// Add the text associated with Prompt

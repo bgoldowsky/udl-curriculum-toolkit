@@ -21,7 +21,6 @@ package org.cast.isi.panel;
 
 import java.util.List;
 
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -29,11 +28,10 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.cast.cwm.components.ClassAttributeModifier;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.UserModel;
-import org.cast.cwm.indira.IndiraImage;
-import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
@@ -44,13 +42,16 @@ import org.cast.isi.data.SectionStatus;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.service.IISIResponseService;
-import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+/**
+ * Navigational panel consisting of a set of numbered links, one for each page in the current section.
+ * These links may have icons indicating feedback status on the page.
+ */
 public class PageLinkPanel extends ISIPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -101,26 +102,23 @@ public class PageLinkPanel extends ISIPanel {
 			link.add(new Label("pageNum", String.valueOf(pageNumDisplay)).setRenderBodyOnly(true));
 
 			feedbackRequired = false;
-			EnvelopeImage envelopImage = new EnvelopeImage("icon", new Model<ISIXmlSection>(page));
+			Icon envelopImage = new EnvelopeImage("icon", new Model<ISIXmlSection>(page));
 			
-			// for teachers add any of the status icons, for students, just add the envelop
+			// for teachers add any of the status icons, for students, just add the envelope if appropriate
 			if (teacher && (currentSectionStatus != null)) {
-				// if the page has feedback (red envelop) then display the envelop
+				// if the page has feedback (red envelope) then display the envelope
 				// otherwise, display the needs review icon or no icon at all
 				if ((currentSectionStatus.getCompleted() == true) &&
 					(currentSectionStatus.getReviewed() == false) && 
 					(!feedbackRequired)) {
-					IndiraImage ii = IndiraImage.get("img/icons/status_ready.png");
-					IndiraImageComponent icon = new IndiraImageComponent("icon", new Model<IndiraImage>(ii));
+					Icon icon = new Icon("icon", "img/icons/status_ready.png", "Ready for review");
 					link.add(icon);
-					icon.add(new SimpleAttributeModifier("alt", "Ready for review"));
-					icon.add(new SimpleAttributeModifier("title", "Ready for review"));
 					// don't display the status icon if there's no response group on this page
 					icon.setVisible(page.hasResponseGroup());
 				} else {
 					link.add(envelopImage);
 				} 
-			} else { // just add the envelop for the student
+			} else { // just add the envelope for the student
 				link.add(envelopImage);
 			}
 						
@@ -144,18 +142,14 @@ public class PageLinkPanel extends ISIPanel {
 	 * @author jbrookover
 	 *
 	 */
-	public class EnvelopeImage extends IndiraImageComponent {
+	public class EnvelopeImage extends Icon {
 
 		private static final long serialVersionUID = 1L;
 
 		public EnvelopeImage(String id, IModel<ISIXmlSection> model) {
 			super(id);
 
-			User student;
-			if (ISISession.get().getUser().getRole().equals(Role.STUDENT))
-				student = ISISession.get().getUser();
-			else
-				student = ISISession.get().getStudent();
+			User student = ISISession.get().getTargetUserModel().getObject();
 			List<FeedbackMessage> messages = responseService.getNotesForPage(student, new ContentLoc(model.getObject()).getLocation());
 			boolean unread = false;
 			for (FeedbackMessage m : messages) {
@@ -167,10 +161,10 @@ public class PageLinkPanel extends ISIPanel {
 				}
 			}
 			if (unread) {
-				setDefaultModelObject(IndiraImage.get("img/icons/envelope_new.png"));
+				mImagePath = Model.of("img/icons/envelope_new.png");
 				feedbackRequired = true;
 			} else if (!messages.isEmpty()) {
-				setDefaultModelObject(IndiraImage.get("img/icons/envelope_old.png"));
+				mImagePath = Model.of("img/icons/envelope_old.png");
 			} else {
 				setVisible(false);
 			}
