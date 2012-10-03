@@ -284,7 +284,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 			// Prompt Icon
 			promptGroup.add(ISIApplication.get().iconFor(
-					currentPrompt.getContentElement().getContentLocObject().getSection().getSectionAncestor(),""));
+					currentPrompt.getContentElement().getContentLocObject().getSection().getSectionAncestor()));
 
 			// Add the title and link to the page where this note is located
 			BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("titleLink", currentPrompt.getContentElement().getContentLocObject().getSection());

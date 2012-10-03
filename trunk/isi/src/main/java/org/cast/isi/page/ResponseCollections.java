@@ -202,7 +202,7 @@ public class ResponseCollections extends ISIStandardPage {
 		rvPromptList.add(new Label("responseHeader", section.getCrumbTrailAsString(1, 1)));
 			
 		// Prompt Icon
-		rvPromptList.add(ISIApplication.get().iconFor(section.getSectionAncestor(),""));
+		rvPromptList.add(ISIApplication.get().iconFor(section.getSectionAncestor()));
 		
 		// Add the title and link to the page where this note is located
 		BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("contentLink", section);

@@ -177,7 +177,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 					questionListing.add(questionItem);
 
 					BookmarkablePageLink<ISIStandardPage> titleLink = new SectionLinkFactory().linkToPage("titleLink", sec);
-					titleLink.add(ISIApplication.get().iconFor(sec.getSectionAncestor(), ""));
+					titleLink.add(ISIApplication.get().iconFor(sec.getSectionAncestor()));
 					questionItem.add(titleLink);
 
 

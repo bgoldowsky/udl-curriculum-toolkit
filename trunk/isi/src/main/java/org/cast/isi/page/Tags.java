@@ -119,7 +119,7 @@ public class Tags extends ISIStandardPage {
 					item.add(link);
 
 					BookmarkablePageLink<ISIStandardPage> iconLink = new SectionLinkFactory().linkToPage("iconLink", sec);
-					iconLink.add(ISIApplication.get().iconFor(sec.getSectionAncestor(),""));
+					iconLink.add(ISIApplication.get().iconFor(sec.getSectionAncestor()));
 					item.add(iconLink);
 				
 				} 

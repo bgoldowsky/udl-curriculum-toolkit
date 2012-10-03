@@ -262,7 +262,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 
 			@Override
 			public Component getIconFor(ISIXmlSection section) {
-				return ISIApplication.get().iconFor(section, "");
+				return ISIApplication.get().iconFor(section);
 			}
 
 		}

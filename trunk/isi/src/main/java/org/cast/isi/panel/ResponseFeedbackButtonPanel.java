@@ -36,8 +36,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Role;
-import org.cast.cwm.indira.IndiraImage;
-import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.FeedbackMessage;
@@ -46,6 +44,7 @@ import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.cast.cwm.components.Icon;
 
 import com.google.inject.Inject;
 
@@ -63,7 +62,7 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 	private List<FeedbackMessage> unreadStudentMessages = new ArrayList<FeedbackMessage>();
 	private List<FeedbackMessage> unreadTeacherMessages = new ArrayList<FeedbackMessage>();
 	private List<FeedbackMessage> messageList;
-	private IndiraImageComponent button;
+	private Icon button;
 
 	@Inject
 	private IEventService eventService;
@@ -137,23 +136,23 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 		};
 		link.add(new SimpleAttributeModifier("href", ResponseFeedbackPanel.getDivName()));
 		
-		button = new IndiraImageComponent("button", new AbstractReadOnlyModel<IndiraImage>() {
+		button = new Icon("button", new AbstractReadOnlyModel<String>() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public IndiraImage getObject() {
+			public String getObject() {
 				if (role.equals(Role.STUDENT)) 
 					if (unreadTeacherMessages.isEmpty())
-						return IndiraImage.get("/img/icons/teacher_comments.png", false);
+						return "img/icons/teacher_comments.png";
 					else 
-						return IndiraImage.get("/img/icons/teacher_comments_new.png", false);
+						return "img/icons/teacher_comments_new.png";
 				else
 					if (messageList.isEmpty())
-						return IndiraImage.get("/img/icons/give_feedback.png", false);
+						return "img/icons/give_feedback.png";
 					else if (!unreadStudentMessages.isEmpty())
-						return IndiraImage.get("/img/icons/new_feedback_from_student.png", false);
+						return "img/icons/new_feedback_from_student.png";
 					else
-						return IndiraImage.get("/img/icons/view_feedback.png", false);
+						return "img/icons/view_feedback.png";
 			}			
 		});
 

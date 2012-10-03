@@ -43,7 +43,6 @@ import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebComponent;
@@ -64,6 +63,7 @@ import org.apache.wicket.util.time.Time;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.components.CwmPopupSettings;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.components.ImageUrlCodingStrategy;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Period;
@@ -77,8 +77,6 @@ import org.cast.cwm.glossary.Glossary;
 import org.cast.cwm.glossary.GlossaryService;
 import org.cast.cwm.glossary.GlossaryTransformer;
 import org.cast.cwm.indira.FileResourceManager;
-import org.cast.cwm.indira.IndiraImage;
-import org.cast.cwm.indira.IndiraImageComponent;
 import org.cast.cwm.indira.IndiraMarkupParserFactory;
 import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.IEventService;
@@ -322,6 +320,7 @@ public abstract class ISIApplication extends CwmApplication {
 		getResourceSettings().setResourceStreamLocator(new LessCSSResourceStreamLocator());
 		
 		// Indira rewrites markup for images
+		// TODO: remove, once theme image references are all corrected.
 		getMarkupSettings().setMarkupParserFactory(new IndiraMarkupParserFactory());
 
 		// FileResourceManager manages external images and files.
@@ -1064,14 +1063,8 @@ public abstract class ISIApplication extends CwmApplication {
 	 * It will have alt and title set as the title of the section.
 	 */
 	public WebComponent iconFor(XmlSection section) {
-		return iconFor(section, "");
-	}
-	
-	// TODO: I don't think the suffix is needed anymore in distributable.
-	public WebComponent iconFor (XmlSection section, String iconSuffix) {
-		IndiraImageComponent icon = makeIcon("icon", section.getClassName() + iconSuffix);
-		icon.add(new SimpleAttributeModifier("title", section.getTitle()));
-		icon.add(new SimpleAttributeModifier("alt", section.getTitle()));
+		Icon icon = makeIcon("icon", section.getClassName());
+		icon.setmAltText(Model.of(section.getTitle()));
 		return icon;
 	}
 	
@@ -1084,127 +1077,92 @@ public abstract class ISIApplication extends CwmApplication {
 	 * @param sectionClass the class attribute of the section, which determines which image to use
 	 * @return an image component
 	 */
-	public IndiraImageComponent makeIcon (String wicketId, String sectionClass) {
-		IndiraImage ii = IndiraImage.get("img/icons/activity_" + sectionClass + ".png");
-		if (ii == null) {
-			log.debug("Icon not found: {}", sectionClass);
-			ii = IndiraImage.get("img/icons/activity_reading.png");  // Default icon to use when no icon matches
-		}
-		return new IndiraImageComponent(wicketId, new Model<IndiraImage>(ii));
+	public Icon makeIcon (String wicketId, String sectionClass) {
+		return new Icon(wicketId, iconPathForSectionClassName(sectionClass));
+	}
+	
+	/**
+	 * What image to use as the icon for a section, based on the section's class attribute.
+	 * TODO: assumes that the image exists; there should be some way to configure this more flexibly.
+	 * @param sectionClassName
+	 * @return
+	 */
+	protected String iconPathForSectionClassName (String sectionClassName) {
+		if (!Strings.isEmpty(sectionClassName))
+			return "img/icons/activity_" + sectionClassName + ".png";
+		else
+			return "img/icons/activity_reading.png";
 	}
 	
 	public WebComponent teacherStatusIconFor(ISIXmlSection section, SectionStatus sectionStatus) {
 		String imageName = "";
-		String alt = "";
+		IModel<String> mAlt;
 		IModel<ISIXmlSection> sectionModel = new Model<ISIXmlSection>(section);
-		IndiraImage ii = null;
 		
 		// if there is no sectionStatus record then student hasn't finished this section
 		if (sectionStatus == null) {
 			imageName = "status_incomplete";
-			alt = formatAltString(
+			mAlt = formatAltString(
 					"isi.sectionStatusIconAlt.incomplete", 
 					"%s is incomplete", 
 					sectionModel);
 		} else if (sectionStatus.getUnreadStudentMessages() > 0) {
 			imageName = "status_message";
-			alt = formatAltString(
+			mAlt = formatAltString(
 					"isi.sectionStatusIconAlt.newfeedback", 
 					"%s has new feedback from student", 
 					sectionModel);
 		} else if (!sectionStatus.getCompleted()) {
 			imageName = "status_incomplete";
-			alt = formatAltString(
+			mAlt = formatAltString(
 					"isi.sectionStatusIconAlt.incomplete", 
 					"%s is incomplete", 
 					sectionModel);
 		} else if (sectionStatus.getReviewed()) {
 			imageName = "status_reviewed";
-			alt = formatAltString(
+			mAlt = formatAltString(
 					"isi.sectionStatusIconAlt.reviewed", 
 					"%s has been reviewed", 
 					sectionModel);
 		} else {
 			imageName = "status_ready";
-			alt = formatAltString(
+			mAlt = formatAltString(
 					"isi.sectionStatusIconAlt.ready", 
 					"%s is ready for review", 
 					sectionModel);
 		}
-		ii = IndiraImage.get("img/icons/" + imageName + ".png");
-		IndiraImageComponent icon = new IndiraImageComponent("icon", new Model<IndiraImage>(ii));
-		icon.add(new SimpleAttributeModifier("alt", alt));
-		icon.add(new SimpleAttributeModifier("title", alt));
-		return icon;
+		return new Icon("icon", "img/icons/" + imageName + ".png", mAlt, mAlt);
 	}
 	
 	public WebComponent studentStatusIconFor(ISIXmlSection section, SectionStatus sectionStatus) {
 		String imageName = "";
-		String alt = "";
+		IModel<String> mAlt;
 		IModel<ISIXmlSection> sectionModel = new Model<ISIXmlSection>(section);
-		IndiraImage ii = null;
 		
 		if ((sectionStatus == null) || (!sectionStatus.getCompleted())) {
 			imageName = "status_incomplete";
-			alt = formatAltString(
+			mAlt = formatAltString(
 					"isi.sectionStatusIconAlt.incomplete", 
 					"%s is incomplete", 
 					sectionModel);
 		} else {
 			imageName = "status_complete";
-			alt = formatAltString(
+			mAlt = formatAltString(
 					"isi.sectionStatusIconAlt.complete", 
 					"%s is completed", 
 					sectionModel);
 		}
-		ii = IndiraImage.get("img/icons/" + imageName + ".png");
-		IndiraImageComponent icon = new IndiraImageComponent("icon", new Model<IndiraImage>(ii));
-		icon.add(new SimpleAttributeModifier("alt", alt));
-		icon.add(new SimpleAttributeModifier("title", alt));
-		return icon;
+		return new Icon("icon", "img/icons/" + imageName + ".png", mAlt, mAlt);
 	}
-	private String formatAltString(String propertyKey, String defaultFormat, IModel<ISIXmlSection> sectionModel) {
+	
+	private IModel<String> formatAltString(String propertyKey, String defaultFormat, IModel<ISIXmlSection> sectionModel) {
 		return new StringResourceModel(
 				propertyKey, 
 				sectionModel, 
 				String.format(
 						defaultFormat, 
 						sectionModel.getObject().getTitle())
-				).getString();
-	}
-		
-	/*============================
-	 *== Static Support Methods ==
-	 *===========================+
-	 */
-	
-	public static WebComponent statusIconFor(SectionStatus sectionStatus) {
-		String imageName = "";
-		String alt = "";
-		IndiraImage ii = null;
-		
-		// if there is no sectionStatus record then student hasn't finished this section
-		if (sectionStatus == null) {
-			imageName = "status_incomplete";
-			alt = "Incomplete";
-		} else if (sectionStatus.getUnreadStudentMessages() > 0) {
-			imageName = "status_message";
-			alt = "New feedback from student";
-		} else if (!sectionStatus.getCompleted()) {
-			imageName = "status_incomplete";
-			alt = "Incomplete";
-		} else if (Boolean.TRUE.equals(sectionStatus.getReviewed())) {
-			imageName = "status_reviewed";
-			alt = "Reviewed";
-		} else {
-			imageName = "status_ready";
-			alt = "Ready for review";
-		}
-		ii = IndiraImage.get("img/icons/" + imageName + ".png");
-		IndiraImageComponent icon = new IndiraImageComponent("icon", new Model<IndiraImage>(ii));
-		icon.add(new SimpleAttributeModifier("alt", alt));
-		icon.add(new SimpleAttributeModifier("title", alt));
-		return icon;
+				);
 	}
 
 	/*=========================
