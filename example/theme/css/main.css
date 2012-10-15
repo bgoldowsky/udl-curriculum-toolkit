@@ -7,6 +7,7 @@ body {
     line-height: 1.3;
     color: #000000;
     background: #243672 url("../img/bg/bubble.gif") top center no-repeat;
+    word-wrap: break-word;
 }
 
 img {
