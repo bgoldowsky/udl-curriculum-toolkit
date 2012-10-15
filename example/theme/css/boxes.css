@@ -51,6 +51,7 @@
     border: 1px solid #BDBDBD;
     padding: 5px;
     margin: 0px 0px 0.75em 0px;
+    word-wrap: break-word;
 }
 
 .responseEditHeader {
