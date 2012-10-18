@@ -350,6 +350,8 @@ public abstract class ISIApplication extends CwmApplication {
 		List<ResourceReference> noStylesheets = Collections.emptyList();
 		DialogBorder.setStyleReferences(noStylesheets);
 
+		getResourceSettings().setPackageResourceGuard(new ISIPackageResourceGuard());
+
 		// Generally helpful log statement.
 		if (!DEVELOPMENT.equalsIgnoreCase(getConfigurationType())) {
 			log.warn("********************** Wicket is running in Deployment Mode **********************");

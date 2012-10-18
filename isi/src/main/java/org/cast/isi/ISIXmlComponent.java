@@ -86,6 +86,7 @@ import org.cast.isi.panel.GlossaryLink;
 import org.cast.isi.panel.ImageDetailButtonPanel;
 import org.cast.isi.panel.LockingResponseButtons;
 import org.cast.isi.panel.LockingResponseList;
+import org.cast.isi.panel.MediaPanel;
 import org.cast.isi.panel.MiniGlossaryLink;
 import org.cast.isi.panel.MiniGlossaryModal;
 import org.cast.isi.panel.PageLinkPanel;
@@ -268,6 +269,42 @@ public class ISIXmlComponent extends XmlComponent {
 			thumbPanel.add(new AttributeRemover("id"));
 			return thumbPanel;
 
+		} else if (wicketId.startsWith("mediaThumb_")) {
+			String src = elt.getAttribute("src");
+			ResourceReference imgRef = getRelativeRef(src);
+			Image image = new Image(wicketId, imgRef) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected void onComponentTag(final ComponentTag tag)
+				{
+					super.onComponentTag(tag);
+						tag.put("width", elt.getAttribute("width"));
+						tag.put("height", elt.getAttribute("height"));
+				}
+			};			
+			return image;
+			
+		} else if (wicketId.startsWith("mediaThumbLink_")) {
+			AjaxFallbackLink<Object> ajaxFallbackLink = new AjaxFallbackLink<Object>(wicketId) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onClick(AjaxRequestTarget target) {
+					target.prependJavascript("showMediaDetail('" + elt.getAttributeNS(null, "videoId") + "', true)");
+					eventService.saveEvent("video:view", "id=" + elt.getAttributeNS(null, "videoId") + ",state=mediaThumb", ((ISIBasePage) getPage()).getPageName());
+				}
+			};
+			ajaxFallbackLink.add(new AttributeRemover("videoId"));
+			return ajaxFallbackLink;			
+
+		} else if (wicketId.startsWith("mediaModal_")) {
+			String videoId = elt.getAttributeNS(null, "videoId");
+			StringResourceModel mediaModalTitle = new StringResourceModel("mediaModal.modalTitle", this, null, "View Video");
+			MediaPanel mediaLink = new MediaPanel(wicketId, mediaModalTitle, videoId);
+			mediaLink.add(new AttributeRemover("videoId"));
+			return mediaLink;		
+			
 		} else if (wicketId.startsWith("videoplayer_")) {
 			final String videoSrc = elt.getAttribute("src");
 			ResourceReference videoRef = getRelativeRef(videoSrc);
@@ -283,7 +320,7 @@ public class ISIXmlComponent extends XmlComponent {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void onPlay (String status) {
-					eventService.saveEvent("video:view", wicketId.substring("videoplayer_".length()) + " - " + status, contentPage);
+					eventService.saveEvent("video:view", "id=" + elt.getAttribute("videoId") + ",state=" + status, contentPage);
 				}
 			};
 
@@ -299,7 +336,7 @@ public class ISIXmlComponent extends XmlComponent {
 			if (!Strings.isEmpty(audioDescription))
 				comp.setAudioDescriptionFile(getRelativeRef(audioDescription));
 			
-			comp.add(new AttributeRemover("src", "width", "height", "poster", "captions", "audiodescription"));
+			comp.add(new AttributeRemover("src", "width", "height", "poster", "captions", "audiodescription", "videoId"));
 			
 			return comp;
 
@@ -575,7 +612,6 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("slideShow_")) {
 			SlideShowComponent slideShowComponent = new SlideShowComponent(wicketId, elt);
-			log.debug("THIS IS THE WICKET ID FOR THE SLIDESHOW {}", wicketId);
 			return slideShowComponent;
 						
 		} else if (wicketId.startsWith("collapseBoxControl-")) {
