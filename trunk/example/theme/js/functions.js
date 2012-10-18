@@ -157,14 +157,12 @@ function resizeCaptions(scope) {
 /* if you have a thumb image showing, this will show/hide the
  * detailed image and long description
 /*=========================================================*/
-
 function showImageDetail(id, show) {
 
 	var image = $("#image_" + id);
 	var detail = $("#imageDetail_" + id);
 
 	if (show) {
-
 		// get the position of the original thumbnail
 		var position = image.position();
 		image.children('a').hide();
@@ -178,6 +176,42 @@ function showImageDetail(id, show) {
 		image.children('a').show();
 		image.fadeTo(10,1.00);
 	}
+}
+
+/*=========================================================*/
+/* if you have a thumb video image showing, this will show/hide the
+ * detailed full video
+/*=========================================================*/
+function showMediaDetail(id, show) {
+	
+	var videoThumb = $("#media_" + id);
+	var videoModal = $("#mediaDetail_" + id);
+    var videoModalMarginLeft = -videoModal.width() / 2;
+
+	if (show) {
+		// get the position of the original thumbnail
+		var position = videoThumb.offset();
+		videoThumb.children('a').hide();
+		videoModal.css("top", position.top);
+		videoModal.css("left", "50%");
+		videoModal.css("margin-left", videoModalMarginLeft);
+		videoModal.css("position", "absolute");
+		videoModal.show();
+
+	} else {
+		videoModal.hide();
+		videoThumb.children('a').show();
+		videoThumb.fadeTo(10,1.00);
+	}
+}
+
+function closeVideo(id) {
+	console.log("stop the video");
+	var videoModal = $("#mediaDetail_" + id);
+	
+	// find the child object
+	var videoObject = videoModal.children('object');
+	console.log("found the child");
 }
 
 

@@ -49,6 +49,7 @@
        </xsl:variable>
        <ol>
            <xsl:copy-of select="&catts;"/>
+           <xsl:copy-of select="@start" />
            <xsl:if test="$listtype != ''">
                <xsl:attribute name="style">
                    <xsl:value-of select="concat('list-style-type: ', $listtype, ';')"/>
@@ -184,64 +185,89 @@
 
     <!-- VIDEOS, AUDIO -->
     <xsl:template match="dtb:object">
-      <xsl:choose>
-      
-      <!-- if there is no source then there is an error -->
-       <xsl:when test="@src=''">
-        	<div style="border:5px inset red">Content error: Object with no src attribute set</div>
-       </xsl:when>
-       
-       <xsl:when test="contains(@src, 'youtube.com') or contains(@src, 'youtu.be')">
-			<xsl:variable name="width">
-	           <xsl:choose>
-	             <xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when>
-	             <xsl:otherwise>640</xsl:otherwise>
-	           </xsl:choose>
-	         </xsl:variable>
-	        <xsl:variable name="height">
-	           <xsl:choose>
-	             <xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when>
-	             <xsl:otherwise>360</xsl:otherwise>
-	           </xsl:choose>
-	        </xsl:variable>
-	        <xsl:variable name="src">
-	          <xsl:choose>
-	            <xsl:when test="contains(@src, '/watch?v=')">
-	              <xsl:value-of select="concat('http://www.youtube-nocookie.com/embed/', substring-after(@src, 'watch?v='))"/>
-				</xsl:when>
-				<xsl:when test="contains(@src, 'youtu.be/')">
-	              <xsl:value-of select="concat('http://www.youtube-nocookie.com/embed/', substring-after(@src, 'youtu.be/'))"/>
-				</xsl:when>
-				<xsl:otherwise><xsl:value-of select="@src"/></xsl:otherwise>
-			  </xsl:choose>
-			</xsl:variable>
-			<div class="objectBox center">
-				<div class="mediaPlaceholder" style="width:{$width}px; height:{$height}px;">
-					<iframe width="{$width}" height="{$height}" src="{$src}" frameborder="0" class="captionSizer">must have content</iframe>
-				</div>
-				<xsl:call-template name="objectCaption" />
-    		</div>
-       </xsl:when>
-      
- 	   <xsl:when test="contains(@src, '.flv') or contains(@src, '.mp4') or contains(@src, '.mp3')">
-         <!-- embedded movie -->
-		 <xsl:call-template name="videotag" />
-	   </xsl:when>
-	   
-	   <xsl:when test="contains(@src, '.swf')">
-	     <div wicket:id="swf_" src="{@src}" width="100" height="100"></div>
-	   </xsl:when>
-                   
- 	   <xsl:otherwise>
- 	     <!-- unknown object type -->
-         <div wicket:id="object_" src="{@src}"  width="{@width}" height="{@height}" id="{@id}">
-           <xsl:apply-templates/>
-         </div>
-		 <xsl:call-template name="objectCaption" />
-       </xsl:otherwise>
-   	 </xsl:choose>
 
+		<!--  determine if the video modal should be added, object must have class = thumb -->
+   		<xsl:variable name="thumbVideo">
+         	<xsl:choose>
+        		<xsl:when test="contains(@class, 'thumb')">
+	            		<xsl:value-of select="'true'" />
+        		</xsl:when>
+        		<xsl:otherwise>
+	            		<xsl:value-of select="'false'" />
+	            </xsl:otherwise>
+	        </xsl:choose>
+	    </xsl:variable>
+
+      <xsl:choose>
+	       <!-- if there is no source then there is an error -->
+	       <xsl:when test="@src=''">
+	        	<div style="border:5px inset red">Content error: Object with no src attribute set</div>
+	       </xsl:when>
+	       
+	       <!-- process external youtube videos -->
+	       <xsl:when test="contains(@src, 'youtube.com') or contains(@src, 'youtu.be')">
+			  	<xsl:if test="$thumbVideo = 'false'">
+					<xsl:call-template name="youtube_videotag" />
+		       	</xsl:if>
+			  	<xsl:if test="$thumbVideo = 'true'">
+				  	<xsl:call-template name="modalVideoDetail">
+						<xsl:with-param name="videoType" select="'youtube'"/>     
+				  </xsl:call-template>
+				</xsl:if>
+	       </xsl:when>
+	      
+	       <!-- process internal videos -->
+	 	   <xsl:when test="contains(@src, '.flv') or contains(@src, '.mp4') or contains(@src, '.mp3')">
+			  	<xsl:if test="$thumbVideo = 'false'">
+					<xsl:call-template name="videotag" />
+		       	</xsl:if>
+			  	<xsl:if test="$thumbVideo = 'true'">
+				  	<xsl:call-template name="modalVideoDetail">
+						<xsl:with-param name="videoType" select="'internal'"/>     
+				  </xsl:call-template>
+	        	</xsl:if>
+		   </xsl:when>
+		   
+	       <!-- process flash applets -->
+		   <xsl:when test="contains(@src, '.swf')">
+		     <div wicket:id="swf_" src="{@src}" width="100" height="100"></div>
+		   </xsl:when>
+	                   
+	 	   <!-- unknown object type -->
+	 	   <xsl:otherwise>
+	         <div wicket:id="object_" src="{@src}"  width="{@width}" height="{@height}" id="{@id}">
+	           <xsl:apply-templates/>
+	         </div>
+			 <xsl:call-template name="objectCaption" />
+	       </xsl:otherwise>
+	   </xsl:choose>
     </xsl:template>
+
+
+	<xsl:template name="modalVideoDetail" match="/">
+		<xsl:param name="videoType" />
+		<xsl:variable name="poster" select="dtb:param[@name='poster']/@value" />
+		<div class="objectBox {@class}" id="media_{@id}">
+			<div style="width: 200px; height: 115px;" class="mediaPlaceholder">
+				<a href="#" wicket:id="mediaThumbLink_" videoId="{@id}" onclick="showMediaDetail('{@id}', true); return false" >
+				<img wicket:id="mediaThumb_" src="{$poster}" width="200" height="115" alt="Video Thumbnail" />
+				<span class="playIcon"></span>
+				</a>
+			</div>
+			<div class="objectCaption">
+				<xsl:call-template name="objectCaption" />
+			</div>
+		</div>	
+		<div wicket:id="mediaModal_" videoId="{@id}">
+       		<xsl:if test="$videoType = 'youtube'">
+				<xsl:call-template name="youtube_videotag" />
+			</xsl:if>
+       		<xsl:if test="$videoType = 'internal'">
+				<xsl:call-template name="videotag" />
+			</xsl:if>
+		</div>		
+	</xsl:template>
+
 
 	<xsl:template name="objectCaption">
 		<xsl:if test="count(child::dtb:caption) > 0 or count(child::dtb:prodnote) > 0">
@@ -275,6 +301,38 @@
 	  	</param>
     </xsl:template>
     
+    <xsl:template name="youtube_videotag">
+		<xsl:variable name="width">
+           <xsl:choose>
+             <xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when>
+             <xsl:otherwise>640</xsl:otherwise>
+           </xsl:choose>
+         </xsl:variable>
+        <xsl:variable name="height">
+           <xsl:choose>
+             <xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when>
+             <xsl:otherwise>360</xsl:otherwise>
+           </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="src">
+          <xsl:choose>
+            <xsl:when test="contains(@src, '/watch?v=')">
+              <xsl:value-of select="concat('http://www.youtube-nocookie.com/embed/', substring-after(@src, 'watch?v='))"/>
+			</xsl:when>
+			<xsl:when test="contains(@src, 'youtu.be/')">
+              <xsl:value-of select="concat('http://www.youtube-nocookie.com/embed/', substring-after(@src, 'youtu.be/'))"/>
+			</xsl:when>
+			<xsl:otherwise><xsl:value-of select="@src"/></xsl:otherwise>
+		  </xsl:choose>
+		</xsl:variable>
+		<div class="objectBox center">
+			<div class="mediaPlaceholder" style="width:{$width}px; height:{$height}px;">
+				<iframe width="{$width}" height="{$height}" src="{$src}" frameborder="0" class="captionSizer">must have content</iframe>
+			</div>
+			<xsl:call-template name="objectCaption" />
+   		</div>	    		
+    </xsl:template>
+
 
     <xsl:template name="videotag">
         <xsl:variable name="width">
@@ -304,7 +362,7 @@
 		<xsl:variable name="audiodescription" select="dtb:param[@name='audiodescription']/@value"/>
         <div class="objectBox center">
 			<div class="mediaPlaceholder" style="width:{$width}px; height:{$height}px;">
-		        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}">
+		        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}" videoId="{@id}">
 		        	<xsl:if test="$poster">
 		        		<xsl:attribute name="poster"><xsl:value-of select="$poster"/></xsl:attribute>
 		        	</xsl:if>
@@ -319,6 +377,7 @@
 		 	<xsl:call-template name="objectCaption" />
         </div>
     </xsl:template>
+
 
 	<!-- thumb ratings -->
 	<xsl:template match="dtb:responsegroup[@class='thumbrating']">
