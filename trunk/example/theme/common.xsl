@@ -820,10 +820,10 @@
    
    <!-- MathML  -->
     <xsl:template match="m:math">
-      <!-- The non-standard "ignore" attribute tells TextHelp toolbar not to mark up inside the span.
+      <!-- The non-standard, ignore="true" attribute tells TextHelp toolbar not to mark up inside the span.
            The class "nohlpassage" tells the highlighting code not to add its spans.
            Any added spans mess up the math display. -->
-      <span ignore="true" class="nohlpassage">
+      <span class="nohlpassage">
         <math>
           <xsl:copy-of select="@*"/>
           <xsl:apply-templates/>
