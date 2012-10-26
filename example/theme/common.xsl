@@ -94,6 +94,21 @@
        <xsl:copy-of select="&catts;"/>
        <xsl:apply-templates/>
    	</xsl:template>
+
+
+    <xsl:template name="basename">
+        <xsl:param name="path"/>
+        <xsl:choose>
+            <xsl:when test="contains($path, '/')">
+                <xsl:call-template name="basename">
+                    <xsl:with-param name="path" select="substring-after($path, '/')"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$path"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
     
     <!-- TOGGLE BUTTONS -->
     <xsl:template match="dtb:div[@class='supplement']">
@@ -820,10 +835,10 @@
    
    <!-- MathML  -->
     <xsl:template match="m:math">
-      <!-- The non-standard, ignore="true" attribute tells TextHelp toolbar not to mark up inside the span.
+      <!-- The non-standard "ignore" attribute tells TextHelp toolbar not to mark up inside the span.
            The class "nohlpassage" tells the highlighting code not to add its spans.
            Any added spans mess up the math display. -->
-      <span class="nohlpassage">
+      <span ignore="true" class="nohlpassage">
         <math>
           <xsl:copy-of select="@*"/>
           <xsl:apply-templates/>
