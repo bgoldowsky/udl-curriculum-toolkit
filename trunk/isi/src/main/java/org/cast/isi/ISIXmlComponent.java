@@ -77,6 +77,7 @@ import org.cast.isi.component.SingleSelectDelayMessage;
 import org.cast.isi.component.SingleSelectItem;
 import org.cast.isi.component.SingleSelectMessage;
 import org.cast.isi.component.SlideShowComponent;
+import org.cast.isi.component.VideoLink;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.page.ISIBasePage;
@@ -86,7 +87,6 @@ import org.cast.isi.panel.GlossaryLink;
 import org.cast.isi.panel.ImageDetailButtonPanel;
 import org.cast.isi.panel.LockingResponseButtons;
 import org.cast.isi.panel.LockingResponseList;
-import org.cast.isi.panel.MediaPanel;
 import org.cast.isi.panel.MiniGlossaryLink;
 import org.cast.isi.panel.MiniGlossaryModal;
 import org.cast.isi.panel.PageLinkPanel;
@@ -269,7 +269,7 @@ public class ISIXmlComponent extends XmlComponent {
 			thumbPanel.add(new AttributeRemover("id"));
 			return thumbPanel;
 
-		} else if (wicketId.startsWith("mediaThumb_")) {
+		} else if (wicketId.startsWith("mediaThumbImage_")) {
 			String src = elt.getAttribute("src");
 			ResourceReference imgRef = getRelativeRef(src);
 			Image image = new Image(wicketId, imgRef) {
@@ -285,26 +285,13 @@ public class ISIXmlComponent extends XmlComponent {
 			};			
 			return image;
 			
-		} else if (wicketId.startsWith("mediaThumbLink_")) {
-			AjaxFallbackLink<Object> ajaxFallbackLink = new AjaxFallbackLink<Object>(wicketId) {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void onClick(AjaxRequestTarget target) {
-					target.prependJavascript("showMediaDetail('" + elt.getAttributeNS(null, "videoId") + "', true)");
-					eventService.saveEvent("video:view", "id=" + elt.getAttributeNS(null, "videoId") + ",state=mediaThumb", ((ISIBasePage) getPage()).getPageName());
-				}
-			};
-			ajaxFallbackLink.add(new AttributeRemover("videoId"));
-			return ajaxFallbackLink;			
-
-		} else if (wicketId.startsWith("mediaModal_")) {
+		} else if (wicketId.startsWith("mediaThumbLink_")) {			
 			String videoId = elt.getAttributeNS(null, "videoId");
-			StringResourceModel mediaModalTitle = new StringResourceModel("mediaModal.modalTitle", this, null, "View Video");
-			MediaPanel mediaLink = new MediaPanel(wicketId, mediaModalTitle, videoId);
-			mediaLink.add(new AttributeRemover("videoId"));
-			return mediaLink;		
-			
+			XmlSectionModel currentSectionModel = getModel();			
+			VideoLink videoLink = new VideoLink(wicketId, videoId, currentSectionModel);
+			videoLink.add(new AttributeRemover("videoId"));
+			return videoLink;
+
 		} else if (wicketId.startsWith("videoplayer_")) {
 			final String videoSrc = elt.getAttribute("src");
 			ResourceReference videoRef = getRelativeRef(videoSrc);
