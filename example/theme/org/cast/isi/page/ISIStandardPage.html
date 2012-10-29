@@ -3,7 +3,7 @@
 <head>
 	<title wicket:id="pageTitle"></title>
 </head>
-<body>
+<body wicket:id="body">
 	<div wicket:id="headerPanel"></div>
 	<div wicket:id="teacherSubHeader"></div>
 		
@@ -13,6 +13,24 @@
 		
 	<div id="footer" wicket:id="footerPanel"></div>
 	<div wicket:id="sessionWarning"></div>
+
+	<!-- Placeholder for AbstractISIAjaxDialog -->
+	<div wicket:id="displayDialog"></div>
+	
+	<!-- Always available dialog to display when waiting for an AjaxDialog to load -->
+	<div wicket:id="loadingDialogBorder">
+		<div class="modalMainCol" role="main">
+			<div class="modalContent">
+				<p>Loading...</p>
+			</div>
+	    </div>
+		<div class="modalFooter">
+	    	<div class="modalFooterContent">
+				<a wicket:id="cancelLink" href="#" class="button">Cancel</a>
+	    	</div>
+		</div>
+	</div>
+
 	<div id="tht" wicket:id="tht"></div>
 </body>
 </html>

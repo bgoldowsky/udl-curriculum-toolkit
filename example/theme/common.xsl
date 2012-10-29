@@ -14,7 +14,10 @@
     exclude-result-prefixes="dtb">
 
 	<xsl:param name="lock-response" select="false()"/>    
-	<xsl:param name="delay-feedback" select="false()"/>     
+	<xsl:param name="delay-feedback" select="false()"/> 
+	
+	<!--  which part of the video thumb should be viewed -->    
+	<xsl:param name="add-video-thumb-link" select="true()"/>  
 
     <xsl:variable name="lower">abcdefghijklmnopqrstuvwxyz</xsl:variable>
     <xsl:variable name="upper">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
@@ -183,7 +186,7 @@
 	        </xsl:choose>
 	    </xsl:variable>
 
-      <xsl:choose>
+      	<xsl:choose>
 	       <!-- if there is no source then there is an error -->
 	       <xsl:when test="@src=''">
 	        	<div style="border:5px inset red">Content error: Object with no src attribute set</div>
@@ -195,22 +198,32 @@
 					<xsl:call-template name="youtube_videotag" />
 		       	</xsl:if>
 			  	<xsl:if test="$thumbVideo = 'true'">
-				  	<xsl:call-template name="modalVideoDetail">
-						<xsl:with-param name="videoType" select="'youtube'"/>     
-				  </xsl:call-template>
+			  	   	<xsl:choose>
+				   		<xsl:when test="boolean($add-video-thumb-link)">
+						  	<xsl:call-template name="videoThumbLink" />
+				   		</xsl:when>
+	   					<xsl:otherwise>
+							<xsl:call-template name="videotag" />
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:if>
 	       </xsl:when>
 	      
 	       <!-- process internal videos -->
 	 	   <xsl:when test="contains(@src, '.flv') or contains(@src, '.mp4') or contains(@src, '.mp3')">
 			  	<xsl:if test="$thumbVideo = 'false'">
-					<xsl:call-template name="videotag" />
+						<xsl:call-template name="videotag" />
 		       	</xsl:if>
 			  	<xsl:if test="$thumbVideo = 'true'">
-				  	<xsl:call-template name="modalVideoDetail">
-						<xsl:with-param name="videoType" select="'internal'"/>     
-				  </xsl:call-template>
-	        	</xsl:if>
+			  	   	<xsl:choose>
+				   		<xsl:when test="boolean($add-video-thumb-link)">
+						  	<xsl:call-template name="videoThumbLink" />
+				   		</xsl:when>
+	   					<xsl:otherwise>
+							<xsl:call-template name="videotag" />
+						</xsl:otherwise>
+					</xsl:choose>
+		       	</xsl:if>
 		   </xsl:when>
 		   
 	       <!-- process flash applets -->
@@ -227,32 +240,27 @@
 	       </xsl:otherwise>
 	   </xsl:choose>
     </xsl:template>
+       
+    <xsl:template match="dtb:param">
+	  	<param>
+	  		<xsl:copy-of select="@name|@value"/>
+	  	</param>
+    </xsl:template>
 
-
-	<xsl:template name="modalVideoDetail" match="/">
-		<xsl:param name="videoType" />
-		<xsl:variable name="poster" select="dtb:param[@name='poster']/@value" />
+ 	<xsl:template name="videoThumbLink" match="/">
+        <xsl:variable name="poster" select="dtb:param[@name='poster']/@value"/>
 		<div class="objectBox {@class}" id="media_{@id}">
 			<div style="width: 200px; height: 115px;" class="mediaPlaceholder">
-				<a href="#" wicket:id="mediaThumbLink_" videoId="{@id}" onclick="showMediaDetail('{@id}', true); return false" >
-				<img wicket:id="mediaThumb_" src="{$poster}" width="200" height="115" alt="Video Thumbnail" />
-				<span class="playIcon"></span>
+				<a href="#" wicket:id="mediaThumbLink_" videoId="{@id}">
+					<img wicket:id="mediaThumbImage_" src="{$poster}" width="200" height="115" alt="Video Thumbnail" />
+					<span class="playIcon"></span>
 				</a>
 			</div>
 			<div class="objectCaption">
 				<xsl:call-template name="objectCaption" />
 			</div>
 		</div>	
-		<div wicket:id="mediaModal_" videoId="{@id}">
-       		<xsl:if test="$videoType = 'youtube'">
-				<xsl:call-template name="youtube_videotag" />
-			</xsl:if>
-       		<xsl:if test="$videoType = 'internal'">
-				<xsl:call-template name="videotag" />
-			</xsl:if>
-		</div>		
 	</xsl:template>
-
 
 	<xsl:template name="objectCaption">
 		<xsl:if test="count(child::dtb:caption) > 0 or count(child::dtb:prodnote) > 0">
@@ -278,13 +286,6 @@
 			</div>
 		</xsl:if>
 	</xsl:template>  
-    
-    
-    <xsl:template match="dtb:param">
-	  	<param>
-	  		<xsl:copy-of select="@name|@value"/>
-	  	</param>
-    </xsl:template>
     
     <xsl:template name="youtube_videotag">
 		<xsl:variable name="width">
@@ -318,7 +319,6 @@
    		</div>	    		
     </xsl:template>
 
-
     <xsl:template name="videotag">
         <xsl:variable name="width">
             <xsl:choose>
@@ -344,7 +344,7 @@
         </xsl:variable>
         <xsl:variable name="poster" select="dtb:param[@name='poster']/@value"/>
 		<xsl:variable name="captions" select="dtb:param[@name='captions']/@value"/>
-		<xsl:variable name="audiodescription" select="dtb:param[@name='audiodescription']/@value"/>
+		<xsl:variable name="audiodescription" select="dtb:param[@name='audiodescription']/@value"/>		
         <div class="objectBox center">
 			<div class="mediaPlaceholder" style="width:{$width}px; height:{$height}px;">
 		        <div wicket:id="videoplayer_{@id}" width="{$width}" height="{$height}" src="{@src}" videoId="{@id}">

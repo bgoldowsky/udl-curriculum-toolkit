@@ -24,18 +24,24 @@ import lombok.Setter;
 import net.databinder.auth.hib.AuthDataSession;
 
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
+import org.cast.cwm.data.component.DialogBorder;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
 import org.cast.cwm.xml.service.IXmlService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
+import org.cast.isi.dialog.AbstractISIAjaxDialog;
 import org.cast.isi.panel.TeacherSubHeaderPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,11 +65,19 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	static IXmlService xmlService;
 	
 	@Getter @Setter protected ContentLoc loc = null;
+	
+	public static final String DISPLAY_DIALOG_ID = "displayDialog";
+	private static final String LOADING_DIALOG_ID = "loadingDialogBorder";
+	private DialogBorder loadingDialog;
+	
 
 	public ISIStandardPage(final PageParameters parameters) {
 		super(parameters);
 		commonInit(parameters);
+		
 	}
+	
+	
 	
 	public void commonInit(PageParameters parameters) {
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
@@ -82,6 +96,33 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		addToolbar("tht");
 	}
 	
+	@Override
+	protected void onInitialize() {
+
+		WebMarkupContainer body = new WebMarkupContainer("body") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isTransparentResolver() {
+				return true;
+			}
+		};
+		add (body);
+
+		// Dialog Placeholder
+		add(new WebMarkupContainer(DISPLAY_DIALOG_ID).setOutputMarkupId(true));
+		
+		// Loading Dialog
+		loadingDialog = new DialogBorder(LOADING_DIALOG_ID, new Model<String>("Loading..."));
+		add(loadingDialog);
+		
+		// Cancel Link on Loading Dialog
+		WebMarkupContainer cancelLink = new WebMarkupContainer("cancelLink");
+		cancelLink.add(loadingDialog.getClickToCloseBehavior());
+		loadingDialog.getBodyContainer().add(cancelLink);
+		super.onInitialize();
+	}
+
 	/**
 	 * Adds the application's default toolbar (with features like text-to-speech, dictionary, etc).
 	 * Pages can override this method to use a different (or no) toolbar.
@@ -139,5 +180,77 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		setResponsePage(getPage().getClass(), parameters);
 	}			
 
+
+	/**
+	 * Display an AbstractStyledDialog on this page.
+	 * 
+	 * @param dialog
+	 * @param target
+	 */
+	public void displayDialog(AbstractISIAjaxDialog<?> dialog, AjaxRequestTarget target) {
+		replace(dialog);
+		dialog.getDialogBorder().open(target);
+		target.addComponent(dialog);
+	}
 	
+	/**
+	 * Reset the AbstractStyledDialog on this page.  Use this to drop the component
+	 * @param target
+	 */
+	public void resetDialog(AjaxRequestTarget target) {
+		WebMarkupContainer empty = new WebMarkupContainer(DISPLAY_DIALOG_ID);
+		empty.setOutputMarkupId(true);
+		replace(empty);
+		target.addComponent(empty);
+	}
+
+	
+	/**
+	 * Add this behavior to any AjaxLink to display a "Loading..." dialog on the client
+	 * side as soon as the link is clicked.  The Loading Dialog will be hidden when
+	 * the ajax request is completed.
+	 * 
+	 * @return
+	 */
+	public IAjaxCallDecorator getLoadingDialogDecorator() {
+		return getLoadingDialogDecorator(null);
+	}
+	
+	/**
+	 * Add this behavior to any AjaxLink to display a "Loading..." dialog on the client
+	 * side as soon as the link is clicked.  The Loading Dialog will be hidden when
+	 * the ajax request is completed.  
+	 * 
+	 * This method allows an optional dialog parameter that will be closed immediately 
+	 * before the "Loading..." dialog is opened.  Use this on links in an existing dialog 
+	 * to transition to another dialog.  However, this should not be used if the dialog
+	 * might not close (e.g. form validation).
+	 * 
+	 * @param dialog existing dialog to be closed before loading is displayed.
+	 * @return
+	 */
+	public IAjaxCallDecorator getLoadingDialogDecorator(final AbstractISIAjaxDialog<?> dialog) {
+		return new AjaxCallDecorator() {
+
+			private static final long serialVersionUID = 1L;
+			@Override
+			public CharSequence decorateScript(CharSequence script) {
+				return (dialog == null ? "" : dialog.getDialogBorder().getCloseString(false)) + loadingDialog.getOpenString(dialog == null) + script;
+			}
+			
+			@Override
+			public CharSequence decorateOnSuccessScript(CharSequence script)
+			{
+				return loadingDialog.getCloseString(false) + script;	
+			}
+
+			@Override
+			public CharSequence decorateOnFailureScript(CharSequence script)
+			{
+				return loadingDialog.getCloseString(false) + script;
+			}
+		};
+	}
+	
+
 }
