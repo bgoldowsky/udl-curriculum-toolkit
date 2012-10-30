@@ -32,7 +32,6 @@ import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -367,8 +366,8 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	}
 
 	public void renderHead(IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/window.css"));
-		response.renderCSSReference(new ResourceReference("/css/window_print.css"), "print");
+		renderThemeCSS(response, "css/window.css");
+		renderThemeCSS(response, "css/window_print.css");
 		super.renderHead(response);
 		response.renderOnLoadJavascript("bindSectionOpenerLinks()");
 	}

@@ -133,6 +133,7 @@ public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
 	}
 
 	public void renderHead(final IHeaderResponse response) {
+		renderThemeCSS(response, "css/main.css");
 		response.renderCSSReference(new ResourceReference("/css/main.css"));
 		super.renderHead(response);		
 	}

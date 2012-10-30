@@ -25,7 +25,6 @@ import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -159,7 +158,7 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 	}
 
 	public void renderHead(final IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/main.css"));
+		renderThemeCSS(response, "css/main.css");
 		super.renderHead(response);		
 	}
 

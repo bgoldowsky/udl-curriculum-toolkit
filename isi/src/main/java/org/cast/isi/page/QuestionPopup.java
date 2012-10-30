@@ -20,7 +20,6 @@
 package org.cast.isi.page;
 
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.cast.cwm.data.ResponseMetadata;
@@ -82,8 +81,8 @@ public class QuestionPopup extends ISIBasePage {
 	}
 	
 	public void renderHead(final IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/window.css"));
-		response.renderCSSReference(new ResourceReference("/css/window_print.css"), "print");
+		renderThemeCSS(response, "css/window.css");
+		renderThemeCSS(response, "css/window_print.css");
 		super.renderHead(response);
 	}
 	

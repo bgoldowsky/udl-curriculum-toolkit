@@ -25,7 +25,6 @@ import lombok.Getter;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -182,8 +181,8 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
-		response.renderCSSReference(new ResourceReference("/css/window.css"));
-		response.renderCSSReference(new ResourceReference("/css/window_print.css"), "print");
+		renderThemeCSS(response, "css/window.css");
+		renderThemeCSS(response, "css/window_print.css");
 	}
 	
 
