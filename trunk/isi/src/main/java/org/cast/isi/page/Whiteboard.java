@@ -28,7 +28,6 @@ import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
@@ -287,10 +286,9 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 	}
 
 	public void renderHead(IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/window.css"));
-		response.renderCSSReference(new ResourceReference("/css/window_print.css"), "print");
+		renderThemeCSS(response, "css/window.css");
+		renderThemeCSS(response, "css/window_print.css");
 		super.renderHead(response);
-
 		response.renderOnLoadJavascript("bindSectionOpenerLinks()");
 	}
 

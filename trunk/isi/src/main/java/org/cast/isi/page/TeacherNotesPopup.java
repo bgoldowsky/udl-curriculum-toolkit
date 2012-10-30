@@ -20,7 +20,6 @@
 package org.cast.isi.page;
 
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -121,8 +120,8 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
-		response.renderCSSReference(new ResourceReference("/css/window.css"));
-		response.renderCSSReference(new ResourceReference("/css/window_print.css"), "print");
+		renderThemeCSS(response, "css/window.css");
+		renderThemeCSS(response, "css/window_print.css");
 		response.renderOnLoadJavascript("bindSectionOpenerLinks()");		
 	}
 	
