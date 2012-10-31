@@ -62,10 +62,13 @@ import org.cast.cwm.service.IEventService;
 import org.cast.cwm.xml.ICacheableModel;
 import org.cast.cwm.xml.IXmlPointer;
 import org.cast.cwm.xml.TransformResult;
+import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
 import org.cast.isi.component.AnnotatedImageComponent;
+import org.cast.isi.component.AuthoredPopupLink;
+import org.cast.isi.component.CollapseBoxContainer;
 import org.cast.isi.component.DelayedFeedbackSingleSelectView;
 import org.cast.isi.component.HotSpotComponent;
 import org.cast.isi.component.ImmediateFeedbackSingleSelectForm;
@@ -252,6 +255,23 @@ public class ISIXmlComponent extends XmlComponent {
 			String id = href.substring(hashLocation+1);  // start at index 0 or 1
 			log.debug("Link to {} # {}", file, id);
 			return new SectionLinkFactory().linkTo(wicketId, file, id);
+
+		} else if (wicketId.startsWith("popupLink_")) {
+			String href = elt.getAttribute("href");
+			// According to NIMAS, href should be in the form "filename.xml#ID"  or just "#ID" for within-file link
+			// For authors' convenience, we accept simple "ID" as well.
+			int hashLocation = href.indexOf('#');
+			String file;
+			if (hashLocation > 0) {
+				file = href.substring(0, hashLocation);
+			} else { // "#ID" or "ID" case:
+				file = getModel().getObject().getXmlDocument().getName(); // same file as we're currently viewing
+			}
+			XmlDocument document = xmlService.getDocument(file);
+			String xmlId = href.substring(hashLocation+1);
+			XmlSection section = document.getById(xmlId);
+			XmlSectionModel mSection = new XmlSectionModel(section);
+			return new AuthoredPopupLink(wicketId, xmlId, mSection);
 			
 		} else if (wicketId.startsWith("fileLink_")) {
 			// link to file in content directory
@@ -603,8 +623,10 @@ public class ISIXmlComponent extends XmlComponent {
 						
 		} else if (wicketId.startsWith("collapseBoxControl-")) {
 			String boxSequence = (wicketId.substring("collapseBoxControl-".length()).equals("") ? "0" : wicketId.substring("collapseBoxControl-".length()));
-			WebMarkupContainer collapseBoxContainer = new WebMarkupContainer(wicketId);
-			collapseBoxContainer.add(new CollapseBoxBehavior("onclick", "support:" + boxSequence, ((ISIBasePage) getPage()).getPageName()));
+			CollapseBoxContainer collapseBoxContainer = new CollapseBoxContainer(wicketId, boxSequence);
+
+//			WebMarkupContainer collapseBoxContainer = new WebMarkupContainer(wicketId);
+//			collapseBoxContainer.add(new CollapseBoxBehavior("onclick", "support:" + boxSequence, ((ISIBasePage) getPage()).getPageName()));
 			return collapseBoxContainer;
 
 		} else if (wicketId.startsWith("iScienceLink-")) {			

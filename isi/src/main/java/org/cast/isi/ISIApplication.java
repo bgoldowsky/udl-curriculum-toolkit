@@ -99,6 +99,7 @@ import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIEvent;
 import org.cast.isi.data.SectionStatus;
+import org.cast.isi.page.AuthoredPopup;
 import org.cast.isi.page.ExceptionPage;
 import org.cast.isi.page.GlossaryPage;
 import org.cast.isi.page.ISIStandardPage;
@@ -165,6 +166,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected static final PopupSettings periodResponsePopupSettings = new CwmPopupSettings ("compare", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
 	@Getter public static final PopupSettings teacherNotesPopupSettings = new CwmPopupSettings ("tnotebook", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
 	@Getter public static final PopupSettings questionPopupSettings = new CwmPopupSettings ("questionp", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
+	@Getter public static final PopupSettings authoredPopupSettings = new CwmPopupSettings ("authoredp", POPUP_FLAGS).setWidth(POPUP_WIDTH).setHeight(POPUP_HEIGHT);
 	
 	// These settings are generally overridden by applications in the configuration file
 	@Getter @Setter protected String sectionElement = "level3"; // XML element that is one section, usually
@@ -394,6 +396,8 @@ public abstract class ISIApplication extends CwmApplication {
 			link.setPopupSettings(teacherNotesPopupSettings);
 		} else if (PeriodResponsePage.class.isAssignableFrom(link.getPageClass())) {
 			link.setPopupSettings(periodResponsePopupSettings);
+		} else if (AuthoredPopup.class.isAssignableFrom(link.getPageClass())) {
+			link.setPopupSettings(authoredPopupSettings);
 		}
 	}
 	
@@ -757,6 +761,7 @@ public abstract class ISIApplication extends CwmApplication {
 		mount(new QueryStringUrlCodingStrategy("register", getRegisterPageClass()));
 		mount(new QueryStringUrlCodingStrategy("reset", getForgotPasswordPageClass()));
 		mount(new QueryStringUrlCodingStrategy("password", getPasswordPageClass()));
+		mount(new QueryStringUrlCodingStrategy("authoredp", getAuthoredPopupPageClass()));
 	}
 	
 	
@@ -861,6 +866,9 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 	public Class<? extends WebPage> getPasswordPageClass() {
 		return org.cast.isi.page.Password.class;
+	}
+	public Class<? extends WebPage> getAuthoredPopupPageClass() {
+		return org.cast.isi.page.AuthoredPopup.class;
 	}
 
 	public Class<? extends org.cast.cwm.data.Response> getResponseClass() {
