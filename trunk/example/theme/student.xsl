@@ -25,6 +25,14 @@
      </a>
    </xsl:template>     
 
+   <xsl:template match="dtb:a[@class='popup']">
+     <a wicket:id="popupLink_{count(preceding::dtb:a[@href])}">
+       <xsl:copy-of select="&catts;"/>
+       <xsl:copy-of select="@href"/>
+       <xsl:apply-templates/>
+     </a>
+   </xsl:template>     
+
    <!-- link to a file or an external URL -->
    <xsl:template match="dtb:a[@external='true']" priority="1">
        	<xsl:choose>
