@@ -81,9 +81,9 @@ public class QuestionPopup extends ISIBasePage {
 	}
 	
 	public void renderHead(final IHeaderResponse response) {
-		renderThemeCSS(response, "css/window.css");
-		renderThemeCSS(response, "css/window_print.css");
 		super.renderHead(response);
+		renderThemeCSS(response, "css/window.css");
+		renderThemeCSS(response, "css/window_print.css", "print");
 	}
 	
 	public void setQuestionsMetadata(ResponseMetadata questionsMetadata) {

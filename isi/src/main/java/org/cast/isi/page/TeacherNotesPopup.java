@@ -121,7 +121,7 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
 		renderThemeCSS(response, "css/window.css");
-		renderThemeCSS(response, "css/window_print.css");
+		renderThemeCSS(response, "css/window_print.css", "print");
 		response.renderOnLoadJavascript("bindSectionOpenerLinks()");		
 	}
 	

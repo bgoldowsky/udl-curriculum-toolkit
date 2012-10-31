@@ -366,9 +366,9 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	}
 
 	public void renderHead(IHeaderResponse response) {
-		renderThemeCSS(response, "css/window.css");
-		renderThemeCSS(response, "css/window_print.css");
 		super.renderHead(response);
+		renderThemeCSS(response, "css/window.css");
+		renderThemeCSS(response, "css/window_print.css", "print");
 		response.renderOnLoadJavascript("bindSectionOpenerLinks()");
 	}
 
