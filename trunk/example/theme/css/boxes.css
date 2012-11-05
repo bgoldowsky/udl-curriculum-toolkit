@@ -244,6 +244,13 @@
     margin: 0px;
 }
 
+.supportBox .hasNotification {
+    height: 16px;
+    position: absolute;
+    right: 45px;
+    top: 7px;
+    width: 22px;
+}
 /*================================================================*/
 /* Entry Box */
 

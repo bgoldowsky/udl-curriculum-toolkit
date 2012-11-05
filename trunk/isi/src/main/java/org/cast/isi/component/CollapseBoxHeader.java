@@ -22,41 +22,20 @@ package org.cast.isi.component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.cast.isi.CollapseBoxBehavior;
 import org.cast.isi.page.ISIBasePage;
-import org.cast.isi.panel.ResponseFeedbackButtonPanel;
 
-public class CollapseBoxContainer extends WebMarkupContainer {
+public class CollapseBoxHeader extends WebMarkupContainer {
 	private static final long serialVersionUID = 1L;
 	
 	String boxSequence;
 
-	public CollapseBoxContainer(String id, String _boxSequence) {
+	public CollapseBoxHeader(String id, String _boxSequence) {
 		super(id);
 		boxSequence = _boxSequence;
-	}
+	}	
 	
-
 	@Override
-	protected void onBeforeRender() {
+	protected void onInitialize() {
+		super.onInitialize();
 		add(new CollapseBoxBehavior("onclick", "support:" + boxSequence, ((ISIBasePage) getPage()).getPageName()));
-		// check for feedback indicators inside this collapse box - visit each response group
-		ResponseVisitor responseVisitor = new ResponseVisitor();
-		visitChildren(ResponseFeedbackButtonPanel.class, responseVisitor);
-		super.onBeforeRender();
 	}
-
-
-	/**
-	 * Visits response children and determines if feedback exists
-	 */
-	public class ResponseVisitor implements IVisitor<ResponseFeedbackButtonPanel> {
-		
-		public ResponseVisitor() {
-		}
-
-		public Object component(ResponseFeedbackButtonPanel component) {	
-			return CONTINUE_TRAVERSAL;
-		}
-
-	}
-
 }
