@@ -68,8 +68,9 @@ import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
 import org.cast.isi.component.AnnotatedImageComponent;
 import org.cast.isi.component.AuthoredPopupLink;
-import org.cast.isi.component.CollapseBoxContainer;
+import org.cast.isi.component.CollapseBoxHeader;
 import org.cast.isi.component.DelayedFeedbackSingleSelectView;
+import org.cast.isi.component.FeedbackStatusIndicator;
 import org.cast.isi.component.HotSpotComponent;
 import org.cast.isi.component.ImmediateFeedbackSingleSelectForm;
 import org.cast.isi.component.ImmediateFeedbackSingleSelectView;
@@ -604,7 +605,7 @@ public class ISIXmlComponent extends XmlComponent {
 			label.add(new CollapseBoxBehavior("onclick", eventType, ((ISIBasePage) getPage()).getPageName(), detail));
 			label.add(new AttributeRemover("src"));
 			return label;
-			
+
 		} else if (wicketId.startsWith("annotatedImage_")) {
 			// image with hotspots
 			AnnotatedImageComponent annotatedImageComponent = new AnnotatedImageComponent(wicketId, elt, getModel());
@@ -621,13 +622,19 @@ public class ISIXmlComponent extends XmlComponent {
 			SlideShowComponent slideShowComponent = new SlideShowComponent(wicketId, elt);
 			return slideShowComponent;
 						
+		} else if (wicketId.startsWith("collapseBox_")) {
+			WebMarkupContainer collapseBox = new WebMarkupContainer(wicketId);
+			return collapseBox;
+
+		} else if (wicketId.startsWith("feedbackStatusIndicator_")) {
+			FeedbackStatusIndicator feedbackStatusIndicator = new FeedbackStatusIndicator(wicketId);
+			return feedbackStatusIndicator;
+
+			
 		} else if (wicketId.startsWith("collapseBoxControl-")) {
 			String boxSequence = (wicketId.substring("collapseBoxControl-".length()).equals("") ? "0" : wicketId.substring("collapseBoxControl-".length()));
-			CollapseBoxContainer collapseBoxContainer = new CollapseBoxContainer(wicketId, boxSequence);
-
-//			WebMarkupContainer collapseBoxContainer = new WebMarkupContainer(wicketId);
-//			collapseBoxContainer.add(new CollapseBoxBehavior("onclick", "support:" + boxSequence, ((ISIBasePage) getPage()).getPageName()));
-			return collapseBoxContainer;
+			CollapseBoxHeader collapseBoxHeader = new CollapseBoxHeader(wicketId, boxSequence);
+			return collapseBoxHeader;
 
 		} else if (wicketId.startsWith("iScienceLink-")) {			
 			return new AjaxFallbackLink<Object>(wicketId) {

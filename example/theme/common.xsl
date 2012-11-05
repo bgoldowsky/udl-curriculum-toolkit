@@ -100,10 +100,12 @@
     
     <!-- TOGGLE BUTTONS -->
     <xsl:template match="dtb:div[@class='supplement']">
-		<div class="supportBox collapseBox">
+		<div wicket:id= "collapseBox_" class="supportBox collapseBox">
 			<h4 wicket:id="collapseBoxControl-" class="toggleOffset">
 				<xsl:value-of select="@title" />
 			</h4>
+			<div wicket:id="feedbackStatusIndicator_">
+			</div>
 			<div class="collapseBody">
 				<xsl:apply-templates />
 			</div>
