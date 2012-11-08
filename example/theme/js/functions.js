@@ -60,7 +60,11 @@ function toggleChildBox(n, e) {
 }
 
 function expandAll(nodeID) {
-    $(nodeID + " .collapseBox").each(function() {
+	expandAllByClass(nodeID, '.collapseBox');
+}
+
+function expandAllByClass(nodeID, classType) {
+    $(nodeID + " " + classType ).each(function() {
         $(this).addClass("expOpen");
         $(this).children(".collapseBody").eq(0).show();
         $(this).children().find(".toggle").eq(0).attr("alt", lang['COLLAPSE']).attr("title", lang['COLLAPSE']).addClass("expOpen");
@@ -68,7 +72,11 @@ function expandAll(nodeID) {
 }
 
 function collapseAll(nodeID) {
-    $(nodeID + " .collapseBox").each(function() {
+	collapseAllByClass(nodeID, '.collapseBox');
+}
+
+function collapseAllByClass(nodeID, classType) {
+    $(nodeID + " " + classType).each(function() {
         $(this).removeClass("expOpen");
         $(this).children(".collapseBody").eq(0).hide();
         $(this).children().find(".toggle").eq(0).attr("alt", lang['EXPAND']).attr("title", lang['EXPAND']).removeClass("expOpen");
@@ -206,18 +214,34 @@ function showMediaDetail(id, show) {
 }
 
 function closeVideo(id) {
-	console.log("stop the video");
 	var videoModal = $("#mediaDetail_" + id);
 	
 	// find the child object
 	var videoObject = videoModal.children('object');
-	console.log("found the child");
 }
 
 
 //Fade Out, Swap, Fade In
 function fadeOutIn(id) {
 	$(id).fadeOut('slow').fadeIn('slow');
+}
+
+function modalInit() {
+    modalMove();
+    modalEscClose();
+}
+
+/*=========================================================*/
+/*  Modal Close vis Esc key	                               */
+/*=========================================================*/
+function modalEscClose() {
+    $(document.body).delegate(".modalBody", "keyup", function(event) {
+            var code=event.charCode || event.keyCode;
+            if(code && code == 27) {// if ESC is pressed
+                // Click the close button
+                $(this).find(".modalClose").eq(0).click();
+        }
+    });
 }
 /*=========================================================*/
 /* Draggable Modal Handler                                 */
@@ -402,7 +426,7 @@ function togglespan(elt) {
 $(window).ready(function() {
     collapseBox();
     thtInit();
-    modalMove();
+    modalInit();
 });
 
 $(window).load(function() {
