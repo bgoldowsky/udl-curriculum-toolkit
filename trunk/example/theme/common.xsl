@@ -100,7 +100,7 @@
     
     <!-- TOGGLE BUTTONS -->
     <xsl:template match="dtb:div[@class='supplement']">
-		<div wicket:id= "collapseBox_" class="supportBox collapseBox">
+		<div wicket:id= "collapseBox_" class="supportBox collapseBox supplement">
 			<h4 wicket:id="collapseBoxControl-" class="toggleOffset">
 				<xsl:value-of select="@title" />
 			</h4>
