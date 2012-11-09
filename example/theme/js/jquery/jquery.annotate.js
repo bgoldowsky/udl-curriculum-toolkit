@@ -344,9 +344,9 @@
 
         // Add the area
         if (note.useImg) {
-            this.area = $('<a href="#" class="image-annotate-area' + (this.editable ? ' image-annotate-area-editable' : '') + '"><div class="image-annotate-area-inner"><div class="' + note.imgClass + '"><img src="' + note.imgSrc + '" alt="" /><span class="image-annotate-text">' + note.text + '</span></div></div></a>');
+            this.area = $('<a href="#" id-"' + note.id + '_hs" class="image-annotate-area' + (this.editable ? ' image-annotate-area-editable' : '') + '"><div class="image-annotate-area-inner"><div class="' + note.imgClass + '"><img src="' + note.imgSrc + '" alt="" /><span class="image-annotate-text">' + note.text + '</span></div></div></a>');
         } else {
-            this.area = $('<a href="#" class="image-annotate-area' + (this.editable ? ' image-annotate-area-editable' : '') + '"><div class="image-annotate-area-inner"><span class="image-annotate-text">' + note.text + '</span></div></a>');
+            this.area = $('<a href="#" id-"' + note.id + '_hs" class="image-annotate-area' + (this.editable ? ' image-annotate-area-editable' : '') + '"><div class="image-annotate-area-inner"><span class="image-annotate-text">' + note.text + '</span></div></a>');
         }
         image.canvas.children('.image-annotate-view').append(this.area);
 
@@ -545,7 +545,7 @@
     	var detail = $("#" + id);
     	var offset = hotSpotNode.offset();
     	logJsEvent("id=" + xmlId, "", "hotspot");
-    	
+
 
     	// determine if you are on the home page
     	if ($('body').hasClass("themeHome")) {
@@ -558,6 +558,7 @@
 		detail.css("top", offset.top);
 		detail.css("left", offset.left);
 		detail.show();
+		detail.focus();
         return false;
     };
 
