@@ -279,6 +279,16 @@
 }
 
 /*================================================================*/
+/* Text Box */
+
+.textBox {
+/*    background: #F0F0F0;*/
+    border: 1px solid #BDBDBD;
+    padding: 5px;
+    margin: 0px 0px 1em 0px;
+}
+
+/*================================================================*/
 /* Image Box and Captions */
 
 .imgBox {
