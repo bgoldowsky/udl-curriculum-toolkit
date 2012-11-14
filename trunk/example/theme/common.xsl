@@ -368,11 +368,8 @@
 
 	<!-- thumb ratings -->
 	<xsl:template match="dtb:responsegroup[@class='thumbrating']">
- 		<p>
-     		<strong>Rate this:</strong>    
-			<span wicket:id="thumbRating_" id="{@id}">
-			</span>
-		</p>
+		<span class="thumbRatingDescription" wicket:id="thumbRatingDescription_"></span>
+		<span wicket:id="thumbRating_" id="{@id}"></span>
 	</xsl:template>
 
 
@@ -581,7 +578,15 @@
 			<xsl:otherwise>responsearea</xsl:otherwise>
 		</xsl:choose>
 	 </xsl:variable>
-     <div class="entryBox nohlpassage">
+   	 <xsl:variable name="responseClass">
+         <xsl:choose>
+        	<xsl:when test="@class='compact'">
+	            <xsl:value-of select="'responseMCCompact'" />
+        	</xsl:when>
+ 	     </xsl:choose>
+  	</xsl:variable>
+	 
+     <div class="entryBox nohlpassage {$responseClass}">
      	<div class="teacherBar" wicket:id="teacherBar_">
      		<div class="teacherBarLeft">
      	    </div>
@@ -602,14 +607,18 @@
    </xsl:template>
 
 	<xsl:template name="responseArea">
-   	<xsl:choose>
-   		<xsl:when test="boolean($delay-feedback)">
-   			<xsl:call-template name="responseArea-delay-feedback" />
-   		</xsl:when>
-   		<xsl:otherwise>
-   			<xsl:call-template name="responseArea-immediate-feedback" />
-   		</xsl:otherwise>
-   	</xsl:choose>
+	   	<xsl:choose>	   	
+	   		<!-- test for single select with no correct answer - no feedback -->
+	   		<xsl:when test="count(child::dtb:select1/dtb:item) > 0 and count(child::dtb:select1/dtb:item[@correct='true']) = 0">
+	   			<xsl:call-template name="responseArea-delay-feedback" />
+	   		</xsl:when>
+	   		<xsl:when test="boolean($delay-feedback)">
+	   			<xsl:call-template name="responseArea-delay-feedback" />
+	   		</xsl:when>
+	   		<xsl:otherwise>
+	   			<xsl:call-template name="responseArea-immediate-feedback" />
+	   		</xsl:otherwise>
+	   	</xsl:choose>
 	</xsl:template>
 
 	<xsl:template name="responseArea-immediate-feedback">
@@ -660,28 +669,39 @@
 	<xsl:template name="responseArea-delay-feedback">
 		<xsl:choose>
 			<xsl:when test="dtb:select1">
+		    	<xsl:variable name="noAnswer" select="boolean(count(ancestor-or-self::dtb:responsegroup/dtb:select1/dtb:item)>0 
+ 		    											and (count(ancestor-or-self::dtb:responsegroup/dtb:select1/dtb:item[@correct='true'])=0)) "/>     
+		    	<xsl:variable name="compact" select="boolean(count(ancestor-or-self::dtb:responsegroup[@class='compact'])>0) "/>     
 				<div wicket:id="responseContainer">
 					<form wicket:id="select1_delay_"
 						rgid="{ancestor-or-self::dtb:responsegroup/@id}"
 						title="{ancestor-or-self::dtb:responsegroup/@title}"
 						group="{ancestor-or-self::dtb:responsegroup/@group}"
-						class="subactivity">					
-						<div wicket:id="shy" class="responseBar">
-							<div class="responseLeft"><!-- empty --></div>
-							<div class="responseRight">
-								<!-- helper links -->
-								<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
-								<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
-								<span wicket:id="mcScore"></span>
+						noAnswer="{$noAnswer}"
+						compact="{$compact}"
+						class="subactivity">	
+						<xsl:if test="$noAnswer != 'true'">
+							<div wicket:id="shy" class="responseBar">
+								<div class="responseLeft"><!-- empty --></div>
+								<div class="responseRight">
+									<!-- helper links -->
+									<xsl:apply-templates select="key('annokey', @id)" mode="showannotations" />
+									<span wicket:id="feedbackButton_" for="student" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+									<span wicket:id="mcScore"></span>
+								</div>
 							</div>
-						</div>
+						</xsl:if>
 						<xsl:apply-templates select="dtb:select1" />
 					</form>
-					<div wicket:id="viewActions"
-						rgid="{ancestor-or-self::dtb:responsegroup/@id}"
-						title="{ancestor-or-self::dtb:responsegroup/@title}"
-						group="{ancestor-or-self::dtb:responsegroup/@group}">
-					</div>
+					<xsl:if test="$compact != 'true'">
+						<!-- don't display if this is a compact response -->
+						<div wicket:id="viewActions"
+							rgid="{ancestor-or-self::dtb:responsegroup/@id}"
+							title="{ancestor-or-self::dtb:responsegroup/@title}"
+							group="{ancestor-or-self::dtb:responsegroup/@group}"
+							behavior="{ancestor-or-self::dtb:responsegroup/@behavior}" >
+						</div>
+					</xsl:if>
 				</div>
 			</xsl:when>
 			<xsl:otherwise>
@@ -703,9 +723,11 @@
 	</xsl:template>
 
 	<!-- Multiple Choice -->
-	<xsl:template match="dtb:select1">
-		
+	<xsl:template match="dtb:select1">	
 		<xsl:choose>
+	   		<xsl:when test="count(dtb:item) > 0 and count(dtb:item[@correct='true']) = 0">
+				<xsl:call-template name="select1-delay-feedback" />
+			</xsl:when>
 			<xsl:when test="boolean($delay-feedback)">
 				<xsl:call-template name="select1-delay-feedback" />
 			</xsl:when>
@@ -715,9 +737,7 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- Multiple Choice -->
 	<xsl:template name="select1-immediate-feedback">
-
 		<div class="responseItem" wicket:id="radioGroup">
         	<div class="responseMCItem">
 				<xsl:apply-templates select="dtb:item//dtb:label" />
@@ -737,10 +757,9 @@
 			</div>
 		</div>
 	</xsl:template>
-	
-	<!-- Multiple Choice -->
-	<xsl:template name="select1-delay-feedback">
 
+	
+	<xsl:template name="select1-delay-feedback">
 		<div class="responseItem" wicket:id="radioGroup">
 			<xsl:for-each select="dtb:item">
 	        	<div class="responseMCItem">
@@ -748,13 +767,16 @@
 					<xsl:call-template name="select1-delay-message" />
 				</div>
 			</xsl:for-each>
-			<div class="responseMCFeedback">
-				<wicket:enclosure child="date">
-					<span class="autosave responseTime" >
-						<strong>Last Saved:</strong> <span wicket:id="date" >[Date]</span>
-					</span>
-				</wicket:enclosure>
-			</div>
+		    <xsl:variable name="compact" select="boolean(count(ancestor-or-self::dtb:responsegroup[@class='compact'])>0) "/>
+            <xsl:if test="$compact != 'true'">
+				<div class="responseMCFeedback">
+					<wicket:enclosure child="date">
+						<span class="autosave responseTime" >
+							<strong>Last Saved:</strong> <span wicket:id="date" >[Date]</span>
+						</span>
+					</wicket:enclosure>
+				</div>
+			</xsl:if>
 		</div>
 	</xsl:template>
 

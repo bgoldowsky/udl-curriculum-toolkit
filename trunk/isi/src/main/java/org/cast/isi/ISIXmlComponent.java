@@ -290,6 +290,10 @@ public class ISIXmlComponent extends XmlComponent {
 			thumbPanel.add(new AttributeRemover("id"));
 			return thumbPanel;
 
+		} else if (wicketId.startsWith("thumbRatingDescription_")) {
+			Label thumbRatingDescription = new Label(wicketId, new ResourceModel("thumbRatingPanel.ratingDescription", "Rate It:"));
+			return thumbRatingDescription;
+
 		} else if (wicketId.startsWith("mediaThumbImage_")) {
 			String src = elt.getAttribute("src");
 			ResourceReference imgRef = getRelativeRef(src);
@@ -710,19 +714,20 @@ public class ISIXmlComponent extends XmlComponent {
 			final Element elt) {
 		ISIXmlSection section = getISIXmlSection();
 		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
+		// TODO: need to fix teacher side to not allow feedback to be given on responses where there is "noAnswer" - LDM
 		ScoredDelayedFeedbackSingleSelectForm selectForm = new ScoredDelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
-		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
+		selectForm.add(new AttributeRemover("rgid", "title", "group", "type", "noAnswer", "compact"));
 		selectForm.setShowDateTime(true);
 		return selectForm;
 	}
-	
+
 	private Component makeImmediateResponseForm(final String wicketId,
 			final Element elt) {
 		Component selectForm = new ScoredImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 		return selectForm;
 	}
-	
+		
 	private Component makeDelayedResponseView(final String wicketId,
 			final Element elt) {
 		ISIXmlSection section = getISIXmlSection();
@@ -732,7 +737,7 @@ public class ISIXmlComponent extends XmlComponent {
 		component.setShowDateTime(false);
 		return component;
 	}
-	
+
 	private Component makeImmediateResponseView(final String wicketId,
 			final Element elt) {
 		ImmediateFeedbackSingleSelectForm selectForm = new ImmediateFeedbackSingleSelectView(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
