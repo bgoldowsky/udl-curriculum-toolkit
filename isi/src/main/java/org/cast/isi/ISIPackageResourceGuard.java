@@ -26,6 +26,7 @@ public class ISIPackageResourceGuard extends SecurePackageResourceGuard {
 		public ISIPackageResourceGuard() {
 			super(new SimpleCache(100));
 			addPattern("+*.pdf");
+			addPattern("+*.json");
 			addPattern("+**/mediaplayer/skins/**/*.xml");
 		}
 
