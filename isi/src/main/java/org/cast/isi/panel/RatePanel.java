@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
@@ -92,6 +93,9 @@ public class RatePanel extends Panel {
 			addAffectButton(FEELINGS.get(i));
 		}
 		
+		Label thumbRatingDescription = new Label("ratingDescription", new ResourceModel("ratePanel.ratingDescription", "Rate It:"));
+		add(thumbRatingDescription);
+				
 		// Set up the prompt and response for the affect button
 		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RATING_AFFECT, contentLoc, xmlId);
 		mResponseAffect = responseService.getResponseForPrompt(mPrompt, mUser);
