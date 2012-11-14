@@ -38,14 +38,14 @@ import org.cast.isi.ISIXmlComponent.AttributeRemover;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.CorrectDelayedSingleSelectSummaryPanel;
-import org.cast.isi.panel.IncorrectSingleSelectSummaryPanel;
 import org.cast.isi.panel.CorrectImmediateSingleSelectSummaryPanel;
+import org.cast.isi.panel.IncorrectSingleSelectSummaryPanel;
+import org.cast.isi.panel.NoAnswerSingleSelectSummaryPanel;
 import org.cast.isi.service.IISIResponseService;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.google.inject.Inject;
-
 public class SingleSelectSummaryXmlComponentHandler {
 
 	@Inject 
@@ -58,7 +58,7 @@ public class SingleSelectSummaryXmlComponentHandler {
 		InjectorHolder.getInjector().inject(this);
 	}
 	
-	public Component makeComponent(final String wicketId, final Element elt, XmlSectionModel model) {
+	public Component makeComponent(final String wicketId, final Element elt, XmlSectionModel model, boolean noAnswer) {
 		WebMarkupContainer container = new WebMarkupContainer(wicketId);
 		container.add(new AttributeRemover("type", "rgid"));
 
@@ -74,19 +74,22 @@ public class SingleSelectSummaryXmlComponentHandler {
 			String responseId = responseGroupId + "_" + getXmlId(itemElt);
 			List<Response> matchingResponses = getResponsesForChoice(responses, responseId);
 
-			container.add(makeChoiceComponent(getWicketId(itemElt), isCorrect(itemElt), delayed, matchingResponses));
+			container.add(makeChoiceComponent(getWicketId(itemElt), isCorrect(itemElt), delayed, noAnswer, matchingResponses));
 		}
 		
 		return container;
 	}
 
 	private Component makeChoiceComponent(String itemWicketId, boolean correct,
-			boolean delayed, List<Response> matchingResponses) {
+			boolean delayed, boolean noAnswer, List<Response> matchingResponses) {
 		if (correct && delayed) {
 			return new CorrectDelayedSingleSelectSummaryPanel(itemWicketId, matchingResponses);
 		}
 		else if (correct && !delayed) {
 			return new CorrectImmediateSingleSelectSummaryPanel(itemWicketId, mapScores(matchingResponses));
+		}
+		else if (noAnswer) {
+			return new NoAnswerSingleSelectSummaryPanel(itemWicketId, matchingResponses);
 		}
 		else {
 			return new IncorrectSingleSelectSummaryPanel(itemWicketId, matchingResponses);

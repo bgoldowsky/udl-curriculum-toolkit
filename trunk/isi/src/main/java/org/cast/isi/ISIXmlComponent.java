@@ -680,7 +680,11 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			return new SectionCompleteImageContainer(wicketId, currentSectionModel);
 		} else if (wicketId.startsWith("itemSummary_")) {
-			return new SingleSelectSummaryXmlComponentHandler().makeComponent(wicketId, elt, getModel());
+			boolean noAnswer = Boolean.parseBoolean(elt.getAttributeNS(null, "noAnswer"));
+			Component singleSelectComponent = new SingleSelectSummaryXmlComponentHandler().makeComponent(wicketId, elt, getModel(), noAnswer);
+			singleSelectComponent.add(new AttributeRemover("noAnswer"));
+			return singleSelectComponent;
+			
 		} else if (wicketId.startsWith("shy")) {
 			return new ShyContainer(wicketId);
 		} else {
@@ -714,10 +718,10 @@ public class ISIXmlComponent extends XmlComponent {
 			final Element elt) {
 		ISIXmlSection section = getISIXmlSection();
 		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
-		// TODO: need to fix teacher side to not allow feedback to be given on responses where there is "noAnswer" - LDM
+		boolean compact = Boolean.parseBoolean(elt.getAttributeNS(null, "compact"));
 		ScoredDelayedFeedbackSingleSelectForm selectForm = new ScoredDelayedFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type", "noAnswer", "compact"));
-		selectForm.setShowDateTime(true);
+		selectForm.setShowDateTime(!compact);
 		return selectForm;
 	}
 

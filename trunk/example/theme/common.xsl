@@ -585,7 +585,16 @@
         	</xsl:when>
  	     </xsl:choose>
   	</xsl:variable>
-	 
+   	 <xsl:variable name="noAnswer">
+         <xsl:choose>
+	    	<xsl:when test="count(dtb:select1/dtb:item)>0 and count(dtb:select1/dtb:item[@correct='true'])=0 ">
+	    		<xsl:value-of select="true()" />
+	    	</xsl:when>
+			<xsl:otherwise>
+	    		<xsl:value-of select="false()" />
+			</xsl:otherwise>
+ 	     </xsl:choose>
+  	</xsl:variable>	 
      <div class="entryBox nohlpassage {$responseClass}">
      	<div class="teacherBar" wicket:id="teacherBar_">
      		<div class="teacherBarLeft">
@@ -593,7 +602,12 @@
       	    <div class="teacherBarRight">
 				<xsl:apply-templates select="key('annokey', @id)[@class='teacheronly']" mode="teacheronly" />
         		<a wicket:id="compareResponses_" href="#" class="button" rgid="{ancestor-or-self::dtb:responsegroup/@id}" group="{ancestor-or-self::dtb:responsegroup/@group}" type="{$type}">Compare Responses</a>
-            	<span wicket:id="feedbackButton_" for="teacher" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+            	<xsl:choose>
+            		<!-- feedback not allowed for survey type questions -->
+            		<xsl:when test="($noAnswer != 'true')">
+ 			           	<span wicket:id="feedbackButton_" for="teacher" rgid="{ancestor-or-self::dtb:responsegroup/@id}"></span>
+ 			        </xsl:when>
+ 			    </xsl:choose>
             	<xsl:choose>
             		<xsl:when test="not($type='select1')">
 						<span wicket:id="scoreButtons_" for="teacher"  rgid="{ancestor-or-self::dtb:responsegroup/@id}"  group="{ancestor-or-self::dtb:responsegroup/@group}" type="{$type}"></span>
@@ -606,7 +620,7 @@
      </div>
    </xsl:template>
 
-	<xsl:template name="responseArea">
+   <xsl:template name="responseArea">
 	   	<xsl:choose>	   	
 	   		<!-- test for single select with no correct answer - no feedback -->
 	   		<xsl:when test="count(child::dtb:select1/dtb:item) > 0 and count(child::dtb:select1/dtb:item[@correct='true']) = 0">
@@ -760,23 +774,24 @@
 
 	
 	<xsl:template name="select1-delay-feedback">
+		<xsl:variable name="noAnswer" select="boolean(count(ancestor-or-self::dtb:responsegroup/dtb:select1/dtb:item)>0 
+ 		    								and (count(ancestor-or-self::dtb:responsegroup/dtb:select1/dtb:item[@correct='true'])=0)) "/>  
 		<div class="responseItem" wicket:id="radioGroup">
 			<xsl:for-each select="dtb:item">
 	        	<div class="responseMCItem">
 					<xsl:apply-templates select="dtb:label" />
-					<xsl:call-template name="select1-delay-message" />
+		            <xsl:if test="$noAnswer != 'true'">
+						<xsl:call-template name="select1-delay-message" />
+					</xsl:if>
 				</div>
 			</xsl:for-each>
-		    <xsl:variable name="compact" select="boolean(count(ancestor-or-self::dtb:responsegroup[@class='compact'])>0) "/>
-            <xsl:if test="$compact != 'true'">
+			<wicket:enclosure child="date">
 				<div class="responseMCFeedback">
-					<wicket:enclosure child="date">
 						<span class="autosave responseTime" >
 							<strong>Last Saved:</strong> <span wicket:id="date" >[Date]</span>
 						</span>
-					</wicket:enclosure>
 				</div>
-			</xsl:if>
+			</wicket:enclosure>
 		</div>
 	</xsl:template>
 

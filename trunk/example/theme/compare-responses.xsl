@@ -26,8 +26,11 @@
 				<xsl:otherwise>default</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+
+    	<xsl:variable name="noAnswer" select="boolean(count(self::dtb:responsegroup/dtb:select1/dtb:item)>0 
+ 		    									and (count(self::dtb:responsegroup/dtb:select1/dtb:item[@correct='true'])=0)) "/>     
    		
-		<div wicket:id="itemSummary_" rgid="{@id}" group="{@group}" type="{$type}">
+		<div wicket:id="itemSummary_" rgid="{@id}" group="{@group}" type="{$type}" noAnswer="{$noAnswer}">
 			<xsl:apply-templates select=".//dtb:item" mode="summary">
 				<xsl:with-param name="mode" select="$type" />
 			</xsl:apply-templates>
@@ -41,6 +44,7 @@
 
 	<xsl:template match="dtb:item" mode="summary">
 		<xsl:param name="mode" />
+    	<xsl:variable name="noAnswer" select="boolean(count(../dtb:item)>0 and (count(../dtb:item[@correct='true'])=0)) "/>     
 		<xsl:choose>
 			<xsl:when test="$mode = 'rate_it'">
 				<!-- Rate-It: copied from UDL Studio but not used here yet. -->
@@ -74,13 +78,18 @@
 						</input>
 						<label for="{@id}">
 							<xsl:apply-templates select="dtb:label"/>
-							<xsl:choose>	
-								<xsl:when test="@correct = 'true'">
-									<span class="correct resultFeedback"> (Correct)</span>
+							<xsl:choose>
+								<!-- only add correct info when there is a correct answer -->
+								<xsl:when test="$noAnswer != 'true'">
+									<xsl:choose>	
+										<xsl:when test="@correct = 'true'">
+											<span class="correct resultFeedback"> (Correct)</span>
+										</xsl:when>
+										<xsl:otherwise>
+											<span class="incorrect resultFeedback"> (Incorrect)</span>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:when>
-								<xsl:otherwise>
-									<span class="incorrect resultFeedback"> (Incorrect)</span>
-								</xsl:otherwise>
 							</xsl:choose>
 						</label>
 					</div>
