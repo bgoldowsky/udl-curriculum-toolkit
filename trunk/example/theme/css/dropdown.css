@@ -1,0 +1,188 @@
+/*================================================================*/
+/* Dropdown Navigation Bar */
+
+.dropdownNavBar {
+    clear: both;
+    position: relative;
+    background: #D7D7D7;
+    padding: 4px 10px;
+}
+
+.dropdownNavBar:after {
+    content: ".";
+    height: 0px;
+    display: block;
+    clear: both;
+    overflow: hidden;
+    visibility: hidden;
+}
+*:first-child+html .dropdownNavBar { height: 100%; } /* IE7 */
+* html .dropdownNavBar { height: 1%; }               /* IE6 */
+
+.dropdownNavBar #pageJump {
+    position: absolute;
+    top: 8px;
+    right: 285px;
+    font-size: 0.9em;
+}
+
+.dropdownNavBar #pageJump label, .dropdownNavBar #pageJump form .button {
+    position: absolute;
+    left: -9999px;
+}
+
+.dropdownNavBar h2 {
+    font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
+    font-size: 1.0em;
+    color: #000000;
+    padding: 0px;
+    margin: 0px;
+}
+
+/*================================================================*/
+/* Navigation Menu */
+
+/* navMenu - Top Level */
+
+.navMenu * {
+    z-index: inherit;
+}
+.navMenu {
+    position: relative;
+    z-index: 401;
+    float: left;
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+}
+
+.navMenu .current {
+    background: #D7D7D7;
+}
+
+.navMenu > li {
+    position: relative;
+    float: left;
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+}
+
+.navMenu > li > h2 >  a {
+    position: relative;
+    display: block;
+    font-weight: bold;
+    background: #99B7DB;
+    color: #000000;
+    text-decoration: none;
+    padding: 3px 25px 3px 3px;
+    border-top: 1px solid #C6DDF4;
+    border-right: 1px solid #C6DDF4;
+    border-bottom: 1px solid #C6DDF4;
+}
+
+.navMenu > li > h2 > a .sub-mark {
+    position: absolute;
+    top: 0.35em;
+    right: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    text-indent: -9999px;
+    background: transparent url("../img/icons/dropdown_arrows.png") 0px 0px no-repeat;
+    width: 15px;
+    height: 15px;
+}
+
+/* hover state - preserve when inside dropdown */
+.navMenu > li > a:hover, .navMenu > li > a:focus,
+.navMenu > li:hover > a, .navMenu > li:focus > a,
+.navMenu > li.show-hover > a {
+    color: #336699;
+    background: #FFFFFF;
+}
+
+.navMenu > li > a:hover .sub-mark, .navMenu > li > a:focus .sub-mark,
+.navMenu > li:hover > a .sub-mark, .navMenu > li:focus > a .sub-mark,
+.navMenu > li.show-hover > a .sub-mark {
+    background-position: -15px -15px;
+}
+
+.navMenu > li:first-child > a {
+    border-left: 1px solid #C6DDF4;
+}
+
+/* navMenu - Dropdowns */
+
+.navMenu ul, .navMenu ul ul {
+	position: absolute;
+	top: 100%;
+	left: -9999px;
+	opacity: 0;
+	background: #FFFFFF;
+	border: 1px solid #BDBDBD;
+    padding: 0px;
+    margin: 0px;
+	list-style: none;
+    width: auto;
+    white-space: nowrap;
+}
+
+/* navMenu - Dropdowns - Level 2 */
+.navMenu li:hover > ul,
+.navMenu li:focus > ul,
+.navMenu ul.show-menu {
+	left: 45px;
+	opacity: 1;
+}
+
+/* navMenu - Dropdowns - Level 3 */
+.navMenu ul li:hover > ul,
+.navMenu ul li:focus > ul,
+.navMenu ul li > ul.show-menu {
+    top: -1px;
+    left: 100%;
+    opacity: 1;
+}
+
+.navMenu ul li {
+	float: none;
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+}
+
+.navMenu ul li a {
+    display: block;
+    font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #000000;
+    text-decoration: none;
+    padding: 3px 25px 3px 3px;
+    border-bottom: 0;
+}
+
+.navMenu ul li a .sub-mark {
+    position: absolute;
+    top: 0.35em;
+    right: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    text-indent: -9999px;
+    background: transparent url("../img/icons/dropdown_arrows.png") 0px 0px no-repeat;
+    width: 15px;
+    height: 15px;
+}
+
+.navMenu ul li a:hover, .navMenu ul li a:focus,
+.navMenu ul li:hover > a, .navMenu ul li:focus > a,
+.navMenu ul li.show-hover > a {
+    background: #C6DDF4;
+    color: #000000;
+}
+
+.navMenu ul li a:hover .sub-mark, .navMenu ul li a:focus .sub-mark,
+.navMenu ul li:hover > a .sub-mark, .navMenu ul li:focus > a .sub-mark,
+.navMenu ul li.show-hover > a .sub-mark {
+    background-position: -15px 0px;
+}
