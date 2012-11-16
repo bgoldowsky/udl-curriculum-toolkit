@@ -143,7 +143,7 @@ public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> imp
 				public Object component(Component component) {
 					ISectionStatusChangeListener listener = (ISectionStatusChangeListener) component;
 					listener.onSectionCompleteChange(target, location);
-					return CONTINUE_TRAVERSAL;
+					return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
 				}
 
 			});
