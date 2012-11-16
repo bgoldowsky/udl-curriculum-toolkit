@@ -11,20 +11,20 @@ TODO:
 */
 
 $.fn.CAST_Dropdown_Menu = function() {
-    // Check for sub menu items
+    // Check for sub menu items and add indicator
     $(this).find('ul').each(function() {
         $(this).closest('li').addClass('show-sub').find('a').eq(0).append(' <span class="sub-mark">&gt;</span>');
     });
 
-    // Set tabIndex to -1 so that links can't receive focus until menu is open
-    $(this).find('li > a').next('ul').find('a').attr('tabIndex',-1);
+    // Set tabIndex=-1 so that sub-menu links can't receive focus until menu is open (skip top level items)
+    $(this).find('ul a').attr('tabIndex',-1);
 
-    $(this).find('li > a').hover(function(){
+    $(this).find('a').hover(function(){
         $(this).closest('ul').find('.show-menu').removeClass('show-menu').find('a').attr('tabIndex',-1);
     });
-    $(this).find('li > a').focus(function(){
+    $(this).find('a').focus(function(){
         $(this).closest('ul').find('.show-menu').removeClass('show-menu').find('a').attr('tabIndex',-1);
-        $(this).next('ul').addClass('show-menu').find('a').attr('tabIndex',0);
+        $(this).closest('li').find('ul').eq(0).addClass('show-menu').find('a').attr('tabIndex',0);
 
         $(this).closest('ul').find('.show-hover').removeClass('show-hover');
         $(this).closest('ul').find('.show-menu').closest('li').addClass('show-hover');
@@ -37,7 +37,10 @@ $.fn.CAST_Dropdown_Menu = function() {
             $('.show-menu').removeClass('show-menu').find('a').attr('tabIndex',-1);
         }
     });
-    $(document).click(function(){ $('.show-menu').removeClass('show-menu').find('a').attr('tabIndex',-1); });
+    $(document).click(function() {
+        $('.show-hover').removeClass('show-hover');
+        $('.show-menu').removeClass('show-menu').find('a').attr('tabIndex',-1);
+    });
 
     $(this).click(function(e){
         e.stopPropagation();
