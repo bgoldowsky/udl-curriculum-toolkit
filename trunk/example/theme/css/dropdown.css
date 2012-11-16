@@ -68,7 +68,8 @@
     list-style: none;
 }
 
-.navMenu > li > h2 >  a {
+.navMenu > li > a,
+.navMenu > li > h2 > a {
     position: relative;
     display: block;
     font-weight: bold;
@@ -81,6 +82,7 @@
     border-bottom: 1px solid #C6DDF4;
 }
 
+.navMenu > li > a .sub-mark,
 .navMenu > li > h2 > a .sub-mark {
     position: absolute;
     top: 0.35em;
@@ -95,15 +97,21 @@
 
 /* hover state - preserve when inside dropdown */
 .navMenu > li > a:hover, .navMenu > li > a:focus,
-.navMenu > li:hover > a, .navMenu > li:focus > a,
-.navMenu > li.show-hover > a {
-    color: #336699;
-    background: #FFFFFF;
+.navMenu > li:hover > a, .navMenu li:focus > a,
+.navMenu > li.show-hover > a,
+.navMenu > li > h2 > a:hover, .navMenu > li > h2 > a:focus,
+.navMenu > li:hover > h2 > a, .navMenu li:focus > h2 > a,
+.navMenu > li.show-hover > h2 > a {
+    color: #000000;
+    background: #C6DDF4;
 }
 
 .navMenu > li > a:hover .sub-mark, .navMenu > li > a:focus .sub-mark,
 .navMenu > li:hover > a .sub-mark, .navMenu > li:focus > a .sub-mark,
-.navMenu > li.show-hover > a .sub-mark {
+.navMenu > li.show-hover > a .sub-mark,
+.navMenu > li > h2 > a:hover .sub-mark, .navMenu > li > h2 > a:focus .sub-mark,
+.navMenu > li:hover > h2 > a .sub-mark, .navMenu > li:focus > h2 > a .sub-mark,
+.navMenu > li.show-hover > h2 > a .sub-mark {
     background-position: -15px -15px;
 }
 
