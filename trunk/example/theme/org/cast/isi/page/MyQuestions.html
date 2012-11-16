@@ -23,7 +23,7 @@
 			                </p>
 			                <wicket:enclosure child="newQuestionButton">
 			                <p>
-			                    <a id="newQMLink" target="_new" onclick="$('#newQuestionModal').show(); return false;" href="#newQuestionModal" class="button">Create New Question</a>
+			                    <a id="newQMLink" target="_new" onclick="$('#newQuestionModal').show(); return false;" href="#newQuestionModal" class="button"><wicket:message key="MyQuestions.newButton">Create New Question</wicket:message></a>
 				                <span wicket:id="newQuestionButton"></span>
 			                </p>
 			                </wicket:enclosure>
@@ -31,14 +31,14 @@
 		
 						<div id="newQuestionModal" class="modalBody modalNarrow" style="display: none;">
 						    <div class="modalHeader" role="banner">
-						        <div class="modalTitle">Create New Question</div>
+						        <div class="modalTitle"><wicket:message key="MyQuestions.newButton">Create New Question</wicket:message></div>
 						        <a href="javascript:void(0)" onclick="$('#newQuestionModal textarea').attr('value', ''); $('#newQuestionModal .feedback').html(''); $('#newQuestionModal').hide();" class="modalClose button icon"><img src="/img/icons/close.png" width="15" height="15" alt="Close"  title="Close"/></a>
 						    </div>
 						    <div class="modalMainCol">
 						        <div class="modalContent">
 						            <div class="modalEdit">
 						                <form wicket:id="newQuestion" action="#">
-											<label wicket:id="questionLabel">Question:</label><br />
+											<label wicket:id="questionLabel"><wicket:message key="MyQuestions.delete.objectName">Question</wicket:message>:</label><br />
 						                    <textarea wicket:id="text"></textarea>
 						                    <p>
 							                    <input wicket:id="submit" type="submit" value="Save" class="button" />
@@ -55,8 +55,8 @@
 		            <div id="myContentRight">
 		                <div class="rightContainer">
 		                    <!-- BEGIN MAIN CONTENT -->
-			               	<h1 wicket:id="noQuestions">There are no Questions added.</h1>
-			               	<h1 wicket:id="noQuestionSelected">No Question selected.</h1>
+			               	<h1 wicket:id="noQuestions"><wicket:message key="MyQuestions.noQuestion">There are no Questions added.</wicket:message></h1>
+			               	<h1 wicket:id="noQuestionSelected"><wicket:message key="MyQuestions.noQuestionSelected">No Question selected.</wicket:message></h1>
 			               	<h1 wicket:id="noStudentSelected">No Student selected.</h1>
 		                    <div wicket:id="questionTitleContainer" class="responseEditHeader">
 			                    <h1 wicket:id="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit?</h1>
