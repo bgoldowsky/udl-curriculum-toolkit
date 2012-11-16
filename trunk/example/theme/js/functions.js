@@ -228,21 +228,8 @@ function fadeOutIn(id) {
 
 function modalInit() {
     modalMove();
-    modalEscClose();
 }
 
-/*=========================================================*/
-/*  Modal Close vis Esc key	                               */
-/*=========================================================*/
-function modalEscClose() {
-    $(document.body).delegate(".modalBody", "keyup", function(event) {
-            var code=event.charCode || event.keyCode;
-            if(code && code == 27) {// if ESC is pressed
-                // Click the close button
-                $(this).find(".modalClose").eq(0).click();
-        }
-    });
-}
 /*=========================================================*/
 /* Draggable Modal Handler                                 */
 /*=========================================================*/
