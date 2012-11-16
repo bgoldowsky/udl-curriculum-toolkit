@@ -63,6 +63,11 @@ public class HotSpotComponent extends DialogBorder {
 		this.height = elt.getAttributeNS(null,"height");
 		this.title = elt.getAttributeNS(null,"title");
 		this.imgSrc = elt.getAttributeNS(null,"imgSrc");
+		
+		// setup needed to return focus to calling hotspot; id for hotspot
+		// link is created in js
+		this.getCloseString();
+		this.setFocusOverrideSelector("#" + hotSpotId + "_hs");
 	}
 
 	@Override

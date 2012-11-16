@@ -100,7 +100,7 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 	public void renderHead(final IHeaderResponse response) {
 		response.renderCSSReference(new ResourceReference("/css/modal.css"));
 		// set up move button and any collapse boxes in the modal
-		response.renderOnLoadJavascript("collapseBox();modalMove();");
+		response.renderOnLoadJavascript("collapseBox();modalInit();");
 	}
 	
 	/**
