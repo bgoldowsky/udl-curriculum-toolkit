@@ -59,6 +59,9 @@ import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.inject.Inject;
 
@@ -135,11 +138,37 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 	}
 
 	private Component makeSummary(String id, IModel<Prompt> mPrompt) {
-		if (featureService.isCompareScoreSummaryOn())
+		if (featureService.isCompareScoreSummaryOn() && validAnswers(mPrompt))
 			return new ResponseCollectionSummary(id, getScoreCounts(mPrompt));
 		else return new EmptyPanel(id);
 	}
 	
+	/**
+	 * Determine if this is a single select with a correct answer.  If
+	 * there are no correct answers, don't display the summary.
+	 * 
+	 * @param mPrompt
+	 * @return
+	 */
+	private boolean validAnswers(IModel<Prompt> mPrompt) {
+		ISIPrompt prompt = ((ISIPrompt)mPrompt.getObject()); 
+		if (prompt.getType().equals(PromptType.SINGLE_SELECT)) {
+			ContentLoc promptLoc = prompt.getContentLoc();
+			String xmlId = prompt.getContentElement().getXmlId();
+			Element xmlElement = promptLoc.getSection().getElement().getOwnerDocument().getElementById(xmlId);
+			NodeList items = xmlElement.getElementsByTagName("item");
+			 for(int i=0; i < items.getLength(); i++){
+				 Node node = (Node) items.item(i);
+				 Element itemElement =  (Element) node;
+				 if (itemElement.getAttributeNS(null, "correct").equals("true")) {
+					 return true; // correct answer found
+				 }
+			 }	
+			 return false; // no correct answer found
+		}
+		return true; // not a single select
+	}
+
 	private ScoreCounts getScoreCounts(IModel<Prompt> mPrompt) {
 		IModel<List<ISIResponse>> responses =  responseService.getPeriodResponsesForPrompt(mPrompt, ISISession.get().getCurrentPeriodModel());
 		return ScoreCounts.forResponses("students", responses);
