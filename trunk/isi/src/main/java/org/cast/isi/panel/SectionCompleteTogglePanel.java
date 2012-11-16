@@ -120,7 +120,7 @@ public abstract class SectionCompleteTogglePanel extends Panel implements ISecti
 	}
 	
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
-		if (location.equals(getLocation()))
+		if (isVisible() && location.equals(getLocation()))
 			target.addComponent(this);
 	}
 	
