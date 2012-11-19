@@ -22,10 +22,17 @@ package org.cast.isi.page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
+import org.cast.cwm.components.ShyLabel;
+import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.transform.FilterElements;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISIXmlComponent;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 public class AuthoredPopup extends ISIBasePage {
 	
 	protected String xmlId;
@@ -44,15 +51,49 @@ public class AuthoredPopup extends ISIBasePage {
 		this.xmlId = _xmlId;
 		this.mSection = _mSection;
 		this.param = _param;
-		add(new Label("pageTitle", ISIApplication.get().getPageTitleBase() + " :: " + "SOME TEXT?"));
+		add(new Label("pageTitle", ISIApplication.get().getPageTitleBase() + " :: " + (new StringResourceModel("AuthoredPopup.pageTitle", this, null, "Shared Content").getString())));
 
+		// get the content based on the id and the msection
 		ISIXmlComponent xmlContent = new ISIXmlComponent("xmlContent", mSection, "student");
 		String object = "//*[@id='" + xmlId + "']";
 		xmlContent.setTransformParameter(FilterElements.XPATH, object);
 		add(xmlContent);
-
+				
+		String popupTitle = getPopupTitle();
+		add(new ShyLabel("popupTitle", new Model<String>(popupTitle)));
 		add(ISIApplication.get().getToolbar("tht", this));
 	}	
+
+	/**
+	 * Get the title for the popup based on the content retrieved.
+	 * @return
+	 */
+	private String getPopupTitle() {
+		// get the element by xmlId
+		Element xmlElement = mSection.getObject().getElement().getOwnerDocument().getElementById(xmlId);
+		
+		// check for a title attribute
+		if (xmlElement.getAttributeNS(null, "title") != null  && !xmlElement.getAttributeNS(null, "title").isEmpty()) {
+			return xmlElement.getAttributeNS(null, "title");
+		}
+				
+		// check if there is a header (h1-h9) or a bridgehead
+		NodeList items = xmlElement.getChildNodes();
+		 for (int i=0; i < items.getLength(); i++) {
+			 Node node = (Node) items.item(i);
+			 if ((node.getNodeName().toLowerCase().matches("h[0-9]") && node.getNodeName().length() == 2) ||
+					 (node.getNodeName().toLowerCase().equals("bridgehead"))) {
+				 if (node.getTextContent() != null && !node.getTextContent().isEmpty()) {
+					 return node.getTextContent();
+				 }
+			 }
+		 }	
+	
+		 // fall back to the title of page
+		XmlSection section = mSection.getObject();
+		return section.getTitle();
+	}
+
 
 	public void renderHead(final IHeaderResponse response) {
 		super.renderHead(response);
