@@ -30,12 +30,12 @@ import org.cast.isi.panel.ResponseFeedbackButtonPanel;
  * based on the priority of the feedback (red first, then gray).  
  *
  */
-public class FeedbackStatusIndicator extends Panel {
+public class FeedbackStatusIndicator extends Panel implements IDisplayFeedbackStatus {
 	private static final long serialVersionUID = 1L;
 
 	public FeedbackStatusIndicator(String id) {
 		super(id);
-		setOutputMarkupId(true);
+		setOutputMarkupPlaceholderTag(true);
 	}
 
 	@Override
@@ -43,13 +43,13 @@ public class FeedbackStatusIndicator extends Panel {
 		ResponseFeedbackButtonPanelVisitor responseVisitor = new ResponseFeedbackButtonPanelVisitor();
 		getParent().visitChildren(ResponseFeedbackButtonPanel.class, responseVisitor);
 		if (responseVisitor.state == null) {
-			add(new EmptyPanel("feedbackStatusIcon").setVisible(false));
+			addOrReplace(new EmptyPanel("feedbackStatusIcon").setVisible(false));
 		} else if (responseVisitor.state.equals("old")) {
-			add(new Icon("feedbackStatusIcon", "img/icons/envelope_large_old.png", 
+			addOrReplace(new Icon("feedbackStatusIcon", "img/icons/envelope_large_old.png", 
 					new ResourceModel("feedback.indicatorText.previousFeedback.alt").getObject(), 
 					new ResourceModel("feedback.indicatorText.previousFeedback.title").getObject()));
 		} else {
-			add(new Icon("feedbackStatusIcon", "img/icons/envelope_large_new.png", 
+			addOrReplace(new Icon("feedbackStatusIcon", "img/icons/envelope_large_new.png", 
 					new ResourceModel("feedback.indicatorText.newFeedback.alt").getObject(), 
 					new ResourceModel("feedback.indicatorText.newFeedback.title").getObject()));
 		}

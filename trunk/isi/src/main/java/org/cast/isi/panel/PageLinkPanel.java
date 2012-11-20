@@ -36,6 +36,7 @@ import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
+import org.cast.isi.component.IDisplayFeedbackStatus;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.data.SectionStatus;
@@ -102,7 +103,15 @@ public class PageLinkPanel extends ISIPanel {
 			link.add(new Label("pageNum", String.valueOf(pageNumDisplay)).setRenderBodyOnly(true));
 
 			feedbackRequired = false;
-			Icon envelopImage = new EnvelopeImage("icon", new Model<ISIXmlSection>(page));
+
+			Icon envelopImage;
+			if (page.equals(currentPage)) {
+				envelopImage = new EnvelopImageWithStatusUpdate("icon", new Model<ISIXmlSection>(page));
+				link.setEnabled(false);
+				link.add(new ClassAttributeModifier("current"));
+			} else {
+				envelopImage = new EnvelopeImage("icon", new Model<ISIXmlSection>(page));
+			}
 			
 			// for teachers add any of the status icons, for students, just add the envelope if appropriate
 			if (teacher && (currentSectionStatus != null)) {
@@ -122,10 +131,6 @@ public class PageLinkPanel extends ISIPanel {
 				link.add(envelopImage);
 			}
 						
-			if (page.equals(currentPage)) {
-				link.setEnabled(false);
-				link.add(new ClassAttributeModifier("current"));
-			}
 			
 			// If the page IS a section, just display it and break out of the loop.
 			// Otherwise, the loop will display sibling sections as pages.
@@ -142,15 +147,22 @@ public class PageLinkPanel extends ISIPanel {
 	 * @author jbrookover
 	 *
 	 */
-	public class EnvelopeImage extends Icon {
+	public class EnvelopeImage extends Icon{
 
 		private static final long serialVersionUID = 1L;
+		private IModel<ISIXmlSection> mIsiXmlSection;
+		
 
 		public EnvelopeImage(String id, IModel<ISIXmlSection> model) {
 			super(id);
+			this.mIsiXmlSection = model;
+			this.setOutputMarkupPlaceholderTag(true);
+		}
 
+		@Override
+		protected void onBeforeRender() {
 			User student = ISISession.get().getTargetUserModel().getObject();
-			List<FeedbackMessage> messages = responseService.getNotesForPage(student, new ContentLoc(model.getObject()).getLocation());
+			List<FeedbackMessage> messages = responseService.getNotesForPage(student, new ContentLoc(mIsiXmlSection.getObject()).getLocation());
 			boolean unread = false;
 			for (FeedbackMessage m : messages) {
 				if (m.isUnread() 
@@ -168,6 +180,24 @@ public class PageLinkPanel extends ISIPanel {
 			} else {
 				setVisible(false);
 			}
+			super.onBeforeRender();
+		}
+		
+		@Override
+		protected void onDetach() {
+			if (mIsiXmlSection != null) {
+				mIsiXmlSection.detach();
+			}
+			super.onDetach();
 		}
 	}	
+	
+	public class EnvelopImageWithStatusUpdate extends EnvelopeImage implements IDisplayFeedbackStatus {
+		private static final long serialVersionUID = 1L;
+
+		public EnvelopImageWithStatusUpdate(String id, IModel<ISIXmlSection> model) {
+			super(id, model);
+		}
+		
+	}
 }

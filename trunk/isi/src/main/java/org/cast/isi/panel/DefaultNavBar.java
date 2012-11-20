@@ -23,6 +23,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -42,13 +44,14 @@ import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
+import org.cast.isi.component.IDisplayFeedbackStatus;
 import org.cast.isi.data.SectionStatus;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
-
+@Slf4j
 /**
  * A Navigation bar that shows the sequence of sections within a chapter.
  * Each section is represented by an icon which may be determined by the its class attribute.
@@ -181,25 +184,55 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 
 			for(XmlSection s : sections) {
 				ISIXmlSection section = (ISIXmlSection) s;
-				WebMarkupContainer sectionContainer = new WebMarkupContainer(newChildId());
-				add(sectionContainer);
 				boolean current = section.equals(currentSection);
 
+				WebMarkupContainer sectionContainer = new WebMarkupContainer(newChildId());
+				add(sectionContainer);
+
 				BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("sectionLink", section);
+				sectionContainer.add(link);
 				if (current) {
 					link.setEnabled(false);
 					link.add(new ClassAttributeModifier("current"));
+					link.add(new IconContainer("iconContainer", section, iconFactory));
+//					WebMarkupContainer iconContainer = new WebMarkupContainer("iconContainer");
+//					link.add(iconContainer);
+//					iconContainer.add(iconFactory.getIconFor(section));
+					
+					sectionContainer.add(new WebMarkupContainer("current"));
+				} else {
+					WebMarkupContainer iconContainer = new WebMarkupContainer("iconContainer");
+					link.add(iconContainer);
+					iconContainer.add(iconFactory.getIconFor(section));
+					sectionContainer.add(new WebMarkupContainer("current").setVisible(false));					
 				}
-				
-				link.add(iconFactory.getIconFor(section));
-
-				sectionContainer.add(link);
-				sectionContainer.add(new WebMarkupContainer("current").setVisible(current));
 			}
 			
+		}	
+	}
+	
+	// TODO: fix me - I am not updating - LDM
+	public class IconContainer extends WebMarkupContainer implements IDisplayFeedbackStatus {
+		private static final long serialVersionUID = 1L;
+		private ISIXmlSection section;
+		private SectionIconFactory iconFactory;
+
+		public IconContainer(String id, ISIXmlSection section, SectionIconFactory iconFactory) {
+			super(id);
+			this.section = section;
+			this.iconFactory = iconFactory;
+			this.setOutputMarkupPlaceholderTag(true);
+		}
+
+		@Override
+		protected void onBeforeRender() {
+ 			addOrReplace(iconFactory.getIconFor(section));
+			super.onBeforeRender();
 		}
 		
 	}
+		
+	
 	
 	public static abstract class SectionIconFactory implements Serializable {
 
@@ -271,7 +304,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 
 			private static final long serialVersionUID = 1L;
 
-			private IModel<User> targetUserModel;
+			protected IModel<User> targetUserModel;
 
 			public StudentStatusSectionIconFactory(IModel<User> targetUserModel) {
 				this.targetUserModel = targetUserModel;
