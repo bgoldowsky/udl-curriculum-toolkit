@@ -43,6 +43,12 @@ public class ExceptionPage extends ISIBasePage {
 		Throwable cause = e;
 		while (cause.getCause() != null)
 			cause = cause.getCause();
+
+		// Redirect to login screen on certain exceptions
+		if (cause instanceof PageExpiredException)
+			throw new RestartResponseException(ISIApplication.get().getSignInPageClass());
+
+		// Otherwise, display details
 		message += "<b>" + cause.toString() + "</b>\n<ul>\n";
 		trace = cause.getStackTrace();
 		for (int i = 0; i < trace.length; i++)
@@ -50,9 +56,6 @@ public class ExceptionPage extends ISIBasePage {
 		message += "</ul><br />";
 		add(new Label("details", message).setEscapeModelStrings(false));
 		
-		// Redirect to login screen on certain exceptions
-		if (cause instanceof PageExpiredException)
-			throw new RestartResponseException(Login.class);
 	}
 
 	@Override
