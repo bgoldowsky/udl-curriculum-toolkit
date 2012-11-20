@@ -194,3 +194,13 @@
 .navMenu ul li.show-hover > a .sub-mark {
     background-position: -15px 0px;
 }
+
+.navMenu .section, .navMenu .message, .navMenu .status {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    min-width: 15px;
+    min-height: 15px;
+    vertical-align: text-top;
+    margin: 0px 3px 0px 0px;
+}

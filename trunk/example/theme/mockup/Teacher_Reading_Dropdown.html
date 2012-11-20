@@ -9,19 +9,14 @@
 <link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/modal.css" />
 <link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/highlight.css" />
 <link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/toolbar.css" />
-<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/slideshow.css" />
-<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/annotation.css" />
 
 <link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/dropdown.css" />
 
 <link type="text/css" rel="stylesheet" media="screen" href="../css/theme.css" />
 
 <script type="text/javascript" src="../../../example/theme/js/jquery/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="../../../example/theme/js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/lang/en.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/functions.js"></script>
-<script type="text/javascript" src="../../../example/theme/js/jquery/jquery.annotate.js"></script>
-<script type="text/javascript" src="../../../example/theme/js/jquery/jquery.seqSlideshow.js"></script>
 <!--
 <script type="text/javascript" src="http://portal.texthelp.com/EmbeddedBrowsealoud/v163/obfBATH.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/toolbar.js"></script>
@@ -61,10 +56,11 @@ $(document).ready(function() {
 <div id="tabBar">
     <ul id="tabs">
         <li><a href="#"><img src="../img/icons/home.png" width="15" height="15" alt="" /> Home</a></li>
-        <li><span class="current">Contents</span></li>
-        <li><a href="#">My Models</a></li>
-        <li><a href="#">My Questions</a></li>
-        <li><a href="#">My Tags</a></li>
+        <li><span class="current">Student Work</span></li>
+        <li><a href="#">Models</a></li>
+        <li><a href="#">Questions</a></li>
+        <li><a href="#">Tags</a></li>
+        <li><a href="#">Manage Classes</a></li>
     </ul>
     <ul id="tabRight">
         <li><a href="#" class="button">Notebook</a></li>
@@ -74,6 +70,29 @@ $(document).ready(function() {
 </div>
 
 <div id="wrapper">
+    <div id="teacherNavBar">
+        <div class="teacherBar">
+            <div class="teacherBarLeft">
+                <label for="class">Class:</label>
+                <select>
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                </select>
+                <label for="student">Student:</label>
+                <select>
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                </select>
+                <a href="#" class="button">Go</a>
+            </div>
+            <div class="teacherBarRight">
+                <a href="#" class="button icon"><img src="../img/icons/flag_off.png" width=15" height="15" alt="Off" title="Off" /></a>
+                <a href="#" class="button">Teacher Notes</a>
+            </div>
+        </div>
+    </div>
     <!--
     <div id="topnav">
     </div>
@@ -94,9 +113,9 @@ $(document).ready(function() {
                     <li>
                         <a href="#">Chapter A: The Beginning</a>
                         <ul>
-                            <li><a href="#"><span class="section"><img src="../img/icons/activity_overview.png" width="15" height="15" alt="Overview" title="Overview" /></span><span class="message"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></span>Section Title</a></li>
-                            <li><a href="#"><span class="section"></span><span class="message"></span>Section Title</a></li>
-                            <li><a href="#"><span class="section"></span><span class="message"></span>Section Title</a></li>
+                            <li><a href="#"><span class="status"><img src="../img/icons/check_done.png" width="15" height="15" alt="Completed" title="Completed" /></span>Section Title</a></li>
+                            <li><a href="#"><span class="status"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></span>Section Title</a></li>
+                            <li><a href="#"><span class="status"></span>Section Title</a></li>
                         </ul>
                     </li>
                     <li>
@@ -138,7 +157,7 @@ $(document).ready(function() {
                 <!-- BEGIN - Main Content -->
                 <div class="leftContainer">
 
-                    <div class="floatBtn">
+                    <div class="ideaBtn">
                         <a href="#" class="button">Big Ideas</a>
                     </div>
 
@@ -163,104 +182,6 @@ $(document).ready(function() {
                         </div>
                     </div>
 
-                    <div class="objectBox center">
-                        <div style="width: 200px; height: 115px;" class="mediaPlaceholder">
-                            <a href="#">
-                                <img src="../img/1x1.gif"  width="200" height="115" alt="image placeholder" style="background: #CCCCCC;"/>
-                                <span class="playIcon"></span>
-                            </a>
-
-                        </div>
-                        <div class="objectCaption">
-                            <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo arcu arcu. Sed lacus odio, mollis sit amet tincidunt et, tincidunt nec purus. Cras tincidunt auctor leo, at egestas neque molestie vestibulum. Vivamus non volutpat lacus. Etiam ultricies vulputate ipsum, non fermentum enim molestie eu?</p>
-                            <p class="source"><strong>Source:</strong> <a href="http://youtu.be/viLC9FIo2a4" target="_blank">http://youtu.be/viLC9FIo2a4</a></p>
-                            <p>
-                                <strong>Rate this:</strong>
-                                <a href="#" class="button icon"><img src="../img/icons/thumb_up.png" width="15" height="15" alt="Positive" title="Positive" /></a>
-                                <a href="#" class="button icon"><img src="../img/icons/thumb_side.png" width="15" height="15" alt="Neutral" title="Neutral" /></a>
-                                <a href="#" class="button icon"><img src="../img/icons/thumb_down.png" width="15" height="15" alt="Negative" title="Negative" /></a>
-                            </p>
-                        </div>
-                    </div>
-
-                    <table class="dataTable">
-                        <caption>Sample .dataTable</caption>
-                        <thead>
-                            <tr>
-                                <th>Test</th>
-                                <th>Test</th>
-                                <th>Test</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Test</td>
-                                <td>Test</td>
-                                <td>Test</td>
-                            </tr>
-                            <tr>
-                                <td>Test</td>
-                                <td>Test</td>
-                                <td>Test</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="miscBox">
-            	        <table class="dataTable">
-                            <caption>Sample .dataTable caption</caption>
-                            <thead>
-                                <tr>
-                                    <th>Test</th>
-                                    <th>Test</th>
-                                    <th>Test</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Test</td>
-                                    <td>Test</td>
-                                    <td>Test</td>
-                                </tr>
-                                <tr>
-                                    <td>Test</td>
-                                    <td>Test</td>
-                                    <td>Test</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <div class="miscCaption">
-                            <div class="miscActions">
-                                <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
-                            </div>
-                            <div class="miscText">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                <div class="collapseBox">
-                                    <h5>More Information</h5>
-                                    <div class="collapseBody">
-                                        <p>Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.</p>
-                                        <p class="source"><strong>Source:</strong> http://www.flickr.com/photos/mauricedb/2742966709/</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="imgBox right">
-                        <img src="../img/1x1.gif" width="195" height="185" alt="test image" title="test image" style="background: #CCCCCC;" class="thumb captionSizer" />
-                        <div class="imgCaption">
-                            <div class="imgActions">
-                                <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
-                                <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
-                            </div>
-                            <div class="imgText">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                <p class="source"><strong>Source:</strong> http://www.example.com/url_path/image_name.ext</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="supportBox collapseBox">
                         <h5>What's Important?</h5>
                         <div class="collapseBody">
@@ -273,22 +194,30 @@ $(document).ready(function() {
                     <h2>Think About What You Read</h2>
 
                     <div class="entryBox">
+                        <div class="teacherBar">
+                            <div class="teacherBarLeft">
+                            </div>
+                            <div class="teacherBarRight">
+                                <a href="#" class="button">Compare Responses</a>
+                                <a href="#" class="button"><img src="../img/icons/envelope_blank.png" width="15" height="15" alt="" title="" /> Give Feedback</a>
+                            </div>
+                        </div>
+
                         <p>
                             1. Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
                         </p>
 
                         <div class="responseBar">
                             <div class="responseLeft">
-                                <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
-                                <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
-                                <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_record.png" width="23" height="16" alt="Record" title="Record"/></a>
-                                <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_upload.png" width="23" height="16" alt="Upload" title="Upload"/></a>
+                                <a href="#" class="button response"><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
+                                <a href="#" class="button response"><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
+                                <a href="#" class="button response"><img src="../img/icons/respond_record.png" width="23" height="16" alt="Record" title="Record"/></a>
+                                <a href="#" class="button response"><img src="../img/icons/respond_upload.png" width="23" height="16" alt="Upload" title="Upload"/></a>
                             </div>
                             <div class="responseRight">
                                 <a href="#" class="button">Get Started</a>
                                 <a href="#" class="button">Check My Word</a>
                                 <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
-                                <span class="responseFeedback"><img src="../img/icons/response_negative.png" width="15" height="15" alt="Didn't Get It!" title="Didn't Get It!" /></span>
                             </div>
                         </div>
                         <div class="responseItem">
@@ -299,6 +228,17 @@ $(document).ready(function() {
                     </div>
 
                     <div class="entryBox">
+                        <div class="teacherBar">
+                            <div class="teacherBarLeft">
+                                <a href="#" class="button">Compare Responses</a>
+                                <a href="#" class="button"><img src="../img/icons/envelope_blank.png" width="15" height="15" alt="" title="" /> Give Feedback</a>
+                            </div>
+                            <div class="teacherBarRight">
+                                Mark with:
+                                <a href="#" class="button"><img src="../img/icons/response_positive.png" width="15" height="15" alt="Got It!" title="Got It!" /></a>
+                                <a href="#" class="button"><img src="../img/icons/response_negative.png" width="15" height="15" alt="Didn't Get It!" title="Didn't Get It!" /></a>
+                            </div>
+                        </div>
                         <p>
                             2. Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
                         </p>
@@ -314,7 +254,6 @@ $(document).ready(function() {
                                 <a href="#" class="button">Get Started</a>
                                 <a href="#" class="button">Check My Word</a>
                                 <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
-                                <span class="responseFeedback"><img src="../img/icons/response_positive.png" width="15" height="15" alt="Got It!" title="Got It!" /></span>
                             </div>
                         </div>
                         <div class="responseItem">
@@ -366,7 +305,6 @@ $(document).ready(function() {
                                         <a href="#" class="button">Get Started</a>
                                         <a href="#" class="button">Check My Word</a>
                                         <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
-                                        <span class="responseFeedback"><img src="../img/icons/response_positive.png" width="15" height="15" alt="Got It!" title="Got It!" /></span>
                                     </div>
                                 </div>
                                 <div class="responseItem">
@@ -396,8 +334,7 @@ $(document).ready(function() {
                                 <div class="rateSel"><a href="#" title="Rate-title4"><img src="../img/rating/affect_frustrated.png" width="67" height="54" alt="" /><br />Rate-title4</a></div>
                             </div>
                             <strong>Comments?</strong><br />
-                            <textarea class="rateComments"></textarea><br />
-                            <a href="#" class="button">Save</a>
+                            <textarea class="rateComments"></textarea>
                         </div>
                     </div>
 
@@ -406,157 +343,17 @@ $(document).ready(function() {
                         <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci. Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.</li>
                     </ul>
 
-                    <div class="imgGroup">
-                        <div class="imgBox">
-                            <img src="../img/1x1.gif" width="195" height="185" alt="test image" title="test image" style="background: #CCCCCC;" class="thumb captionSizer" />
-                            <div class="imgCaption">
-                                <div class="imgActions">
-                                    <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
-                                    <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
-                                </div>
-                                <div class="imgText">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                    <p class="source"><strong>Source:</strong> http://www.example.com/url_path/image_name.ext</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="imgBox">
-                            <img src="../img/1x1.gif" width="195" height="185" alt="test image" title="test image" style="background: #CCCCCC;" class="thumb captionSizer" />
-                            <div class="imgCaption">
-                                <div class="imgActions">
-                                    <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
-                                    <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
-                                </div>
-                                <div class="imgText">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                    <p class="source"><strong>Source:</strong> http://www.example.com/url_path/image_name.ext</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="slideshow" id="slideshowId2">
-                        <div class="slideshowTitle">Slideshow Title:</div>
-                    	<ul>
-                    		<li><a href="#tabs-4">Nunc tincidunt</a></li>
-                    		<li><a href="#tabs-5">Proin dolor</a></li>
-                    		<li><a href="#tabs-6">Aenean lacinia</a></li>
-                    		<li><a href="#tabs-7">Response Box</a></li>
-                    	</ul>
-                    	<div id="tabs-4">
-                    	    <div class="imgBox">
-                    	        <img id="toAnnotateS1" src="../img/samples/trafalgar-square.jpg" alt="test image" title="test image" width="600" height="398" class="thumb captionSizer" />
-                                <div class="imgCaption">
-                                    <div class="imgActions">
-                                        <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
-                                    </div>
-                                    <div class="imgText">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                        <div class="collapseBox">
-                                            <h5>More Information</h5>
-                                            <div class="collapseBody">
-                                                <p>Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.</p>
-                                                <p class="source"><strong>Source:</strong> http://www.flickr.com/photos/mauricedb/2742966709/</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    	</div>
-                    	<div id="tabs-5">
-                    		<div class="imgBox">
-                    	        <img id="toAnnotateS2" src="../img/samples/trafalgar-square.jpg" alt="test image" title="test image" width="600" height="398" class="thumb captionSizer" />
-                                <div class="imgCaption">
-                                    <div class="imgActions">
-                                        <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
-                                        <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
-                                    </div>
-                                    <div class="imgText">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                        <div class="collapseBox">
-                                            <h5>More Information</h5>
-                                            <div class="collapseBody">
-                                                <p>Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.</p>
-                                                <p class="source"><strong>Source:</strong> http://www.flickr.com/photos/mauricedb/2742966709/</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    		<script type="text/javascript">
-                    		$("#toAnnotateS2").annotateImage({
-                            viewAnnotations: true,
-                            editable: false,
-                            useAjax: false,
-                            hoverShow: false,
-                            notes: [ { "top": 290,
-                                       "left": 115,
-                                       "width": 52,
-                                       "height": 37,
-                                       "text": "Small people on the steps",
-                                       "id": "e69213d0-2eef-40fa-a04b-0ed998f9f1f5" },
-                                     { "top": 134,
-                                       "left": 179,
-                                       "width": 68,
-                                       "height": 74,
-                                       "text": "National Gallery Dome",
-                                       "id": "e7f44ac5-bcf2-412d-b440-6dbb8b19ffbe" } ]
-                            });
-                            </script>
-                    	</div>
-                    	<div id="tabs-6">
-                    		<div class="objectBox center">
-                                <div style="width: 420px; height: 315px;" class="mediaPlaceholder">
-                                    <iframe title="YouTube video player" width="420" height="315" src="http://www.youtube.com/embed/viLC9FIo2a4" frameborder="0" allowfullscreen></iframe>
-                                </div>
-                                <div class="objectCaption">
-                                    <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo arcu arcu. Sed lacus odio, mollis sit amet tincidunt et, tincidunt nec purus. Cras tincidunt auctor leo, at egestas neque molestie vestibulum. Vivamus non volutpat lacus. Etiam ultricies vulputate ipsum, non fermentum enim molestie eu?</p>
-                                    <p class="source"><strong>Source:</strong> <a href="http://youtu.be/viLC9FIo2a4" target="_blank">http://youtu.be/viLC9FIo2a4</a></p>
-                                    <p>
-                                        <strong>Rate this:</strong>
-                                        <a href="#" class="button icon"><img src="../img/icons/thumb_up.png" width="15" height="15" alt="Positive" title="Positive" /></a>
-                                        <a href="#" class="button icon"><img src="../img/icons/thumb_side.png" width="15" height="15" alt="Neutral" title="Neutral" /></a>
-                                        <a href="#" class="button icon"><img src="../img/icons/thumb_down.png" width="15" height="15" alt="Negative" title="Negative" /></a>
-                                    </p>
-                                </div>
-                            </div>
-                    	</div>
-                    	<div id="tabs-7">
-                    	    <div class="entryBox">
-                                <p>
-                                    1. Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
-                                </p>
-
-                                <div class="responseBar">
-                                    <div class="responseLeft">
-                                        <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
-                                        <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
-                                        <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_record.png" width="23" height="16" alt="Record" title="Record"/></a>
-                                        <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_upload.png" width="23" height="16" alt="Upload" title="Upload"/></a>
-                                    </div>
-                                    <div class="responseRight">
-                                        <a href="#" class="button">Get Started</a>
-                                        <a href="#" class="button">Check My Word</a>
-                                        <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
-                                    </div>
-                                </div>
-                                <div class="responseItem">
-                                    <p class="responseDirections">
-                                        To answer the question click the Write, Draw, Record, or Upload button above.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <script type="text/javascript">
-                    $(window).ready(function() {
-                        $("#slideshowId2").seqSlideshow();
-                    });
-                    </script>
-
                     <h2>Check Your Understanding</h2>
 
                     <div class="entryBox">
+                        <div class="teacherBar">
+                            <div class="teacherBarLeft">
+                            </div>
+                            <div class="teacherBarRight">
+                                <a href="#" class="button">Compare Responses</a>
+                                <a href="#" class="button"><img src="../img/icons/envelope_blank.png" width="15" height="15" alt="" title="" /> Give Feedback</a>
+                            </div>
+                        </div>
                         <p>
                             Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
                         </p>
@@ -570,26 +367,31 @@ $(document).ready(function() {
                         </div>
                         <div class="responseItem">
                             <div class="responseMCItem">
-                                <input type="radio" name="mc1" id="mc1_1" />
-                                <label for="mc1_1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus.</label>
+                                <input type="radio" name="mc1" id="mc1_1" disabled="disabled" />
+                                <label for="mc1_1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. <span class="incorrect">(incorrect)</span></label>
                             </div>
                             <div class="responseMCItem">
-                                <input type="radio" name="mc1" id="mc1_2" />
-                                <label for="mc1_2">Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci.</label>
+                                <input type="radio" name="mc1" id="mc1_2" disabled="disabled" />
+                                <label for="mc1_2">Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci. <span class="correct">(correct)</span></label>
                             </div>
                             <div class="responseMCItem">
-                                <input type="radio" name="mc1" id="mc1_3" />
-                                <label for="mc1_3">Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.</label>
+                                <input type="radio" name="mc1" id="mc1_3" disabled="disabled" />
+                                <label for="mc1_3">Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit. <span class="incorrect">(incorrect)</span></label>
                             </div>
-                            <p class="responseMCActions">
-                                <a class="button" href="#">Check My Answer</a>
-                            </p>
                         </div>
                     </div>
 
                     <h2>Check Your Understanding</h2>
 
                     <div class="entryBox">
+                        <div class="teacherBar">
+                            <div class="teacherBarLeft">
+                            </div>
+                            <div class="teacherBarRight">
+                                <a href="#" class="button">Compare Responses</a>
+                                <a href="#" class="button"><img src="../img/icons/envelope_blank.png" width="15" height="15" alt="" title="" /> Give Feedback</a>
+                            </div>
+                        </div>
                         <p>
                             Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
                         </p>
@@ -600,75 +402,30 @@ $(document).ready(function() {
                             <div class="responseRight">
                                 <a href="#" class="button">Get Started</a>
                                 <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
-                                <span class="responseFeedback"><img src="../img/icons/response_negative.png" width="15" height="15" alt="Didn't Get It!" title="Didn't Get It!" /></span>
+                                <span class="responseFeedback"><img src="../img/icons/response_positive.png" width="15" height="15" alt="Got It!" title="Got It!" /> Nth Try</span>
                             </div>
                         </div>
                         <div class="responseItem">
                             <div class="responseMCItem">
-                                <input type="radio" name="mc2" id="mc2_1" />
-                                <label for="mc2_1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus.</label>
+                                <input type="radio" name="mc2" id="mc2_1" disabled="disabled" />
+                                <label for="mc2_1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. <span class="incorrect">(incorrect - inline feedback?)</span></label>
                             </div>
                             <div class="responseMCItem">
-                                <input type="radio" name="mc2" id="mc2_2" />
-                                <label for="mc2_2">Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci.</label>
+                                <!-- Using both 'disabled' and 'checked' will not show a checked item - only shows a grayed out radio button -->
+                                <input type="radio" name="mc2" id="mc2_2" checked="checked" />
+                                <label for="mc2_2">Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci. <span class="correct">(correct - inline feedback?)</span></label>
                             </div>
                             <div class="responseMCItem">
-                                <input type="radio" name="mc2" id="mc2_3" />
-                                <label for="mc2_3">Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.</label>
+                                <input type="radio" name="mc2" id="mc2_3" disabled="disabled" />
+                                <label for="mc2_3">Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit. <span class="incorrect">(incorrect - inline feedback?)</span></label>
                             </div>
-                            <p class="responseMCActions">
-                                <a class="button" href="#">Check My Answer</a>
-                            </p>
                             <div class="responseMCFeedback">
-                                <p class="incorrect">
+                                <p class="correct">
                                     Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
                                 </p>
                             </div>
                         </div>
                     </div>
-
-                    <div class="entryBox">
-                        <div class="responseItem responseMCCompact">
-                            <div class="responsePrompt">
-                                <p>
-                                    Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
-                                </p>
-                            </div>
-                            <form>
-                                <div class="responseMCItem">
-                                    <input type="radio" name="mc3" id="mc3_1" />
-                                    <label for="mc3_1">Lorem ipsum</label>
-                                </div>
-                                <div class="responseMCItem">
-                                    <input type="radio" name="mc3" id="mc3_2" />
-                                    <label for="mc3_2">Aliquam erat</label>
-                                </div>
-                                <div class="responseMCItem">
-                                    <input type="radio" name="mc3" id="mc3_3" />
-                                    <label for="mc3_3">Proin sit amet</label>
-                                </div>
-                                <p class="responseMCActions">
-                                    <a class="button" href="#">Check My Answer</a>
-                                </p>
-                                <div class="responseMCFeedback">
-                                    <p class="incorrect">
-                                        Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
-                                    </p>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <p>
-                        <a href="#" class="button"/><img src="../img/icons/check_notdone.png" width="17" height="15" /> Done with this page</a>
-                    </p>
-
-                    <div class="progress">
-                        <div class="progressBar" style="width: 83%">
-                            <div class="progressValue">83%</div>
-                        </div>
-                    </div>
-
 
                 </div>
                <!-- END - Main Content -->
@@ -847,7 +604,7 @@ $(document).ready(function() {
 
     <div class="pageNavBar">
         <div class="pageNavLeft">
-            <a href="#" class="button icon"><img src="../img/icons/check_done.png" width="19" height="15" alt="Completed" /></a>
+            <span class="teacherButton"><a href="#" class="button icon"><img src="../img/icons/check_notdone.png" width="19" height="15" alt="Incomplete" /></a></span>
             <a href="#">Lorem ipsum dolor sit amet, consectetur.</a>
             <a href="#" class="button pagenum">1</a>
             <span class="button pagenum current">2</span>
