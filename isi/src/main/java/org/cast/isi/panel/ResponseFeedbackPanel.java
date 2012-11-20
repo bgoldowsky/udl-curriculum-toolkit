@@ -50,6 +50,7 @@ import org.cast.cwm.data.component.AjaxDeletePersistedObjectDialog;
 import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISISession;
+import org.cast.isi.component.IDisplayFeedbackStatus;
 import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.service.ISIResponseService;
@@ -182,6 +183,7 @@ public class ResponseFeedbackPanel extends ISIPanel {
 						}
 						target.addComponent(responseContainer);				
 						target.addComponent(callingButton);				
+						target.addChildren(getPage(), IDisplayFeedbackStatus.class);
 					}
 				};
 				dialog.setObjectName("Feedback Message");

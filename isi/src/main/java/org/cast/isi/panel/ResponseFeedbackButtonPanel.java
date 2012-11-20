@@ -38,6 +38,7 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISISession;
+import org.cast.isi.component.IDisplayFeedbackStatus;
 import org.cast.isi.data.FeedbackMessage;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.service.ISIResponseService;
@@ -59,10 +60,11 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 	private static final long serialVersionUID = 1L;
 	private ResponseFeedbackPanel responseFeedbackPanel;
 	private Role role;
-	private List<FeedbackMessage> unreadStudentMessages = new ArrayList<FeedbackMessage>();
-	private List<FeedbackMessage> unreadTeacherMessages = new ArrayList<FeedbackMessage>();
-	private List<FeedbackMessage> messageList;
 	private Icon button;
+	private IModel<Prompt> mPrompt;
+	private List<FeedbackMessage> unreadStudentMessages;
+	private List<FeedbackMessage> unreadTeacherMessages;
+	private List<FeedbackMessage> messageList;
 
 	@Inject
 	private IEventService eventService;
@@ -73,33 +75,24 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 	@Inject
 	private ISectionService sectionService;
 
-	public ResponseFeedbackButtonPanel(String id, final IModel<Prompt> promptM, final ResponseFeedbackPanel p) {
+	public ResponseFeedbackButtonPanel(String id, final IModel<Prompt> mPrompt, ResponseFeedbackPanel p) {
 		super(id);
-		setOutputMarkupPlaceholderTag(true);
-
+		this.mPrompt = mPrompt;
 		this.responseFeedbackPanel = p;
 		this.role = ISISession.get().getUser().getRole();
-		
-		if (role.equals(Role.STUDENT)) {
-			messageList = ISIResponseService.get().getFeedbackMessages(promptM, ISISession.get().getUser());
-		} else {
-			messageList = ISIResponseService.get().getFeedbackMessages(promptM, ISISession.get().getStudent());
-		}
-		
-		for (FeedbackMessage m : messageList) {
-			if (m.isUnread())
-				if (m.getAuthor().getRole().equals(Role.STUDENT))
-					unreadStudentMessages.add(m);
-				else
-					unreadTeacherMessages.add(m);
-		}
-		
+		setOutputMarkupPlaceholderTag(true);
+
+		messageList = getMessageList();
+		unreadStudentMessages = getUnreadStudentMessages();
+		unreadTeacherMessages = getUnreadTeacherMessages();
+				
 		AjaxFallbackLink<Void> link = new AjaxFallbackLink<Void>("link") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				responseFeedbackPanel.setPromptModel(promptM);
+
+				responseFeedbackPanel.setPromptModel(mPrompt);
 				responseFeedbackPanel.setMessageList(messageList);
 
 				if (role.subsumes(Role.RESEARCHER)) {
@@ -125,11 +118,12 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 				}
 				responseFeedbackPanel.clearFeedbackMessageForm();
 				responseFeedbackPanel.setCallingButton(ResponseFeedbackButtonPanel.this);
-				eventService.saveEvent("messagepanel:view", promptM.getObject().toString(), ((ISIStandardPage) getPage()).getPageName());
+				eventService.saveEvent("messagepanel:view", mPrompt.getObject().toString(), ((ISIStandardPage) getPage()).getPageName());
 				if (target != null) {
 					target.addComponent(responseFeedbackPanel);
 					target.addComponent(this);
 					target.appendJavascript(responseFeedbackPanel.getSidebarDialog().getOpenString());
+					target.addChildren(getPage(), IDisplayFeedbackStatus.class);
 				}				
 			}
 			
@@ -185,6 +179,14 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 			link.setVisible(false);
 	}
 	
+	@Override
+	protected void onDetach() {
+		if (mPrompt != null) {
+			mPrompt.detach();
+		}
+		super.onDetach();
+	}
+
 	public String getUserRole () {
 		return role.name().toLowerCase();
 	}
@@ -192,15 +194,43 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 	public boolean isVisible() {
 		return (role.equals(Role.TEACHER) || !messageList.isEmpty());
 	}
+
 	
-	public String getState() {
-		if (messageList.isEmpty())
-			return "empty";
-		if (role.equals(Role.STUDENT) && !unreadTeacherMessages.isEmpty())
-			return "new";
-		if (role.equals(Role.TEACHER) && !unreadStudentMessages.isEmpty())
-			return "new";
-		return "old";
+	public List<FeedbackMessage> getUnreadStudentMessages() {
+		List<FeedbackMessage> unreadStudentMessages = new ArrayList<FeedbackMessage>();
+		for (FeedbackMessage m : messageList) {
+			if (m.isUnread())
+				if (m.getAuthor().getRole().equals(Role.STUDENT))
+					unreadStudentMessages.add(m);
+		}
+		return unreadStudentMessages;
+	}
+
+	public List<FeedbackMessage> getUnreadTeacherMessages() {
+		List<FeedbackMessage> unreadTeacherMessages = new ArrayList<FeedbackMessage>();
+		for (FeedbackMessage m : messageList) {
+			if (m.isUnread())
+				if (!m.getAuthor().getRole().equals(Role.STUDENT))
+					unreadTeacherMessages.add(m);
+		}	
+		return unreadTeacherMessages;
 	}
 	
+	public List<FeedbackMessage> getMessageList() {
+		if (role.equals(Role.STUDENT)) {
+			return ISIResponseService.get().getFeedbackMessages(mPrompt, ISISession.get().getUser());
+		} else {
+			return ISIResponseService.get().getFeedbackMessages(mPrompt, ISISession.get().getStudent());
+		}		
+	}
+	
+	public String getState() {
+		if (getMessageList().isEmpty())
+			return "empty";
+		if (role.equals(Role.STUDENT) && !getUnreadTeacherMessages().isEmpty())
+			return "new";
+		if (role.equals(Role.TEACHER) && !getUnreadStudentMessages().isEmpty())
+			return "new";
+		return "old";
+	}	
 }
