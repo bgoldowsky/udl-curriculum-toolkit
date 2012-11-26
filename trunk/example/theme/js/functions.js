@@ -315,8 +315,10 @@ function thtLocate() {
 
     // Get container position
     var constraint = $("#mainContentLeft").eq(0);
+    var topPadding = 0;
     if (!$(constraint).length) {
-        var constraint = $("#myContentLeft");
+        var constraint = $("#myContent");
+        var topPadding = constraint.innerHeight() - constraint.height(); // padding of myContent
     }
 
     var pageOffset = constraint.offset();
@@ -330,10 +332,10 @@ function thtLocate() {
     }
 
     if ((pageOffset.top ) >= scrollOffset ) {
-        var thtTop = pageOffset.top;
+        var thtTop = pageOffset.top + topPadding;
         var thtPosition = "absolute";
-    } else if ((scrollOffset + thtHeight) >= (pageOffset.top + pageHeight)) {
-        var thtTop = pageOffset.top + pageHeight - thtHeight;
+    } else if ((scrollOffset + thtHeight + topPadding) >= (pageOffset.top + pageHeight)) {
+        var thtTop = pageOffset.top + pageHeight - thtHeight - topPadding;
         var thtPosition = "absolute";
     } else {
         //var thtTop = pageOffset.top;
