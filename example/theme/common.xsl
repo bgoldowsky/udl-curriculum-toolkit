@@ -252,9 +252,9 @@
  	<xsl:template name="videoThumbLink" match="/">
         <xsl:variable name="poster" select="dtb:param[@name='poster']/@value"/>
 		<div class="objectBox {@class}" id="media_{@id}">
-			<div style="width: 200px; height: 115px;" class="mediaPlaceholder">
+			<div style="width: 250px; height: 170px;" class="mediaPlaceholder">
 				<a href="#" wicket:id="mediaThumbLink_" videoId="{@id}">
-					<img wicket:id="mediaThumbImage_" src="{$poster}" width="200" height="115" alt="Video Thumbnail" />
+					<img wicket:id="mediaThumbImage_" src="{$poster}" width="250" height="170" alt="Video Thumbnail" />
 					<span class="playIcon"></span>
 				</a>
 			</div>
