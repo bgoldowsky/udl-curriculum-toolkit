@@ -31,6 +31,17 @@
     <!-- pagenum naver displayed -->
     <xsl:template match="dtb:pagenum"/>
     
+   <!-- noteref links to another page of our content -->
+   <xsl:template match="dtb:noteref">
+	 <sup>
+       <a wicket:id="link_n{count(preceding::dtb:noteref[@href])}" href="{@idref}">
+         <xsl:copy-of select="&catts;"/>
+         <xsl:copy-of select="@idref"/>
+	       <xsl:apply-templates/>
+       </a>
+     </sup>
+   </xsl:template>     
+
     <!-- For some reason span isn't handled in the standard dtbook2xhtml -->
     <xsl:template match="dtb:span">
       <span>
@@ -143,7 +154,7 @@
    		<xsl:text> </xsl:text>
     </xsl:template>
 
-	<!--  ignore all bridgheads inside the slideshow -->
+	<!--  ignore all bridgeheads inside the slideshow -->
     <xsl:template match="dtb:div[@class='slideshow']//dtb:bridgehead">
     </xsl:template>
     
@@ -449,9 +460,9 @@
    		<div class="modalBody" id="imageDetail_{@id}" style="display:none">
 		    <div class="modalHeader" role="banner">
 		        <div class="modalTitle"></div>
-		        <a href="#" class="modalMove button icon"><img src="/img/icons/move.png" width="16" height="16" alt="Move" title="Move" /></a>
+		        <a href="#" class="modalMove button icon"><img src="img/icons/move.png" width="16" height="16" alt="Move" title="Move" /></a>
 	      		<a href="#" class="modalClose button icon" onclick="showImageDetail('{@id}', false); return false">
-	        		<img class="imageDetailButton" src="/img/icons/close.png"></img>
+	        		<img class="imageDetailButton" src="img/icons/close.png"></img>
 	        	</a>	
 	    	</div>
 		    <div class="modalMainCol">
@@ -859,8 +870,7 @@
    
    <!-- MathML  -->
     <xsl:template match="m:math">
-      <!-- The non-standard, ignore="true" attribute tells TextHelp toolbar not to mark up inside the span.
-           The class "nohlpassage" tells the highlighting code not to add its spans.
+      <!-- The class "nohlpassage" tells the highlighting code not to add its spans.
            Any added spans mess up the math display. -->
       <span class="nohlpassage">
         <math>
