@@ -55,6 +55,7 @@ public class SidebarDialog extends DialogBorder {
 		super(id, mTitle);
 		this.verticalReferencePointId = verticalReferenceId;
 		this.setMasking(false);
+		this.setShowMoveLink(true);
 	}
 
 	@Override
