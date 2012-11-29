@@ -213,6 +213,7 @@ function showMediaDetail(id, show) {
 	}
 }
 
+// TODO -- why is this no-op function here?
 function closeVideo(id) {
 	var videoModal = $("#mediaDetail_" + id);
 	
