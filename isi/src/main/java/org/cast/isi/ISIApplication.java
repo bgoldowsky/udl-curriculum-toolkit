@@ -140,7 +140,6 @@ import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import com.visural.wicket.util.lesscss.LessCSSResourceStreamLocator;
 
 public abstract class ISIApplication extends CwmApplication {
 	
@@ -319,19 +318,10 @@ public abstract class ISIApplication extends CwmApplication {
 		if (getCustomSkinDir() != null) 
 			getResourceSettings().addResourceFolder(getCustomSkinDir());
 		getResourceSettings().addResourceFolder(getSkinDir());
-		getResourceSettings().setResourceStreamLocator(new LessCSSResourceStreamLocator());
 		
 		// Indira rewrites markup for images
 		// TODO: remove, once theme image references are all corrected.
 		getMarkupSettings().setMarkupParserFactory(new IndiraMarkupParserFactory());
-
-		// FileResourceManager manages external images and files.
-		FileResourceManager.addKnownExtensions("jar");  // Java Applets
-		if (getCustomSkinDir() != null) 
-			FileResourceManager.get().addFolder("theme", new Folder(getCustomSkinDir()));
-		FileResourceManager.get().addFolder("themeBase", new Folder(getSkinDir()));
-		FileResourceManager.get().addFolder("content", new Folder(getContentDir()));
-		FileResourceManager.get().scanFolders(false); // appears to be necessary for file download links to work
 
 		// Content elements are taggable
 		TagService.get().configureTaggableClass('P', ContentElement.class);

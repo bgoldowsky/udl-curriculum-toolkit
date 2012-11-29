@@ -22,17 +22,14 @@ package org.cast.isi.dialog;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.cast.cwm.components.ShyLabel;
 import org.cast.cwm.data.component.DialogBorder;
 import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.page.ISIStandardPage;
@@ -51,9 +48,6 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 	@Getter
 	protected DialogBorder dialogBorder;
 	
-	@Getter @Setter
-	protected boolean showCloseLink = true;
-	
 	@Getter @Setter 
 	private String title = "Default Dialog Title";
 
@@ -65,30 +59,7 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 		super(ISIStandardPage.DISPLAY_DIALOG_ID, model);
 		setOutputMarkupId(true);		
 		
-		dialogBorder = new DialogBorder ("dialogBorder", new PropertyModel<String>(this, "title")) {
-
-			private static final long serialVersionUID = 1L;
-
-			// We customize DialogBorder to have the top-right close button optionally hidden.
-			@Override
-			protected void addCloseLink(WebMarkupContainer container) {
-				WebMarkupContainer link = new WebMarkupContainer("closeWindowLink") {
-					private static final long serialVersionUID = 1L;
-					@Override
-					public boolean isVisible() {
-						return showCloseLink;
-					}
-				};
-				container.add(link);
-				link.add(getClickToCloseBehavior());
-			}
-
-			// Customize the title so that it can be invisible when not used.
-			@Override
-			protected void addTitle(WebMarkupContainer container) {
-				container.add(new ShyLabel("title", getModel()));
-			}
-		};
+		dialogBorder = newDialogBorder("dialogBorder", new PropertyModel<String>(this, "title"));
 
 		// This allows us to add components directly to the panel, even though they are enclosed in the DialogBorder
 		dialogBorder.setTransparentResolver(true); 
@@ -97,10 +68,14 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 		add(dialogBorder);
 	}
 	
+	protected DialogBorder newDialogBorder(String string, IModel<String> mTitle) {
+		return new DialogBorder(string, mTitle);
+	}
+	
 	public void renderHead(final IHeaderResponse response) {
-		response.renderCSSReference(new ResourceReference("/css/modal.css"));
-		// set up move button and any collapse boxes in the modal
-		response.renderOnLoadJavascript("collapseBox();modalInit();");
+		ISIStandardPage.renderThemeCSS(response, "css/modal.css");
+		// set up any collapse boxes in the modal
+		response.renderOnLoadJavascript("collapseBox();");
 	}
 	
 	/**
