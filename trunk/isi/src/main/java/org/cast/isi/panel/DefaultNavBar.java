@@ -45,6 +45,7 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.component.IDisplayFeedbackStatus;
+import org.cast.isi.component.QuickFlipForm;
 import org.cast.isi.data.SectionStatus;
 import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
