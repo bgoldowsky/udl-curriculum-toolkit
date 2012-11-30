@@ -83,7 +83,7 @@
 	 				<div id="newQuestionModal" class="modalBody modalNarrow" style="display: none;">
 					    <div class="modalHeader" role="banner">
 					        <div class="modalTitle">Create New Question</div>
-					        <a href="javascript:void(0)" onclick="$('#newQuestionModal textarea').attr('value', ''); $('#newQuestionModal .feedback').html(''); $('#newQuestionModal').hide();" class="modalClose button icon"><img src="/img/icons/close.png" width="15" height="15" alt="Close"  title="Close" /></a>
+					        <a href="javascript:void(0)" onclick="$('#newQuestionModal textarea').attr('value', ''); $('#newQuestionModal .feedback').html(''); $('#newQuestionModal').hide();" class="modalClose button icon"><img src="img/icons/close.png" width="15" height="15" alt="Close"  title="Close" /></a>
 					    </div>
 					    <div class="modalMainCol">
 					        <div class="modalContent">
@@ -105,29 +105,6 @@
 		            <div wicket:id="tagsBox" class="rightBox collapseBox tagCurrent">
 		 		        <h5 wicket:id="tagCollapseToggle">My Tags</h5>
 		 		        <wicket:container wicket:id="tagPanel"></wicket:container>
-		          		<wicket:remove>
-			                <div class="tagCurrentList">
-			                    <span class="tagItem">smell <a href="#" class="button tag removeLink"><img src="../img/icons/close_tag.png" width="9" height="9" alt="" /></a></span>
-			                    <span class="tagItem">my_words <a href="#" class="button tag removeLink"><img src="../img/icons/close_tag.png" width="9" height="9" alt="" /></a></span>
-			                </div>
-			                <div class="collapseBody">
-			                    <h6>Add Tags:</h6>
-			                    <p class="tagStarsCloud">
-			                        <a href="#"><img src="../img/icons/star_3.png" width="42" height="13" alt="3 Stars" /></a>
-			                        <a href="#" class="selected"><img src="../img/icons/star_2.png" width="27" height="13" alt="2 Stars" /></a>
-			                        <a href="#"><img src="../img/icons/star_1.png" width="13" height="13" alt="1 Star" /></a>
-			                    </p>
-			                    <p class="tagCloud">
-			                        <a href="#" class="s1">rules</a>
-			                        <a href="#" class="s2">my_words</a>
-			                        <a href="#" class="s3">big_ideas</a>
-			                        <a href="#" class="s2 selected">smell</a>
-			                    </p>
-			                    <form method="post" action="#" name="something" id="something" class="tagAddForm">
-			                        <a href="#" class="button">Add</a>
-			                    </form>
-			                </div>
-		            	</wicket:remove>
 		            </div>
 		        </div>
 	            <!-- END - Support Content Right -->

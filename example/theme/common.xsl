@@ -462,7 +462,7 @@
 		        <div class="modalTitle"></div>
 		        <a href="#" class="modalMove button icon"><img src="img/icons/move.png" width="16" height="16" alt="Move" title="Move" /></a>
 	      		<a href="#" class="modalClose button icon" onclick="showImageDetail('{@id}', false); return false">
-	        		<img class="imageDetailButton" src="img/icons/close.png"></img>
+	        		<img class="imageDetailButton" src="img/icons/close.png" />
 	        	</a>	
 	    	</div>
 		    <div class="modalMainCol">
@@ -831,7 +831,7 @@
 			</xsl:attribute>
 			<xsl:choose>
 				<xsl:when test="@correct='true'">
-					<img style="padding-right:5px;" src="/img/icons/response_positive.png" title="Correct Answer" alt="Correct Answer" />
+					<img style="padding-right:5px;" src="img/icons/response_positive.png" title="Correct Answer" alt="Correct Answer" />
 				</xsl:when>
 				<xsl:otherwise>
 					<img style="padding-right:5px;" src="img/icons/response_negative.png" title="Incorrect Answer" alt="Incorrect Answer" />
