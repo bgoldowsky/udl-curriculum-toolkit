@@ -57,7 +57,6 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
 import org.apache.wicket.util.file.File;
-import org.apache.wicket.util.file.Folder;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
 import org.cast.cwm.CwmApplication;
@@ -76,7 +75,6 @@ import org.cast.cwm.dav.DavResource;
 import org.cast.cwm.glossary.Glossary;
 import org.cast.cwm.glossary.GlossaryService;
 import org.cast.cwm.glossary.GlossaryTransformer;
-import org.cast.cwm.indira.FileResourceManager;
 import org.cast.cwm.indira.IndiraMarkupParserFactory;
 import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.IEventService;
@@ -1004,8 +1002,21 @@ public abstract class ISIApplication extends CwmApplication {
 		return null;
 	}
 	
+	/**
+	 * Return the ISIXMLSection correspoding to a page number. 
+	 * @param num the zero-based page number
+	 * @return corresponding ISIXMLSection, or null if page number is out of range.
+	 */
 	public ISIXmlSection getPageNum(int num) {
 		return (ISIXmlSection) studentContent.getByLabel(ISIXmlSection.SectionType.PAGE, num);
+	}
+	
+	/**
+	 * Return the number of pages of content.  Page numbers range from 0 to the given number - 1.
+	 * @return
+	 */
+	public int getPageCount() {
+		return studentContent.getLabelCount(ISIXmlSection.SectionType.PAGE);
 	}
 
 	

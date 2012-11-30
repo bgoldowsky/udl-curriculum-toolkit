@@ -20,9 +20,7 @@
 package org.cast.isi.panel;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.model.IModel;
-import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.UserModel;
@@ -31,7 +29,7 @@ import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
-import org.cast.isi.page.ISIStandardPage;
+import org.cast.isi.component.PageNumberLink;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,56 +58,15 @@ public class PageNavPanel extends ISIPanel {
 
 		ISIXmlSection currentPage = (ISIXmlSection) mSection.getObject();
 		ISIXmlSection currentSection = currentPage.getSectionAncestor(); // May be itself
-		final int currentPageNum = 1 + ISIApplication.get().getStudentContent().getLabelIndex(ISIXmlSection.SectionType.PAGE, currentPage);
 		
 		add(new PageLinkPanel("pageLinkPanel", new XmlSectionModel(currentSection), mSection));
 
-		// Previous Next Links		
-		BookmarkablePageLink<ISIStandardPage> previousLink = new BookmarkablePageLink<ISIStandardPage>("previousPage", ISIApplication.get().getReadingPageClass()) {
-			private static final long serialVersionUID = 1L;
+		// Previous & Next Links
+		int currentPageNum = 1 + ISIApplication.get().getStudentContent().getLabelIndex(ISIXmlSection.SectionType.PAGE, currentPage);
+		add(new PageNumberLink("previousPage", currentPageNum-1));
+		add(new PageNumberLink("nextPage", currentPageNum+1));
 
-			@Override
-			protected void onBeforeRender() {
-				if (isEnabled()) {
-					this.add(new ClassAttributeModifier("off", true));
-					this.setParameter("pageNum", currentPageNum-1);
-				} else {
-					this.add(new ClassAttributeModifier("off"));
-				}
-				super.onBeforeRender();
-			}
-
-			@Override
-			public boolean isEnabled() {
-				return (ISIApplication.get().getPageNum(currentPageNum-2) != null);
-			}
-		};
-		add(previousLink);
-		
-		BookmarkablePageLink<ISIStandardPage> nextLink = new BookmarkablePageLink<ISIStandardPage>("nextPage", ISIApplication.get().getReadingPageClass()) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void onBeforeRender() {
-				if (isEnabled()) {
-					this.add(new ClassAttributeModifier("off", true));
-					this.setParameter("pageNum", currentPageNum+1);
-				} else {
-					this.add(new ClassAttributeModifier("off"));
-				}
-				super.onBeforeRender();
-			}
-
-			@Override
-			public boolean isEnabled() {
-				return (ISIApplication.get().getPageNum(currentPageNum) != null); // getPageNum() is 0-based
-			}
-			
-		};
-		add(nextLink);
-
-		add(new Label("sectionTitle", currentSection.getTitle()));
-		
+		add(new Label("sectionTitle", currentSection.getTitle()));		
 
 		// If this is a student then add the checkbox for a student.  If this is a teacher then add the checkbox for the teacher
 		if (!teacher) {

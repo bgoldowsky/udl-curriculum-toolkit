@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cast.isi.panel;
+package org.cast.isi.component;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
