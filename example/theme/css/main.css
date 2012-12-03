@@ -45,6 +45,19 @@ input {
 a { color: #686868; }
 a:hover, a:focus { color: #1E2D56; }
 
+a.authoredPopupLink {
+    background-image: url("../img/icons/link_window.png");
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding: 0px 17px 0px 0px;
+}
+a.authoredExternalLink {
+    background-image: url("../img/icons/link_external.png");
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding: 0px 17px 0px 0px;
+}
+
 ul, ol {
     padding: 0px 0px 1em 0px;
     margin: 0px;
