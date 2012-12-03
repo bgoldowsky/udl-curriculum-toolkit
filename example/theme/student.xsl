@@ -37,7 +37,7 @@
    <xsl:template match="dtb:a[@external='true']" priority="1">
        	<xsl:choose>
        		<xsl:when test="starts-with(@href,'http:') or starts-with(@href, 'https:') or starts-with(@href, 'mailto:')">
-		    <a target="_blank">
+		    <a target="_blank" class="authoredExternalLink">
 		       	<xsl:copy-of select="&catts;"/>
 	           	<xsl:copy-of select="@href"/>
 	           	<xsl:apply-templates/>
