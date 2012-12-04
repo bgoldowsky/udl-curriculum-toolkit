@@ -84,6 +84,14 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 		renderThemeCSS(response, "css/buttons.css");
 		renderThemeCSS(response, "css/boxes.css");
 		renderThemeCSS(response, "css/modal.css");
+
+		// custom application-wide css/js can be loaded by overriding this method
+		ISIApplication.get().getCustomRenderHead(response);
+
+		// Per page additions usually go here.
+		renderAdditionalHeaderResources (response);
+		
+		// Theme CSS is loaded last, since it has overrides for any of the above CSS.
 		renderThemeCSS(response, "css/theme.css");
 
 		// if MathML is configured on, then link out to the MathJax site
@@ -93,11 +101,18 @@ public abstract class ISIBasePage extends WebPage implements IHeaderContributor 
 					"</script>\n");
 		}
 		
-		// custom css/js can be loaded by overriding this method
-		ISIApplication.get().getCustomRenderHead(response);
 	
 	}
 
+	/**
+	 * Pages may override this to render any CSS or JS needed that should go after the
+	 * standard CSS and JS files, but before theme.css .
+	 * @param response
+	 */
+	public void renderAdditionalHeaderResources (final IHeaderResponse response) {
+		// no op by default.
+	}
+	
 	public void setPageTitle(String pageTitle) {
 		this.pageTitle = ISIApplication.get().getPageTitleBase() + " :: " + pageTitle;
 	}
