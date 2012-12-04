@@ -62,7 +62,7 @@ public class PageNavPanel extends ISIPanel {
 		add(new PageLinkPanel("pageLinkPanel", new XmlSectionModel(currentSection), mSection));
 
 		// Previous & Next Links
-		int currentPageNum = 1 + ISIApplication.get().getStudentContent().getLabelIndex(ISIXmlSection.SectionType.PAGE, currentPage);
+		int currentPageNum = ISIApplication.get().getStudentContent().getLabelIndex(ISIXmlSection.SectionType.PAGE, currentPage);
 		add(new PageNumberLink("previousPage", currentPageNum-1));
 		add(new PageNumberLink("nextPage", currentPageNum+1));
 
