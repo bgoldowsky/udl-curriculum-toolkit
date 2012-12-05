@@ -44,6 +44,7 @@ import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.tag.component.TagPanel;
+import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.CollapseBoxBehavior;
 import org.cast.isi.ISIApplication;
@@ -55,7 +56,6 @@ import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.HighlightControlPanel;
 import org.cast.isi.panel.MiniGlossaryModal;
-import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
@@ -115,16 +115,15 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		boolean teacher = ISISession.get().getUser().getRole().equals(Role.TEACHER);
 
     	setLoc(parameters);
-    	add(ISIApplication.get().getNavBar("navbar", mSection, teacher));    	
+    	
 		addXmlComponent((ISIXmlSection) mSection.getObject());
 		addSectionCompleteToggle((ISIXmlSection) mSection.getObject());
     	addNotesPanel();		
 		addHighlightPanel();
 		addTaggingPanel();
 		addQuestionsPanel();
-		
-		PageNavPanel bottomNavPanel = new PageNavPanel("pageNavPanelBottom", mSection);
-		add(bottomNavPanel);
+		addTopNavigation(mSection, teacher);
+		addBottomNavigation(mSection, teacher);
 	}
 
 	@Override
@@ -138,12 +137,12 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		if (parameters.containsKey("loc")) {
 			loc = new ContentLoc(parameters.getString("loc"));
 		} else if (parameters.containsKey("pageNum")) {
-			loc = new ContentLoc(ISIApplication.get().getPageNum(parameters.getInt(("pageNum")) - 1));
+			loc = new ContentLoc(ISIApplication.get().getPageNum(parameters.getInt("pageNum")));
 		} else {
 			loc = new ContentLoc(ISIApplication.get().getBookmarkLoc().getLocation());
 		}
 		if (loc == null || loc.getSection() == null) {
-			loc = new ContentLoc(ISIApplication.get().getPageNum(0));
+			loc = new ContentLoc(ISIApplication.get().getPageNum(1));
 		}
 				
     	ISIXmlSection section = loc.getSection();
@@ -153,7 +152,14 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
     	mSection = new XmlSectionModel(section);
 	}
 	
+	protected void addTopNavigation(IModel<XmlSection> mSection, boolean teacher) {
+		add(ISIApplication.get().getTopNavigation("navbar", mSection, teacher));
+	}
 	
+	protected void addBottomNavigation(IModel<XmlSection> mSection, boolean teacher) {
+		add (ISIApplication.get().getBottomNavigation("pageNavPanelBottom", mSection, teacher));
+	}
+
 	protected void addSectionCompleteToggle(ISIXmlSection section) {
 		add(new StudentSectionCompleteTogglePanel("toggleCompletePanel", mSection, mTargetUser));
 	}
@@ -286,6 +292,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 				private static final long serialVersionUID = 1L;
 
 				@Override
+				@SuppressWarnings("null")
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 					super.onSubmit();
 					String qstr = ((String) textModel.getObject());

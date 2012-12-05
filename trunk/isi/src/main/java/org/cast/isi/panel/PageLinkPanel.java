@@ -91,7 +91,7 @@ public class PageLinkPanel extends ISIPanel {
 
 		// Page Number Repeater
 		RepeatingView pageRepeater = new RepeatingView("pageRepeater");
-		int pageNumDisplay = 1 + ISIApplication.get().getStudentContent().getLabelIndex(ISIXmlSection.SectionType.PAGE, currentSection.firstPage());
+		int pageNumDisplay = ISIApplication.get().getStudentContent().getLabelIndex(ISIXmlSection.SectionType.PAGE, currentSection.firstPage());
 
 		for(ISIXmlSection page = currentSection.firstPage(); page != null; page = page.getNext(), pageNumDisplay++) {
 			WebMarkupContainer pageLinkContainer = new WebMarkupContainer(pageRepeater.newChildId());

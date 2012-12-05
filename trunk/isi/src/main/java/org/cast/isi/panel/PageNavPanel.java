@@ -40,7 +40,7 @@ import com.google.inject.Inject;
  * This nav panel adds the previous/next buttons, the completion checkmark, the section title
  * and adds the panel with the page number icons
  */
-public class PageNavPanel extends ISIPanel {
+public class PageNavPanel extends AbstractNavBar<XmlSection> {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
@@ -49,14 +49,14 @@ public class PageNavPanel extends ISIPanel {
 	@Inject
 	private ISectionService sectionService;
 
-	public PageNavPanel(String id, IModel<? extends XmlSection> mSection) {
-		super(id);
+	public PageNavPanel(String id, IModel<XmlSection> mSection) {
+		super(id, mSection);
 
 		UserModel mUser = new UserModel(ISISession.get().getUser());
 		IModel<User> mTargetUser = ISISession.get().getTargetUserModel();
 		boolean teacher = mUser.getObject().getRole().equals(Role.TEACHER);
 
-		ISIXmlSection currentPage = (ISIXmlSection) mSection.getObject();
+		ISIXmlSection currentPage = (ISIXmlSection) mSection.getObject(); // FIXME: XmlSectionModel should be genericized to fix this and similar hacks
 		ISIXmlSection currentSection = currentPage.getSectionAncestor(); // May be itself
 		
 		add(new PageLinkPanel("pageLinkPanel", new XmlSectionModel(currentSection), mSection));

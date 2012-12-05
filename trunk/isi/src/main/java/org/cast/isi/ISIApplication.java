@@ -112,6 +112,7 @@ import org.cast.isi.panel.DefaultNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.HeaderPanel;
+import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.TeacherHeaderPanel;
 import org.cast.isi.service.FeatureService;
 import org.cast.isi.service.IFeatureService;
@@ -1004,7 +1005,7 @@ public abstract class ISIApplication extends CwmApplication {
 	
 	/**
 	 * Return the ISIXMLSection correspoding to a page number. 
-	 * @param num the zero-based page number
+	 * @param num the 1-based page number
 	 * @return corresponding ISIXMLSection, or null if page number is out of range.
 	 */
 	public ISIXmlSection getPageNum(int num) {
@@ -1056,7 +1057,7 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 
 		// User has never visited a page before.  Set bookmark to first page.
-		ISIXmlSection section = getPageNum(0);
+		ISIXmlSection section = getPageNum(1);
 		if (section != null)
 			bookmark = new ContentLoc(section);
 		session.setBookmark(bookmark);
@@ -1254,10 +1255,11 @@ public abstract class ISIApplication extends CwmApplication {
 		return new FooterPanel(id, parameters);
 	}
 
-	@SuppressWarnings("unchecked")
-	public AbstractNavBar<?> getNavBar(String id, IModel<? extends XmlSection> sec, boolean teacher) {
-		return new DefaultNavBar(id, (IModel<XmlSection>) sec, teacher);
+	public AbstractNavBar<? extends XmlSection> getTopNavigation(String id, IModel<XmlSection> sec, boolean teacher) {
+		return new DefaultNavBar(id, sec, teacher);
 	}
 
-		
+	public AbstractNavBar<? extends XmlSection> getBottomNavigation (String id, IModel<XmlSection> mSection, boolean teacher) {
+		return new PageNavPanel("pageNavPanelBottom", mSection);
+	}
 }
