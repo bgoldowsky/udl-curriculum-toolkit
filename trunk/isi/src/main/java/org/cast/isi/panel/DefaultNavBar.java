@@ -193,10 +193,6 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 					link.setEnabled(false);
 					link.add(new ClassAttributeModifier("current"));
 					link.add(new IconContainer("iconContainer", section, iconFactory));
-//					WebMarkupContainer iconContainer = new WebMarkupContainer("iconContainer");
-//					link.add(iconContainer);
-//					iconContainer.add(iconFactory.getIconFor(section));
-					
 					sectionContainer.add(new WebMarkupContainer("current"));
 				} else {
 					WebMarkupContainer iconContainer = new WebMarkupContainer("iconContainer");
@@ -209,7 +205,6 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 		}	
 	}
 	
-	// TODO: fix me - I am not updating - LDM
 	public class IconContainer extends WebMarkupContainer implements IDisplayFeedbackStatus {
 		private static final long serialVersionUID = 1L;
 		private ISIXmlSection section;
@@ -219,15 +214,15 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 			super(id);
 			this.section = section;
 			this.iconFactory = iconFactory;
-			this.setOutputMarkupPlaceholderTag(true);
+			setOutputMarkupId(true);
 		}
 
 		@Override
 		protected void onBeforeRender() {
- 			addOrReplace(iconFactory.getIconFor(section));
+			Component teacherStatusIcon = iconFactory.getIconFor(section);
+ 			addOrReplace(teacherStatusIcon);
 			super.onBeforeRender();
 		}
-		
 	}
 		
 	
