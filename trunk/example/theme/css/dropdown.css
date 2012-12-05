@@ -19,14 +19,14 @@
 *:first-child+html .dropdownNavBar { height: 100%; } /* IE7 */
 * html .dropdownNavBar { height: 1%; }               /* IE6 */
 
-.dropdownNavBar #pageJump {
+.dropdownNavBar .pageJump {
     position: absolute;
     top: 8px;
     right: 285px;
     font-size: 0.9em;
 }
 
-.dropdownNavBar #pageJump label, .dropdownNavBar #pageJump form .button {
+.dropdownNavBar .pageJump label, .dropdownNavBar .pageJump form .button {
     position: absolute;
     left: -9999px;
 }

@@ -314,19 +314,19 @@ ul li, ol li {
 /*================================================================*/
 /* Page Jump */
 
-#pageJump {
+#pageJump, .pageJump {
     position: absolute;
     top: 5px;
     right: 10px;
     font-size: 0.9em;
 }
 
-#pageJump form {
+#pageJump form, .pageJump form {
     display: inline;
     vertical-align: text-bottom;
 }
 
-#pageJump .pageJumpVal {
+#pageJump .pageJumpVal, .pageJump .pageJumpVal {
     width: 2em;
     border: 1px solid #B2B2B2;
     background: #FFFFFF;
