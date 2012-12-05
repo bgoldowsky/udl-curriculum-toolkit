@@ -32,8 +32,8 @@ public class QuickFlipWithTotal extends QuickFlipForm {
 
 	private static final long serialVersionUID = 1L;
 
-	public QuickFlipWithTotal(String id, Boolean addLabel) {
-		super(id, addLabel);
+	public QuickFlipWithTotal(String id, Boolean addLabel, Integer currentPage) {
+		super(id, addLabel, currentPage);
 
 		add(new Label("pageCount", String.valueOf(ISIApplication.get().getPageCount())));
 	}

@@ -23,8 +23,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -52,7 +50,6 @@ import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
-@Slf4j
 /**
  * A Navigation bar that shows the sequence of sections within a chapter.
  * Each section is represented by an icon which may be determined by the its class attribute.

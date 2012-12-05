@@ -36,17 +36,26 @@ import org.cast.isi.ISIApplication;
 public class QuickFlipForm extends Form<Object> {
 
 	private static final long serialVersionUID = 1L;
-
-	public QuickFlipForm(String id, Boolean addLabel) {
+	
+	public QuickFlipForm(String id, boolean addLabel) {
+		this(id, addLabel, null);
+	}
+	
+	public QuickFlipForm(String id, boolean addLabel, Integer currentPage) {
 		super(id);
-		TextField<String> numberField = new TextField<String>("numberField", new Model<String>(""));
+		Model<String> numberModel;
+		if (currentPage != null)
+			numberModel = new Model<String>(currentPage.toString());
+		else
+			numberModel = new Model<String>("");
+		TextField<String> numberField = new TextField<String>("numberField", numberModel);
 		add(numberField);
 		if (addLabel) {
 			FormComponentLabel numberFieldLabel =  new FormComponentLabel("numberFieldLabel", numberField);
 			add(numberFieldLabel);
 		}
 		add(new SubmitLink("goLink"));
-	}
+	}	
 
 	@Override
 	public void onSubmit() {
@@ -58,7 +67,7 @@ public class QuickFlipForm extends Form<Object> {
 		} catch (Exception ex) { /* Do Nothing */}
 		
 		// check if the page number is valid
-		if (ISIApplication.get().getPageNum(pageNum-1) == null)
+		if (ISIApplication.get().getPageNum(pageNum) == null)
 			pageNum = -1;
 		
 		if (pageNum != -1) {
