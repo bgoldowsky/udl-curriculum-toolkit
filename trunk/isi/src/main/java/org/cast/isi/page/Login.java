@@ -26,6 +26,7 @@ import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -42,6 +43,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Site;
 import org.cast.cwm.data.User;
+import org.cast.cwm.mediaplayer.MediaPlayerPanel;
 import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
@@ -154,6 +156,8 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 	public void renderHead(final IHeaderResponse response) {
 		renderThemeCSS(response, "css/login.css");
 		renderThemeCSS(response, "css/main.css");
+		// setup jwplayer to enable videos to be run on the login page
+		response.renderJavascriptReference(new ResourceReference(MediaPlayerPanel.class, "jwplayer.js"));
 		super.renderHead(response);
 	}
 
