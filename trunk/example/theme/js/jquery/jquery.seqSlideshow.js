@@ -5,6 +5,15 @@
         // Create tabs with jQuery UI
         var $tabs = this.tabs();
 
+        $tabs.bind("tabsselect", function(event, ui) {
+        	$tabs.find('object,embed').each (function() {
+        		// Any video players in tabs should be paused when switching tabs, so they don't keep playing when hidden.
+        		if (typeof (jwplayer) === 'function' && jwplayer(this)) {
+        			jwplayer(this).pause(true);
+        		}
+        	});
+        });
+
         // Size the width based on imgBox content
         var currWidth = parseInt($tabs.css('min-width'));
         $tabs.find(".ui-tabs-panel").each(function() {
