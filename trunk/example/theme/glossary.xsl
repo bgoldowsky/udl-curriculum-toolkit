@@ -52,10 +52,12 @@
     </xsl:template>
 
     <xsl:template match="dtb:h2">
-      <h2>
-        <xsl:copy-of select="&catts;"/>
-        <xsl:apply-templates/>
-      </h2>
+      <xsl:if test=".!=''">
+		<h2>
+			<xsl:copy-of select="&catts;"/>
+			<xsl:apply-templates/>
+		</h2>
+	  </xsl:if>
     </xsl:template>
 
     <xsl:template match="dtb:p[@title]">
