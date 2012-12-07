@@ -699,3 +699,36 @@
     padding: 4px;
     margin-bottom: 0px;
 }
+
+/*================================================================*/
+/* Pull Quote */
+
+.pullQuote {
+    display: inline-block;
+    float: right;
+    border: 1px solid #BDBDBD;
+    background: #F0F0F0;
+    width: 175px;
+    padding: 5px;
+    margin: 0px 0px 1em 1em;
+}
+
+.pullQuote blockquote {
+    background: transparent url("../img/icons/openquote_grey.png") left top no-repeat;
+    color: #364A77;
+    font-size: 1.1em;
+    font-style: italic;
+    font-weight: normal;
+    min-height: 14px;
+    padding: 0px 0px 0.3em 24px;
+    margin: 0px;
+}
+.pullQuote blockquote p {
+    padding: 0px 0px 0.5em 0px;
+}
+
+.pullQuote .attrib {
+    color: #333333;
+    font-size: 0.9em;
+    padding: 0px 0px 0px 24px;
+}
