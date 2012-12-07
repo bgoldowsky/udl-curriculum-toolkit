@@ -49,8 +49,9 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 /**
- * Base page for ISI application.  All non-popup pages should extend this page.
- * It will include the header and footer panels and any other common feature
+ * Base for "main" (non-popup) pages of the ISI application.  
+ * All non-popup pages should extend this page.
+ * It includes the header and footer panels and any other common features
  * across these pages.
  * 
  * @author jacobbrookover
@@ -69,15 +70,11 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	public static final String DISPLAY_DIALOG_ID = "displayDialog";
 	private static final String LOADING_DIALOG_ID = "loadingDialogBorder";
 	private DialogBorder loadingDialog;
-	
 
 	public ISIStandardPage(final PageParameters parameters) {
 		super(parameters);
 		commonInit(parameters);
-		
 	}
-	
-	
 	
 	public void commonInit(PageParameters parameters) {
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
