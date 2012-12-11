@@ -136,17 +136,27 @@
 }
 
 /* navMenu - Dropdowns - Level 2 */
+.navMenu a:focus ~ ul {
+    /* no sub-menus for keyboard nav if JS is disabled  */
+    display: none;
+}
 .navMenu li:hover > ul,
-.navMenu li:focus > ul,
+.navMenu a:focus ~ ul.show-menu,
 .navMenu ul.show-menu {
+	display: block;
 	left: 45px;
 	opacity: 1;
 }
 
 /* navMenu - Dropdowns - Level 3 */
+.navMenu ul a:focus ~ ul {
+    /* no sub-menus for keyboard nav if JS is disabled  */
+    display: none;
+}
 .navMenu ul li:hover > ul,
-.navMenu ul li:focus > ul,
+.navMenu ul a:focus ~ ul.show-menu,
 .navMenu ul li > ul.show-menu {
+    display: block;
     top: -1px;
     left: 100%;
     opacity: 1;
