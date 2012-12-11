@@ -172,6 +172,18 @@
                     <tagBase>https://udl-curriculum-toolkit.googlecode.com/svn/tags</tagBase>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.5</version>
+            </plugin>
 		</plugins>
 
         <extensions>
@@ -213,7 +225,7 @@
 	</build>
 
   <properties>
-      <cwm.version>1.4-SNAPSHOT</cwm.version>
+      <cwm.version>1.4</cwm.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
   </properties>
