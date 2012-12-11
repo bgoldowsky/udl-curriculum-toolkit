@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org" lang="en" xml:lang="en">
+<wicket:panel>
+
+    <div id="topnav">
+        <div id="pageTitle">
+            <h2 wicket:id="title">Lesson 2: Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem</h2>
+        </div>
+        <div id="pageJump">
+            <form wicket:id="quickFlipForm" action="#">
+            	<label wicket:id="numberFieldLabel"><strong>Quick Flip:</strong></label>
+                <input wicket:id="numberField" type="text" class="pageJumpVal" />
+                <a wicket:id="goLink" href="#" class="button">Go</a>
+            </form>
+        </div>
+    </div>
+
+    <ul id="sectionNav">
+        <li wicket:id="superSectionRepeater">
+            <span wicket:id="superSectionTitle" class="sectionTitle">Overview</span>
+            <ul class="sectionItems">
+                <li wicket:id="sectionRepeater">
+                	<a wicket:id="sectionLink" href="#" class="button icon">
+                		<span wicket:id="iconContainer">
+                			<img wicket:id="icon" src="img/icons/activity_overview.png" width="15" height="15" alt="Overview" title="Overview" />
+                		</span>
+                	</a>
+                    <span wicket:id="current" class="caret"></span>
+                </li>
+            </ul>
+        </li>
+    </ul>
+	<div wicket:id="pageNavPanelTop"></div>
+    
+</wicket:panel>
+</html>
