@@ -71,7 +71,7 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 		
 		// If getRequestCycleSettings().setGatherExtendedBrowserInfo(true) is set in the application
 		// this line is necessary to prevent a failed login session.
-		// ISISession.get().getClientInfo();
+		ISISession.get().getClientInfo();
 		
 		AuthApplication<User> app = null;
 		try { app = ((AuthApplication<User>)Application.get()); } catch (ClassCastException e) { }

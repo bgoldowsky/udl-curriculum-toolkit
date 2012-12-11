@@ -305,7 +305,7 @@ public abstract class ISIApplication extends CwmApplication {
 		// If enabled, see Login.java for pre-fetching of data so it does not break
 		// the login form.
 		//
-		// getRequestCycleSettings().setGatherExtendedBrowserInfo(true);
+		getRequestCycleSettings().setGatherExtendedBrowserInfo(true);
 		
 		getMarkupSettings().setDefaultBeforeDisabledLink( "" );
 		getMarkupSettings().setDefaultAfterDisabledLink( "" ); 
