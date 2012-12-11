@@ -20,9 +20,15 @@ create      - menu initialization complete
 (function($) {
     // Mobile browser detection
     var $isMobile = false;
+    /*
     if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
         $isMobile = true;
     }
+    */
+    try {
+        document.createEvent('TouchEvent');
+        $isMobile = true;
+    } catch(e) {}
 
     // Menu object holder
     var menu = null;
@@ -32,14 +38,17 @@ create      - menu initialization complete
         'hasSubMenu'        : "show-sub",
         'showSubMenu'       : "show-menu",
         'showHover'         : "show-hover",
+        'isMobile'          : "isMobile",
     };
 
     var settings = {
         // Default Settings
         'subMark'           : "&gt;",       // Text character to use to indicate presence of sub-menu (overrule in CSS for graphical one)
         'isMobile'          : $isMobile,    // Mobile browser flag
-        'delayShow'         : 150,          // Delay for showing menu (not currently impemented)
         'delayHide'         : 500,          // Delay for hiding menu
+
+        // Callback hooks
+        'create'            : null,
     };
 
     var methods = {
@@ -58,27 +67,47 @@ create      - menu initialization complete
             // Set tabIndex=-1 so that sub-menu links can't receive focus until menu is open (skip top level items)
             $(this).find('ul a').attr('tabIndex',-1);
 
-            // Handle link focus
-            $(this).find('a').focus(function() {
-                methods.showMenu(this);
-            });
-
-            // Handle menu item mouse interaction
-            $(this).find('li').hover(
-                function() {
-                    // Mouseenter
-                    if (menu.timerHide) clearTimeout(menu.timerHide);
+            // Mobile OFF - handle keyboard navigation and mouse hover
+            if (!settings.isMobile) {
+                // Handle link focus
+                $(this).find('a').focus(function() {
                     methods.showMenu(this);
-                },
-                function() {
-                    // Mouseleave
-                    if (menu.timerHide) clearTimeout(menu.timerHide);
-                    menu.timerHide = setTimeout(function() {
-                        menu.timerHide = null;
+                });
+
+                // Handle menu item mouse interaction
+                $(this).find('a').hover(
+                    function() {
+                        // Mouseenter
+                        if (menu.timerHide) clearTimeout(menu.timerHide);
+                        methods.showMenu(this);
+                    },
+                    function() {
+                        // Mouseleave
+                        if (menu.timerHide) clearTimeout(menu.timerHide);
+                        menu.timerHide = setTimeout(function() {
+                            menu.timerHide = null;
+                            methods.hideMenu();
+                        }, settings.delayHide);
+                     }
+                );
+            }
+
+            // Mobile ON - handle click/tap style navigation
+            if (settings.isMobile) {
+                $(this).addClass(c.isMobile);
+                $(this).find('a').click(function(e) {
+                    // Override click action if sub-menu present and not shown
+                    // Check class, not visibilty - item is visible, just not in viewport
+                    if ($(this).closest('li').hasClass(c.hasSubMenu) && !$(this).closest('li').hasClass(c.showHover)) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        methods.showMenu(this);
+                    } else {
+                        // Hide menu after click
                         methods.hideMenu();
-                    }, settings.delayHide);
-                 }
-            );
+                    }
+                });
+            }
 
             // Hide menu if click or focus occurs outside of navigation
             $(this).find('a').last().keydown(function(e){
@@ -120,7 +149,7 @@ create      - menu initialization complete
 
             // Restrict informtion that is sent back
             var options = {
-                'colors'            : settings.colors,
+                'isMobile'          : settings.isMobile,
             };
 
             if ($.isFunction(settings[callback])) {
