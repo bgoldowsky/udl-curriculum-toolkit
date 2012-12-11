@@ -34,7 +34,7 @@ public class ISIDateLabel extends DateLabel {
 	private static final String dateFormat = "M/d/yy h:mm a";
 	
 	public ISIDateLabel (String id, IModel<Date> mDate) {
-		super(id, mDate, new PatternDateConverter(dateFormat, false));
+		super(id, mDate, new PatternDateConverter(dateFormat, true));
 	}
 
 	public ISIDateLabel(String id, Date date) {
