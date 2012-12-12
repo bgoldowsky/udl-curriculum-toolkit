@@ -75,7 +75,6 @@ import org.cast.cwm.dav.DavResource;
 import org.cast.cwm.glossary.Glossary;
 import org.cast.cwm.glossary.GlossaryService;
 import org.cast.cwm.glossary.GlossaryTransformer;
-import org.cast.cwm.indira.IndiraMarkupParserFactory;
 import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.IResponseService;
@@ -318,10 +317,6 @@ public abstract class ISIApplication extends CwmApplication {
 			getResourceSettings().addResourceFolder(getCustomSkinDir());
 		getResourceSettings().addResourceFolder(getSkinDir());
 		
-		// Indira rewrites markup for images
-		// TODO: remove, once theme image references are all corrected.
-		getMarkupSettings().setMarkupParserFactory(new IndiraMarkupParserFactory());
-
 		// Content elements are taggable
 		TagService.get().configureTaggableClass('P', ContentElement.class);
 		String requestedTags = appProperties.getProperty("isi.defaultTags", "");

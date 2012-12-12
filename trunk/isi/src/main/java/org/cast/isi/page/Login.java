@@ -20,7 +20,6 @@
 package org.cast.isi.page;
 
 import net.databinder.auth.AuthApplication;
-import net.databinder.auth.components.RSAPasswordTextField;
 import net.databinder.auth.hib.AuthDataSession;
 import net.databinder.models.hib.HibernateObjectModel;
 
@@ -33,6 +32,7 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponentLabel;
+import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.validation.FormComponentFeedbackBorder;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -99,13 +99,13 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 	protected class SignInForm extends Form<User> {
 		private static final long serialVersionUID = 1L;
 		private RequiredTextField<String> username;
-		private RSAPasswordTextField password;
+		private PasswordTextField password;
 
 		protected SignInForm(String id) {
 			super(id);
 			add(new FeedbackPanel("login-feedback"));
 			add((new FormComponentFeedbackBorder("username-border")).add(username = new RequiredTextField<String>("username", new Model<String>())));
-			add((new FormComponentFeedbackBorder("password-border")).add(password = new RSAPasswordTextField("password", new Model<String>(), this)));
+			add((new FormComponentFeedbackBorder("password-border")).add(password = new PasswordTextField("password", new Model<String>())));
 			password.setRequired(true);
 			FormComponentLabel usernameLabel =  (new FormComponentLabel("usernameLabel", username));
 			add(usernameLabel);
