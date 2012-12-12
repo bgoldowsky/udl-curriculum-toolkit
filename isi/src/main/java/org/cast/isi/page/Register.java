@@ -24,7 +24,6 @@ import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.databinder.auth.components.RSAPasswordTextField;
 import net.databinder.auth.valid.EqualPasswordConvertedInputValidator;
 import net.databinder.components.hib.DataForm;
 import net.databinder.hib.Databinder;
@@ -35,6 +34,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.Radio;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.markup.html.form.TextField;
@@ -137,13 +137,13 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 	protected class RegisterForm extends DataForm<User> {
 		private static final long serialVersionUID = 1L;
 
-		private RSAPasswordTextField password;
+		private PasswordTextField password;
 		private RadioGroup<Role> radioGroup;
 		
 		protected RegisterForm(String id) {
 			super(id, User.class);
 
-			RSAPasswordTextField verifyPassword;
+			PasswordTextField verifyPassword;
 			TextField<String> email;
 			TextField<String> verifyEmail;
 
@@ -184,13 +184,13 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 					.setRequired(true)));
 
 			add(new FeedbackBorder("passwordBorder")
-				.add(password = (RSAPasswordTextField) new RSAPasswordTextField("password", new Model<String>(), this)
+				.add(password = (PasswordTextField) new PasswordTextField("password", new Model<String>())
 					.add(StringValidator.lengthBetween(4, 32))
 					.add(new PatternValidator("[\\w!@#$%^&*()-=_+\\\\.,;:/]+"))
 					.setRequired(true)));
 
 			add(new FeedbackBorder("verifyPasswordBorder")
-				.add(verifyPassword = (RSAPasswordTextField) new RSAPasswordTextField("verifyPassword", new Model<String>(), this)
+				.add(verifyPassword = (PasswordTextField) new PasswordTextField("verifyPassword", new Model<String>())
 					.setRequired(true)));
 			
 			// Passwords and email addresses have to match

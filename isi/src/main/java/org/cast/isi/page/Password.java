@@ -19,7 +19,6 @@
  */
 package org.cast.isi.page;
 
-import net.databinder.auth.components.RSAPasswordTextField;
 import net.databinder.auth.valid.EqualPasswordConvertedInputValidator;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
@@ -121,7 +120,7 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 			
 			fields.add (new WebMarkupContainer("oldPassContainer")
 				.add((new FeedbackBorder("oldPassBorder"))
-						.add(new RSAPasswordTextField("oldPass", new Model<String>(), this)
+						.add(new PasswordTextField("oldPass", new Model<String>())
 							.setLabel(new Model<String>("Old Password"))
 							.add (new CorrectPasswordValidator())))
 				.setVisible(!haveKey));
