@@ -50,16 +50,6 @@
 			<id>CAST</id>
 			<url>http://comp.cast.org/maven2/</url>
 		</repository>
-		<repository>
-            <id>visural-common</id>
-            <name>visural-common</name>
-            <url>http://visural-common.googlecode.com/svn/trunk/visural-common/maven/</url>
-        </repository>
-        <repository>
-            <id>visural-wicket</id>
-            <name>visural-wicket</name>
-            <url>http://visural-wicket.googlecode.com/svn/trunk/visural-wicket/maven/</url>
-        </repository>
 	</repositories>
 	
 	<dependencies>
@@ -84,20 +74,9 @@
 			<version>${cwm.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.cast.cwm</groupId>
-			<artifactId>cwm-indira</artifactId>
-			<version>0.7</version>
-		</dependency>
-
-		<dependency>
 			<groupId>rhino</groupId>
 			<artifactId>js</artifactId>
 			<version>1.7R2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.visural</groupId>
-			<artifactId>visural-common</artifactId>
-			<version>0.4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.jeremybrooks</groupId>
@@ -225,7 +204,7 @@
 	</build>
 
   <properties>
-      <cwm.version>1.4</cwm.version>
+      <cwm.version>1.5-SNAPSHOT</cwm.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
   </properties>
