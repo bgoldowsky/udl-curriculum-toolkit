@@ -326,8 +326,8 @@ ul li, ol li {
 }
 
 #pageJump form, .pageJump form {
-    display: inline;
-    vertical-align: text-bottom;
+    display: inline-block;
+    vertical-align: top;
 }
 
 #pageJump .pageJumpVal, .pageJump .pageJumpVal {
