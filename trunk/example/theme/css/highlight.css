@@ -89,10 +89,13 @@
     margin: 0px;
 }
 #globalHighlight .hlRow .hlIcon {
+    display: block;
+    min-height: 25px;
     background: transparent url("../img/icons/highlight_yellow.png") 18px 4px no-repeat;
 }
 
 #globalHighlight .hlRowInner {
+    display: block;
     min-height: 25px;
     padding: 5px 10px 0px 55px;
 }
@@ -111,8 +114,33 @@
     vertical-align: middle;
 }
 
+#globalHighlight .hlRow form {
+    position: absolute;
+    top: 5px;
+    left: 55px;
+}
+
+#globalHighlight a.hlIcon, #globalHighlight a.hlIcon:hover {
+    color: #000000;
+    text-decoration: none;
+}
+/*
+ #globalHighlight a.hlIcon:focus .action{
+    text-decoration: underline;
+    background-color: #FFFFCC;
+}
+*/
+
 #globalHighlight .hlRow a.button {
-    float: right;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+#globalHighlight .hlRow form a.button{
+    position: absolute;
+    top: 0px;
+    right: -66px;
 }
 
 #globalHighlight input {
@@ -123,10 +151,9 @@
 #globalHighlight .controlY .hlIcon { background-image: url("../img/icons/highlight_yellow.png");}
 #globalHighlight .controlB .hlIcon { background-image: url("../img/icons/highlight_blue.png"); }
 #globalHighlight .controlG .hlIcon { background-image: url("../img/icons/highlight_green.png"); }
-#globalHighlight .controlE { color: #999999; font-style: italic; background: transparent !important; }
-#globalHighlight .controlE .hlIcon { background-image: url("../img/icons/highlight_erase_g.png"); }
-#globalHighlight .controlE.enable { cursor: pointer; color: #000000; }
-#globalHighlight .controlE.enable .hlIcon { background-image: url("../img/icons/highlight_erase.png"); }
+#globalHighlight .controlE .hlIcon { background-image: url("../img/icons/highlight_erase_g.png"); cursor: default; color: #999999; font-style: italic; }
+#globalHighlight .controlE .hlIcon:hover { cursor: default; color: #999999; font-style: italic; }
+#globalHighlight .controlE.enable .hlIcon { background-image: url("../img/icons/highlight_erase.png"); cursor: pointer; color: #000000; }
 
 #globalHighlight .controlY:hover { cursor: pointer; }
 #globalHighlight .controlB:hover { cursor: pointer; }
