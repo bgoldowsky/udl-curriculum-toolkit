@@ -32,7 +32,7 @@
 }
 
 .dropdownNavBar #pageJump .pageJumpVal, .dropdownNavBar .pageJump .pageJumpVal {
-    vertical-align: none;
+    vertical-align: baseline;
 }
 
 .dropdownNavBar h2 {
