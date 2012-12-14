@@ -20,6 +20,20 @@
 <script type="text/javascript" src="../../../example/theme/js/functions.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/jquery/jquery.annotate.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/jquery/jquery.seqSlideshow.js"></script>
+
+<!--
+<script type="text/javascript" src="../../../example/theme/js/rangy-1.2.3/rangy-core.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/highlight.js"></script>
+<script type="text/javascript">
+    $(window).ready(function() {
+        $().CAST_Highlighter({
+            colors: ['Y','B','G'],
+            readonly : false
+        });
+    });
+</script>
+-->
+
 <!--
 <script type="text/javascript" src="http://portal.texthelp.com/EmbeddedBrowsealoud/v163/obfBATH.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/toolbar.js"></script>
@@ -157,6 +171,20 @@
 
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo arcu arcu. Sed lacus odio, mollis sit amet tincidunt et, tincidunt nec purus. Cras tincidunt auctor leo, at egestas neque molestie vestibulum. Vivamus non volutpat lacus. Etiam ultricies vulputate ipsum, non fermentum enim molestie eu?</p>
                     <p>Curabitur faucibus porta iaculis. Mauris eget hendrerit justo. Cras pharetra sapien orci! Integer egestas elit id lorem lacinia et tempor libero sodales. Mauris et diam tortor? Nam consequat condimentum erat, vel fringilla ante feugiat ut. Ut venenatis venenatis interdum.</p>
+
+                    <!--
+                    <h2>Highlightable Passage</h2>
+                    <div id="hlLocal" class="hlregion">
+                        <p class="hlpassage">
+                            <span class="key keyhint">Curabitur suscipit elit nec massa hendrerit nec</span> fermentum massa tincidunt. Nulla vel tempus felis. Curabitur varius, dolor sit amet feugiat aliquam, est leo ornare risus, vitae auctor nisl lectus ac nibh. Sed ultricies, leo ac luctus adipiscing, enim dolor cursus eros, mollis tempus velit nisi ut nisl. Ut cursus fringilla lorem, sed tincidunt lacus consectetur ac. Aenean vel tristique magna? In auctor libero nec eros scelerisque auctor at nec justo. Ut sit amet lorem vel tellus condimentum commodo. Ut ut ullamcorper turpis. Fusce laoreet viverra magna, eget eleifend massa congue nec? Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+                        </p>
+                        <form class="highlightDisplayForm" method="post" action="#">
+                            <input type="hidden" name="colorDisplayList:0:input" id="idec" class="YhighlightedWords" value="" />
+                            <input type="hidden" name="colorDisplayList:0:input" id="ided" class="GhighlightedWords" value="" />
+                            <input type="hidden" name="colorDisplayList:1:input" id="idfe" class="BhighlightedWords" value="67,68,69,70,71,72" />
+                        </form>
+                    </div>
+                    -->
 
                     <div class="objectBox center">
                         <div style="width: 420px; height: 315px;" class="mediaPlaceholder">
@@ -708,13 +736,13 @@
             <div id="globalHighlight" class="rightBox collapseBox open">
                 <h5>Highlights</h5>
                 <div class="collapseBody">
-                    <div class="hlRow controlY helper has on" onclick="javascript:changeMode('Y');">
+                    <div class="hlRow controlY helper has on">
                         <div class="hlGradient">
-                            <div class="hlIcon">
-                                <div class="hlRowInner">
+                            <a href="#" onclick="javascript:changeMode('Y'); return false;" class="hlIcon">
+                                <span class="hlRowInner">
                                     <span class="action">Main Ideas</span>
-                                </div>
-                            </div>
+                                </span>
+                            </a>
                         </div>
                         <div class="highlightHelper">
                             <h5>What do I Highlight</h5>
@@ -739,37 +767,38 @@
                             </div>
                         </div>
                     </div>
-                    <div class="hlRow controlB" onclick="javascript:changeMode('B');">
+                    <div class="hlRow controlB">
                         <div class="hlGradient">
-                            <div class="hlIcon">
-                                <div class="hlRowInner">
+                            <a href="#" onclick="javascript:changeMode('B'); return false;" class="hlIcon">
+                                <span class="hlRowInner">
                                     <span class="action">Evidence</span>
-                                    <a href="#" class="button">Edit</a>
-                                </div>
-                            </div>
+                                </span>
+                            </a>
+                            <a href="#" class="button">Edit</a>
                         </div>
                     </div>
-                    <div class="hlRow controlG" onclick="javascript:changeMode('G');">
+                    <div class="hlRow controlG">
                         <div class="hlGradient">
-                            <div class="hlIcon">
-                                <div class="hlRowInner">
-                                    <form action="#">
-                                        <input type="text" value="For the test" />
-                                        <a href="#" class="button">Save</a>
-                                    </form>
-                                </div>
-                            </div>
+                            <a href="#" onclick="javascript:changeMode('G'); return false;" class="hlIcon">
+                                <span class="hlRowInner">
+                                </span>
+                            </a>
+                            <form action="#">
+                                <input type="text" value="For the test" />
+                                <a href="#" class="button">Save</a>
+                            </form>
                         </div>
                     </div>
-                    <div class="hlRow controlE" onclick="javascript:changeMode('E');">
+                    <div class="hlRow controlE" >
                         <div class="hlGradient">
-                            <div class="hlIcon">
-                                <div class="hlRowInner">
+                            <a href="#" onclick="javascript:changeMode('E'); return false;" class="hlIcon">
+                                <span class="hlRowInner">
                                     <span class="action">Erase Highlights</span>
-                                </div>
-                            </div>
+                                </span>
+                            </a>
                         </div>
                     </div>
+                    <!--
                     <form wicket:id="highlightDisplay" class="autosave">
                         <div>
                             <input id="YhighlightedWords" wicket:id="Y_highlightedWords" name="YhighlightedWords" type="hidden" />
@@ -777,6 +806,7 @@
                             <input id="GhighlightedWords" wicket:id="G_highlightedWords" name="GhighlightedWords" type="hidden" />
                         </div>
                     </form>
+                    -->
                 </div>
             </div>
 
