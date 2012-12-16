@@ -201,12 +201,6 @@ public abstract class ISIApplication extends CwmApplication {
 
 	// highlighter settings from the config file
 	@Getter protected boolean highlightsPanelOn = true;
-	@Getter protected boolean yHighlighterOn = true;
-	@Getter protected boolean bHighlighterOn = true;
-	@Getter protected boolean gHighlighterOn = true;
-	@Getter protected boolean yHighlighterEditable = false;
-	@Getter protected boolean bHighlighterEditable = false;
-	@Getter protected boolean gHighlighterEditable = true;
 
 	// rss feed info from the config file
 	@Getter protected boolean rssFeedOn = false; 
@@ -348,18 +342,18 @@ public abstract class ISIApplication extends CwmApplication {
 	protected void registerHighlighters() {
 		// These letters are the same as used in the markup.  Don't change one without changing the other
 		// or just change the css and leave these alone.
-		yHighlighterOn = setBooleanProperty("isi.highlighter.yellow.isOn", yHighlighterOn );
-		yHighlighterEditable = setBooleanProperty("isi.highlighter.yellow.nameEditable", yHighlighterEditable );
+		boolean yHighlighterOn = setBooleanProperty("isi.highlighter.yellow.isOn", true);
+		boolean yHighlighterEditable = setBooleanProperty("isi.highlighter.yellow.nameEditable", true);
 
-		bHighlighterOn = setBooleanProperty("isi.highlighter.blue.isOn", bHighlighterOn );
-		bHighlighterEditable = setBooleanProperty("isi.highlighter.blue.nameEditable", bHighlighterEditable );
+		boolean bHighlighterOn = setBooleanProperty("isi.highlighter.blue.isOn", true);
+		boolean bHighlighterEditable = setBooleanProperty("isi.highlighter.blue.nameEditable", true);
 
-		gHighlighterOn = setBooleanProperty("isi.highlighter.green.isOn", gHighlighterOn );
-		gHighlighterEditable = setBooleanProperty("isi.highlighter.green.nameEditable", gHighlighterEditable );
+		boolean gHighlighterOn = setBooleanProperty("isi.highlighter.green.isOn", true);
+		boolean gHighlighterEditable = setBooleanProperty("isi.highlighter.green.nameEditable", true);
 
-		HighlightService.get().addHighlighter('Y', null, yHighlighterEditable);
-		HighlightService.get().addHighlighter('B', null, bHighlighterEditable);
-		HighlightService.get().addHighlighter('G', null, gHighlighterEditable);		
+		HighlightService.get().addHighlighter('Y', yHighlighterOn, yHighlighterEditable);
+		HighlightService.get().addHighlighter('B', bHighlighterOn, bHighlighterEditable);
+		HighlightService.get().addHighlighter('G', gHighlighterOn, gHighlighterEditable);		
 	}
 
 	
