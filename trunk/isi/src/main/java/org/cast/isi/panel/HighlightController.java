@@ -1,7 +1,6 @@
 package org.cast.isi.panel;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -45,7 +44,6 @@ import com.google.inject.Inject;
  * @author bgoldowsky
  *
  */
-@Slf4j
 public class HighlightController extends Panel {
 
 	@Inject
@@ -91,7 +89,6 @@ public class HighlightController extends Panel {
 			labelModel = new PropertyModel<String>(this, "editedName");
 		} else {
 			// The e.g. yellow highlighter name in the properties file is highlightsPanel.yHighlighterName
-			log.debug("Highlight name will be taken from resource: {}", String.format("highlightsPanel.%sHighlighterName", color));
 			labelModel = new StringResourceModel(String.format("highlightsPanel.%sHighlighterName", color),
 				this, null, "Highlighter");
 		}
@@ -122,20 +119,23 @@ public class HighlightController extends Panel {
 	 * @param type which highlighter the label will be for
 	 */
 	private void makeEditForm (HighlightType type) {
-		
-		String color = type.getColor().toString().toLowerCase();
 
-		IModel<Prompt> mPrompt = responseService.getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, loc, color);
-
-		EditHighlightLabelForm editHighlightLabelForm = new EditHighlightLabelForm("editHighlightNameForm", 
-				responseService.getResponseForPrompt(mPrompt, targetUser), 
-				mPrompt);
-		add(editHighlightLabelForm);
-		editHighlightLabelForm.setEnabled(!isTeacher);
-		editHighlightLabelForm.setVisible(type.isEditable());
+		if (type.isEditable()) {
+			String color = type.getColor().toString().toLowerCase();
+	
+			IModel<Prompt> mPrompt = responseService.getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, loc, color);
+	
+			EditHighlightLabelForm editHighlightLabelForm = new EditHighlightLabelForm("editHighlightNameForm", 
+					responseService.getResponseForPrompt(mPrompt, targetUser), 
+					mPrompt);
+			add(editHighlightLabelForm);
+			editHighlightLabelForm.setEnabled(!isTeacher);
+		} else {
+			add (new WebMarkupContainer("editHighlightNameForm").setVisibilityAllowed(false));
+		}
 
 		// Button to show the edit form
-		add (new AjaxLink<Void>("edit") {
+		AjaxLink<Void> editButton = new AjaxLink<Void>("edit") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -147,7 +147,9 @@ public class HighlightController extends Panel {
 				editing = true;
 				target.addComponent(HighlightController.this);
 			}
-		});
+		};
+		editButton.setVisibilityAllowed(type.isEditable());
+		add (editButton);
 
 	}
 
