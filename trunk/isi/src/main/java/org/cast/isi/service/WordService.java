@@ -28,7 +28,7 @@ import net.databinder.models.hib.HibernateObjectModel;
 import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
-import org.cast.cwm.service.CwmService;
+import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.service.IEventService;
 import org.cast.isi.data.WordCard;
 import org.cast.isi.data.builder.WordCardsQuery;
@@ -44,6 +44,9 @@ public class WordService  {
 	
 	private static WordService INSTANCE = new WordService();
 	
+	@Inject
+	private ICwmService cwmService;
+
 	@Inject
 	private IEventService eventService;
 
@@ -72,7 +75,7 @@ public class WordService  {
 		WordCard wc = new WordCard(word, user);
 		wc.setGlossaryWord(inGlossary);
 		Databinder.getHibernateSession().save(wc);
-		CwmService.get().flushChanges();
+		cwmService.flushChanges();
 		eventService.saveEvent("wordcard:create", word, "glossary");
 		cardModel.setObject(wc);
 		return cardModel;
