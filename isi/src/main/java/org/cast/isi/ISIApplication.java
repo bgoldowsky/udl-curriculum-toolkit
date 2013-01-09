@@ -195,7 +195,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean useAuthoredResponseType = false; // false for backwards compatibility
 	@Getter protected String responseSortField = "createDate";
 	@Getter protected int responseSortState = ISortState.DESCENDING;
-	@Getter protected ResponseMetadata responseMetadata = new ResponseMetadata(); // the default type of responses
+	@Getter protected ResponseMetadata responseMetadata; // the default type of responses
 	@Getter protected ArrayList<IResponseType> defaultResponseTypes = new ArrayList<IResponseType>();
 	protected TinyMCESettings tinyMCESettings = null;
 
@@ -286,11 +286,10 @@ public abstract class ISIApplication extends CwmApplication {
 		// the super.init is called
 		sectionElement = appProperties.getProperty("isi.sectionElement");
 		pageElement = appProperties.getProperty("isi.pageElement");
-
 		super.init();
 		
 		ISIEmailService.useAsServiceInstance();
-		
+		responseMetadata  = new ResponseMetadata();		
 		
 		// Gather Extended Browser Information - Uses a wicket-administered redirect.
 		// May not be necessary.
