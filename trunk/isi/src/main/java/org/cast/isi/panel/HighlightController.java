@@ -97,10 +97,14 @@ public class HighlightController extends Panel {
 		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
 		
 		String color = type.getColor().toString().toLowerCase();
-
+		
+		WebMarkupContainer labelContainer = new WebMarkupContainer("labelContainer");
+		labelContainer.setOutputMarkupId(true);
+		add(labelContainer);
+		
 		WebMarkupContainer link = new WebMarkupContainer("highlightLink");
 		link.add(new SimpleAttributeModifier("onclick", String.format("$().CAST_Highlighter('modify', '%c');return false;", type.getColor())));
-		add(link);
+		labelContainer.add(link);
 
 		// The label may be editable, or may be retrieved from the properties file.
 		IModel<String> labelModel;
@@ -119,7 +123,7 @@ public class HighlightController extends Panel {
 		});
 		
 		// Form for editing the label, if requested
-		makeEditForm(type);
+		makeEditForm(type, labelContainer);
 		
 		// the yellow highlighter may have both authored highlights and hints associated with it
 		WebMarkupContainer hintContainer = new WebMarkupContainer("hintContainer");
@@ -137,7 +141,7 @@ public class HighlightController extends Panel {
 	 *
 	 * @param type which highlighter the label will be for
 	 */
-	private void makeEditForm (HighlightType type) {
+	private void makeEditForm (HighlightType type, final WebMarkupContainer container) {
 
 		if (type.isEditable()) {
 			String color = type.getColor().toString().toLowerCase();
@@ -146,11 +150,11 @@ public class HighlightController extends Panel {
 	
 			EditHighlightLabelForm editHighlightLabelForm = new EditHighlightLabelForm("editHighlightNameForm", 
 					responseService.getResponseForPrompt(mPrompt, targetUser), 
-					mPrompt);
-			add(editHighlightLabelForm);
+					mPrompt, container);
+			container.add(editHighlightLabelForm);
 			editHighlightLabelForm.setEnabled(!isTeacher);
 		} else {
-			add (new WebMarkupContainer("editHighlightNameForm").setVisibilityAllowed(false));
+			container.add (new WebMarkupContainer("editHighlightNameForm").setVisibilityAllowed(false));
 		}
 
 		// Button to show the edit form
@@ -164,12 +168,11 @@ public class HighlightController extends Panel {
 			
 			public void onClick(AjaxRequestTarget target) {
 				editing = true;
-				target.addComponent(HighlightController.this);
+				target.addComponent(container);
 			}
 		};
 		editButton.setVisibilityAllowed(type.isEditable());
-		add (editButton);
-
+		container.add (editButton);
 	}
 
 	protected void makeHint (WebMarkupContainer hintContainer, XmlSectionModel mSection) {
@@ -224,7 +227,7 @@ public class HighlightController extends Panel {
 		private static final long serialVersionUID = 1L;
 	
 		@SuppressWarnings("unchecked")
-		public EditHighlightLabelForm(String id, final IModel<Response> model, IModel<? extends Prompt > mHighlightPrompt) {
+		public EditHighlightLabelForm(String id, final IModel<Response> model, IModel<? extends Prompt > mHighlightPrompt, final WebMarkupContainer container) {
 			super(id, model);
 			setOutputMarkupId(true);
 			
@@ -261,7 +264,7 @@ public class HighlightController extends Panel {
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 					editing = false;
 					if (target != null) {
-						target.addComponent(HighlightController.this);
+						target.addComponent(container);
 						target.appendJavascript("showIndicators();");
 					}
 				}
