@@ -3,7 +3,7 @@
 <head></head>
 <body>
 <wicket:panel>
-	<div class="hlGradient">
+	<div wicket:id="labelContainer" class="hlGradient">
 		<a wicket:id="highlightLink" href="#" class="hlIcon">
 			<span class="hlRowInner">
 				<span wicket:id="name" class="action">Main Ideas</span>
@@ -27,7 +27,7 @@
 			</div>
 			<wicket:container wicket:id="hintCompareBox">
 				<div id="hintBox" class="supportBox collapseBox">
-                   	<h5 onclick="$().CAST_Highlighter('hintDisplay', null, false, null, 'hint');">Hint</h5>
+                   	<h5 onclick="$().CAST_Highlighter('hintDisplay', null, 'Y', null, 'hint'); return false;">Hint</h5>
                     <div class="collapseBody">
 	                	<!--  this is authorable  -->
                     	<p wicket:id="hintText">
@@ -37,7 +37,7 @@
                 </div>
 
                 <div id="compareBox" class="supportBox collapseBox">
-					<h5 onclick="showCompareHighlights(event, 'Y', this); return false;">Compare</h5>
+					<h5 onclick="$().CAST_Highlighter('hintDisplay', null, 'Y', null, 'key'); return false;">Compare</h5>
 					<div class="collapseBody">
 	                	<!--  this is authorable  -->
 						<p wicket:id="compareText">
