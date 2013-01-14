@@ -51,7 +51,7 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 		renderThemeJS(response, "js/lang/en.js");
 		renderThemeJS(response, "js/jquery/jquery.form.js");
 		renderThemeJS(response, "js/functions.js");
-		renderThemeJS(response, "js/jquery/jquery-ui-1.8.16.custom.min.js");
+		renderThemeJS(response, "js/jquery/jquery-ui-1.9.2.custom.min.js");
 	
 		renderThemeCSS(response, "css/toolbar.css");
 		renderThemeCSS(response, "css/buttons.css");
