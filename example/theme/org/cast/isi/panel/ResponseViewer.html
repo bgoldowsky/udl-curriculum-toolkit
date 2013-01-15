@@ -2,19 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
 <wicket:panel>
   <span wicket:id="response">response</span>
-  <wicket:enclosure child="sectionLink">
-    <div class="noteIcon"> 
-      <img wicket:id="icon" src="img/icons/reading.png" />
-      <div class="noteHeaderL">
-        <h3>Go To: <a href="#" wicket:id="sectionLink"><span wicket:id="sectionTitle">Link to the Section</span></a></h3>
-      </div>
-      <br />
-    </div>
-  </wicket:enclosure>
   <wicket:enclosure child="responseTitle">
   	<p wicket:id="responseTitle" class="responseTitle">Title or description</p>
   </wicket:enclosure>
-  <p wicket:id="date" class="responseTime">Date</p>
+  <p>
+	<wicket:enclosure child="user"><span wicket:id="user" class="responseUser">Author</span> : </wicket:enclosure>
+	<span wicket:id="date" class="responseTime">Date</span>
+  </p>
 </wicket:panel>
 
 <wicket:fragment wicket:id="textFragment">
