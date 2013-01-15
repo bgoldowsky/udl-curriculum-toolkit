@@ -94,6 +94,23 @@
 		</li>
 	</xsl:template>
 
+	<!-- Pullquotes, with attributions -->
+	<xsl:template match="dtb:blockquote[@class='pullquote']">
+		<div class="pullQuote">
+			<blockquote>
+				<xsl:apply-templates select="*[local-name()!='author']"/>
+			</blockquote>
+			<xsl:apply-templates select="dtb:author"/>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="dtb:blockquote[@class='pullquote']/dtb:author">
+		<p class="attrib">
+			<xsl:text>—</xsl:text> <!-- em dash -->
+			<xsl:apply-templates/>
+		</p>
+	</xsl:template>
+
     <!-- Ignore except when called out by image. -->
     <xsl:template match="dtb:imggroup/dtb:caption"/>
     
@@ -594,6 +611,9 @@
         	<xsl:when test="@class='compact'">
 	            <xsl:value-of select="'responseMCCompact'" />
         	</xsl:when>
+        	<xsl:otherwise>
+        		<xsl:value-of select="@class"/>
+        	</xsl:otherwise>
  	     </xsl:choose>
   	</xsl:variable>
    	 <xsl:variable name="noAnswer">
@@ -674,6 +694,7 @@
 				</div>
 			</xsl:when>
 			<xsl:otherwise>
+				<!-- normal, non-select response area -->
 				<div class="responseBar">
 					<div wicket:id="responseButtons_" rgid="{@id}" class="responseLeft">
 					</div>
@@ -685,8 +706,16 @@
 					</div>
 				</div>
 				<!-- list of responses -->
-				<div wicket:id="responseList_" rgid="{@id}" group="{@group}">
-				</div>
+				<xsl:choose>
+					<xsl:when test="ancestor-or-self::dtb:responsegroup/@share = 'class'">
+						<!-- discussion area -->
+						<div wicket:id="period_responseList_" rgid="{@id}" group="{@group}"></div>
+					</xsl:when>
+					<xsl:otherwise>
+						<!-- single-user response area -->
+						<div wicket:id="responseList_" rgid="{@id}" group="{@group}"></div>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
