@@ -1130,6 +1130,11 @@ h4 {
     margin: 0px;
 }
 
+.note {
+	margin: 0 6em 0 4em;
+	text-indent: -1em;
+}
+
 hr {
     background: #EBEBEB;
     color: #EBEBEB;
