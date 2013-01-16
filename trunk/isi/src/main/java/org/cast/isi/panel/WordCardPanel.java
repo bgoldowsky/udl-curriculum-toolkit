@@ -62,7 +62,7 @@ public class WordCardPanel extends ISIPanel {
 	protected void addWordCardResponses () {
 
 		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.WORD_CARD, mUser, mWordcard.getObject().getId().toString());
-		ResponseList responseList = new ResponseList("responseList", mPrompt, wordCardMetadata, null, null);
+		ResponseList responseList = new ResponseList("responseList", mPrompt, wordCardMetadata, null, mUser);
 		String glossaryContext = (isTeacher) ? "glossary.teacher" : "glossary";
 		responseList.setContext(glossaryContext);
 		responseList.setAllowEdit(!isTeacher);

@@ -38,16 +38,10 @@ public class LockingResponseList extends ResponseList implements ISectionStatusC
 	@Inject
 	private ISectionService sectionService;
 
-	public LockingResponseList(String wicketId, IModel<Prompt> mPrompt,
-			ResponseMetadata metadata, ContentLoc loc, IModel<User> mUser) {
+	public LockingResponseList(String wicketId, IModel<Prompt> mPrompt, ResponseMetadata metadata, ContentLoc loc, IModel<User> mUser) {
 		super(wicketId, mPrompt, metadata, loc, mUser);
 	}
 	
-	public LockingResponseList(String wicketId, IModel<Prompt> mPrompt,
-			ResponseMetadata metadata, ContentLoc loc) {
-		super(wicketId, mPrompt, metadata, loc);
-	}
-
 	@Override
 	public void onBeforeRender() {
 		setAllowEdit(!isTeacher() && !isCompleteAndLocked());

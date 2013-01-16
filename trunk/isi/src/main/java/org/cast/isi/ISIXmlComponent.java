@@ -94,6 +94,7 @@ import org.cast.isi.panel.LockingResponseList;
 import org.cast.isi.panel.MiniGlossaryLink;
 import org.cast.isi.panel.MiniGlossaryModal;
 import org.cast.isi.panel.PageLinkPanel;
+import org.cast.isi.panel.PeriodResponseList;
 import org.cast.isi.panel.RatePanel;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackButtonPanel;
@@ -461,12 +462,12 @@ public class ISIXmlComponent extends XmlComponent {
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
-			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc);
-			dataView.setContext(getResponseListContext());
+			ResponseList dataView = new ResponseList (wicketId, mPrompt, metadata, loc, ISISession.get().getTargetUserModel());
+			dataView.setContext(getResponseListContext(false));
 			dataView.setAllowEdit(!isTeacher);
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
-			dataView.add(new AttributeRemover("rgid"));
+			dataView.add(new AttributeRemover("rgid", "group"));
 			return dataView;
 
 		} else if (wicketId.startsWith("locking_responseList_")) {
@@ -474,13 +475,26 @@ public class ISIXmlComponent extends XmlComponent {
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
-			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc);
-			dataView.setContext(getResponseListContext());
+			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, ISISession.get().getTargetUserModel());
+			dataView.setContext(getResponseListContext(false));
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
-			dataView.add(new AttributeRemover("rgid"));
+			dataView.add(new AttributeRemover("rgid", "group"));
 			return dataView;
 
+		} else if (wicketId.startsWith("period_responseList_")) {
+			ContentLoc loc = new ContentLoc(getModel().getObject());
+			String responseGroupId = elt.getAttribute("rgid");
+			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
+			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
+			PeriodResponseList dataView = new PeriodResponseList(wicketId, mPrompt, metadata, loc, ISISession.get().getCurrentPeriodModel());
+			dataView.setContext(getResponseListContext(true));
+			dataView.setAllowEdit(!isTeacher);
+			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
+			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
+			dataView.add(new AttributeRemover("rgid", "group"));
+			return dataView;			
+			
 		} else if (wicketId.startsWith("responseButtons_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttribute("rgid");
@@ -703,12 +717,14 @@ public class ISIXmlComponent extends XmlComponent {
 		return page.hasMiniGlossary();
 	}
 	
-	private String getResponseListContext() {
+	private String getResponseListContext(boolean isDiscussion) {
 		StringBuilder builder = new StringBuilder();
 		if (inGlossary)
 			builder.append("glossary");
 		else
 			builder.append("response");
+		if (isDiscussion)
+			builder.append(".discuss");
 		if (isTeacher)
 			builder.append(".teacher");
 		return builder.toString();

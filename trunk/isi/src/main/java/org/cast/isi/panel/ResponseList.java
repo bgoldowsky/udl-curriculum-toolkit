@@ -40,10 +40,7 @@ import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.IResponseService;
 import org.cast.isi.ISIApplication;
-import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
@@ -68,7 +65,7 @@ public class ResponseList extends Panel {
 	protected String context = "default";
 	
 	@Getter @Setter
-	protected IModel<User> mTargetUser = ISISession.get().getTargetUserModel();
+	protected IModel<User> mTargetUser;
 
 	@Getter @Setter
 	protected boolean allowEdit = true;
@@ -85,67 +82,75 @@ public class ResponseList extends Panel {
 	@Inject
 	IResponseService responseService;
 	
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(ResponseList.class);
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Create a ResponseList for a particular response area and user.
+	 * @param wicketId
+	 * @param mPrompt
+	 * @param metadata
+	 * @param loc
+	 * @param mUser
+	 */
 	public ResponseList (String wicketId, IModel<Prompt> mPrompt, final ResponseMetadata metadata, final ContentLoc loc, IModel<User> mUser) {
-		this(wicketId, mPrompt, metadata, loc);
-		if (mUser != null) 
-			this.mTargetUser = mUser;
-		
-	}
-	
-	public ResponseList(String wicketId, IModel<Prompt> mPrompt,
-			ResponseMetadata metadata, ContentLoc loc) {
 		super(wicketId);
 		setOutputMarkupId(true);
 		this.promptModel = mPrompt;
 		this.metadata = metadata;
 		this.loc = loc;
+		this.mTargetUser = mUser;
 	}
 	
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		dataProvider = responseService.getResponseProviderForPrompt(promptModel, mTargetUser);
-		// response list sort order is set by application configuration
-		dataProvider.getSortState().setPropertySortOrder(ISIApplication.get().getResponseSortField(), ISIApplication.get().getResponseSortState());
+		dataProvider = getResponseProvider();
 		
 		DataView<Response> dataView = new DataView<Response>("dataView", dataProvider) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected void populateItem(Item<Response> item) {
-				EditableResponseViewer viewer = new EditableResponseViewer("response", item.getModel(), metadata, loc) {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					protected void onDelete(AjaxRequestTarget target) {
-						super.onDelete(target);
-						target.addComponent(ResponseList.this);
-						getDirectionsComponent().setVisibility();
-						target.addComponent(getDirectionsComponent());
-					}
-				};
-				viewer.setAllowEdit(allowEdit);
-				viewer.setAllowNotebook(allowNotebook);
-				viewer.setAllowWhiteboard(allowWhiteboard);
-				viewer.setContext(context); // pass through the context
-				item.add(viewer);
-			}				
+				item.add(getEditableResponseViewer("response", item.getModel(), metadata, loc));
+			}
 		};
 		add(dataView);
 		add (new EmptyPanel("placeholder").setOutputMarkupId(true));
 		add (new Directions("directions"));
-
 	}
-	
+
 	@Override
 	public void onBeforeRender() {
 		getDirectionsComponent().setVisibility();
 		super.onBeforeRender();
 	}
 	
+	protected ISortableDataProvider<Response> getResponseProvider() {
+		 ISortableDataProvider<Response> provider = responseService.getResponseProviderForPrompt(promptModel, mTargetUser);
+		// response list sort order is set by application configuration
+		ISIApplication app = ISIApplication.get();
+		provider.getSortState().setPropertySortOrder(app.getResponseSortField(), app.getResponseSortState());
+		return provider;
+	}
+	
+	protected EditableResponseViewer getEditableResponseViewer(String wicketId, IModel<Response> mResponse, ResponseMetadata metadata, ContentLoc loc) {
+		EditableResponseViewer viewer = new EditableResponseViewer(wicketId, mResponse, metadata, loc) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onDelete(AjaxRequestTarget target) {
+				super.onDelete(target);
+				target.addComponent(ResponseList.this);
+				getDirectionsComponent().setVisibility();
+				target.addComponent(getDirectionsComponent());
+			}
+		};
+		viewer.setAllowEdit(allowEdit);
+		viewer.setAllowNotebook(allowNotebook);
+		viewer.setAllowWhiteboard(allowWhiteboard);
+		viewer.setContext(context); // pass through the context
+		return viewer;
+	}				
+
 	public String getPlaceholderId() {
 		return "placeholder";
 	}

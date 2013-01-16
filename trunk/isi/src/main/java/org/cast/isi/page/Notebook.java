@@ -214,7 +214,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	 */
 	protected void addNotebookResponses () {
 		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.NOTEBOOK_NOTES, currentChapterLoc);
-		ResponseList responseList = new ResponseList("nbResponseList", mPrompt, notebookMetadata, currentChapterLoc);
+		ResponseList responseList = new ResponseList("nbResponseList", mPrompt, notebookMetadata, currentChapterLoc, ISISession.get().getTargetUserModel());
 		String context = "notebook" + (isTeacher ? ".teacher" : ""  );
 		responseList.setContext(context);
 		responseList.setAllowEdit(!isTeacher);

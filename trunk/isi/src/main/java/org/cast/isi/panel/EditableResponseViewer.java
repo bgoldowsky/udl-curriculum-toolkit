@@ -48,6 +48,9 @@ public class EditableResponseViewer extends Panel {
 
 	@Getter @Setter
 	protected String context = "default";
+	
+	@Getter @Setter
+	protected boolean showAuthor = false;
 
 	@Getter @Setter
 	protected boolean allowEdit = false;
@@ -81,6 +84,7 @@ public class EditableResponseViewer extends Panel {
 		
 		viewer = new ResponseViewer("viewer", getModel());
 		viewer.setShowDateTime(true);
+		viewer.setShowAuthor(showAuthor);
 		viewContainer.add(viewer);
 		
 		WebMarkupContainer responseActions = new WebMarkupContainer("responseActions");

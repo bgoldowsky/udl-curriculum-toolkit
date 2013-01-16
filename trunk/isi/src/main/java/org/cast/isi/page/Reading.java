@@ -219,7 +219,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		};
 		add(notesbox);
 		notesbox.add(new WebMarkupContainer("collapseBoxToggle").add(new CollapseBoxBehavior("onclick", "pagenotes", getPageName())));
-		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc);
+		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc, mTargetUser);
 		responseList.setContext("pagenote");
 		responseList.setAllowNotebook(ISIApplication.get().isNotebookOn());
 		responseList.setAllowWhiteboard(ISIApplication.get().isWhiteboardOn());
@@ -247,10 +247,9 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		add(tagsBox);
 		tagsBox.setVisible(ISIApplication.get().isTagsOn());
 		tagsBox.add(new WebMarkupContainer("tagCollapseToggle").add(new CollapseBoxBehavior("onclick", "tagpanel:reading", getPageName())));
-		tagsBox.add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()));
+		tagsBox.add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()).setRenderBodyOnly(true));
 	}
 	
-	@SuppressWarnings("static-access")
 	protected void addQuestionsPanel () {
     	// Always open this panel if there are questions
 		WebMarkupContainer questionBox = new WebMarkupContainer("questionBox") {
@@ -270,7 +269,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
     	questionContainer = new WebMarkupContainer("questionContainer");
     	questionBox.add(questionContainer);
 		questionContainer.setOutputMarkupId(true);
-		PopupSettings questionPopupSettings = ISIApplication.get().questionPopupSettings;
+		PopupSettings questionPopupSettings = ISIApplication.questionPopupSettings;
     	questionList = new QuestionListView("question", QuestionPopup.class, questionPopupSettings, null, null);
 		questionContainer.add(questionList);
 		questionContainer.add(new WebMarkupContainer("qButtonVisible"));
