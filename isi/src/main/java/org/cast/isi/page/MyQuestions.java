@@ -175,7 +175,7 @@ public class MyQuestions extends ISIStandardPage {
 			responseButtons.setVisible(!isTeacher);
 			add(responseButtons);
 
-			ResponseList responseList = new ResponseList("responseList", mPrompt, questionsMetadata, loc);
+			ResponseList responseList = new ResponseList("responseList", mPrompt, questionsMetadata, loc, mUser);
 			String context = "questions" + (isTeacher ? ".teacher" : ""  );
 			responseList.setContext(context);
 			responseList.setAllowEdit(!isTeacher);
