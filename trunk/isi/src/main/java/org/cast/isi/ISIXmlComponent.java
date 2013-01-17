@@ -20,6 +20,11 @@
 package org.cast.isi;
 
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -66,6 +71,7 @@ import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
+import org.cast.cwm.xml.service.XmlService;
 import org.cast.isi.component.AnnotatedImageComponent;
 import org.cast.isi.component.AuthoredPopupLink;
 import org.cast.isi.component.CollapseBoxHeader;
@@ -85,6 +91,7 @@ import org.cast.isi.component.VideoLink;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.page.ISIBasePage;
+import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.panel.AgentLink;
 import org.cast.isi.panel.GlossaryLink;
@@ -274,6 +281,44 @@ public class ISIXmlComponent extends XmlComponent {
 			XmlSection section = document.getById(xmlId);
 			XmlSectionModel mSection = new XmlSectionModel(section);
 			return new AuthoredPopupLink(wicketId, xmlId, mSection);
+			
+		} else if (wicketId.startsWith("noteBackLink_")) {
+			// Link back from a note to its (first) noteref.
+			String idref = elt.getAttribute("idref");
+			// Find candidate noterefs in this chapter
+			XmlSection sec = getModel().getObject();
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			xPath.setNamespaceContext(XmlService.get().getNamespaceContext());
+			XmlSection linkSection = null;
+			String linkText = "?";
+			try {
+				String path = String.format("//dtb:noteref[@idref='#%s']", idref);
+				NodeList nl = (NodeList) xPath.evaluate(path, sec.getXmlDocument().getDocument().getDocumentElement(), XPathConstants.NODESET);
+				if (nl.getLength() > 0) {
+					Element node = null;
+					node = (Element) nl.item(0);
+					linkText = node.getTextContent();
+					// Scan parents until you find the smallest enclosing XML Section.
+					while (linkSection == null && node.getParentNode() != null) {
+						String id = node.getAttributeNS(null, "id");
+						if (id != null) {
+							linkSection = sec.getXmlDocument().getById(id);
+						}
+						node = (Element) node.getParentNode();
+					}
+				}
+			} catch (XPathExpressionException e) {
+				e.printStackTrace();  // malformed expression - shouldn't happen
+			}
+			if (linkSection != null) {
+				BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkTo(wicketId, linkSection, "note_"+idref);
+				link.add(new AttributeRemover("idref"));
+				link.add(new Label("text", linkText));
+				return link;
+			} else {
+				log.debug("Could not find noteref for note: idref={}", idref);
+				return new SectionLinkFactory().linkToPage(wicketId, null);
+			}
 			
 		} else if (wicketId.startsWith("fileLink_")) {
 			// link to file in content directory
