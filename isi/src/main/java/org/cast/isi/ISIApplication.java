@@ -78,7 +78,9 @@ import org.cast.cwm.glossary.GlossaryTransformer;
 import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.IResponseService;
+import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.service.SiteService;
+import org.cast.cwm.service.UserPreferenceService;
 import org.cast.cwm.tag.TagService;
 import org.cast.cwm.xml.FileResource;
 import org.cast.cwm.xml.IDocumentObserver;
@@ -274,6 +276,8 @@ public abstract class ISIApplication extends CwmApplication {
    			binder.bind(ILinkPropertiesService.class).to(LinkPropertiesService.class).in(Scopes.SINGLETON);
    			binder.bind(IEventService.class).to(ISIEventService.class).in(Scopes.SINGLETON);
    			binder.bind(IQuestionService.class).to(QuestionService.class);
+   			binder.bind(IUserPreferenceService.class).to(UserPreferenceService.class).in(Scopes.SINGLETON);
+   			log.debug("finished binding ISI Services");
     		}
         });
         return modules;
