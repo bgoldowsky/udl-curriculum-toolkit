@@ -43,42 +43,39 @@
 		        <div id="mainContentRight">
 		        
 			   		<!-- Highlight Panel -->
-		            <div wicket:id="highlightControlPanel"></div>
+				    <div wicket:id="highlightBox">
+					    <div wicket:id="highlightControlPanel"></div>
+				  	</div>
+		
 		
 			   		<!-- My Notes Panel -->
-		            <div wicket:id="notesbox" class="rightBox collapseBox">
-		                <h5 wicket:id=collapseBoxToggle>My Notes</h5>
-		                <div class="collapseBody">
-		                    <div class="responseBar">
-		                    	<div wicket:id="responseButtons" rgid="{@id}" class="responseLeft"></div>
-		                    	<div class="responseRight"></div>
-		                    </div>
-		                    <div wicket:id="responseList"></div>
-		                </div>
+		            <div wicket:id="noteBox">
+	                    <div class="responseBar">
+	                    	<div wicket:id="responseButtons" rgid="{@id}" class="responseLeft"></div>
+	                    	<div class="responseRight"></div>
+	                    </div>
+	                    <div wicket:id="responseList"></div>
 		            </div>
 			
 			   		<!-- Questions Panel -->
-		            <div wicket:id="questionBox" class="rightBox collapseBox">
-		                <h5 wicket:id="questionBoxToggle">My Questions</h5>
-		                <div class="collapseBody">
-		                	<div wicket:id="questionContainer">
-			                    <p wicket:id="question">
-			                        <a wicket:id="link" href="#">
-			                        	<span wicket:id="text">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?
-			                        	</span>
-			                        </a>
-			                    </p>
-			                    <wicket:remove>
-			                    <p>
-			                        <a href="#">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?</a>
-			                    </p>
-			                    </wicket:remove>
-			                    <wicket:enclosure child="qButtonVisible">
-			                    	<wicket:container wicket:id="qButtonVisible"></wicket:container>
-			                    	<a id="newQMLink" target="_new" onclick="$('#newQuestionModal').show(); return false;" href="#newQuestionModal" class="button">Create New Question</a>
-			                    </wicket:enclosure>
-		                    </div>
-		                </div>
+		            <div wicket:id="questionBox">
+	                	<div wicket:id="questionContainer">
+		                    <p wicket:id="question">
+		                        <a wicket:id="link" href="#">
+		                        	<span wicket:id="text">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?
+		                        	</span>
+		                        </a>
+		                    </p>
+		                    <wicket:remove>
+		                    <p>
+		                        <a href="#">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?</a>
+		                    </p>
+		                    </wicket:remove>
+		                    <wicket:enclosure child="qButtonVisible">
+		                    	<wicket:container wicket:id="qButtonVisible"></wicket:container>
+		                    	<a id="newQMLink" target="_new" onclick="$('#newQuestionModal').show(); return false;" href="#newQuestionModal" class="button">Create New Question</a>
+		                    </wicket:enclosure>
+	                    </div>
 		            </div>
 	 				<div id="newQuestionModal" class="modalBody modalNarrow" style="display: none;">
 					    <div class="modalHeader" role="banner">
@@ -102,8 +99,8 @@
 					</div>
 			
 			   		<!-- My Tags Panel -->
-		            <div wicket:id="tagsBox" class="rightBox collapseBox tagCurrent">
-		 		        <h5 wicket:id="tagCollapseToggle">My Tags</h5>
+		            <div wicket:id="tagBox" class="rightBox collapseBox">
+		 		        <h5 wicket:id="tagBoxToggle">My Tags</h5>
 		 		        <div wicket:id="tagPanel"></div>
 		            </div>
 		        </div>
