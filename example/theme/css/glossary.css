@@ -36,6 +36,15 @@ input {
 a { color: #364A77; }
 a:hover, a:focus { color: #1E2D56; }
 
+ul, ol {
+    padding: 0px 0px 1em 0px;
+    margin: 0px;
+}
+ul li, ol li {
+    padding: 0px 0px 0.5em 0px;
+    margin: 0px 0px 0px 1.5em;
+}
+
 /*================================================================*/
 /* Header */
 

@@ -68,8 +68,10 @@
       </p>
     </xsl:template>
 
-    <!-- list of alternate terms -->
-    <xsl:template match="dtb:list">
+    <!-- List of alternate terms -->
+    <!-- For lack of any more explicit markup, these are defined as a <list> immediately following the <h1>  -->
+    <xsl:template match="dtb:level1/dtb:list[local-name(preceding-sibling::dtb:*[1])='h1']">
+    	<!--  do not display -->
     </xsl:template>
     
     <xsl:template match="dtb:source">
