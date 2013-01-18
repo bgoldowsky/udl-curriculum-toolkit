@@ -250,7 +250,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		}				
 		tagBox.setVisible(ISIApplication.get().isTagsOn());
 
-		StateSavingCollapseBoxBehavior behavior = new StateSavingCollapseBoxBehavior("onclick", "tagToggle", getPageName(), "tagToggle");
+		StateSavingCollapseBoxBehavior behavior = new StateSavingCollapseBoxBehavior("tagToggle", getPageName(), "tagToggle");
 		tagBox.add(new WebMarkupContainer("tagBoxToggle").add(behavior));
 
 		ContentElement ce = responseService.getOrCreateContentElement(loc).getObject();

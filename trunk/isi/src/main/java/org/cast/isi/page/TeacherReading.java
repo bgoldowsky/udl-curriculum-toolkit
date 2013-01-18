@@ -27,10 +27,11 @@ import org.apache.wicket.markup.html.link.PopupSettings;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.tag.component.TagPanel;
-import org.cast.isi.CollapseBoxBehavior;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
+import org.cast.isi.component.StateSavingCollapseBoxBehavior;
+import org.cast.isi.component.StateSavingCollapseBoxBorder;
 import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.HighlightControlPanel;
@@ -66,28 +67,19 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	protected void addNotesPanel () {
 		setPageNotesMetadata();
 		mNotesPrompt = responseService.getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
-		WebMarkupContainer notesbox = new WebMarkupContainer("notesbox") {
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected void onBeforeRender() {
-				super.onBeforeRender();
-				if (mNotesPrompt != null || !(mNotesPrompt.getObject().getResponses().size() == 0))
-					this.add(new ClassAttributeModifier("open"));
-			}
-		};
-		add(notesbox);
-		notesbox.setVisible(showXmlContent);
-		notesbox.add(new WebMarkupContainer("collapseBoxToggle").add(new CollapseBoxBehavior("onclick", "pagenotes", getPageName())));
+		StateSavingCollapseBoxBorder noteBox = new StateSavingCollapseBoxBorder("noteBox", "noteToggle", null, getPageName());
+		add(noteBox);
+		noteBox.setVisible(showXmlContent);
 		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc, mTargetUser);
 		responseList.setContext("pagenote.teacher");
 		responseList.setAllowNotebook(false);
 		responseList.setAllowEdit(false);
 		responseList.setAllowWhiteboard(ISIApplication.get().isWhiteboardOn());
-		notesbox.add(responseList);
+		noteBox.add(responseList);
 		WebMarkupContainer responseButtons = new WebMarkupContainer("responseButtons");
-		notesbox.add(responseButtons);
+		noteBox.add(responseButtons);
 		responseButtons.setVisible(false);
-		notesbox.setVisible(ISIApplication.get().isPageNotesOn());
+		noteBox.setVisible(ISIApplication.get().isPageNotesOn());
 	}
 
 	
@@ -95,15 +87,22 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	// and will create a READ-ONLY tagging panel to view student's tags.
 	protected void addTaggingPanel () {
 		if (showXmlContent) {
+			WebMarkupContainer tagBox = new WebMarkupContainer("tagBox");
+			add(tagBox);
+			Boolean toggleState = userPreferenceService.getUserPreferenceBoolean(ISISession.get().getUserModel(), "tagToggle");
+			if (toggleState != null) {
+				tagBox.add(new ClassAttributeModifier("open", !toggleState));
+			}				
+			tagBox.setVisible(ISIApplication.get().isTagsOn());
+
+			StateSavingCollapseBoxBehavior behavior = new StateSavingCollapseBoxBehavior("tagToggle", getPageName(), "tagToggle");
+			tagBox.add(new WebMarkupContainer("tagBoxToggle").add(behavior));
+
 			ContentElement ce = responseService.getOrCreateContentElement(loc).getObject();
-			WebMarkupContainer tagsBox = new WebMarkupContainer("tagsBox");
-			add(tagsBox);
-			tagsBox.setVisible(ISIApplication.get().isTagsOn());
-			tagsBox.add(new WebMarkupContainer("tagCollapseToggle").add(new CollapseBoxBehavior("onclick", "tagpanel:reading", getPageName())));
-			tagsBox.add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder(), ISISession.get().getStudentModel().getObject()));
+			tagBox.add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder(), ISISession.get().getStudentModel().getObject()));
 		} else {
-			add (new WebMarkupContainer("tagsBox")
-				.add(new WebMarkupContainer("tagCollapseToggle"))
+			add (new WebMarkupContainer("tagBox")
+				.add(new WebMarkupContainer("tagBoxToggle"))
 				.add(new WebMarkupContainer("tagPanel"))
 				.setVisible(false));
 		}
@@ -114,16 +113,20 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	@Override
 	public void addHighlightPanel() {	
 		if (showXmlContent) {
-			add(new HighlightControlPanel("highlightControlPanel", loc, mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
+			StateSavingCollapseBoxBorder highlightBox = new StateSavingCollapseBoxBorder("highlightBox", "highlightToggle", "globalHighlight", getPageName());
+			add(highlightBox);
+			highlightBox.setVisible(ISIApplication.get().isHighlightsPanelOn());
+			highlightBox.add(new HighlightControlPanel("highlightControlPanel", loc, mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
 			HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", 
 					responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
 					ISISession.get().getStudentModel());
 			add(highlightDisplayPanel);
-			highlightDisplayPanel.setVisible(ISIApplication.get().isHighlightsPanelOn());
 			highlightDisplayPanel.setReadOnly(true);
 
 		} else {
-			add (new WebMarkupContainer("highlightControlPanel").setVisible(false));
+			add (new WebMarkupContainer("highlightBox")
+				.add (new WebMarkupContainer("highlightControlPanel"))
+				.setVisible(false));
 			add (new WebMarkupContainer("highlightDisplayPanel").setVisible(false));
 		}		
 	}
@@ -132,21 +135,9 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	@SuppressWarnings("static-access")
 	@Override
 	protected void addQuestionsPanel () {
-    	// Always open this panel if there are questions
-		WebMarkupContainer questionBox = new WebMarkupContainer("questionBox") {
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected void onBeforeRender() {
-				super.onBeforeRender();
-				if (questionList.size() > 0) {
-					this.add(new ClassAttributeModifier("open"));
-				}
-			}
-		};
+		StateSavingCollapseBoxBorder questionBox = new StateSavingCollapseBoxBorder("questionBox", "questionToggle", null, getPageName());
 		add(questionBox);
 		questionBox.setVisible(ISIApplication.get().isMyQuestionsOn() && (showXmlContent));
-		questionBox.add(new WebMarkupContainer("questionBoxToggle")
-					.add(new CollapseBoxBehavior("onclick", "questionspanel", getPageName())));
     	questionContainer = new WebMarkupContainer("questionContainer");
 		questionContainer.setOutputMarkupId(true);
     	questionBox.add(questionContainer);

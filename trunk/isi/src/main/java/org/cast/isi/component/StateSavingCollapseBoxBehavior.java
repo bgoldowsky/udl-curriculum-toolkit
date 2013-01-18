@@ -44,13 +44,14 @@ public final class StateSavingCollapseBoxBehavior extends CollapseBoxBehavior {
 	IUserPreferenceService userPreferenceService;
 
 	/**
-	 * @param event - the type of ajax event to track (e.g., onclick)
+	 * State Saving Behavior added to the onclick event
+	 * 
 	 * @param type - event type
 	 * @param pageName - usually supplied by the page - can be null
 	 * @param userPreferenceName - unique name for a user preference
 	 */
-	public StateSavingCollapseBoxBehavior(String event, String type, String pageName, String userPreferenceName) {
-		super(event, type, pageName);
+	public StateSavingCollapseBoxBehavior(String type, String pageName, String userPreferenceName) {
+		super("onclick", type, pageName);
 		this.userPreferenceName = userPreferenceName;
 	}
 
