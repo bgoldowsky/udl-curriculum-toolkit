@@ -19,11 +19,9 @@
  */
 package org.cast.isi.component;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.border.Border;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.service.IUserPreferenceService;
@@ -57,7 +55,7 @@ public class StateSavingCollapseBoxBorder extends Border {
 		
 		// add the id, if it has been supplied
 		if (collapseBoxId != null && !collapseBoxId.isEmpty()) {
-			collapseBox.add(new AttributeModifier("id", true, new Model<String>(collapseBoxId)));
+			collapseBox.setOutputMarkupId(true).setMarkupId(collapseBoxId);
 		}
 		
 		// if the preference exists in the db, add or remove the css class "open"
@@ -70,7 +68,7 @@ public class StateSavingCollapseBoxBorder extends Border {
 		collapseBox.add(collapseBoxToggle);
 		
 		// add event logging behavior
-		collapseBoxToggle.add(new StateSavingCollapseBoxBehavior("onclick", userPreferenceName, pageName, userPreferenceName));
+		collapseBoxToggle.add(new StateSavingCollapseBoxBehavior(userPreferenceName, pageName, userPreferenceName));
 		
 		// title of collapse box is in the application .properties file
 		collapseBoxToggle.add(new Label("collapseBoxLabel", new ResourceModel(userPreferenceName+".title", "default collapse box label")));
