@@ -1131,8 +1131,12 @@ h4 {
 }
 
 .note {
+    position: relative;
 	margin: 0 6em 0 4em;
-	text-indent: -1em;
+}
+.noteindex {
+    position: absolute;
+    left: -1.75em;
 }
 
 hr {
