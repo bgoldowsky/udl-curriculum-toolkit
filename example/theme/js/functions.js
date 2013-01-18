@@ -9,9 +9,9 @@
 /*=========================================================*/
 /* TODO is there a way to make this info JS safe?? */
 function logJsEvent(detail, page, type) {
-	
+
 	// logJsEventCallbackUrl is a global js var defined in java.  The value is callback URL for the component
-	// the event behavior is attached to.	
+	// the event behavior is attached to.
 	wicketAjaxGet(logJsEventCallbackUrl + '&eventDetail=' + detail + '&eventPage=' + page + '&eventType=' + type , function() {}, function() {});
 
 }
@@ -171,18 +171,57 @@ function showImageDetail(id, show) {
 	var detail = $("#imageDetail_" + id);
 
 	if (show) {
-		// get the position of the original thumbnail
-		var position = image.position();
-		image.children('a').hide();
-		detail.css("top", position.top);
-		detail.css("left", position.left);
-		detail.css("position", "absolute");
-		detail.show();
+        // Get dimensions of modal window
+        detail.css("position", "absolute").css("left", "-9999px").css("display", "block");
+        detailWidth = detail.outerWidth();
+        detail.css("left", "auto").css("display", "none");
 
+		// get the position of the original thumbnail and width of browser window
+		var thumbPosition = image.position();
+		var thumbOffset = image.offset();
+		var thumbWidth = image.outerWidth(true);
+		var windowWidth = $(window).width();
+
+        // Check to make sure modal won't bleed off right edge
+        if ( $(document.body).hasClass("themeGlossary") && (windowWidth < (thumbOffset.left + detailWidth)) ) {
+            // Has bleed in glossary window - align to top right of thumbnail
+            var glossLeft = (thumbPosition.left + thumbWidth) - detailWidth ;
+            detail.css("left",  glossLeft + "px");
+            detail.css("right", "auto");
+        } else if (windowWidth < (thumbOffset.left + detailWidth)) {
+		    // Has bleed - align to top of thumbnail, right side of mainContent
+		    mainContent = $("#mainContent");
+		    mainContentLeft = $("#mainContentLeft");
+		    mainContentWidth = mainContent.outerWidth();
+		    mainContentLeftWidth = mainContentLeft.outerWidth();
+            var newRight = mainContentLeftWidth - mainContentWidth;
+		    detail.css("right", newRight + "px");
+		    detail.css("left", "auto");
+	    } else {
+	        // No bleed - align to top left of thumbnail
+		    detail.css("left", thumbPosition.left);
+		    detail.css("right", "auto");
+		}
+
+		// Store trigger
+		var $trigger = $(document.activeElement);
+		detail.data("detailTrigger", $trigger.attr("id"));
+
+        detail.css("position", "absolute");
+        detail.css("top", thumbPosition.top);
+	    detail.attr("tabindex", "-1");
+	    detail.get(0).focus();
+	    detail.show();
+        //image.children('a').hide();
 	} else {
-		detail.hide();
-		image.children('a').show();
-		image.fadeTo(10,1.00);
+        detail.hide();
+		//image.children('a').show();
+	    if (detail.data("DialogTrigger")) {
+			var $trigger = $("#" + detail.data("DialogTrigger"));
+			if ($trigger.get(0)) {
+				$trigger.get(0).focus();
+			}
+		}
 	}
 }
 
@@ -191,7 +230,7 @@ function showImageDetail(id, show) {
  * detailed full video
 /*=========================================================*/
 function showMediaDetail(id, show) {
-	
+
 	var videoThumb = $("#media_" + id);
 	var videoModal = $("#mediaDetail_" + id);
     var videoModalMarginLeft = -videoModal.width() / 2;
@@ -216,7 +255,7 @@ function showMediaDetail(id, show) {
 // TODO -- why is this no-op function here?
 function closeVideo(id) {
 	var videoModal = $("#mediaDetail_" + id);
-	
+
 	// find the child object
 	var videoObject = videoModal.children('object');
 }
@@ -245,9 +284,9 @@ function modalMove() {
             var boxElm = $(this).closest('.modalBody');
             $(boxElm).draggable({
                 handle: ".modalMove",
-                start: function() { $(boxElm).css('z-index', ++moveZIndex); 
+                start: function() { $(boxElm).css('z-index', ++moveZIndex);
                 /* logJsEvent("move something", "", "modal:move");*/
-                } 
+                }
             });
         }
     });
