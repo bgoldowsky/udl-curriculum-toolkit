@@ -209,9 +209,9 @@ function showImageDetail(id, show) {
 
         detail.css("position", "absolute");
         detail.css("top", thumbPosition.top);
+	    detail.show();
 	    detail.attr("tabindex", "-1");
 	    detail.get(0).focus();
-	    detail.show();
         //image.children('a').hide();
 	} else {
         detail.hide();
