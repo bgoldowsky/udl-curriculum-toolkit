@@ -194,9 +194,9 @@ function showImageDetail(id, show) {
 		    mainContentLeft = $("#mainContentLeft");
 		    mainContentWidth = mainContent.outerWidth();
 		    mainContentLeftWidth = mainContentLeft.outerWidth();
-            var newRight = mainContentLeftWidth - mainContentWidth;
-		    detail.css("right", newRight + "px");
-		    detail.css("left", "auto");
+            var newLeft = mainContentWidth - detailWidth;
+		    detail.css("left", newLeft + "px");
+		    detail.css("right", "auto");
 	    } else {
 	        // No bleed - align to top left of thumbnail
 		    detail.css("left", thumbPosition.left);
