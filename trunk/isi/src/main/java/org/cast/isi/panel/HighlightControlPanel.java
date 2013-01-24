@@ -35,6 +35,12 @@ import org.slf4j.LoggerFactory;
  * via javascript.  The bulk of this panel is actually support content and
  * the ability to edit an application wide "Highlight Label."
  * 
+ * The highlighting javascript requires two other components: a {@link HighlightDisplayPanel},
+ * which includes hidden form fields to transmit data about highlights, and a 
+ * {@link NoHighlightsModal} modal message which needs to be attached
+ * as a direct child of the page.  This panel will check for both in onBeforeRender
+ * and raise an error if they are not found.
+ * 
  * @author jbrookover
  *
  */
@@ -56,22 +62,27 @@ public class HighlightControlPanel extends Panel {
 		for (HighlightType type : HighlightService.get().getHighlighters()) {
 			add(new HighlightController(type.getColor().toString(), type, loc, mSection));
 		}
-		
 	}
 	
-
 	@Override
 	protected void onBeforeRender() {
-		
-		Object result = getPage().visitChildren(HighlightDisplayPanel.class, new IVisitor<HighlightDisplayPanel>() {
-
+		Object hdpFound = getPage().visitChildren(HighlightDisplayPanel.class, new IVisitor<HighlightDisplayPanel>() {
 			public Object component(HighlightDisplayPanel component) {
 				return IVisitor.STOP_TRAVERSAL;
 			}
 		});
 		
-		if (result == null)
+		if (hdpFound == null)
 			throw new IllegalStateException("HighlightControlPanel must be on the same page as a HighlightDisplayPanel.");
+		
+		Object nhpFound = getPage().visitChildren(NoHighlightModal.class, new IVisitor<NoHighlightModal>() {
+			public Object component(NoHighlightModal component) {
+				return IVisitor.STOP_TRAVERSAL;
+			}
+		});
+
+		if (nhpFound == null)
+			throw new IllegalStateException("HighlightControlPanel must be on the same page as a NoHighlightModal.");
 		
 		super.onBeforeRender();
 	}

@@ -3,24 +3,11 @@
 <head></head>
 <body>
 	<wicket:panel>
-		<div id="noHighlightModel" class="modalBody modalNarrow" style="display: none;">
-		    <div class="modalHeader" role="banner">
-		        <div class="modalTitle">No Highlights Saved</div>
-		        <a href="javascript:void(0)" onclick="$('#noHighlightModel').hide();" class="modalClose button icon"><img src="img/icons/close.png" width="15" height="15" alt="Close"  title="Close" /></a>
-		    </div>
-		    <div class="modalMainCol">
-		        <div class="modalContent">
-			        <p>No highlights have been made.
-			        </p>
-		        </div>
-		    </div>
-		</div>
-
         <div wicket:id="Y"></div>
         <div wicket:id="B"></div>
         <div wicket:id="G"></div>
         
-        <div class="hlRow controlE" onclick="javascript:changeMode('E'); return false;">
+        <div class="hlRow controlE" onclick="$().CAST_Highlighter('modify', 'E');return false;">
             <div class="hlGradient">
                 <a href="#" onclick="changeMode('E'); return false;" class="hlIcon">
                     <span class="hlRowInner">
