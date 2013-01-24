@@ -27,9 +27,8 @@
 			</div>
 			<wicket:container wicket:id="hintCompareBox">
 				<div id="hintBox" class="supportBox collapseBox">
-                   	<h5 onclick="$().CAST_Highlighter('hintDisplay', null, 'Y', null, 'hint'); return false;">Hint</h5>
+                   	<h5 onclick="$().CAST_Highlighter('hintDisplay', event, null, 'Y', null, 'hint', 'hintBox', false);return false;">Hint</h5>
                     <div class="collapseBody">
-	                	<!--  this is authorable  -->
                     	<p wicket:id="hintText">
                         	This text can be found and set in the Application Properties file
                         </p>
@@ -37,9 +36,8 @@
                 </div>
 
                 <div id="compareBox" class="supportBox collapseBox">
-					<h5 onclick="$().CAST_Highlighter('hintDisplay', null, 'Y', null, 'model'); return false;">Compare</h5>
+					<h5 onclick="$().CAST_Highlighter('hintDisplay', event, null, 'Y', null, 'model', 'compareBox', true); return false;">Compare</h5>
 					<div class="collapseBody">
-	                	<!--  this is authorable  -->
 						<p wicket:id="compareText">
 							This text can be found and set in the Application Properties file
 						</p>

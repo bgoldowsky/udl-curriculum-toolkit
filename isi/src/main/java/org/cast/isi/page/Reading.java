@@ -58,6 +58,7 @@ import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.panel.HighlightControlPanel;
 import org.cast.isi.panel.MiniGlossaryModal;
+import org.cast.isi.panel.NoHighlightModal;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseFeedbackPanel;
 import org.cast.isi.panel.ResponseList;
@@ -239,6 +240,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		highlightBox.setVisible(ISIApplication.get().isHighlightsPanelOn());
 		highlightBox.add(new HighlightControlPanel("highlightControlPanel", loc, mSection));		
 		add(new HighlightDisplayPanel("highlightDisplayPanel", responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc)).setVisible(ISIApplication.get().isHighlightsPanelOn()));
+		add(new NoHighlightModal("noHighlightModal"));
 	}
 	
 	protected void addTaggingPanel () {
