@@ -295,14 +295,6 @@ public abstract class ISIApplication extends CwmApplication {
 		ISIEmailService.useAsServiceInstance();
 		responseMetadata  = new ResponseMetadata();		
 		
-		// Gather Extended Browser Information - Uses a wicket-administered redirect.
-		// May not be necessary.
-		// 
-		// If enabled, see Login.java for pre-fetching of data so it does not break
-		// the login form.
-		//
-		getRequestCycleSettings().setGatherExtendedBrowserInfo(true);
-		
 		getMarkupSettings().setDefaultBeforeDisabledLink( "" );
 		getMarkupSettings().setDefaultAfterDisabledLink( "" ); 
 		

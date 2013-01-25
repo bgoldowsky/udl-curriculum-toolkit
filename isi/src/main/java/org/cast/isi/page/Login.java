@@ -69,10 +69,6 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 		add (new BookmarkablePageLink<Void>("forgot", ISIApplication.get().getForgotPasswordPageClass()).setVisible(ISIApplication.get().isEmailOn()));
 		add (new BookmarkablePageLink<Void>("register", ISIApplication.get().getRegisterPageClass()).setVisible(ISIApplication.get().isSelfRegisterOn()));
 		
-		// If getRequestCycleSettings().setGatherExtendedBrowserInfo(true) is set in the application
-		// this line is necessary to prevent a failed login session.
-		ISISession.get().getClientInfo();
-		
 		AuthApplication<User> app = null;
 		try { app = ((AuthApplication<User>)Application.get()); } catch (ClassCastException e) { }
 		if (app == null || !app.getSignInPageClass().isInstance(this))
