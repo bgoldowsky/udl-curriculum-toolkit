@@ -35,6 +35,7 @@
 	<!-- Keeping defaults for: memoryStoreEvictionPolicy="LRU" -->
 	<!-- CWM objects -->
     <cache name="org.cast.cwm.data.User" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.UserPreference" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
     <cache name="org.cast.cwm.data.Prompt" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
     <cache name="org.cast.cwm.data.Response" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
     <cache name="org.cast.cwm.data.LoginSession" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
