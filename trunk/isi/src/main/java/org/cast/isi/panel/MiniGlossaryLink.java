@@ -52,7 +52,7 @@ public class MiniGlossaryLink extends AjaxLink<String>{
 	@Override
 	public void onClick(AjaxRequestTarget target) {
 		// Set model of mini glossary panel to the model of the glossary entry
-		glossaryModal.setModel(ISIApplication.get().getGlossary().getEntryById(getDefaultModelObjectAsString()));
+		glossaryModal.setModel(ISIApplication.get().getGlossary().getEntryById(getModelObject()));
 		glossaryModal.getDialog().setVerticalReferencePointId(this.getMarkupId());
 		target.addComponent(glossaryModal);
 		target.appendJavascript(glossaryModal.getDialog().getOpenString());

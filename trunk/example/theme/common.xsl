@@ -189,13 +189,8 @@
    				<a wicket:id="glosslink" word="{@entryId}">(more)</a>
   		</span>
 
-    	<!--  this is for glossary links to modal popups -->
+    	<!--  this is for glossary links to modal popup or new window -->
   		<a wicket:id="glossaryLink_" class="vocabulary" word="{@entryId}">
-	    	<xsl:apply-templates/>
-  		</a>
-  		
-    	<!--  this is for glossary links to main glossary page-->
-  		<a wicket:id="glossaryMainLink_" class="vocabulary" word="{@entryId}">
 	    	<xsl:apply-templates/>
   		</a>  		
 	</xsl:template>
