@@ -46,6 +46,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -207,18 +208,31 @@ public class ISIXmlComponent extends XmlComponent {
 			return super.getDynamicComponent(wicketId, elt);
 			
 			
-		// glossaryLink is associated with a short glossary definition modal
+		// link to a short glossary definition modal or main glossary window
 		} else if (wicketId.startsWith("glossaryLink_")) {
-			MiniGlossaryLink miniGlossaryLink = new MiniGlossaryLink(wicketId, new Model<String>(elt.getAttribute("word")), miniGlossaryModal);
-			miniGlossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MODAL) && pageHasMiniGlossary());
-			return miniGlossaryLink;
-
-		// glossdef and the the glosslink that follows are associated with inline glossary definitions
+			IModel<String> wordModel = new Model<String>(elt.getAttribute("word"));
+			String glossaryLinkType = ISIApplication.get().getGlossaryLinkType();
+			if (glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MODAL) && pageHasMiniGlossary() && miniGlossaryModal != null) {
+				return new MiniGlossaryLink(wicketId, wordModel, miniGlossaryModal);
+				
+			} else if (glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_INLINE)) {
+				return new EmptyPanel(wicketId);
+				
+			} else {
+				// Default case: glossary type is MAIN, or we wanted a modal but have no place to put it
+				// (eg, we're in a popup window, or modal window)
+				GlossaryLink glossaryLink = new GlossaryLink(wicketId, wordModel);
+				ISIApplication.get().setLinkProperties(glossaryLink);
+				return glossaryLink;
+			}
+							
+		// inline glossary: linked word
 		} else if (wicketId.startsWith("glossword")) {
 			WebMarkupContainer glossaryWord = new WebMarkupContainer(wicketId);
 			glossaryWord.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_INLINE));
 			return glossaryWord;
 			
+		// inline glossary: definition
 		} else if (wicketId.startsWith("glossdef")) {
 			// Span element, to be filled in with the glossary short def.
 			String word = elt.getAttribute("word");
@@ -234,7 +248,8 @@ public class ISIXmlComponent extends XmlComponent {
 			container.add(new AttributeRemover("word"));
 			container.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_INLINE));
 			return container;
-					
+
+		// inline glossary: "more" link to main glossary window			
 		} else if (wicketId.startsWith("glosslink")) {
 			IModel<String> wordModel = new Model<String>(elt.getAttribute("word"));
 			GlossaryLink glossaryLink = new GlossaryLink(wicketId, wordModel);
@@ -242,14 +257,6 @@ public class ISIXmlComponent extends XmlComponent {
 			glossaryLink.setVisible(ISIApplication.get().glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_INLINE));
 			return glossaryLink;
 		
-		// glossaryMainLinks are linked directly to the glossary popup page
-		} else if (wicketId.startsWith("glossaryMainLink_")) {
-			IModel<String> wordModel = new Model<String>(elt.getAttribute("word"));
-			GlossaryLink glossaryLink = new GlossaryLink(wicketId, wordModel);
-			ISIApplication.get().setLinkProperties(glossaryLink);
-			glossaryLink.setVisible(shouldShowMainGlossaryLink());
-			return glossaryLink;
-						
 		} else if (wicketId.startsWith("link_")) {
 			String href = elt.getAttribute("href");
 			// According to NIMAS, href should be in the form "filename.xml#ID"  or just "#ID" for within-file link
@@ -262,7 +269,6 @@ public class ISIXmlComponent extends XmlComponent {
 			// "#ID" or "ID" case:
 			String file = getModel().getObject().getXmlDocument().getName(); // same file as we're currently viewing
 			String id = href.substring(hashLocation+1);  // start at index 0 or 1
-			log.debug("Link to {} # {}", file, id);
 			return new SectionLinkFactory().linkTo(wicketId, file, id);
 
 		} else if (wicketId.startsWith("popupLink_")) {
@@ -749,12 +755,6 @@ public class ISIXmlComponent extends XmlComponent {
 		} else {
 			return super.getDynamicComponent(wicketId, elt);
 		}
-	}
-	
-	private boolean shouldShowMainGlossaryLink() {
-		String glossaryLinkType = ISIApplication.get().glossaryLinkType;
-		return (glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MAIN) 
-				|| ((glossaryLinkType.equals(ISIApplication.GLOSSARY_TYPE_MODAL) && !pageHasMiniGlossary())));
 	}
 	
 	private boolean pageHasMiniGlossary() {
