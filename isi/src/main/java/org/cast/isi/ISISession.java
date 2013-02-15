@@ -41,9 +41,8 @@ public class ISISession extends CwmSession {
 	@Getter @Setter
 	protected ContentLoc bookmark = null;
 	
-	@Getter @Setter
-
 	// Teachers can have a student whose data they are looking at; this persists across requests
+	@Getter @Setter
 	private IModel<User> studentModel;
 	
 	private static final long serialVersionUID = 1L;

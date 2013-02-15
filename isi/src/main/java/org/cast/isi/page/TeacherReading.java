@@ -34,6 +34,7 @@ import org.cast.isi.component.StateSavingCollapseBoxBehavior;
 import org.cast.isi.component.StateSavingCollapseBoxBorder;
 import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.PromptType;
+import org.cast.isi.panel.NoHighlightModal;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.TeacherSectionCompleteTogglePanel;
 import org.slf4j.Logger;
@@ -116,10 +117,11 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 			((HighlightDisplayPanel) get("highlightDisplayPanel")).setReadOnly(true);
 
 		} else {
-			add (new WebMarkupContainer("highlightBox")
-				.add (new WebMarkupContainer("highlightControlPanel"))
+			add(new WebMarkupContainer("highlightBox")
+				.add(new WebMarkupContainer("highlightControlPanel"))
 				.setVisible(false));
-			add (new WebMarkupContainer("highlightDisplayPanel").setVisible(false));
+			add(new WebMarkupContainer("highlightDisplayPanel").setVisible(false));
+			add(new NoHighlightModal("noHighlightModal"));
 		}		
 	}
 
