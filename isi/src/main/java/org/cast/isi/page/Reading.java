@@ -235,11 +235,17 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	}
 
 	public void addHighlightPanel() {	
+		boolean highlightsPanelOn = ISIApplication.get().isHighlightsPanelOn();
+
 		StateSavingCollapseBoxBorder highlightBox = new StateSavingCollapseBoxBorder("highlightBox", "highlightToggle", "globalHighlight", getPageName());
 		add(highlightBox);
-		highlightBox.setVisible(ISIApplication.get().isHighlightsPanelOn());
+		highlightBox.setVisible(highlightsPanelOn);
 		highlightBox.add(new HighlightControlPanel("highlightControlPanel", loc, mSection));		
-		add(new HighlightDisplayPanel("highlightDisplayPanel", responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc)).setVisible(ISIApplication.get().isHighlightsPanelOn()));
+		HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", 
+					responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
+					ISISession.get().getTargetUserModel());
+		highlightDisplayPanel.setVisible(highlightsPanelOn);
+		add(highlightDisplayPanel);
 		add(new NoHighlightModal("noHighlightModal"));
 	}
 	

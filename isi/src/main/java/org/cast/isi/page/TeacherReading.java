@@ -34,7 +34,6 @@ import org.cast.isi.component.StateSavingCollapseBoxBehavior;
 import org.cast.isi.component.StateSavingCollapseBoxBorder;
 import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.PromptType;
-import org.cast.isi.panel.HighlightControlPanel;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.panel.TeacherSectionCompleteTogglePanel;
 import org.slf4j.Logger;
@@ -113,15 +112,8 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 	@Override
 	public void addHighlightPanel() {	
 		if (showXmlContent) {
-			StateSavingCollapseBoxBorder highlightBox = new StateSavingCollapseBoxBorder("highlightBox", "highlightToggle", "globalHighlight", getPageName());
-			add(highlightBox);
-			highlightBox.setVisible(ISIApplication.get().isHighlightsPanelOn());
-			highlightBox.add(new HighlightControlPanel("highlightControlPanel", loc, mSection).setVisible(ISIApplication.get().isHighlightsPanelOn()));
-			HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", 
-					responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
-					ISISession.get().getStudentModel());
-			add(highlightDisplayPanel);
-			highlightDisplayPanel.setReadOnly(true);
+			super.addHighlightPanel();
+			((HighlightDisplayPanel) get("highlightDisplayPanel")).setReadOnly(true);
 
 		} else {
 			add (new WebMarkupContainer("highlightBox")
