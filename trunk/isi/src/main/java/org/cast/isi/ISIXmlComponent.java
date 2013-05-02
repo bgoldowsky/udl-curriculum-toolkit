@@ -145,7 +145,8 @@ public class ISIXmlComponent extends XmlComponent {
 
 	public ISIXmlComponent(String id, ICacheableModel<? extends IXmlPointer> rootEntry, String transformName) {
 		super(id, rootEntry, transformName);
-		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
+		User user = ISISession.get().getUser();
+		isTeacher = user!=null ? user.getRole().subsumes(Role.TEACHER) : false;
 	}
 
 	// Enforce more specific type than super does
