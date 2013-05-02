@@ -68,6 +68,7 @@ import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
+import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.DialogBorder;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
 import org.cast.cwm.dav.DavClientManager;
@@ -780,7 +781,8 @@ public abstract class ISIApplication extends CwmApplication {
 		return getStudentTOCPageClass();
 	}
 	public Class<? extends ISIStandardPage> getReadingPageClass() {
-		if (Role.TEACHER.equals(CwmSession.get().getUser().getRole()))
+		User user = CwmSession.get().getUser();
+		if (user!=null && Role.TEACHER.equals(user.getRole()))
 			return getTeacherReadingPageClass();
 		else
 			return getStudentReadingPageClass();

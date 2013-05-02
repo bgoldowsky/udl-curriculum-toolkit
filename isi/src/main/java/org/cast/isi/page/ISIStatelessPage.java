@@ -65,7 +65,7 @@ public class ISIStatelessPage extends ISIPage {
 			if (statefulComponents.size() > 0) {
 				message += " - the reason is that it contains the following stateful components: ";
 				for (Component c : statefulComponents) {
-					message += "\n" + c.getMarkupId();
+					message += "\n" + c.getMarkupId() + "[" + c.getClass().getCanonicalName() + "]";
 				}
 			}
 			log.warn(message);
