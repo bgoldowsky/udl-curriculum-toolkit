@@ -915,11 +915,12 @@ ul li, ol li {
 }
 
 .tagTerm {
-    width: 145px;
+    width: 131px;
     background: #FFFFFF;
     color: #000000;
     border: 1px solid #000000;
     float: left;
+    margin-right: 15px;
     padding-left: 2px;
     font-size: 1.1em;
 }
