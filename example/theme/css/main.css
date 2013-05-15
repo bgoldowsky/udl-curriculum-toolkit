@@ -897,6 +897,45 @@ ul li, ol li {
     float: left;
     padding: 0.15em 0px 0px 17px;
 }
+
+
+.tagCurrentList .tagItem {
+    display: inline-block;
+    color: #316EA7;
+    border: 1px solid #D7D7D7;
+    background: #D5E0EC;
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#D5E0EC));
+	background: -moz-linear-gradient(top, #FFFFFF, #D5E0EC);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#FFFFFF,endColorstr=#D5E0EC);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#FFFFFF, endColorstr=#D7D7D7);
+    padding: 2px 3px;
+    text-decoration: none;
+}
+.tagCurrentList .tagItem a {
+    color: #316EA7;
+    text-decoration: none;
+}
+
+.tagCurrentList .tagItem:hover {
+    text-decoration: none;
+    background: #FFFFFF;
+	background: -webkit-gradient(linear, left top, left bottom, from(#D5E0EC), to(#FFFFFF));
+	background: -moz-linear-gradient(top, #D5E0EC, #FFFFFF);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#D5E0EC,endColorstr=#FFFFFF);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#D5E0EC, endColorstr=#FFFFFF);
+}
+.tagCurrentList .tagItem:hover a {
+    color: #316EA7;
+    text-decoration: none;
+}
+.tagCurrentList .tagItem a:focus {
+    text-decoration: underline;
+}
+
+.tagCurrentList .tagItem span {
+    padding: 0px 3px 0px 3px;
+}
+
 /* To avoid displaying remove links in collapsed Tag panel. */
 .collapseBox .tagCurrentList .removeLink {
     display: none;
@@ -910,8 +949,10 @@ ul li, ol li {
     display: inline-block;
 }
 .expOpen .tagCurrentList span.tagItem {
+    /*
     display: block;
     height: 1.75em;
+    */
 }
 
 .tagTerm {
