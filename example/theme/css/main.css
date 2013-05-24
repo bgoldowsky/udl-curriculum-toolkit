@@ -867,6 +867,10 @@ ul li, ol li {
 
 .tagCloud a, .tagList a {
     margin-right: 0.5em;
+    text-decoration: none;
+}
+.tagCloud a:hover, .tagCloud a:focus, .tagList a:hover, .tagList a:focus {
+	text-decoration: underline;
 }
 
 .tagCloud .s1, .tagList .s1 {
@@ -898,8 +902,7 @@ ul li, ol li {
     padding: 0.15em 0px 0px 17px;
 }
 
-
-.tagCurrentList .tagItem {
+.tagItem {
     display: inline-block;
     color: #316EA7;
     border: 1px solid #D7D7D7;
@@ -909,14 +912,15 @@ ul li, ol li {
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#FFFFFF,endColorstr=#D5E0EC);
 	-ms-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#FFFFFF, endColorstr=#D7D7D7);
     padding: 2px 3px;
+    margin: .1em .5em .1em 0;
     text-decoration: none;
 }
-.tagCurrentList .tagItem a {
+.tagItem a {
     color: #316EA7;
     text-decoration: none;
 }
 
-.tagCurrentList .tagItem:hover {
+.tagItem:hover {
     text-decoration: none;
     background: #FFFFFF;
 	background: -webkit-gradient(linear, left top, left bottom, from(#D5E0EC), to(#FFFFFF));
@@ -924,15 +928,15 @@ ul li, ol li {
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#D5E0EC,endColorstr=#FFFFFF);
 	-ms-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#D5E0EC, endColorstr=#FFFFFF);
 }
-.tagCurrentList .tagItem:hover a {
+.tagItem:hover a {
     color: #316EA7;
     text-decoration: none;
 }
-.tagCurrentList .tagItem a:focus {
+.tagItem a:focus {
     text-decoration: underline;
 }
 
-.tagCurrentList .tagItem span {
+.tagItem span {
     padding: 0px 3px 0px 3px;
 }
 
@@ -976,6 +980,11 @@ ul li, ol li {
 
 .tagAddForm input, .tagAddForm img {
     vertical-align: middle;
+}
+
+.tagAddForm input {
+	border: 1px solid #D7D7D7;
+	margin-bottom: .3em;	
 }
 
 #tagPageList {
