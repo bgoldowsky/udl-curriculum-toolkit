@@ -7,20 +7,19 @@
 	  </div>
 
 	  <div class="collapseBody">
+	  	  <br />
 	      <h6 wicket:id="tagsSubHeader">Add Tags:</h6>
-          <p class="tagStarsCloud">
-          </p>
-	      <p wicket:id="taglist" class="tagCloud">
-		      <wicket:container wicket:id="tag">
-	          	<a wicket:id="link" href="#"><span wicket:id="name">Name</span></a>
-	          </wicket:container>
-	      </p>
 	      <form wicket:id="form" method="post" action="#" name="something" id="something" class="tagAddForm">
 	          <div>
 			      <input wicket:id="term" type="text" value="" class="tagTerm" maxlength="15"/>
       			  <input wicket:id="add" class="button" type="submit" value="Add" />
 	          </div>
 	      </form>
+	      <p wicket:id="taglist" class="tagCloud">
+		      <wicket:container wicket:id="tag">
+	          	<a wicket:id="link" class="tagItem" href="#"><span wicket:id="name">Name</span></a>
+	          </wicket:container>
+	      </p>
 	   </div>
 
 </wicket:panel>
