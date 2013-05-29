@@ -64,6 +64,7 @@ import org.cast.cwm.data.User;
 import org.cast.cwm.mediaplayer.AudioPlayerPanel;
 import org.cast.cwm.mediaplayer.FlashAppletPanel;
 import org.cast.cwm.mediaplayer.MediaPlayerPanel;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.service.IEventService;
 import org.cast.cwm.xml.ICacheableModel;
 import org.cast.cwm.xml.IXmlPointer;
@@ -132,20 +133,25 @@ public class ISIXmlComponent extends XmlComponent {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(ISIXmlComponent.class);
 
-	@Inject IISIResponseService responseService;
+	@Inject 
+	private IISIResponseService responseService;
+	
+	@Inject 
+	private ICwmSessionService cwmSessionService;
+
+	@Inject
+	private IEventService eventService;
 	
 	@Getter @Setter private String contentPage;
 	@Getter @Setter private MiniGlossaryModal miniGlossaryModal;
 	@Getter @Setter private ResponseFeedbackPanel responseFeedbackPanel;
 	@Getter @Setter protected boolean inGlossary = false;
+	
 	protected boolean isTeacher = false;
-
-	@Inject
-	private IEventService eventService;
 
 	public ISIXmlComponent(String id, ICacheableModel<? extends IXmlPointer> rootEntry, String transformName) {
 		super(id, rootEntry, transformName);
-		User user = ISISession.get().getUser();
+		User user = cwmSessionService.getUser();
 		isTeacher = user!=null ? user.getRole().subsumes(Role.TEACHER) : false;
 	}
 
@@ -385,7 +391,8 @@ public class ISIXmlComponent extends XmlComponent {
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void onPlay (String status) {
-					eventService.saveEvent("video:view", "id=" + elt.getAttribute("videoId") + ",state=" + status, contentPage);
+					if (cwmSessionService.isSignedIn())
+						eventService.saveEvent("video:view", "id=" + elt.getAttribute("videoId") + ",state=" + status, contentPage);
 				}
 			};
 
@@ -443,7 +450,7 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<Prompt> pm = responseService.getOrCreatePrompt(PromptType.FEEDBACK, loc, responseGroupId);
 			ResponseFeedbackButtonPanel component = new ResponseFeedbackButtonPanel(wicketId, pm, responseFeedbackPanel);
 			String forRole = elt.getAttribute("for");
-			boolean usesTeacherButton = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
+			boolean usesTeacherButton = cwmSessionService.getUser().getRole().subsumes(Role.TEACHER);
 			component.setVisibilityAllowed(usesTeacherButton ? forRole.equals("teacher") : forRole.equals("student"));
 			component.add(new AttributeRemover("rgid", "for"));
 			return component;
@@ -455,7 +462,7 @@ public class ISIXmlComponent extends XmlComponent {
 			return component;
 		} else if (wicketId.startsWith("showScore_")) {
 			IModel<Prompt> promptModel = getPrompt(elt);
-			IModel<User> studentModel = ISISession.get().getUserModel();
+			IModel<User> studentModel = cwmSessionService.getUserModel();
 			ISortableDataProvider<Response> responseProvider = responseService.getResponseProviderForPrompt(promptModel, studentModel);
 			ScorePanel component = new StudentScorePanel(wicketId, responseProvider);
 			return component;
@@ -571,7 +578,7 @@ public class ISIXmlComponent extends XmlComponent {
 				metadata = addMetadata(metadata);
 			}
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
-			return new LockingResponseButtons(wicketId, mPrompt, metadata, loc, ISISession.get().getUserModel());
+			return new LockingResponseButtons(wicketId, mPrompt, metadata, loc, cwmSessionService.getUserModel());
 
 		} else if (wicketId.startsWith("ratePanel_")) {
 			ContentLoc loc = new ContentLoc(getModel().getObject());
@@ -597,7 +604,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("teacherBar_")) {
 			WebMarkupContainer teacherBar = new WebMarkupContainer(wicketId);
-			teacherBar.setVisible(!ISISession.get().getUser().getRole().equals(Role.STUDENT) && !inGlossary);
+			teacherBar.setVisible(!cwmSessionService.getUser().getRole().equals(Role.STUDENT) && !inGlossary);
 			return teacherBar;
 
 		} else if (wicketId.startsWith("compareResponses_")) {
