@@ -109,6 +109,7 @@ import org.cast.isi.page.PeriodResponsePage;
 import org.cast.isi.page.TeacherNotesPopup;
 import org.cast.isi.page.Whiteboard;
 import org.cast.isi.panel.AbstractNavBar;
+import org.cast.isi.panel.AlternateNavBar1;
 import org.cast.isi.panel.DefaultHeaderPanel;
 import org.cast.isi.panel.DefaultNavBar;
 import org.cast.isi.panel.FooterPanel;
@@ -171,6 +172,7 @@ public abstract class ISIApplication extends CwmApplication {
 	// These settings are generally overridden by applications in the configuration file
 	@Getter @Setter protected String sectionElement = "level3"; // XML element that is one section, usually
 	@Getter @Setter protected String pageElement    = "level4";    // XML element that is one page, usually
+	@Getter protected String alternateNavBar = null;
 	@Getter protected String readingAgentName = "the Penguin";
 	@Getter protected String responseAgentName = "the Gecko";
 	@Getter protected boolean ratePanelIncludesDone = true;
@@ -419,6 +421,7 @@ public abstract class ISIApplication extends CwmApplication {
 		selfRegisterOn = setBooleanProperty("isi.selfRegister.isOn", selfRegisterOn);
 		collectionsScoreSummaryOn = setBooleanProperty("isi.collectionsScoreSummary.isOn", collectionsScoreSummaryOn);
 		compareScoreSummaryOn = setBooleanProperty("isi.compareScoreSummary.isOn", compareScoreSummaryOn);
+		alternateNavBar = setStringProperty("isi.navBarType", alternateNavBar);
 		
 		navbarSectionIconsTeacher = setStringProperty("isi.navbar.sectionIcons.teacher", navbarSectionIconsTeacher);
 		navbarSectionIconsStudent = setStringProperty("isi.navbar.sectionIcons.student", navbarSectionIconsStudent);
@@ -428,6 +431,7 @@ public abstract class ISIApplication extends CwmApplication {
 			url = urlValue.trim();
 			log.info("using this URL starter for email links: {}", url);
 		}
+		
 
 		/* if the glossary is on, decide what type of glossary link is used */
 		if (glossaryOn == true) {
@@ -1242,6 +1246,11 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 
 	public AbstractNavBar<? extends XmlSection> getTopNavigation(String id, IModel<XmlSection> sec, boolean teacher) {
+		if (alternateNavBar != null) {
+			if (alternateNavBar.equals("alternate1")) {
+				return new AlternateNavBar1(id, sec, teacher);
+			}
+		}
 		return new DefaultNavBar(id, sec, teacher);
 	}
 
