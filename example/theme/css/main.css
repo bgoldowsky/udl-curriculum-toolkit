@@ -992,7 +992,7 @@ ul li, ol li {
 
 .tagAddForm input {
 	border: 1px solid #D7D7D7;
-	margin-bottom: .3em;	
+	margin-bottom: .3em;
 }
 
 #tagPageList {
@@ -1189,6 +1189,14 @@ h4 {
     margin: 0px;
 }
 
+h5 {
+    font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
+    font-size: 1.0em;
+    color: #000000;
+    padding: 0px 0px 0.2em 0px;
+    margin: 0px;
+}
+
 .note {
     position: relative;
 	margin: 0 6em 0 4em;
@@ -1311,15 +1319,13 @@ hr {
 /*================================================================*/
 /* Clearing Items */
 
-.clearfix {
-    display: inline-block;
-}
 .clearfix:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    overflow: hidden;
-    visibility: hidden;
-}
-*:first-child+html .clearfix { zoom: 1; display: block; } /* IE7 */
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+	}
+* html .clearfix             { zoom: 1; } /* IE6 */
+*:first-child+html .clearfix { zoom: 1; } /* IE7 */
