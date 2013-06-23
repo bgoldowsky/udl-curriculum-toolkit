@@ -21,15 +21,12 @@ package org.cast.isi.panel;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.isi.ISIApplication;
-import org.cast.isi.panel.GlossaryLink;
-import org.cast.isi.panel.HeaderPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

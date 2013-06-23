@@ -19,10 +19,6 @@
  */
 package org.cast.isi.page;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -37,6 +33,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.glossary.IGlossaryEntry;
 import org.cast.isi.ISIApplication;
@@ -46,6 +43,9 @@ import org.cast.isi.panel.GlossaryPanel;
 import org.cast.isi.service.WordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
 	@SuppressWarnings("unused")
@@ -64,11 +64,11 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
 		// Look up word
 		IModel<? extends IGlossaryEntry> mEntry = null;
-		if (params.containsKey("word")) {
-			mEntry = ISIApplication.get().getGlossary().getEntryById(params.getString("word"));
+		if (params.getNamedKeys().contains("word")) {
+			mEntry = ISIApplication.get().getGlossary().getEntryById(params.get("word").toString());
 			if (mEntry == null) {
 				// Try WordCards
-				Long id = params.getLong("word");
+				Long id = params.get("word").toLong();
 				mEntry = WordService.get().getWordCard(id);
 			}
 		}
@@ -127,7 +127,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 		renderThemeCSS(response, "css/glossary.css");
 		renderThemeCSS(response, "css/window_print.css", "print");
 		super.renderHead(response);
-		response.renderOnLoadJavascript("bindSectionOpenerLinks()");		
+		response.renderOnLoadJavaScript("bindSectionOpenerLinks()");
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
 	@Override
 	public String getPageType() {
-		String linkFrom = getPageParameters().getString("link");
+		String linkFrom = getPageParameters().get("link").toString();
 		if (linkFrom != null)
 			return "glossary:" + linkFrom;
 		return "glossary";
@@ -145,7 +145,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
 	@Override
 	public String getPageViewDetail() {
-		return getPageParameters().getString("word");
+		return getPageParameters().get("word").toString();
 	}
 
 }

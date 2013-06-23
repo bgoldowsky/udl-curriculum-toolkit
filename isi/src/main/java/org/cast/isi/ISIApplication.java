@@ -19,31 +19,22 @@
  */
 package org.cast.isi;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.google.inject.Binder;
+import com.google.inject.Module;
+import com.google.inject.Scopes;
 import lombok.Getter;
 import lombok.Setter;
 import net.databinder.auth.hib.AuthDataSession;
-import net.databinder.hib.DataRequestCycle;
 import net.databinder.hib.Databinder;
 import net.databinder.hib.SessionUnit;
 import net.jeremybrooks.knicker.AccountApi;
 import net.jeremybrooks.knicker.KnickerException;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Response;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
+import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebPage;
@@ -53,17 +44,28 @@ import org.apache.wicket.markup.html.link.PopupSettings;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebResponse;
-import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.PageProvider;
+import org.apache.wicket.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.file.File;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
+import org.cast.cwm.IInputStreamProvider;
+import org.cast.cwm.InputStreamNotFoundException;
+import org.cast.cwm.ThemeDirectoryRequestMapper;
 import org.cast.cwm.components.CwmPopupSettings;
 import org.cast.cwm.components.Icon;
-import org.cast.cwm.components.ImageUrlCodingStrategy;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.ResponseMetadata;
@@ -135,13 +137,14 @@ import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Scopes;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class ISIApplication extends CwmApplication {
 	
@@ -199,7 +202,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected String glossaryLinkType = DEFAULT_GLOSSARY_TYPE;
 	@Getter protected boolean useAuthoredResponseType = false; // false for backwards compatibility
 	@Getter protected String responseSortField = "createDate";
-	@Getter protected int responseSortState = ISortState.DESCENDING;
+	@Getter protected SortOrder responseSortState = SortOrder.DESCENDING;
 	@Getter protected ResponseMetadata responseMetadata; // the default type of responses
 	@Getter protected ArrayList<IResponseType> defaultResponseTypes = new ArrayList<IResponseType>();
 	protected TinyMCESettings tinyMCESettings = null;
@@ -291,8 +294,8 @@ public abstract class ISIApplication extends CwmApplication {
 
 		// Set xml content Section and Page based on property file - these have to be set before
 		// the super.init is called
-		sectionElement = appProperties.getProperty("isi.sectionElement");
-		pageElement = appProperties.getProperty("isi.pageElement");
+		sectionElement = configuration.getProperty("isi.sectionElement");
+		pageElement = configuration.getProperty("isi.pageElement");
 		super.init();
 		
 		ISIEmailService.useAsServiceInstance();
@@ -311,7 +314,10 @@ public abstract class ISIApplication extends CwmApplication {
 		
 		// Content elements are taggable
 		TagService.get().configureTaggableClass('P', ContentElement.class);
-		String requestedTags = appProperties.getProperty("isi.defaultTags", "");
+        String requestedTags = configuration.getProperty("isi.defaultTags");
+        if(StringUtils.isEmpty(requestedTags)) {
+            requestedTags = "";
+        }
 		if (!Strings.isEmpty(requestedTags))
 			TagService.get().setDefaultTags(Arrays.asList(requestedTags.split("\\s*,\\s*")));
 
@@ -330,12 +336,37 @@ public abstract class ISIApplication extends CwmApplication {
 
 		getResourceSettings().setPackageResourceGuard(new ISIPackageResourceGuard());
 
+        this.getRequestCycleListeners().add(new AbstractRequestCycleListener() {
+            @Override
+            public IRequestHandler onException(RequestCycle cycle, Exception x) {
+                PageParameters pageParameters = requestParameters2PageParameters(cycle.getRequest().getQueryParameters());
+                return new RenderPageRequestHandler(new PageProvider(new ExceptionPage(pageParameters, new RuntimeException(x))));
+            }
+        });
+
 		// Generally helpful log statement.
-		if (!DEVELOPMENT.equalsIgnoreCase(getConfigurationType())) {
+		if (!RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
 			log.warn("********************** Wicket is running in Deployment Mode **********************");
 		}
 		log.debug("Finished ISI Application Init");
 	}
+
+    /**
+     * Converts requestParameters to PageParameters.
+     *
+     * @param requestParameters
+     * @return
+     */
+    private PageParameters requestParameters2PageParameters(IRequestParameters requestParameters) {
+        PageParameters pageParameters = new PageParameters();
+        for(String name : requestParameters.getParameterNames()) {
+            List<StringValue> values = requestParameters.getParameterValues(name);
+            for(StringValue value : values) {
+                pageParameters.add(name, value.toString());
+            }
+        }
+        return pageParameters;
+    }
 
 	protected void registerHighlighters() {
 		// These letters are the same as used in the markup.  Don't change one without changing the other
@@ -359,7 +390,7 @@ public abstract class ISIApplication extends CwmApplication {
 	 * Method to call with any BookmarkablePageLink that will set appropriate PopupSettings
 	 * (or it can be extended to do other link configuration if necessary).
 	 * 
-	 * @param the BookmarkablePageLink
+	 * @param link BookmarkablePageLink
 	 */	
 	public void setLinkProperties (BookmarkablePageLink<?> link) {
 		if (GlossaryPage.class.isAssignableFrom(link.getPageClass())) {
@@ -378,7 +409,7 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 	
 	@Override
-	protected void configureHibernate(@SuppressWarnings("deprecation") org.hibernate.cfg.AnnotationConfiguration ac) {
+	protected void configureHibernate(Configuration ac) {
 		super.configureHibernate(ac);
 		
 		Configuration c = ac;
@@ -426,7 +457,7 @@ public abstract class ISIApplication extends CwmApplication {
 		navbarSectionIconsTeacher = setStringProperty("isi.navbar.sectionIcons.teacher", navbarSectionIconsTeacher);
 		navbarSectionIconsStudent = setStringProperty("isi.navbar.sectionIcons.student", navbarSectionIconsStudent);
 
-		String urlValue = appProperties.getProperty("app.url");
+		String urlValue = configuration.getProperty("app.url");
 		if (urlValue != null) {
 			url = urlValue.trim();
 			log.info("using this URL starter for email links: {}", url);
@@ -435,7 +466,7 @@ public abstract class ISIApplication extends CwmApplication {
 
 		/* if the glossary is on, decide what type of glossary link is used */
 		if (glossaryOn == true) {
-			String glossaryTypeProperty =  appProperties.getProperty("isi.glossary.type");
+			String glossaryTypeProperty =  configuration.getProperty("isi.glossary.type");
 			if (glossaryTypeProperty != null && 
 					(glossaryTypeProperty.trim().equals(GLOSSARY_TYPE_INLINE) || 
 							glossaryTypeProperty.trim().equals(GLOSSARY_TYPE_MAIN) || 
@@ -446,7 +477,7 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 
 		// Wordnik API key, used if available for free dictionary
-		String wordnikKey = appProperties.getProperty("isi.wordnikApiKey");
+		String wordnikKey = configuration.getProperty("isi.wordnikApiKey");
 		if (wordnikKey != null) {
 			System.setProperty("WORDNIK_API_KEY", wordnikKey);
 			try {
@@ -463,9 +494,9 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 
 		if (rssFeedOn == true) {
-			rssFeedUrl =  appProperties.getProperty("isi.rssFeed.url").trim();
+			rssFeedUrl =  configuration.getProperty("isi.rssFeed.url").trim();
 			log.info("Using this URL for the RSS feed: {}", rssFeedUrl);
-			maxRssFeedItems =  Integer.parseInt(appProperties.getProperty("isi.rssFeed.maxItems").trim());
+			maxRssFeedItems =  Integer.parseInt(configuration.getProperty("isi.rssFeed.maxItems").trim());
 			log.info("The RSS feed will have at most {} items displayed.", maxRssFeedItems);
 		}
 
@@ -473,7 +504,7 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 
 	private String setStringProperty(String property, String defaultPropertyValue) {
-		String propertyValue =  appProperties.getProperty(property);
+		String propertyValue =  configuration.getProperty(property);
 		if (propertyValue != null) {
 			log.info("Value of {} is  = {}", property, propertyValue);
 			return propertyValue.trim();
@@ -483,7 +514,7 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 	
 	protected Boolean setBooleanProperty(String property, boolean defaultPropertyValue) {
-		String propertyValue =  appProperties.getProperty(property);
+		String propertyValue =  configuration.getProperty(property);
 		if (propertyValue != null) {
 			log.info("Value of {} is  = {}", property, propertyValue);
 			return Boolean.valueOf(propertyValue.trim());
@@ -498,7 +529,7 @@ public abstract class ISIApplication extends CwmApplication {
 	public void configureResponseTypes() {
 		log.debug("Configuring ISI Response Types");
 		// Set default response types based on comma separated values in the property file
-		String responseTypeList = appProperties.getProperty("isi.defaultResponse.type");
+		String responseTypeList = configuration.getProperty("isi.defaultResponse.type");
 		String[] responseTypes = null;
 		if (responseTypeList != null) {
 			responseTypes = responseTypeList.split("\\s*,\\s*");	
@@ -539,8 +570,8 @@ public abstract class ISIApplication extends CwmApplication {
 	 * determine any custom response sorting
 	 */
 	public void configureResponseSort() {
-		String field = appProperties.getProperty("isi.response.sortField");
-		String state = appProperties.getProperty("isi.response.sort");
+		String field = configuration.getProperty("isi.response.sortField");
+		String state = configuration.getProperty("isi.response.sort");
 
 		if (field != null) {
 			responseSortField = field.trim();
@@ -549,16 +580,16 @@ public abstract class ISIApplication extends CwmApplication {
 		if (state != null) {
 			state = state.trim();
 			if (state.equalsIgnoreCase("ascending")) 
-				responseSortState = ISortState.ASCENDING;
+				responseSortState = SortOrder.ASCENDING;
 			else if (state.equalsIgnoreCase("descending")) 
-				responseSortState = ISortState.DESCENDING;
+				responseSortState = SortOrder.DESCENDING;
 			else if (state.equalsIgnoreCase("none")) 
-				responseSortState = ISortState.NONE;
+				responseSortState = SortOrder.NONE;
 			log.info("The Response have a sort order: {}", state);
 		}
 	}
-	
-	/**
+
+    /**
 	 * Load XML documents
 	 */
 	protected void loadXmlFiles() {
@@ -566,8 +597,8 @@ public abstract class ISIApplication extends CwmApplication {
 		
 		String davServer  = getDavServer();
 		if (davServer != null) {
-			final String davUser = appProperties.getProperty("isi.davUser");
-			final String davPassword = appProperties.getProperty("isi.davPassword");
+			final String davUser = configuration.getProperty("isi.davUser");
+			final String davPassword = configuration.getProperty("isi.davPassword");
 			
 			DavClientManager manager = DavClientManager.get();
 			manager.setDefaultAuthentication (davUser, davPassword);
@@ -575,19 +606,21 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 		
 		// Load glossary if there is one
-		String glossaryFileName = appProperties.getProperty("isi.glossaryFile");
+		String glossaryFileName = configuration.getProperty("isi.glossaryFile");
 		if (glossaryOn == false) {
 			log.debug("Glossary is turned off");
 		} else if (Strings.isEmpty(glossaryFileName)) {
 			log.debug("No glossary file");
 		} else { // when the glossary is on
-			Resource glossaryResource;
-			if (davServer != null) {
-				glossaryResource = new DavResource(davServer, getContentDir() + "/" + glossaryFileName);
-			} else {
-				glossaryResource = new FileResource(new File(getContentDir(), glossaryFileName));
-			}
-			final XmlDocument glossaryDoc = xmlService.loadXmlDocument("glossary", glossaryResource, new DtbookParser(), null);
+
+            final XmlDocument glossaryDoc;
+            if (davServer != null) {
+                IInputStreamProvider glossaryResource = new DavResource(davServer, getContentDir() + "/" + glossaryFileName);
+                glossaryDoc = xmlService.loadXmlDocument("glossary", glossaryResource, new DtbookParser(), null);
+            } else {
+                File glossaryFile = new File(getContentDir(), glossaryFileName);
+                glossaryDoc = xmlService.loadXmlDocument("glossary", glossaryFile, new DtbookParser(), null);
+            }
 			
 			// Set up Glossary
 			Databinder.ensureSession(new SessionUnit() {
@@ -599,33 +632,40 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 				
 		// Load student content files
-		String fileList = appProperties.getProperty("isi.studentContentFiles", DEFAULT_STUDENT_CONTENT_FILE_NAMES).trim();
+		String fileList = configuration.getProperty("isi.studentContentFiles");
+        if(StringUtils.isEmpty(fileList)) {
+            fileList = DEFAULT_STUDENT_CONTENT_FILE_NAMES;
+        }
+        else {
+            fileList = fileList.trim();
+        }
 		studentContentFiles = fileList.split("\\s*,\\s*");		
 		documentObservers.add(new XmlDocumentObserver(getSectionElement(), getPageElement())); // Use set so sub-classed applications can add to it as well
 		for (String file : studentContentFiles) {
-			Resource resource;
-			if (davServer != null) {
-				log.debug("attempting to load DavResource file = {}", getContentDir() + "/" + file);
-				log.debug("loading the DavResource on the Server = {}", davServer);
-				resource = new DavResource(davServer, getContentDir() + "/" + file);
-			} else {
-				log.debug("attempting to load Resource file = {}", getContentDir() + "/" + file);
-				resource = new FileResource(new File(getContentDir(), file));
-			}
-			XmlDocument doc = xmlService.loadXmlDocument(file, resource, new DtbookParser(), documentObservers);
+            XmlDocument doc;
+            if (davServer != null) {
+                log.debug("attempting to load DavResource file = {}", getContentDir() + "/" + file);
+                log.debug("loading the DavResource on the Server = {}", davServer);
+                IInputStreamProvider resource = new DavResource(davServer, getContentDir() + "/" + file);
+                doc = xmlService.loadXmlDocument(file, resource, new DtbookParser(), documentObservers);
+            } else {
+                log.debug("attempting to load Resource file = {}", getContentDir() + "/" + file);
+                File resource = new File(getContentDir(), file);
+                doc = xmlService.loadXmlDocument(file, resource, new DtbookParser(), documentObservers);
+            }
 			studentContent.add(doc);
 		}
 		
 		// Load email content files
 		if (emailOn) {
-			String emailFileName = EMAIL_FILE_NAME;					
-			Resource emailResource;
+			String emailFileName = EMAIL_FILE_NAME;
 			if (davServer != null) {
-				emailResource = new DavResource(davServer, getContentDir() + "/" + emailFileName);
-			} else {
-				emailResource = new FileResource(new File(getContentDir(), emailFileName));
-			}
-			emailContent = xmlService.loadXmlDocument("email", emailResource, new DtbookParser(), null);					
+                IInputStreamProvider emailResource = new DavResource(davServer, getContentDir() + "/" + emailFileName);
+                emailContent = xmlService.loadXmlDocument("email", emailResource, new DtbookParser(), null);
+            } else {
+				File emailResource = new File(getContentDir(), emailFileName);
+                emailContent = xmlService.loadXmlDocument("email", emailResource, new DtbookParser(), null);
+            }
 		}
 		log.debug("Finished loading ISI XML Files");
 	}
@@ -649,7 +689,9 @@ public abstract class ISIApplication extends CwmApplication {
 		File studentXslFile = new File(getCustomTransformationDir(), getStudentTransformationFile());
 		if (!studentXslFile.exists())
 			studentXslFile = new File(getTransformationDir(), getStudentTransformationFile());
-		
+
+        final File studentXslFileFinal = studentXslFile;
+
 		// For comparing responses, need to filter down to a single response area and invoke custom XSL
 		TransformChain compareChain = new TransformChain(
 				new FilterElements(),
@@ -665,11 +707,26 @@ public abstract class ISIApplication extends CwmApplication {
 		xmlService.registerTransformer("view-response", viewChain);
 		
 		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
+        IInputStreamProvider inputStreamProvider = new IInputStreamProvider() {
+            public InputStream getInputStream() throws InputStreamNotFoundException {
+                try {
+                    return new FileResource(studentXslFileFinal).getResourceStream().getInputStream();
+                }
+                catch (ResourceStreamNotFoundException x) {
+                    throw new InputStreamNotFoundException(x);
+                }
+            }
+
+            public Time lastModifiedTime() {
+                // TODO heikki
+                return Time.now();
+            }
+        };
 		TransformChain transformchain = new TransformChain(
 				new XslTransformer(xmlService.findXslResource("strip-class.xsl")),
 				new GlossaryTransformer(glossary),
 				new FilterElements(),
-				new XslTransformer(new FileResource(studentXslFile)),
+				new XslTransformer(inputStreamProvider),
 				new EnsureUniqueWicketIds());
 		xmlService.registerTransformer("student", transformchain);	
 		
@@ -691,55 +748,45 @@ public abstract class ISIApplication extends CwmApplication {
 	public org.apache.wicket.Session newSession(Request request, Response response) {
 		return new ISISession(request);
 	}
-	
-	@Override
-	public RequestCycle newRequestCycle (final Request request, final Response response) {
-		return new DataRequestCycle (this, (WebRequest) request, (WebResponse) response) {
-			
-			@Override
-			public Page onRuntimeException(final Page cause, final RuntimeException e) {
-				super.onRuntimeException(cause, e);  // Executes some methods
-				return new ExceptionPage(cause != null ? cause.getPageParameters() : null, e);
-			}
-		};
-	}
-	
+
+
+    /* see getCustomRenderHead()
 	@Override
 	public AjaxRequestTarget newAjaxRequestTarget (final Page page) {
 		AjaxRequestTarget target = super.newAjaxRequestTarget(page);
-		target.appendJavascript(SessionExpireWarningDialog.getResetJavascript());
+		target.appendJavaScript(SessionExpireWarningDialog.getResetJavascript());
 		return target;
 	}
+	*/
 
 	// TODO: When shifting to the Cwm-Data 0.8-Snapshot, swap to the CwmApplication method
 	@Override
 	protected void configureMountPaths() {
 		super.configureMountPaths();
-		
-		mount(new ImageUrlCodingStrategy("css"));
-		mount(new ImageUrlCodingStrategy("img"));
-		mount(new ImageUrlCodingStrategy("js"));
 
-		mount(new QueryStringUrlCodingStrategy("login", getSignInPageClass()));
-		mount(new QueryStringUrlCodingStrategy("home", getStudentTOCPageClass()));
-		mount(new QueryStringUrlCodingStrategy("thome", getTeacherTOCPageClass()));
-		mount(new QueryStringUrlCodingStrategy("ahome", getAdminHomePageClass()));
-		mount(new QueryStringUrlCodingStrategy("reading", getStudentReadingPageClass()));
-		mount(new QueryStringUrlCodingStrategy("treading", getTeacherReadingPageClass()));
-		mount(new QueryStringUrlCodingStrategy("glossary", getGlossaryPageClass()));
-		mount(new QueryStringUrlCodingStrategy("notebook", getNotebookPageClass()));
-		mount(new QueryStringUrlCodingStrategy("tags", getTagsPageClass()));
-		mount(new QueryStringUrlCodingStrategy("questions", getMyQuestionsPageClass()));
-		mount(new QueryStringUrlCodingStrategy("questionp", getQuestionPopupPageClass()));
-		mount(new QueryStringUrlCodingStrategy("collections", getResponseCollectionsPageClass()));
-		mount(new QueryStringUrlCodingStrategy("whiteboard", getWhiteboardPageClass()));
-		mount(new QueryStringUrlCodingStrategy("compare", getPeriodResponsePageClass()));
-		mount(new QueryStringUrlCodingStrategy("tnotebook", getTeacherNotesPageClass()));
-		mount(new QueryStringUrlCodingStrategy("manage", getManageClassesPageClass()));
-		mount(new QueryStringUrlCodingStrategy("register", getRegisterPageClass()));
-		mount(new QueryStringUrlCodingStrategy("reset", getForgotPasswordPageClass()));
-		mount(new QueryStringUrlCodingStrategy("password", getPasswordPageClass()));
-		mount(new QueryStringUrlCodingStrategy("authoredp", getAuthoredPopupPageClass()));
+        File themeDir = new File(ISIApplication.get().getSkinDir());
+        getRootRequestMapperAsCompound().add(new ThemeDirectoryRequestMapper(themeDir, "img", "css", "js"));
+
+		mountPage("login", getSignInPageClass());
+		mountPage("home", getStudentTOCPageClass());
+        mountPage("thome", getTeacherTOCPageClass());
+        mountPage("ahome", getAdminHomePageClass());
+        mountPage("reading", getStudentReadingPageClass());
+        mountPage("treading", getTeacherReadingPageClass());
+        mountPage("glossary", getGlossaryPageClass());
+        mountPage("notebook", getNotebookPageClass());
+        mountPage("tags", getTagsPageClass());
+        mountPage("questions", getMyQuestionsPageClass());
+        mountPage("questionp", getQuestionPopupPageClass());
+        mountPage("collections", getResponseCollectionsPageClass());
+        mountPage("whiteboard", getWhiteboardPageClass());
+        mountPage("compare", getPeriodResponsePageClass());
+        mountPage("tnotebook", getTeacherNotesPageClass());
+        mountPage("manage", getManageClassesPageClass());
+        mountPage("register", getRegisterPageClass());
+        mountPage("reset", getForgotPasswordPageClass());
+        mountPage("password", getPasswordPageClass());
+        mountPage("authoredp", getAuthoredPopupPageClass());
 	}
 	
 	
@@ -872,6 +919,7 @@ public abstract class ISIApplication extends CwmApplication {
 
 	// over ride this class to add custom js, css that is needed by the entire application
 	public void getCustomRenderHead(IHeaderResponse response) {
+        response.renderOnDomReadyJavaScript(SessionExpireWarningDialog.getResetJavascript());
 	}
 
 
@@ -921,74 +969,74 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 
 	public String getContentDir() {
-		return (appProperties.getProperty("isi.contentDir")).trim();
+		return (configuration.getProperty("isi.contentDir")).trim();
 	}
 		
 	public String getSkinDir() {
-		return (appProperties.getProperty("isi.skinDir")).trim();
+		return (configuration.getProperty("isi.skinDir")).trim();
 	}
 
 	public String getCustomSkinDir() {
-		String csd =  appProperties.getProperty("isi.customSkinDir");
+		String csd =  configuration.getProperty("isi.customSkinDir");
 		if (csd != null) {
-			return (appProperties.getProperty("isi.customSkinDir")).trim();
+			return (configuration.getProperty("isi.customSkinDir")).trim();
 		}
 		return null;	
 	}
 	
 	public String getTransformationDir() {
-		String td =  appProperties.getProperty("isi.transformationDir");
+		String td =  configuration.getProperty("isi.transformationDir");
 		if (td != null) {
-			return (appProperties.getProperty("isi.transformationDir")).trim();
+			return (configuration.getProperty("isi.transformationDir")).trim();
 		}
 		return getSkinDir();
 	}
 
 	public String getGlossaryTransformationFile() {
-		String tf =  appProperties.getProperty("isi.xslGlossaryFile");
+		String tf =  configuration.getProperty("isi.xslGlossaryFile");
 		if (tf != null) {
-			return (appProperties.getProperty("isi.xslGlossaryFile")).trim();
+			return (configuration.getProperty("isi.xslGlossaryFile")).trim();
 		}
 		return "glossary.xsl";
 	}
 
 	public String getStudentTransformationFile() {
-		String tf =  appProperties.getProperty("isi.xslStudentFile");
+		String tf =  configuration.getProperty("isi.xslStudentFile");
 		if (tf != null) {
-			return (appProperties.getProperty("isi.xslStudentFile")).trim();
+			return (configuration.getProperty("isi.xslStudentFile")).trim();
 		}
 		return "student.xsl";
 	}
 
 	public String getTocTransformationFile() {
-		String tf =  appProperties.getProperty("isi.xslTocFile");
+		String tf =  configuration.getProperty("isi.xslTocFile");
 		if (tf != null) {
-			return (appProperties.getProperty("isi.xslTocFile")).trim();
+			return (configuration.getProperty("isi.xslTocFile")).trim();
 		}
 		return "toc.xsl";
 	}
 
 	public String getEmailTransformationFile() {
-		String tf =  appProperties.getProperty("isi.xslEmailFile");
+		String tf =  configuration.getProperty("isi.xslEmailFile");
 		if (tf != null) {
-			return (appProperties.getProperty("isi.xslEmailFile")).trim();
+			return (configuration.getProperty("isi.xslEmailFile")).trim();
 		}
 		return "email.xsl";
 	}
 
 	public String getCustomTransformationDir() {
 		// if there isn't any custom directory then use the default directory
-		String ctd =  appProperties.getProperty("isi.customTransformationDir");
+		String ctd =  configuration.getProperty("isi.customTransformationDir");
 		if (ctd != null) {
-			return (appProperties.getProperty("isi.customTransformationDir")).trim();
+			return (configuration.getProperty("isi.customTransformationDir")).trim();
 		}
 		return getTransformationDir();
 	}
 	
 	public String getDavServer() {
-		String davServer = appProperties.getProperty("isi.davServer");
+		String davServer = configuration.getProperty("isi.davServer");
 		if (davServer != null) {
-			return (appProperties.getProperty("isi.davServer")).trim();
+			return (configuration.getProperty("isi.davServer")).trim();
 		}
 		return null;
 	}
@@ -1016,7 +1064,7 @@ public abstract class ISIApplication extends CwmApplication {
 	 */
 	public IModel<? extends Period> getMDefaultPeriod() {
 		// Set the default Period
-		String periodName =  appProperties.getProperty("isi.defaultPeriod");
+		String periodName =  configuration.getProperty("isi.defaultPeriod");
 		if (periodName != null) {
 			periodName = periodName.trim();
 			return SiteService.get().getPeriodByName(periodName);		
@@ -1204,7 +1252,7 @@ public abstract class ISIApplication extends CwmApplication {
 		@Override
 		public void onClick() {
 			AuthDataSession.get().signOut();
-			getRequestCycle().setRedirect(true);
+            getSession().bind();
 			setResponsePage(ISIApplication.get().getSignInPageClass());
 		}
 	}

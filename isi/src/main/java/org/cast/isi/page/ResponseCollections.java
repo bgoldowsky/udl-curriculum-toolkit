@@ -19,16 +19,12 @@
  */
 package org.cast.isi.page;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.inject.Inject;
 import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -39,6 +35,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
@@ -60,7 +57,8 @@ import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ResponseCollections are groups of response areas that are collected under a response name.
@@ -108,7 +106,7 @@ public class ResponseCollections extends ISIStandardPage {
 		pageTitleEnd = (new StringResourceModel("ResponseCollections.pageTitle", this, null, "Collections").getString());
 		setPageTitle(pageTitleEnd);
 		
-		paramCollectionName = parameters.getString("name");
+		paramCollectionName = parameters.get("name").toString();
 		
 		if (!haveSelectedCollection()) {
 			add(new WebMarkupContainer("collectionTitle").setVisible(false));

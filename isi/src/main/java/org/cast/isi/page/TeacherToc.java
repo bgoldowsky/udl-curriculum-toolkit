@@ -19,15 +19,9 @@
  */
 package org.cast.isi.page;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.inject.Inject;
 import net.databinder.models.hib.HibernateObjectModel;
-
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -40,6 +34,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Role;
@@ -61,7 +56,10 @@ import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Teacher Table of Contents
@@ -198,15 +196,15 @@ public class TeacherToc extends ISIStandardPage {
 										// the wrong icon on the page.  See ISIApplication.statusIconFor() as well.
 										String s = null;
 										if (stat != null && stat.getUnreadStudentMessages() > 0 && (s = responseService.locationOfFirstUnreadMessage(student, sec)) != null) {
-											param.put("loc", s);
+											param.set("loc", s);
 										} else if (stat != null && stat.getCompleted() && !stat.getReviewed()){
 											ISIXmlSection section = targetSection.getSectionAncestor().firstPageWithResponseGroup();
 											if (section != null)
-												param.put("loc", (new ContentLoc(section).getLocation()));
+												param.set("loc", (new ContentLoc(section).getLocation()));
 											else 
 												throw new IllegalStateException("Section without response areas marked Ready For Review - should automatically be reviewed.");
 										} else {
-											param.put("loc", (new ContentLoc(targetSection)).getLocation());
+											param.set("loc", (new ContentLoc(targetSection)).getLocation());
 										}
 										setResponsePage(pageType, param);										
 									}

@@ -20,6 +20,8 @@
 package org.cast.isi.panel;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.service.HighlightService;
@@ -66,20 +68,20 @@ public class HighlightControlPanel extends Panel {
 	
 	@Override
 	protected void onBeforeRender() {
-		Object hdpFound = getPage().visitChildren(HighlightDisplayPanel.class, new IVisitor<HighlightDisplayPanel>() {
-			public Object component(HighlightDisplayPanel component) {
-				return IVisitor.STOP_TRAVERSAL;
-			}
-		});
+		Object hdpFound = getPage().visitChildren(HighlightDisplayPanel.class, new IVisitor<HighlightDisplayPanel, Void>() {
+            public void component(HighlightDisplayPanel object, IVisit<Void> visit) {
+                visit.stop();
+            }
+        });
 		
 		if (hdpFound == null)
 			throw new IllegalStateException("HighlightControlPanel must be on the same page as a HighlightDisplayPanel.");
 		
-		Object nhpFound = getPage().visitChildren(NoHighlightModal.class, new IVisitor<NoHighlightModal>() {
-			public Object component(NoHighlightModal component) {
-				return IVisitor.STOP_TRAVERSAL;
-			}
-		});
+		Object nhpFound = getPage().visitChildren(NoHighlightModal.class, new IVisitor<NoHighlightModal, Void>() {
+            public void component(NoHighlightModal object, IVisit<Void> visit) {
+                visit.stop();
+            }
+        });
 
 		if (nhpFound == null)
 			throw new IllegalStateException("HighlightControlPanel must be on the same page as a NoHighlightModal.");

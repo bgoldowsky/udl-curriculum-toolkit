@@ -55,7 +55,7 @@ public class MiniGlossaryLink extends AjaxLink<String>{
 		glossaryModal.setModel(ISIApplication.get().getGlossary().getEntryById(getModelObject()));
 		glossaryModal.getDialog().setVerticalReferencePointId(this.getMarkupId());
 		target.addComponent(glossaryModal);
-		target.appendJavascript(glossaryModal.getDialog().getOpenString());
+		target.appendJavaScript(glossaryModal.getDialog().getOpenString());
 		eventService.saveEvent("miniglossary:view", getModelObject(), ((ISIStandardPage) getPage()).getPageName());
 	}
 

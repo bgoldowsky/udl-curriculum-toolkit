@@ -19,9 +19,10 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
+import com.google.inject.Inject;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.models.PromptModel;
@@ -31,8 +32,6 @@ import org.cast.isi.data.Question;
 import org.cast.isi.panel.ResponseButtons;
 import org.cast.isi.panel.ResponseList;
 import org.cast.isi.service.IQuestionService;
-
-import com.google.inject.Inject;
 
 /**
  * This popup window shows all the responses to a given question passed in
@@ -52,7 +51,7 @@ public class QuestionPopup extends ISIBasePage {
 	public QuestionPopup (final PageParameters param) {
 		super(param);
 		setQuestionsMetadata(questionsMetadata);
-		setDefaultModel(questionService.getQuestionModelById(param.getLong("question")));	
+		setDefaultModel(questionService.getQuestionModelById(param.get("question").toLong()));
 		Question question = (Question) getDefaultModelObject();
 		add(new Label("pageTitle", ISIApplication.get().getPageTitleBase() + " :: " + question.getText()));
 		add(new Label("question", question.getText()));
@@ -92,7 +91,7 @@ public class QuestionPopup extends ISIBasePage {
 
 	@Override
 	public String getPageName() {
-		return getPage().getPageParameters().getString("callingPageName");
+		return getPage().getPageParameters().get("callingPageName").toString();
 	}
 
 	@Override

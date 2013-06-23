@@ -19,11 +19,8 @@
  */
 package org.cast.isi.panel;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.inject.Inject;
 import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -34,6 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.service.IEventService;
@@ -45,9 +43,9 @@ import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.cast.cwm.components.Icon;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -122,7 +120,7 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 				if (target != null) {
 					target.addComponent(responseFeedbackPanel);
 					target.addComponent(this);
-					target.appendJavascript(responseFeedbackPanel.getSidebarDialog().getOpenString());
+					target.appendJavaScript(responseFeedbackPanel.getSidebarDialog().getOpenString());
 					target.addChildren(getPage(), IDisplayFeedbackStatus.class);
 				}				
 			}

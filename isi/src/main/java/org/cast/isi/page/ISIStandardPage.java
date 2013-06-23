@@ -19,11 +19,11 @@
  */
 package org.cast.isi.page;
 
+import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 import net.databinder.auth.hib.AuthDataSession;
-
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.DialogBorder;
@@ -45,8 +46,6 @@ import org.cast.isi.dialog.AbstractISIAjaxDialog;
 import org.cast.isi.panel.TeacherSubHeaderPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
 
 /**
  * Base for "main" (non-popup) pages of the ISI application.  
@@ -99,10 +98,12 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		WebMarkupContainer body = new WebMarkupContainer("body") {
 			private static final long serialVersionUID = 1L;
 
+            /* heikki TODO
 			@Override
 			public boolean isTransparentResolver() {
 				return true;
 			}
+			*/
 		};
 		add (body);
 
@@ -131,7 +132,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	/** 
 	 * By default returns null.  Override to provide more detail.
 	 * 
-	 * @see org.cast.isi.page.IEventInfoProvider#getPageViewDetail()
+	 * @see org.cast.isi.page.ISIBasePage#getPageViewDetail()
 	 */
 	public String getPageViewDetail() {
 		return null;
@@ -230,23 +231,22 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		return new AjaxCallDecorator() {
 
 			private static final long serialVersionUID = 1L;
-			@Override
-			public CharSequence decorateScript(CharSequence script) {
-				return (dialog == null ? "" : dialog.getDialogBorder().getCloseString(false)) + loadingDialog.getOpenString(dialog == null) + script;
-			}
-			
-			@Override
-			public CharSequence decorateOnSuccessScript(CharSequence script)
-			{
-				return loadingDialog.getCloseString(false) + script;	
-			}
 
-			@Override
-			public CharSequence decorateOnFailureScript(CharSequence script)
-			{
-				return loadingDialog.getCloseString(false) + script;
-			}
-		};
+            @Override
+            public CharSequence decorateScript(Component c, CharSequence script) {
+                return (dialog == null ? "" : dialog.getDialogBorder().getCloseString(false)) + loadingDialog.getOpenString(dialog == null) + script;
+            }
+
+            @Override
+            public CharSequence decorateOnSuccessScript(Component c, CharSequence script) {
+                return loadingDialog.getCloseString(false) + script;
+            }
+
+            @Override
+            public CharSequence decorateOnFailureScript(Component c, CharSequence script) {
+                return loadingDialog.getCloseString(false) + script;
+            }
+        };
 	}
 	
 

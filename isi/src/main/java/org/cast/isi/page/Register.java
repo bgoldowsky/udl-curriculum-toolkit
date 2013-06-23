@@ -19,17 +19,11 @@
  */
 package org.cast.isi.page;
 
-import java.util.Date;
-import java.util.Random;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import com.google.inject.Inject;
 import net.databinder.auth.valid.EqualPasswordConvertedInputValidator;
 import net.databinder.components.hib.DataForm;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
-
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -44,6 +38,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.PatternValidator;
 import org.apache.wicket.validation.validator.StringValidator;
@@ -63,7 +58,10 @@ import org.cast.isi.service.ISIEmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.Date;
+import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * This page enables anonymous user creation.  User must provide some basic validated
@@ -100,9 +98,9 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 		});
 		
 		// If user comes in with a registration key, confirm their account.
-		if (params.containsKey("username") && params.containsKey("key")) {
-			User user = UserService.get().getByUsername(params.getString("username")).getObject();
-			if (user != null && params.getString("key").equals(user.getSecurityToken())) {
+		if (params.getNamedKeys().contains("username") && params.getNamedKeys().contains("key")) {
+			User user = UserService.get().getByUsername(params.get("username").toString()).getObject();
+			if (user != null && params.get("key").toString().equals(user.getSecurityToken())) {
 				UserService.get().confirmUser(user);
 				ISISession.get().signIn(user, false);
 				eventService.createLoginSession(getRequest());
@@ -114,8 +112,8 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 				success = true;
 			} else {
 				// Incorrect credentials or already confirmed: redirect to login page here.
-				log.warn("Failed confirmation attempt: username={}, key={}", params.getString("username"), params.getString("key"));
-				this.setRedirect(true);
+				log.warn("Failed confirmation attempt: username={}, key={}", params.get("username").toString(), params.get("key").toString());
+                this.getSession().bind();
 				this.setResponsePage(ISIApplication.get().getSignInPageClass());
 				return;
 			}

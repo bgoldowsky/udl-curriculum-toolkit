@@ -19,20 +19,20 @@
  */
 package org.cast.isi.panel;
 
+import com.google.inject.Inject;
 import lombok.Getter;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.service.ISectionService;
-
-import com.google.inject.Inject;
 
 public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> implements ISectionStatusChangeListener {
 
@@ -139,14 +139,13 @@ public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> imp
 	public void notifyListeners(final AjaxRequestTarget target) {
 		final String location = getLocation();
 		if ((target != null) && (location != null)) {
-			getPage().visitChildren(ISectionStatusChangeListener.class, new IVisitor<Component>() {
-				public Object component(Component component) {
-					ISectionStatusChangeListener listener = (ISectionStatusChangeListener) component;
-					listener.onSectionCompleteChange(target, location);
-					return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
-				}
-
-			});
+			getPage().visitChildren(ISectionStatusChangeListener.class, new IVisitor<Component, Void>() {
+                public void component(Component component, IVisit<Void> visit) {
+                    ISectionStatusChangeListener listener = (ISectionStatusChangeListener) component;
+                    listener.onSectionCompleteChange(target, location);
+                    visit.dontGoDeeper();
+                }
+            });
 		}
 	}
 

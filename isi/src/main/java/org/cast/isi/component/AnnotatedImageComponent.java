@@ -20,14 +20,12 @@
 package org.cast.isi.component;
 
 import lombok.Getter;
-
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.cast.cwm.IRelativeLinkSource;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
+import org.cast.cwm.IInputStreamProvider;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.page.ISIBasePage;
 import org.slf4j.Logger;
@@ -65,12 +63,12 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 		ISIBasePage.renderThemeCSS(response, "css/annotation.css");
 		// The js call that will set up the annotated image.  The hotSpotString contains all the information
 		// needed for the annotated image.
-		response.renderOnLoadJavascript("{$(\"#" + annotatedImageComponentId + "\").annotateImage({" +
-	        "viewAnnotations: true, " +
-            "editable: false, " +
-            "useAjax: false, " +
-            "hoverShow: false, " +
-            "notes: [ " + hotSpotString + "] } )}");
+		response.renderOnLoadJavaScript("{$(\"#" + annotatedImageComponentId + "\").annotateImage({" +
+                "viewAnnotations: true, " +
+                "editable: false, " +
+                "useAjax: false, " +
+                "hoverShow: false, " +
+                "notes: [ " + hotSpotString + "] } )}");
 	}
 	
 	/**
@@ -78,7 +76,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 	 * call the js correctly for this image.  Each child record will create a 
 	 * hotspot on the annotated image
 	 */
-	public class HotSpotVisitor implements IVisitor<HotSpotComponent> {
+	public class HotSpotVisitor implements IVisitor<HotSpotComponent, Void> {
 		public StringBuffer hotSpotDetails;
 		@Getter private int count = 0;
 		
@@ -86,6 +84,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 			this.hotSpotDetails = hotSpotDetails;
 		}
 
+        /*
 		public Object component(HotSpotComponent component) {
 			
 			if (count != 0 )
@@ -114,9 +113,39 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 			count++;
 			
 			return CONTINUE_TRAVERSAL;
-		} 
-		
-	}
+		}
+
+        */
+        public void component(HotSpotComponent component, IVisit visit) {
+            if (count != 0 )
+                hotSpotDetails.append(", ");
+
+            hotSpotDetails.append("{ \"top\": " + component.top + ", ");
+            hotSpotDetails.append("\"left\": " + component.left + ", ");
+            hotSpotDetails.append("\"width\": " + component.width + ", ");
+            hotSpotDetails.append("\"height\": " + component.height + ", ");
+            hotSpotDetails.append("\"text\": " + "\"" + component.title + "\"" + ", ");
+
+            if (component.imgSrc != null && !component.imgSrc.trim().equals("")) {
+                // find the url of the image
+                IInputStreamProvider xmlFile = xmlSectionModel.getObject().getXmlDocument().getXmlFile();
+                // heikki TODO
+                //ResourceReference imageResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(component.imgSrc);
+                //String imageUrl = RequestCycle.get().urlFor(imageResourceRef).toString();
+                //if (imageUrl.equals(null))
+                //    log.warn("The URL for the hotspot image {} is not found", imageUrl);
+
+                hotSpotDetails.append("\"useImg\": " + "\"true" + "\"" + ", ");
+                //hotSpotDetails.append("\"imgSrc\": " + "\"" + imageUrl + "\"" + ", ");
+            }
+            hotSpotDetails.append("\"xmlId\": " + "\"" + component.xmlId + "\"" + ", ");
+            hotSpotDetails.append("\"id\": " + "\"" + component.hotSpotId + "\"" + " }");
+
+            count++;
+
+            //return CONTINUE_TRAVERSAL;
+        }
+    }
 
 	/*
 	 * this is when the js will get called  

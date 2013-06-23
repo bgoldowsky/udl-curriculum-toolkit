@@ -19,30 +19,30 @@
  */
 package org.cast.isi.component;
 
-import org.apache.wicket.Component.IVisitor;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.isi.panel.ResponseFeedbackButtonPanel;
 
 /**
  * * Visits @ResponseFeedbackButtonPanel and determines what kind of feedback exists
  *
  */
-public class ResponseFeedbackButtonPanelVisitor implements IVisitor<ResponseFeedbackButtonPanel>  {
+public class ResponseFeedbackButtonPanelVisitor implements IVisitor<ResponseFeedbackButtonPanel, Void> {
 
 	public String state = null;
 	
 	public ResponseFeedbackButtonPanelVisitor() {
 	}
 
-	public Object component(ResponseFeedbackButtonPanel component) {	
-		String currentState = component.getState();
+    public void component(ResponseFeedbackButtonPanel component, IVisit visit) {
+        String currentState = component.getState();
 
-		// once a new feedback is found - stop, this will be the indicator
-		if (currentState.equals("new")) {
-			state="new";
-			return STOP_TRAVERSAL;
-		} else if (currentState.equals("old") && (state == null)) {
-			state="old";
-		}
-		return CONTINUE_TRAVERSAL;
-	}
+        // once a new feedback is found - stop, this will be the indicator
+        if (currentState.equals("new")) {
+            state="new";
+            visit.stop();
+        } else if (currentState.equals("old") && (state == null)) {
+            state="old";
+        }
+    }
 }

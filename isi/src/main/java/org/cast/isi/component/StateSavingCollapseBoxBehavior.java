@@ -19,13 +19,12 @@
  */
 package org.cast.isi.component;
 
-import org.apache.wicket.RequestCycle;
+import com.google.inject.Inject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.isi.CollapseBoxBehavior;
 import org.cast.isi.ISISession;
-
-import com.google.inject.Inject;
 
 /**
  * Event logging and state saving behavior for a collapse box.  See @CollapseBoxBehavior@ 
@@ -57,7 +56,7 @@ public final class StateSavingCollapseBoxBehavior extends CollapseBoxBehavior {
 
 	@Override
 	protected void onEvent(AjaxRequestTarget target) {
-		String action = RequestCycle.get().getRequest().getParameter("action");
+		String action = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("action").toString();
 		boolean toggleState;
 		if (action.equals("open")) {
 			toggleState = true;

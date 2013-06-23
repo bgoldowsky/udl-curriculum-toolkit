@@ -19,11 +19,10 @@
  */
 package org.cast.isi.page;
 
+import com.google.inject.Inject;
 import net.databinder.auth.valid.EqualPasswordConvertedInputValidator;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
-
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -35,6 +34,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.validation.validator.PatternValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.cast.cwm.CwmSession;
@@ -46,8 +46,6 @@ import org.cast.cwm.service.UserService;
 import org.cast.isi.ISIApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
 
 /**
  * When a user forgets their password, they are emailed a link to this page where
@@ -78,13 +76,13 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 		resetLink.setVisible(false);
 
 		// User may come in with a secret key from the "Forgot Password" page.
-		if (params.containsKey("username") && params.containsKey("key")) {
-			User user = UserService.get().getByUsername(params.getString("username")).getObject();
-			if (user != null && params.getString("key").equals(user.getSecurityToken())) {
+		if (params.getNamedKeys().contains("username") && params.getNamedKeys().contains("key")) {
+			User user = UserService.get().getByUsername(params.get("username").toString()).getObject();
+			if (user != null && params.get("key").toString().equals(user.getSecurityToken())) {
 				haveKey = true;
 				add (new ChangePasswordForm ("form", user));
 			} else {
-				log.warn("Failed reset-password attempt: username={}, key={}", params.getString("username"), params.getString("key"));
+				log.warn("Failed reset-password attempt: username={}, key={}", params.get("username").toString(), params.get("key").toString());
 				String failed = new StringResourceModel("Password.failed", this, null, "Incorrect URL").getString();
 				error(failed);
 				add (new ChangePasswordForm ("form", null));

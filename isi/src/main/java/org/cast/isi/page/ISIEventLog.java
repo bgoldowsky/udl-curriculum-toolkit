@@ -19,12 +19,11 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.admin.EventLog;
 
 @AuthorizeInstantiation("RESEARCHER")
-
 public class ISIEventLog extends EventLog {
 	
 	public ISIEventLog(final PageParameters params) {

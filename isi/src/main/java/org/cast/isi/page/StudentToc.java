@@ -19,12 +19,9 @@
  */
 package org.cast.isi.page;
 
-import java.util.List;
-
+import com.google.inject.Inject;
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
@@ -35,6 +32,8 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.components.Icon;
 import org.cast.cwm.xml.XmlDocument;
@@ -56,7 +55,7 @@ import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.List;
 
 @AuthorizeInstantiation("STUDENT")
 public class StudentToc extends ISIStandardPage {
@@ -170,9 +169,9 @@ public class StudentToc extends ISIStandardPage {
 				ContentLoc loc = new ContentLoc(sec3);
 				BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("link", sec3);
 				if (locsWithUnread.contains(loc.getLocation()))
-					link.add(new Image("messageIcon", new ResourceReference("img/icons/envelope_new.png")));
+					link.add(new Image("messageIcon", new SharedResourceReference("img/icons/envelope_new.png")));
 				else if (locsWithMessages.contains(loc.getLocation()))
-					link.add(new Image("messageIcon", new ResourceReference("img/icons/envelope_old.png")));
+					link.add(new Image("messageIcon", new SharedResourceReference("img/icons/envelope_old.png")));
 				else
 					link.add(new WebMarkupContainer("messageIcon").setVisible(false));
 				item.add(link);
@@ -193,7 +192,7 @@ public class StudentToc extends ISIStandardPage {
 	 * Provides an image indicating whether a section has been completed or not.
 	 * 
 	 * @param id wicket id
-	 * @param completed true if the section has been completed, false otherwise.
+	 * @param model
 	 * @return the appropriate image component for the 'completed' parameter
 	 */
 	public Component getCompletedImage(String id, IModel<XmlSection> model) {

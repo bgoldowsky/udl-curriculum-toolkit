@@ -19,10 +19,10 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
+import com.google.inject.Inject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -35,6 +35,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
@@ -69,8 +70,6 @@ import org.cast.isi.service.IQuestionService;
 import org.cast.isi.validator.QuestionNameValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
 
 @AuthorizeInstantiation("STUDENT")
 public class Reading extends ISIStandardPage implements IHeaderContributor {
@@ -141,10 +140,10 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	protected void setLoc(PageParameters parameters) {
 		// setup the loc of this reading page, check the parameters, then
 		// the bookmark and then finally the first page		
-		if (parameters.containsKey("loc")) {
-			loc = new ContentLoc(parameters.getString("loc"));
-		} else if (parameters.containsKey("pageNum")) {
-			loc = new ContentLoc(ISIApplication.get().getPageNum(parameters.getInt("pageNum")));
+		if (parameters.getNamedKeys().contains("loc")) {
+			loc = new ContentLoc(parameters.get("loc").toString());
+		} else if (parameters.getNamedKeys().contains("pageNum")) {
+			loc = new ContentLoc(ISIApplication.get().getPageNum(parameters.get("pageNum").toInt()));
 		} else {
 			loc = new ContentLoc(ISIApplication.get().getBookmarkLoc().getLocation());
 		}
@@ -308,7 +307,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 						target.addComponent(questionContainer);
 						target.addComponent(NewQuestionForm.this);
 					}
-					target.appendJavascript("$('#newQuestionModal').hide();");
+					target.appendJavaScript("$('#newQuestionModal').hide();");
 				}
 				@Override
 				protected void onError(AjaxRequestTarget target, Form<?> form) {

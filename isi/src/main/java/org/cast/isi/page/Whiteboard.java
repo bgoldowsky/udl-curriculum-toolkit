@@ -19,18 +19,12 @@
  */
 package org.cast.isi.page;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
+import com.google.inject.Inject;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
-
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -43,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.Role;
@@ -61,7 +56,10 @@ import org.hibernate.LockOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * This is a general purpose whiteboard shared by all users within a period.
@@ -289,7 +287,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 		super.renderHead(response);
 		renderThemeCSS(response, "css/window.css");
 		renderThemeCSS(response, "css/window_print.css", "print");
-		response.renderOnLoadJavascript("bindSectionOpenerLinks()");
+		response.renderOnLoadJavaScript("bindSectionOpenerLinks()");
 	}
 
 

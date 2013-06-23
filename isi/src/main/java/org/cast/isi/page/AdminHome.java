@@ -19,16 +19,16 @@
  */
 package org.cast.isi.page;
 
-import java.util.List;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.Role;
 import org.cast.isi.ISIApplication;
+
+import java.util.List;
 
 @AuthorizeInstantiation("RESEARCHER")
 public class AdminHome extends org.cast.cwm.admin.AdminHome {
