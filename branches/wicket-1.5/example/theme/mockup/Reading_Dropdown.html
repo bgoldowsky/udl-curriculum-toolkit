@@ -1,0 +1,919 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Product Name</title>
+<wicket:link>
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/main.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/buttons.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/boxes.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/modal.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/highlight.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/toolbar.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/slideshow.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/annotation.css" />
+
+<link type="text/css" rel="stylesheet" media="screen" href="../../../example/theme/css/dropdown.css" />
+
+<link type="text/css" rel="stylesheet" media="screen" href="../css/theme.css" />
+
+<script type="text/javascript" src="../../../example/theme/js/jquery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/lang/en.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/functions.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/jquery/jquery.annotate.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/jquery/jquery.seqSlideshow.js"></script>
+<!--
+<script type="text/javascript" src="http://portal.texthelp.com/EmbeddedBrowsealoud/v163/obfBATH.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/toolbar.js"></script>
+-->
+
+<script type="text/javascript" src="../../../example/theme/js/dropdown.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.navMenu').CAST_Dropdown_Menu();
+});
+</script>
+
+</wicket:link>
+</head>
+<body>
+
+<div id="header">
+    <div id="headerLeft">
+        <div id="logo">
+            <img src="../img/1x1.gif" width="50" height="50" alt="Product Name" title="Product Name" style="background: #FFFFFF;" />
+        </div>
+        <div id="title">
+            CAST UDL Curriculum Toolkit
+        </div>
+        <div id="tagline">
+            Tagline
+        </div>
+    </div>
+    <div id="headerRight">
+        <p id="user">
+            <strong wicket:id="welcome">Welcome: Person's Name</strong>,
+            <a wicket:id="logout" href="#">Logout</a>
+        </p>
+    </div>
+</div>
+
+<div id="tabBar">
+    <ul id="tabs">
+        <li><a href="#"><img src="../img/icons/home.png" width="15" height="15" alt="" /> Home</a></li>
+        <li><span class="current">Contents</span></li>
+        <li><a href="#">My Models</a></li>
+        <li><a href="#">My Questions</a></li>
+        <li><a href="#">My Tags</a></li>
+    </ul>
+    <ul id="tabRight">
+        <li><a href="#" class="button">Notebook</a></li>
+        <li><a href="#" class="button off">Whiteboard</a></li>
+        <li><a href="#" class="button">Glossary</a></li>
+    </ul>
+</div>
+
+<div id="wrapper">
+    <!--
+    <div id="topnav">
+    </div>
+
+    <ul id="sectionNav">
+    </ul>
+
+    <div class="pageNavBar">
+    </div>
+    -->
+
+    <div class="dropdownNavBar">
+
+        <ul class="navMenu">
+            <li>
+                <h2><a href="#">Chapter X: Chapter Title &gt; Section Title</a></h2>
+                <ul>
+                    <li>
+                        <a href="#">Chapter A: The Beginning</a>
+                        <ul>
+                            <li><a href="#"><span class="section"><img src="../img/icons/activity_overview.png" width="15" height="15" alt="Overview" title="Overview" /></span><span class="message"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></span>Section Title</a></li>
+                            <li><a href="#"><span class="section"></span><span class="message"></span>Section Title</a></li>
+                            <li><a href="#"><span class="section"></span><span class="message"></span>Section Title</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="current">Chapter B: Somewhere in the Middle</a>
+                        <ul>
+                            <li><a href="#">Section Title</a></li>
+                            <li><a href="#" class="current">Section Title With Extras</a></li>
+                            <li><a href="#">Section Title</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">Chapter C: Suprise Ending</a>
+                        <ul>
+                            <li><a href="#">Section Title</a></li>
+                            <li><a href="#">Section Title</a></li>
+                            <li><a href="#">Section Title</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <div id="pageJump">
+            <a href="#" class="button icon"><img src="../img/icons/page_prev.png" width="15" height="15" alt="Previous Page" title="Previous Page" /></a>
+            <form action="#">
+                <label for="pageJumpVal"><strong>Quick Flip:</strong></label>
+                <input type="text" class="pageJumpVal" id="pageJumpVal" />
+                of ##
+                <a href="#" class="button">Go</a>
+            </form>
+            <a href="#" class="button icon"><img src="../img/icons/page_next.png" width="15" height="15" alt="Next Page" title="Next Page" /></a>
+        </div>
+
+    </div>
+
+    <div id="mainWrapper">
+        <div id="mainContent">
+            <div id="mainContentLeft">
+                <!-- BEGIN - Main Content -->
+                <div class="leftContainer">
+
+                    <div class="floatBtn">
+                        <a href="#" class="button">Big Ideas</a>
+                    </div>
+
+                    <h1>Introduction</h1>
+
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo arcu arcu. Sed lacus odio, mollis sit amet tincidunt et, tincidunt nec purus. Cras tincidunt auctor leo, at egestas neque molestie vestibulum. Vivamus non volutpat lacus. Etiam ultricies vulputate ipsum, non fermentum enim molestie eu?</p>
+                    <p>Curabitur faucibus porta iaculis. Mauris eget hendrerit justo. Cras pharetra sapien orci! Integer egestas elit id lorem lacinia et tempor libero sodales. Mauris et diam tortor? Nam consequat condimentum erat, vel fringilla ante feugiat ut. Ut venenatis venenatis interdum.</p>
+
+                    <div class="objectBox center">
+                        <div style="width: 420px; height: 315px;" class="mediaPlaceholder">
+                            <iframe title="YouTube video player" width="420" height="315" src="http://www.youtube.com/embed/viLC9FIo2a4" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="objectCaption">
+                            <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo arcu arcu. Sed lacus odio, mollis sit amet tincidunt et, tincidunt nec purus. Cras tincidunt auctor leo, at egestas neque molestie vestibulum. Vivamus non volutpat lacus. Etiam ultricies vulputate ipsum, non fermentum enim molestie eu?</p>
+                            <p class="source"><strong>Source:</strong> <a href="http://youtu.be/viLC9FIo2a4" target="_blank">http://youtu.be/viLC9FIo2a4</a></p>
+                            <p>
+                                <strong>Rate this:</strong>
+                                <a href="#" class="button icon"><img src="../img/icons/thumb_up.png" width="15" height="15" alt="Positive" title="Positive" /></a>
+                                <a href="#" class="button icon"><img src="../img/icons/thumb_side.png" width="15" height="15" alt="Neutral" title="Neutral" /></a>
+                                <a href="#" class="button icon"><img src="../img/icons/thumb_down.png" width="15" height="15" alt="Negative" title="Negative" /></a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="objectBox center">
+                        <div style="width: 200px; height: 115px;" class="mediaPlaceholder">
+                            <a href="#">
+                                <img src="../img/1x1.gif"  width="200" height="115" alt="image placeholder" style="background: #CCCCCC;"/>
+                                <span class="playIcon"></span>
+                            </a>
+
+                        </div>
+                        <div class="objectCaption">
+                            <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo arcu arcu. Sed lacus odio, mollis sit amet tincidunt et, tincidunt nec purus. Cras tincidunt auctor leo, at egestas neque molestie vestibulum. Vivamus non volutpat lacus. Etiam ultricies vulputate ipsum, non fermentum enim molestie eu?</p>
+                            <p class="source"><strong>Source:</strong> <a href="http://youtu.be/viLC9FIo2a4" target="_blank">http://youtu.be/viLC9FIo2a4</a></p>
+                            <p>
+                                <strong>Rate this:</strong>
+                                <a href="#" class="button icon"><img src="../img/icons/thumb_up.png" width="15" height="15" alt="Positive" title="Positive" /></a>
+                                <a href="#" class="button icon"><img src="../img/icons/thumb_side.png" width="15" height="15" alt="Neutral" title="Neutral" /></a>
+                                <a href="#" class="button icon"><img src="../img/icons/thumb_down.png" width="15" height="15" alt="Negative" title="Negative" /></a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <table class="dataTable">
+                        <caption>Sample .dataTable</caption>
+                        <thead>
+                            <tr>
+                                <th>Test</th>
+                                <th>Test</th>
+                                <th>Test</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Test</td>
+                                <td>Test</td>
+                                <td>Test</td>
+                            </tr>
+                            <tr>
+                                <td>Test</td>
+                                <td>Test</td>
+                                <td>Test</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="miscBox">
+            	        <table class="dataTable">
+                            <caption>Sample .dataTable caption</caption>
+                            <thead>
+                                <tr>
+                                    <th>Test</th>
+                                    <th>Test</th>
+                                    <th>Test</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Test</td>
+                                    <td>Test</td>
+                                    <td>Test</td>
+                                </tr>
+                                <tr>
+                                    <td>Test</td>
+                                    <td>Test</td>
+                                    <td>Test</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="miscCaption">
+                            <div class="miscActions">
+                                <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
+                            </div>
+                            <div class="miscText">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                <div class="collapseBox">
+                                    <h5>More Information</h5>
+                                    <div class="collapseBody">
+                                        <p>Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.</p>
+                                        <p class="source"><strong>Source:</strong> http://www.flickr.com/photos/mauricedb/2742966709/</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="imgBox right">
+                        <img src="../img/1x1.gif" width="195" height="185" alt="test image" title="test image" style="background: #CCCCCC;" class="thumb captionSizer" />
+                        <div class="imgCaption">
+                            <div class="imgActions">
+                                <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
+                                <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
+                            </div>
+                            <div class="imgText">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                <p class="source"><strong>Source:</strong> http://www.example.com/url_path/image_name.ext</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="supportBox collapseBox">
+                        <h5>What's Important?</h5>
+                        <div class="collapseBody">
+                            <p>
+                                Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2>Think About What You Read</h2>
+
+                    <div class="entryBox">
+                        <p>
+                            1. Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                        </p>
+
+                        <div class="responseBar">
+                            <div class="responseLeft">
+                                <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
+                                <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
+                                <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_record.png" width="23" height="16" alt="Record" title="Record"/></a>
+                                <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_upload.png" width="23" height="16" alt="Upload" title="Upload"/></a>
+                            </div>
+                            <div class="responseRight">
+                                <a href="#" class="button">Get Started</a>
+                                <a href="#" class="button">Check My Word</a>
+                                <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
+                                <span class="responseFeedback"><img src="../img/icons/response_negative.png" width="15" height="15" alt="Didn't Get It!" title="Didn't Get It!" /></span>
+                            </div>
+                        </div>
+                        <div class="responseItem">
+                            <p class="responseDirections">
+                                To answer the question click the Write, Draw, Record, or Upload button above.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="entryBox">
+                        <p>
+                            2. Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                        </p>
+
+                        <div class="responseBar">
+                            <div class="responseLeft">
+                                <a href="#" class="button response"><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
+                                <a href="#" class="button response"><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
+                                <a href="#" class="button response"><img src="../img/icons/respond_record.png" width="23" height="16" alt="Record" title="Record"/></a>
+                                <a href="#" class="button response"><img src="../img/icons/respond_upload.png" width="23" height="16" alt="Upload" title="Upload"/></a>
+                            </div>
+                            <div class="responseRight">
+                                <a href="#" class="button">Get Started</a>
+                                <a href="#" class="button">Check My Word</a>
+                                <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
+                                <span class="responseFeedback"><img src="../img/icons/response_positive.png" width="15" height="15" alt="Got It!" title="Got It!" /></span>
+                            </div>
+                        </div>
+                        <div class="responseItem">
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci. Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.
+                            </p>
+                            <p class="responseTime">
+                                June 24, 2011, 12:12 PM
+                            </p>
+                            <p class="responseActions">
+                                <a href="#" class="button">Edit</a>
+                                <a href="#" class="button">Copy to Notebook</a>
+                                <a href="#" class="button">Copy to Whiteboard</a>
+                            </p>
+                        </div>
+                        <div class="responseItem">
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci. Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.
+                            </p>
+                            <p class="responseTime">
+                                June 24, 2011, 12:12 PM
+                            </p>
+                            <p class="responseActions">
+                                <a href="#" class="button">Edit</a>
+                                <a href="#">In Notebook</a>
+                                <a href="#">On Whiteboard</a>
+                            </p>
+                        </div>
+                    </div>
+
+                     <div class="supportBox collapseBox">
+                        <h5>What's Important?</h5>
+                        <div class="collapseBody">
+                            <h2>Think About What You Read</h2>
+
+                            <div class="entryBox">
+                                <p>
+                                    1. Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                                </p>
+
+                                <div class="responseBar">
+                                    <div class="responseLeft">
+                                        <a href="#" class="button response"><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
+                                        <a href="#" class="button response"><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
+                                        <a href="#" class="button response"><img src="../img/icons/respond_record.png" width="23" height="16" alt="Record" title="Record"/></a>
+                                        <a href="#" class="button response"><img src="../img/icons/respond_upload.png" width="23" height="16" alt="Upload" title="Upload"/></a>
+                                    </div>
+                                    <div class="responseRight">
+                                        <a href="#" class="button">Get Started</a>
+                                        <a href="#" class="button">Check My Word</a>
+                                        <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
+                                        <span class="responseFeedback"><img src="../img/icons/response_positive.png" width="15" height="15" alt="Got It!" title="Got It!" /></span>
+                                    </div>
+                                </div>
+                                <div class="responseItem">
+                                    <p class="responseDirections">
+                                        To answer the question click the Write, Draw, Record, or Upload button above.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="supportBox collapseBox">
+                        <div class="rateHead">
+                            <h5>Rate it:</h5>
+                            <a href="#" class="button icon"><img src="../img/icons/thumb_up.png" width="15" height="15" alt="Positive" title="Positive" /></a>
+                            <a href="#" class="button icon"><img src="../img/icons/thumb_side.png" width="15" height="15" alt="Neutral" title="Neutral" /></a>
+                            <a href="#" class="button icon"><img src="../img/icons/thumb_down.png" width="15" height="15" alt="Negative" title="Negative" /></a>
+                        </div>
+                        <div class="collapseBody">
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit?
+                            </p>
+                            <div class="rateRow">
+                                <div class="rateSel"><a href="#" title="Rate-title1" class="selected"><img src="../img/rating/affect_happy.png" width="67" height="54" alt="" /><br />Rate-title1</a></div>
+                                <div class="rateSel"><a href="#" title="Rate-title2"><img src="../img/rating/affect_relieved.png" width="67" height="54" alt="" /><br />Rate-title2</a></div>
+                                <div class="rateSel"><a href="#" title="Rate-title3"><img src="../img/rating/affect_unhappy.png" width="67" height="54" alt="" /><br />Rate-title3</a></div>
+                                <div class="rateSel"><a href="#" title="Rate-title4"><img src="../img/rating/affect_frustrated.png" width="67" height="54" alt="" /><br />Rate-title4</a></div>
+                            </div>
+                            <strong>Comments?</strong><br />
+                            <textarea class="rateComments"></textarea><br />
+                            <a href="#" class="button">Save</a>
+                        </div>
+                    </div>
+
+                    <ul class="checkList">
+                        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci. Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.</li>
+                        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci. Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.</li>
+                    </ul>
+
+                    <div class="imgGroup">
+                        <div class="imgBox">
+                            <img src="../img/1x1.gif" width="195" height="185" alt="test image" title="test image" style="background: #CCCCCC;" class="thumb captionSizer" />
+                            <div class="imgCaption">
+                                <div class="imgActions">
+                                    <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
+                                    <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
+                                </div>
+                                <div class="imgText">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                    <p class="source"><strong>Source:</strong> http://www.example.com/url_path/image_name.ext</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="imgBox">
+                            <img src="../img/1x1.gif" width="195" height="185" alt="test image" title="test image" style="background: #CCCCCC;" class="thumb captionSizer" />
+                            <div class="imgCaption">
+                                <div class="imgActions">
+                                    <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
+                                    <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
+                                </div>
+                                <div class="imgText">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                    <p class="source"><strong>Source:</strong> http://www.example.com/url_path/image_name.ext</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slideshow" id="slideshowId2">
+                        <div class="slideshowTitle">Slideshow Title:</div>
+                    	<ul>
+                    		<li><a href="#tabs-4">Nunc tincidunt</a></li>
+                    		<li><a href="#tabs-5">Proin dolor</a></li>
+                    		<li><a href="#tabs-6">Aenean lacinia</a></li>
+                    		<li><a href="#tabs-7">Response Box</a></li>
+                    	</ul>
+                    	<div id="tabs-4">
+                    	    <div class="imgBox">
+                    	        <img id="toAnnotateS1" src="../img/samples/trafalgar-square.jpg" alt="test image" title="test image" width="600" height="398" class="thumb captionSizer" />
+                                <div class="imgCaption">
+                                    <div class="imgActions">
+                                        <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
+                                    </div>
+                                    <div class="imgText">
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        <div class="collapseBox">
+                                            <h5>More Information</h5>
+                                            <div class="collapseBody">
+                                                <p>Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.</p>
+                                                <p class="source"><strong>Source:</strong> http://www.flickr.com/photos/mauricedb/2742966709/</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    	</div>
+                    	<div id="tabs-5">
+                    		<div class="imgBox">
+                    	        <img id="toAnnotateS2" src="../img/samples/trafalgar-square.jpg" alt="test image" title="test image" width="600" height="398" class="thumb captionSizer" />
+                                <div class="imgCaption">
+                                    <div class="imgActions">
+                                        <a href="#" class="button icon"><img src="../img/icons/expand_image.png" width="15" height="15" alt="Expand Image" title="Expand Image" /></a>
+                                        <!--<a href="#" class="button icon"><img src="../img/icons/info2.png" width="15" height="15" alt="Image Information" title="Image Information" /></a>-->
+                                    </div>
+                                    <div class="imgText">
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                        <div class="collapseBox">
+                                            <h5>More Information</h5>
+                                            <div class="collapseBody">
+                                                <p>Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.</p>
+                                                <p class="source"><strong>Source:</strong> http://www.flickr.com/photos/mauricedb/2742966709/</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    		<script type="text/javascript">
+                    		$("#toAnnotateS2").annotateImage({
+                            viewAnnotations: true,
+                            editable: false,
+                            useAjax: false,
+                            hoverShow: false,
+                            notes: [ { "top": 290,
+                                       "left": 115,
+                                       "width": 52,
+                                       "height": 37,
+                                       "text": "Small people on the steps",
+                                       "id": "e69213d0-2eef-40fa-a04b-0ed998f9f1f5" },
+                                     { "top": 134,
+                                       "left": 179,
+                                       "width": 68,
+                                       "height": 74,
+                                       "text": "National Gallery Dome",
+                                       "id": "e7f44ac5-bcf2-412d-b440-6dbb8b19ffbe" } ]
+                            });
+                            </script>
+                    	</div>
+                    	<div id="tabs-6">
+                    		<div class="objectBox center">
+                                <div style="width: 420px; height: 315px;" class="mediaPlaceholder">
+                                    <iframe title="YouTube video player" width="420" height="315" src="http://www.youtube.com/embed/viLC9FIo2a4" frameborder="0" allowfullscreen></iframe>
+                                </div>
+                                <div class="objectCaption">
+                                    <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo arcu arcu. Sed lacus odio, mollis sit amet tincidunt et, tincidunt nec purus. Cras tincidunt auctor leo, at egestas neque molestie vestibulum. Vivamus non volutpat lacus. Etiam ultricies vulputate ipsum, non fermentum enim molestie eu?</p>
+                                    <p class="source"><strong>Source:</strong> <a href="http://youtu.be/viLC9FIo2a4" target="_blank">http://youtu.be/viLC9FIo2a4</a></p>
+                                    <p>
+                                        <strong>Rate this:</strong>
+                                        <a href="#" class="button icon"><img src="../img/icons/thumb_up.png" width="15" height="15" alt="Positive" title="Positive" /></a>
+                                        <a href="#" class="button icon"><img src="../img/icons/thumb_side.png" width="15" height="15" alt="Neutral" title="Neutral" /></a>
+                                        <a href="#" class="button icon"><img src="../img/icons/thumb_down.png" width="15" height="15" alt="Negative" title="Negative" /></a>
+                                    </p>
+                                </div>
+                            </div>
+                    	</div>
+                    	<div id="tabs-7">
+                    	    <div class="entryBox">
+                                <p>
+                                    1. Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                                </p>
+
+                                <div class="responseBar">
+                                    <div class="responseLeft">
+                                        <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
+                                        <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
+                                        <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_record.png" width="23" height="16" alt="Record" title="Record"/></a>
+                                        <a href="#" class="button response preferred"><img src="../img/icons/respond_star.png" width="11" height="11" alt="Star" title="Star" class="indicator" /><img src="../img/icons/respond_upload.png" width="23" height="16" alt="Upload" title="Upload"/></a>
+                                    </div>
+                                    <div class="responseRight">
+                                        <a href="#" class="button">Get Started</a>
+                                        <a href="#" class="button">Check My Word</a>
+                                        <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
+                                    </div>
+                                </div>
+                                <div class="responseItem">
+                                    <p class="responseDirections">
+                                        To answer the question click the Write, Draw, Record, or Upload button above.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                    $(window).ready(function() {
+                        $("#slideshowId2").seqSlideshow();
+                    });
+                    </script>
+
+                    <h2>Check Your Understanding</h2>
+
+                    <div class="entryBox">
+                        <p>
+                            Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                        </p>
+
+                        <div class="responseBar">
+                            <div class="responseLeft">
+                            </div>
+                            <div class="responseRight">
+                                <a href="#" class="button">Get Started</a>
+                            </div>
+                        </div>
+                        <div class="responseItem">
+                            <div class="responseMCItem">
+                                <input type="radio" name="mc1" id="mc1_1" />
+                                <label for="mc1_1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus.</label>
+                            </div>
+                            <div class="responseMCItem">
+                                <input type="radio" name="mc1" id="mc1_2" />
+                                <label for="mc1_2">Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci.</label>
+                            </div>
+                            <div class="responseMCItem">
+                                <input type="radio" name="mc1" id="mc1_3" />
+                                <label for="mc1_3">Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.</label>
+                            </div>
+                            <p class="responseMCActions">
+                                <a class="button" href="#">Check My Answer</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2>Check Your Understanding</h2>
+
+                    <div class="entryBox">
+                        <p>
+                            Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                        </p>
+
+                        <div class="responseBar">
+                            <div class="responseLeft">
+                            </div>
+                            <div class="responseRight">
+                                <a href="#" class="button">Get Started</a>
+                                <a href="#" class="button"><img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
+                                <span class="responseFeedback"><img src="../img/icons/response_negative.png" width="15" height="15" alt="Didn't Get It!" title="Didn't Get It!" /></span>
+                            </div>
+                        </div>
+                        <div class="responseItem">
+                            <div class="responseMCItem">
+                                <input type="radio" name="mc2" id="mc2_1" />
+                                <label for="mc2_1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus.</label>
+                            </div>
+                            <div class="responseMCItem">
+                                <input type="radio" name="mc2" id="mc2_2" />
+                                <label for="mc2_2">Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci.</label>
+                            </div>
+                            <div class="responseMCItem">
+                                <input type="radio" name="mc2" id="mc2_3" />
+                                <label for="mc2_3">Proin sit amet tincidunt lacus. Quisque eget tellus dui, eget cursus velit. Sed suscipit adipiscing blandit.</label>
+                            </div>
+                            <p class="responseMCActions">
+                                <a class="button" href="#">Check My Answer</a>
+                            </p>
+                            <div class="responseMCFeedback">
+                                <p class="incorrect">
+                                    Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="entryBox">
+                        <div class="responseItem responseMCCompact">
+                            <div class="responsePrompt">
+                                <p>
+                                    Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                                </p>
+                            </div>
+                            <form>
+                                <div class="responseMCItem">
+                                    <input type="radio" name="mc3" id="mc3_1" />
+                                    <label for="mc3_1">Lorem ipsum</label>
+                                </div>
+                                <div class="responseMCItem">
+                                    <input type="radio" name="mc3" id="mc3_2" />
+                                    <label for="mc3_2">Aliquam erat</label>
+                                </div>
+                                <div class="responseMCItem">
+                                    <input type="radio" name="mc3" id="mc3_3" />
+                                    <label for="mc3_3">Proin sit amet</label>
+                                </div>
+                                <p class="responseMCActions">
+                                    <a class="button" href="#">Check My Answer</a>
+                                </p>
+                                <div class="responseMCFeedback">
+                                    <p class="incorrect">
+                                        Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <p>
+                        <a href="#" class="button"/><img src="../img/icons/check_notdone.png" width="17" height="15" /> Done with this page</a>
+                    </p>
+
+                    <div class="progress">
+                        <div class="progressBar" style="width: 83%">
+                            <div class="progressValue">83%</div>
+                        </div>
+                    </div>
+
+
+                </div>
+               <!-- END - Main Content -->
+            </div>
+        </div>
+        <div id="mainContentRight">
+            <!-- BEGIN - Support Content -->
+
+            <div id="globalHighlight" class="rightBox collapseBox open">
+                <h5>Highlights</h5>
+                <div class="collapseBody">
+                    <div class="hlRow controlY helper has on">
+                        <div class="hlGradient">
+                            <a href="#" onclick="javascript:changeMode('Y'); return false;" class="hlIcon">
+                                <span class="hlRowInner">
+                                    <span class="action">Main Ideas</span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="highlightHelper">
+                            <h5>What do I Highlight</h5>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci.
+                            </p>
+                            <div class="supportBox collapseBox">
+                                <h5>Hint</h5>
+                                <div class="collapseBody">
+                                    <p>
+                                        Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="supportBox collapseBox">
+                                <h5>Compare</h5>
+                                <div class="collapseBody">
+                                    <p>
+                                        Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hlRow controlB">
+                        <div class="hlGradient">
+                            <a href="#" onclick="javascript:changeMode('B'); return false;" class="hlIcon">
+                                <span class="hlRowInner">
+                                    <span class="action">Evidence</span>
+                                </span>
+                            </a>
+                            <a href="#" class="button">Edit</a>
+                        </div>
+                    </div>
+                    <div class="hlRow controlG">
+                        <div class="hlGradient">
+                            <a href="#" onclick="javascript:changeMode('G'); return false;" class="hlIcon">
+                                <span class="hlRowInner">
+                                </span>
+                            </a>
+                            <form action="#">
+                                <input type="text" value="For the test" />
+                                <a href="#" class="button">Save</a>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="hlRow controlE" >
+                        <div class="hlGradient">
+                            <a href="#" onclick="javascript:changeMode('E'); return false;" class="hlIcon">
+                                <span class="hlRowInner">
+                                    <span class="action">Erase Highlights</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <!--
+                    <form wicket:id="highlightDisplay" class="autosave">
+                        <div>
+                            <input id="YhighlightedWords" wicket:id="Y_highlightedWords" name="YhighlightedWords" type="hidden" />
+                            <input id="BhighlightedWords" wicket:id="B_highlightedWords" name="BhighlightedWords" type="hidden" />
+                            <input id="GhighlightedWords" wicket:id="G_highlightedWords" name="GhighlightedWords" type="hidden" />
+                        </div>
+                    </form>
+                    -->
+                </div>
+            </div>
+
+            <div class="rightBox collapseBox open">
+                <h5>My Notes</h5>
+                <div class="collapseBody">
+                    <div class="responseBar">
+                        <div class="responseLeft">
+                            <a href="#" class="button response"><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
+                            <a href="#" class="button response"><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
+                        </div>
+                        <div class="responseRight">
+                        </div>
+                    </div>
+                    <div class="responseItem">
+                        <p class="responseDirections">
+                            Click the Write or Record to add Notes.
+                        </p>
+                    </div>
+                    <div class="responseItem">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus.
+                        </p>
+                        <p class="responseTime">
+                            June 24, 2011, 12:12 PM
+                        </p>
+                        <p class="responseActions">
+                            <a href="#" class="button">Edit</a>
+                            <a href="#" class="button">Copy to Notebook</a>
+                        </p>
+                    </div>
+
+                    <div class="responseEdit">
+                        <form action="#">
+                            <textarea></textarea>
+                            <p class="responseTime">
+                                Saving&hellip;
+                                <br />-- or --<br />
+                                June 24, 2011, 12:12 PM
+                            </p>
+                            <p class="responseActions">
+                                <a href="#" class="button">Save</a>
+                                <a href="#" class="button">Cancel</a>
+                                <a href="#" class="button">Delete</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rightBox collapseBox open">
+                <h5>My Questions</h5>
+                <div class="collapseBody">
+                    <p>
+                        <a href="#">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?</a>
+                    </p>
+                    <p>
+                        <a href="#">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?</a>
+                    </p>
+                    <a href="#" class="button">Create New Question</a>
+                </div>
+            </div>
+
+            <div wicket:id="tagpanel" class="rightBox collapseBox tagCurrent open">
+                <h5>My Tags:</h5>
+                <div class="tagCurrentList">
+                    <span class="tagItem">smell <a href="#" class="button tag removeLink"><img src="../img/icons/close_tag.png" width="9" height="9" alt="" /></a></span>
+                    <span class="tagItem">my_words <a href="#" class="button tag removeLink"><img src="../img/icons/close_tag.png" width="9" height="9" alt="" /></a></span>
+                </div>
+                <div class="collapseBody">
+                    <h6>Add Tags:</h6>
+                    <p class="tagStarsCloud">
+                        <a href="#"><img src="../img/icons/star_3.png" width="42" height="13" alt="3 Stars" /></a>
+                        <a href="#" class="selected"><img src="../img/icons/star_2.png" width="27" height="13" alt="2 Stars" /></a>
+                        <a href="#"><img src="../img/icons/star_1.png" width="13" height="13" alt="1 Star" /></a>
+                    </p>
+                    <p class="tagCloud">
+                        <a href="#" class="s1">rules</a>
+                        <a href="#" class="s2">my_words</a>
+                        <a href="#" class="s3">big_ideas</a>
+                        <a href="#" class="s2 selected">smell</a>
+                    </p>
+
+                    <form method="post" action="#" name="something" id="something" class="tagAddForm">
+                        <label for="addTags">Add Tags</label><br />
+                        <input type="text" value="" class="tagTerm" id="addTags" />
+                        <a href="#" class="button">Add</a>
+                    </form>
+                    <!-- END - Tag - Cloud/Alph Example -->
+
+                </div>
+            </div>
+            <!-- END - Support Content -->
+        </div>
+    </div>
+
+    <div class="pageNavBar">
+        <div class="pageNavLeft">
+            <a href="#" class="button icon"><img src="../img/icons/check_done.png" width="19" height="15" alt="Completed" /></a>
+            <a href="#">Lorem ipsum dolor sit amet, consectetur.</a>
+            <a href="#" class="button pagenum">1</a>
+            <span class="button pagenum current">2</span>
+            <a href="#" class="button pagenum">3</a>
+            <a href="#" class="button pagenum">4</a>
+            <a href="#" class="button pagenum">5 <img src="../img/icons/envelope_new.png" width="13" height="11" alt="message" title="message" /></a>
+        </div>
+        <div class="pageNavRight">
+            <a href="#" class="button">Previous</a>
+            <a href="#" class="button">Next</a>
+        </div>
+    </div>
+</div>
+
+<div id="footer" wicket:id="pageFooter">
+    <div class="pageWidth">
+        <div id="copyright">
+            <p>
+                <strong>&copy; Copyright 2011, CAST Inc.</strong><br />
+                40 Harvard Mills Square, Suite 3, Wakefield, MA 01880-3233<br />
+                TEL (781) 245-2212 , EMAIL <a href="mailto:curriculumtoolkit@cast.org">curriculumtoolkit@cast.org</a>
+            </p>
+        </div>
+        <div id="footerRight">
+            <div id="build">
+                <p>
+                    <img src="../img/logos/logo-mini.png" alt="" width="20" height="21" style="vertical-align: middle;"/> Built with UDL Curriculum Toolkit
+                </p>
+            </div>
+        </div>
+        <div id="grant">
+            <p>
+                <img src="../img/logos/cast.png" width="71" height="20" alt="CAST Logo"/>
+            	<img src="../img/logos/umich.png" width="169" height="20" alt="University of Michigan Logo"/>
+            	<img src="../img/logos/edc_cse.png" width="151" height="25" alt="EDC Center for Science Education Logo"/>
+            </p>
+            <p>
+                <img src="../img/logos/nsf-30.png" width="30" height="30" alt="NSG Logo" title="NSF Logo" />
+                This material is based upon work supported by the National Science Foundation under Grant No. 0730348.
+                Any opinions, findings, conclusions, or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="tht" class="thtFull">
+    <ul id="thtActions">
+        <li>
+            <span>listen</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_play(); return false;" id="thtPlay" title="Play"><span>Play</span></a></li>
+                <li><a href="#" onclick="$rw_event_pause(); return false;" id="thtPause" title="Pause"><span>Pause</span></a></li>
+                <li><a href="#" onclick="$rw_stopSpeech(); return false;" id="thtStop" title="Stop"><span>Stop</span></a></li>
+            </ul>
+        </li>
+        <li>
+            <span>lookup</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_dict(); return false;" id="thtDictionary" title="Dictionary"><span>Dictionary</span></a></li>
+                <li><a href="#" onclick="$rw_event_trans(); return false;" id="thtTranslate" title="Translate"><span>Translate</span></a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

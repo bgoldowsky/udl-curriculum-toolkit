@@ -1,0 +1,17 @@
+<wicket:panel>
+	<div width="100%">
+		<div wicket:id="bar" class="progress" style="width:80%; margin: 0px auto;">
+		    <div class="progressBar">
+		        <div class="progressValue">83%</div>
+		    </div>
+		</div>
+		<div class="progressText">
+			<img src="img/icons/summary_correct.png" style="margin-left: 10px; vertical-align: middle; padding: 3px;"/>
+			<span wicket:id="correctCount">[# Correct]</span> Correct
+			<img src="img/icons/summary_incorrect.png" style="margin-left: 10px; vertical-align: middle; padding: 3px;"/>
+			<span wicket:id="incorrectCount">[# Incorrect]</span> Incorrect
+		</div>
+	</div>
+	<div wicket:id="summary" style="margin: 20px;">
+	</div>
+</wicket:panel>

@@ -1,0 +1,19 @@
+<wicket:panel>
+  <form wicket:id="toolbarForm">
+    <input wicket:id="selectedText" type="hidden" id="selectedText"/>
+    <ul id="thtActions">
+      <li>
+        <span>lookup</span>
+        <ul>
+          <li><a wicket:id="dictionary" href="#" id="thtDictionary" title="Dictionary"><span>Dictionary</span></a></li>
+        </ul>
+      </li>
+    </ul>
+  </form>
+  <div wicket:id="dictionaryModal">
+  	<div wicket:id="body">
+		<div wicket:id="definition" class="definitionContainer"/>
+		<div><a wicket:id="wordnikLink" href="#"><img src="img/logos/powered_by_wordnik.png" width="132" height="18"></a></div>
+	</div>
+  </div>
+</wicket:panel>

@@ -1,0 +1,15 @@
+<wicket:border>
+	<div wicket:id="contentContainer" class="visuraloverlaycontent modalContainer modalBody">
+		<div class="modalHeader" role="banner">
+			<div class="modalTitle" wicket:id="title">Generic Dialog</div>
+			<a wicket:id="moveWindowLink" href="#" class="button icon modalMove"><img src="img/icons/move.png" width="16" height="16" alt="Move" title="Move" /></a>
+			<a wicket:id="closeWindowLink" href="#" class="button icon modalClose"><img src="img/icons/close.png" width="15" height="15" alt="Close" title="Close"/></a>
+		</div>
+		<div class="modalMainCol">
+		  <div class="modalContent">
+			<wicket:body />
+		  </div>
+		</div>
+	</div>
+	<div wicket:id="overlay" class="visuraloverlay"></div>    
+</wicket:border>
