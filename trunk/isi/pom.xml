@@ -42,7 +42,7 @@
         <id>CAST</id>
         <url>scpexe://xander.cast.org/shared/maven2-repository</url>
       </repository>
-      <!-- todo: site -->
+      <!-- todo: site  -->
     </distributionManagement>
 
 	<repositories>
