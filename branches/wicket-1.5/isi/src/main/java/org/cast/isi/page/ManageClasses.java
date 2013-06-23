@@ -19,19 +19,13 @@
  */
 package org.cast.isi.page;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
-
+import com.google.inject.Inject;
 import lombok.Setter;
 import net.databinder.hib.Databinder;
-
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
@@ -52,6 +46,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator.MaximumLengthValidator;
 import org.cast.cwm.data.Period;
@@ -77,7 +74,10 @@ import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Teacher page for managing student accounts.
@@ -267,7 +267,7 @@ public class ManageClasses extends ISIStandardPage {
 					target.addChildren(getPage(), PeriodStudentSelectPanel.class);
 					target.addComponent(editStudentForm);
 					target.addComponent(periodTitle);
-					target.appendJavascript("$('#moveModal').hide();");
+					target.appendJavaScript("$('#moveModal').hide();");
 				}
 									
 			};
@@ -464,8 +464,8 @@ public class ManageClasses extends ISIStandardPage {
 						target.addComponent(FormRowFragment.this);
 						target.addComponent(moveForm);
 						String moveButtonMarkupId = this.getMarkupId();
-						target.appendJavascript("$('#moveModal').show();");
-						target.appendJavascript("matchVerticalPosition('" + moveButtonMarkupId + "', \'moveModal');");
+						target.appendJavaScript("$('#moveModal').show();");
+						target.appendJavaScript("matchVerticalPosition('" + moveButtonMarkupId + "', \'moveModal');");
 					}
 				}
 
@@ -745,15 +745,16 @@ public class ManageClasses extends ISIStandardPage {
 		 * @param enable
 		 * @return
 		 */
-		public static IVisitor<EditLink<?>> getVisitor(final AjaxRequestTarget target, final boolean enable) {
-			return new IVisitor<EditLink<?>>() {
+		public static IVisitor<EditLink<?>, Void> getVisitor(final AjaxRequestTarget target, final boolean enable) {
 
-				public Object component(EditLink<?> link) {
-					link.setEnabled(enable);
-					target.addComponent(link);
-					return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
-				}
-			};
+			return new IVisitor<EditLink<?>, Void>() {
+
+                public void component(EditLink<?> link, IVisit<Void> visit) {
+                    link.setEnabled(enable);
+                    target.addComponent(link);
+                    visit.dontGoDeeper();
+                }
+            };
 		}
 	}
 	

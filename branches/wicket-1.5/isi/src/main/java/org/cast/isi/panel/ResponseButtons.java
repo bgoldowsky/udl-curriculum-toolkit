@@ -19,15 +19,17 @@
  */
 package org.cast.isi.panel;
 
+import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.IResponseType;
@@ -36,8 +38,6 @@ import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.service.IResponseService;
 import org.cast.isi.data.ContentLoc;
-
-import com.google.inject.Inject;
 
 public class ResponseButtons extends Panel {
 
@@ -157,16 +157,17 @@ public class ResponseButtons extends Panel {
 	private ResponseList getListComponent() {
 		if (listComponent != null)
 			return listComponent;
-		getPage().visitChildren(ResponseList.class, new IVisitor<ResponseList>() {
-
-			public Object component(ResponseList component) {
-				if (component.getPromptModel().equals(mPrompt)) {
-					listComponent = component; // found!
-					return STOP_TRAVERSAL;
-				}
-				return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
-			}
-		});
+		getPage().visitChildren(ResponseList.class, new IVisitor<ResponseList, Void>() {
+            public void component(ResponseList component, IVisit<Void> visit) {
+                if (component.getPromptModel().equals(mPrompt)) {
+                    listComponent = component; // found!
+                    visit.stop();
+                }
+                else {
+                    visit.dontGoDeeper();
+                }
+            }
+        });
 		return listComponent;
 	}
 	

@@ -19,6 +19,15 @@
  */
 package org.cast.isi.data;
 
+import com.google.inject.Inject;
+import lombok.Getter;
+import org.apache.wicket.injection.Injector;
+import org.apache.wicket.model.IModel;
+import org.cast.cwm.data.Prompt;
+import org.cast.cwm.data.User;
+import org.cast.isi.ISIXmlSection;
+import org.cast.isi.service.ISectionService;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,17 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import lombok.Getter;
-
-import org.apache.wicket.injection.web.InjectorHolder;
-import org.apache.wicket.model.IModel;
-import org.cast.cwm.data.Prompt;
-import org.cast.cwm.data.User;
-import org.cast.isi.ISIXmlSection;
-import org.cast.isi.service.ISectionService;
-
-import com.google.inject.Inject;
 
 /**
  * A simple data holder for score counts used in summary pages
@@ -98,7 +96,7 @@ public class ScoreCounts implements Serializable {
 		private ISectionService sectionService;
 		
 		public ScoreCounter() {
-			InjectorHolder.getInjector().inject(this);
+            Injector.get().inject(this);
 		}
 
 		public abstract ScoreCounts count();

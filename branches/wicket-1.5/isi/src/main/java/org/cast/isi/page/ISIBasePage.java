@@ -19,13 +19,12 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
+import com.google.inject.Inject;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.behavior.JsEventLoggingBehavior;
 import org.cast.cwm.service.EventService;
 import org.cast.cwm.service.IEventService;
-
-import com.google.inject.Inject;
 
 /**
  * Superclass for logged-in, stateful ISI pages.

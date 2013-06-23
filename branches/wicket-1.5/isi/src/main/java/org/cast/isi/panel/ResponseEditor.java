@@ -19,15 +19,9 @@
  */
 package org.cast.isi.panel;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
-
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -43,7 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.cast.audioapplet.component.AbstractAudioRecorder;
-import org.cast.cwm.IRelativeLinkSource;
+import org.cast.cwm.IInputStreamProvider;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
@@ -54,10 +48,10 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
@@ -101,7 +95,8 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 	 */
 	@Override
 	protected void onInitialize() {
-		Resource xmlFile = null;
+
+        IInputStreamProvider xmlFile = null;
 		if (loc != null) {
 			this.setPageName(loc.getLocation());
 			xmlFile = loc.getSection().getXmlDocument().getXmlFile();  
@@ -115,14 +110,15 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 			if (typeMD != null) {
 				if (thisType.getName().equals("SVG") && typeMD.getFragments() != null) {
 					// Drawing starters - need to convert to URLs.
-					ArrayList<String> urls = new ArrayList<String>(typeMD.getFragments().size());
+				    List<String> urls = new ArrayList<String>(typeMD.getFragments().size());
 					for (String frag : typeMD.getFragments()) {
-						ResourceReference fragResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(frag);
-						String url = RequestCycle.get().urlFor(fragResourceRef).toString();
-						if (url != null)
-							urls.add(url);
-						else
-							log.warn("Drawing stamp image does not exist: {}", frag);
+                        // heikki TODO
+						//ResourceReference fragResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(frag);
+						//String url = RequestCycle.get().urlFor(fragResourceRef).toString();
+						//if (url != null)
+						//	urls.add(url);
+						//else
+						//	log.warn("Drawing stamp image does not exist: {}", frag);
 					}
 					setStarters(urls);
 				} else {
@@ -131,9 +127,10 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 				}
 				// Template
 				if (typeMD.getTemplates() != null && !typeMD.getTemplates().isEmpty()) {
-					String templateRelativePath = typeMD.getTemplates().get(0);  // path from xml file
-					ResourceReference templateResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(templateRelativePath);
-					this.setTemplateURL(RequestCycle.get().urlFor(templateResourceRef).toString());
+                    // heikki TODO
+					//String templateRelativePath = typeMD.getTemplates().get(0);  // path from xml file
+					//ResourceReference templateResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(templateRelativePath);
+					//this.setTemplateURL(RequestCycle.get().urlFor(templateResourceRef).toString());
 				}
 			}
 		}
@@ -158,7 +155,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 					// First, save the title to datastore (creating Response if necessary).
 					responseService.saveResponseWithoutData(model);
 					// Then get the audio data streamed back to the server
-					target.appendJavascript(((AbstractAudioRecorder)editor.get("applet")).generateJavascriptMessage("SAVE"));
+					target.appendJavaScript(((AbstractAudioRecorder)editor.get("applet")).generateJavascriptMessage("SAVE"));
 				}
 				
 			};

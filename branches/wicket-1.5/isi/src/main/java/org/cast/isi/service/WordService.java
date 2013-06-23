@@ -19,13 +19,11 @@
  */
 package org.cast.isi.service;
 
-import java.util.List;
-
+import com.google.inject.Inject;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateListModel;
 import net.databinder.models.hib.HibernateObjectModel;
-
-import org.apache.wicket.injection.web.InjectorHolder;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.ICwmService;
@@ -33,7 +31,7 @@ import org.cast.cwm.service.IEventService;
 import org.cast.isi.data.WordCard;
 import org.cast.isi.data.builder.WordCardsQuery;
 
-import com.google.inject.Inject;
+import java.util.List;
 
 /**
  * Methods to interface with the database representations of WordCards, WordConnections, etc.
@@ -51,7 +49,7 @@ public class WordService  {
 	private IEventService eventService;
 
 	public WordService () {
-		InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
 	}
 	
 	public static WordService get() { return INSTANCE; }

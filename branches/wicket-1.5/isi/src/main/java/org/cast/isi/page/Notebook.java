@@ -19,20 +19,12 @@
  */
 package org.cast.isi.page;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
+import com.google.inject.Inject;
 import lombok.Getter;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -49,6 +41,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
@@ -74,7 +67,12 @@ import org.hibernate.LockOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * A base Notebook view.  Notebook entries viewable by Chapter.  Entries can be directly inside
@@ -155,8 +153,8 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	 */
 	protected void getInitChapter(PageParameters parameters) {
 		// check if there is a location passed in otherwise default to the current bookmarked location
-		if (parameters.containsKey("loc")) {
-			currentLoc = new ContentLoc(parameters.getString("loc"));
+		if (parameters.getNamedKeys().contains("loc")) {
+			currentLoc = new ContentLoc(parameters.get("loc").toString());
 		} else {
 			currentLoc = ISIApplication.get().getBookmarkLoc();
 		}
@@ -369,7 +367,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		super.renderHead(response);
 		renderThemeCSS(response, "css/window.css");
 		renderThemeCSS(response, "css/window_print.css", "print");
-		response.renderOnLoadJavascript("bindSectionOpenerLinks()");
+		response.renderOnLoadJavaScript("bindSectionOpenerLinks()");
 	}
 
 

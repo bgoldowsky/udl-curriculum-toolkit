@@ -19,23 +19,20 @@
  */
 package org.cast.isi.panel;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.inject.Inject;
 import org.apache.wicket.Component;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.injection.web.InjectorHolder;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.cast.cwm.components.ClassAttributeModifier;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
@@ -49,7 +46,9 @@ import org.cast.isi.page.ISIStandardPage;
 import org.cast.isi.page.SectionLinkFactory;
 import org.cast.isi.service.ISectionService;
 
-import com.google.inject.Inject;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * A Navigation bar that shows the sequence of sections within a chapter.
  * Each section is represented by an icon which may be determined by the its class attribute.
@@ -165,8 +164,8 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 		// Nav Bar Tool Tips
 		// NOTE: Based on unstable, 2.0 version.  If replacing, take note of CSS style changes as well!
 		// response.renderJavascriptReference(new ResourceReference("js/jquery/jquery.qtip-2.0-rev411.min.js"));
-		response.renderJavascriptReference(new ResourceReference("js/jquery/jquery.qtip-1.0.min.js"));
-		response.renderJavascript("$(window).ready(function() { navBarToolTips(); });", "Nav Bar Tool Tip Init");
+		response.renderJavaScriptReference(new JavaScriptResourceReference(this.getClass(), "js/jquery/jquery.qtip-1.0.min.js"));
+		response.renderJavaScript("$(window).ready(function() { navBarToolTips(); });", "Nav Bar Tool Tip Init");
 	}
 	
 	/**
@@ -232,13 +231,14 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 		private static final long serialVersionUID = 1L;
 		
 		private static final String ICON_TYPE_CLASS = "class";
-		private static final String ICON_TYPE_STATUS = "status";
-		
+        private static final String ICON_TYPE_STATUS = "status";
+        private static final String ACTIVITY_ICON_URI_PREFIX = "theme/img/icons/activity_";
+
 		@Inject
 		protected ISectionService sectionService;
 
 		public SectionIconFactory() {
-			InjectorHolder.getInjector().inject(this);
+            Injector.get().inject(this);
 		}
 		
 		public static SectionIconFactory getIconFactory(boolean teacher) {
@@ -277,7 +277,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 
 			@Override
 			public Component getIconFor(ISIXmlSection section) {
-				return new Image("icon").setVisible(false);
+                return new Icon("icon", ACTIVITY_ICON_URI_PREFIX + section.getClassName() + ".png").setVisible(false);
 			}
 
 		}

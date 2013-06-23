@@ -20,10 +20,9 @@
 package org.cast.isi.panel;
 
 import net.databinder.auth.hib.AuthDataSession;
-
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISIApplication;
 

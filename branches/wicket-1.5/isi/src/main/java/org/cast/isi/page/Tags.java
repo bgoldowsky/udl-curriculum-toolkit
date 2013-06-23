@@ -19,11 +19,7 @@
  */
 package org.cast.isi.page;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -33,6 +29,7 @@ import org.apache.wicket.markup.repeater.util.ModelIteratorAdapter;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.PersistedObject;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
@@ -50,6 +47,9 @@ import org.cast.isi.data.ContentLoc;
 import org.cast.isi.panel.TagCloudAlternateView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * This page creates a clickable listing of tags on the left hand side with 
@@ -79,7 +79,7 @@ public class Tags extends ISIStandardPage {
 		pageTitleEnd = (new StringResourceModel("Tags.pageTitle", this, null, "Collections").getString());
 		setPageTitle(pageTitleEnd);
 		
-		String tagName = parameters.getString("tag");
+		String tagName = parameters.get("tag").toString();
 		if (tagName != null) {
 			selected = TagService.get().findTag(targetUser, tagName);
 		}

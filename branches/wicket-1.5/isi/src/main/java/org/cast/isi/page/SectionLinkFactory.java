@@ -19,9 +19,8 @@
  */
 package org.cast.isi.page;
 
-import java.io.Serializable;
-
-import org.apache.wicket.injection.web.InjectorHolder;
+import com.google.inject.Inject;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.cast.cwm.xml.XmlDocument;
@@ -31,7 +30,7 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 
-import com.google.inject.Inject;
+import java.io.Serializable;
 
 public class SectionLinkFactory implements Serializable {
 
@@ -43,7 +42,7 @@ public class SectionLinkFactory implements Serializable {
 	
 	public SectionLinkFactory() {
 		super();
-		InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
 	}
 
 	/** Return the real page that should be linked to when a link to a 

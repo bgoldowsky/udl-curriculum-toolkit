@@ -19,24 +19,11 @@
  */
 package org.cast.isi.panel;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.tester.BaseWicketTester;
 import org.apache.wicket.util.tester.ITestPanelSource;
 import org.apache.wicket.util.tester.TagTester;
 import org.cast.cwm.components.Icon;
@@ -49,6 +36,18 @@ import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.PromptType;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class TeacherScoreResponseButtonPanelTest {
 
@@ -135,7 +134,7 @@ public class TeacherScoreResponseButtonPanelTest {
 	public void gotItIconHasProperAltTextIfResponsesUnmarked() {
 		setResponseScores(null);
 		wicketTester.startPanel(new TestPanelSource());
-		TagTester tag = BaseWicketTester.getTagsByWicketId(wicketTester, "icon").get(0); // assumes Got It is the first icon
+		TagTester tag = wicketTester.getTagsByWicketId("icon").get(0); // assumes Got It is the first icon
 		// The quotes get changed to entities when HTML is rendered
 		// String expectedAltText = "Click to score as \"Got it!\"";
 		assertTrue("Should have 'alt' text including 'Click to score'" , tag.getAttributeContains("alt", "Click to score"));
@@ -146,7 +145,7 @@ public class TeacherScoreResponseButtonPanelTest {
 	public void gotItIconHasProperAltTextIfResponsesScoredCorrect() {
 		setResponseScores(1);
 		wicketTester.startPanel(new TestPanelSource());
-		TagTester tag = BaseWicketTester.getTagsByWicketId(wicketTester, "icon").get(0); // assumes Got It is the first icon
+		TagTester tag = wicketTester.getTagsByWicketId("icon").get(0); // assumes Got It is the first icon
 		// String expectedAltText = "Click to remove \"Got it!\" scoring.";
 		assertTrue("Should have 'alt' text including 'Click to remove'" , tag.getAttributeContains("alt", "Click to remove"));
 		assertTrue("Should have 'alt' text including 'Got it!'" , tag.getAttributeContains("alt", "Got it!"));
@@ -208,7 +207,7 @@ public class TeacherScoreResponseButtonPanelTest {
 	public void notGotItIconHasProperAltTextIfResponsesUnmarked() {
 		setResponseScores(null);
 		wicketTester.startPanel(new TestPanelSource());
-		TagTester tag = BaseWicketTester.getTagsByWicketId(wicketTester, "icon").get(1); // assumes this the second icon
+		TagTester tag = wicketTester.getTagsByWicketId("icon").get(1); // assumes this the second icon
 		// String expectedAltText = "Click to score as \"Didn't get it\"";
 		assertTrue("Should have 'alt' text including 'Click to score'" , tag.getAttributeContains("alt", "Click to score"));
 		assertTrue("Should have 'alt' text including 'Didn't get it'" , tag.getAttributeContains("alt", "Didn't get it"));
@@ -218,7 +217,7 @@ public class TeacherScoreResponseButtonPanelTest {
 	public void notGotItIconHasProperAltTextIfResponsesScoredIncorrect() {
 		setResponseScores(0);
 		wicketTester.startPanel(new TestPanelSource());
-		TagTester tag = BaseWicketTester.getTagsByWicketId(wicketTester, "icon").get(1); // assumes this the second icon
+		TagTester tag = wicketTester.getTagsByWicketId("icon").get(1); // assumes this the second icon
 		// String expectedAltText = "Click to remove \"Didn't get it\" scoring.";
 		assertTrue("Should have 'alt' text including 'Click to remove'" , tag.getAttributeContains("alt", "Click to remove"));
 		assertTrue("Should have 'alt' text including 'Didn't get it'" , tag.getAttributeContains("alt", "Didn't get it"));

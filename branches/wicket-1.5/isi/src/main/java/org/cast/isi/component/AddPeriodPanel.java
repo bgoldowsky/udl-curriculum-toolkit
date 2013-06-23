@@ -19,12 +19,9 @@
  */
 package org.cast.isi.component;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import com.google.inject.Inject;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -47,7 +44,8 @@ import org.cast.isi.panel.PeriodStudentSelectPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Panel used by a teacher to add a new Period for the current Site.  Teacher is 
@@ -107,7 +105,7 @@ public class AddPeriodPanel extends Panel {
 
 				@Override
 				public void onClick(AjaxRequestTarget target) {
-					target.appendJavascript("$('#" + addPeriodPanelMarkupId + "').hide();");
+					target.appendJavaScript("$('#" + addPeriodPanelMarkupId + "').hide();");
 				}
 			});
 			
@@ -128,7 +126,7 @@ public class AddPeriodPanel extends Panel {
 						target.addComponent(newPeriodForm);
 						
 						// hide the form
-						target.appendJavascript("$('#" + addPeriodPanelMarkupId + "').hide();");
+						target.appendJavaScript("$('#" + addPeriodPanelMarkupId + "').hide();");
 					}	
 				}
 				

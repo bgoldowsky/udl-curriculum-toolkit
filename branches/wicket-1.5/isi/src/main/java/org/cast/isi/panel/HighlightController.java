@@ -265,7 +265,7 @@ public class HighlightController extends Panel {
 					editing = false;
 					if (target != null) {
 						target.addComponent(container);
-						target.appendJavascript("showIndicators();");
+						target.appendJavaScript("showIndicators();");
 					}
 				}
 				

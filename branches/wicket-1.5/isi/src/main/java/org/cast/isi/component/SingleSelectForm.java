@@ -19,19 +19,19 @@
  */
 package org.cast.isi.component;
 
+import com.google.inject.Inject;
 import lombok.Getter;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISISession;
 import org.cast.isi.service.IISIResponseService;
-
-import com.google.inject.Inject;
 
 public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSelectFormListener {
 
@@ -75,13 +75,11 @@ public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSe
 	}
 	
 	protected void refreshListeners(final AjaxRequestTarget target) {
-		getPage().visitChildren(ISingleSelectFormListener.class, new IVisitor<Component>() {
-			public Object component(Component component) {
-				target.addComponent(component);
-				return CONTINUE_TRAVERSAL;
-			}
-
-		});
+		getPage().visitChildren(ISingleSelectFormListener.class, new IVisitor<Component, Void>() {
+            public void component(Component object, IVisit<Void> visit) {
+                target.addComponent(object);
+            }
+        });
 	}
 	
 	/**
@@ -89,16 +87,14 @@ public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSe
 	 * @return the selected item, or null if there is none.
 	 */
 	protected SingleSelectItem getSelectedItem() {
-		return (SingleSelectItem) visitChildren(SingleSelectItem.class, new IVisitor<SingleSelectItem>() {
-			public Object component(SingleSelectItem component) {
-				if (component.isSelected()) {
-					// Halt traversal by returning this component
-					return component;
-				} else {
-					return CONTINUE_TRAVERSAL;
-				}
-			}
-		});
+		return visitChildren(SingleSelectItem.class, new IVisitor<SingleSelectItem, SingleSelectItem>() {
+            public void component(SingleSelectItem component, IVisit<SingleSelectItem> visit) {
+                if (component.isSelected()) {
+                    // Halt traversal by returning this component
+                    visit.stop(component);
+                }
+            }
+        });
 		
 	}
 	

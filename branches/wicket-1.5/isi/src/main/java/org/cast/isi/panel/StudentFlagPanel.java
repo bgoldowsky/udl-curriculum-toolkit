@@ -19,21 +19,22 @@
  */
 package org.cast.isi.panel;
 
-import java.util.HashMap;
-
 import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISISession;
 import org.cast.isi.service.ISIResponseService;
+
+import java.util.HashMap;
 
 /**
  * A simple flag icon can be toggled.
@@ -48,14 +49,14 @@ public class StudentFlagPanel extends Panel {
 	private String imagePrefix;
 	private boolean isFlagged = false;
 
-	/**
-	 * Creates a flag panel (use <span> tags) with the given id.
-	 * 
-	 * @param id - the component id
-	 * @param person - the person being flagged
-	 * @param period - the period to be flagged
-	 * 
-	 */
+    /**
+     * Creates a flag panel (use <span> tags) with the given id.
+     *
+     * @param id
+     * @param person
+     * @param flagList
+     * @param imagePrefix
+     */
 	public StudentFlagPanel(String id, User person, HashMap<Long, Boolean> flagList, String imagePrefix) {
 		super(id);
 		this.mUser = new HibernateObjectModel<User>(person);
@@ -93,20 +94,16 @@ public class StudentFlagPanel extends Panel {
 				if (mUser != null) {
 					ISIResponseService.get().toggleFlag(mUser.getObject());
 					if(target != null) {
-						getPage().visitChildren(StudentFlagPanel.class, new IVisitor<StudentFlagPanel>() {
-							
-							public Object component(StudentFlagPanel component) {
-								IModel<User> mOtherUser = component.getmUser();
-								if (mOtherUser!=null && mOtherUser.getObject()!=null && mOtherUser.getObject().equals(mUser.getObject())) {
-									component.toggleFlag();
-									target.addComponent(component);
-								}
-								return CONTINUE_TRAVERSAL;
-							}
-							
-						});
+						getPage().visitChildren(StudentFlagPanel.class, new IVisitor<StudentFlagPanel, Void>() {
+                            public void component(StudentFlagPanel component, IVisit<Void> visit) {
+                                IModel<User> mOtherUser = component.getmUser();
+                                if (mOtherUser!=null && mOtherUser.getObject()!=null && mOtherUser.getObject().equals(mUser.getObject())) {
+                                    component.toggleFlag();
+                                    target.addComponent(component);
+                                }
+                            }
+                        });
 					}
-					
 				}
 			}
 		};

@@ -56,6 +56,6 @@ public class SlideShowComponent extends WebMarkupContainer implements IHeaderCon
 		ISIBasePage.renderThemeCSS(response, "css/slideshow.css");
 
 		// The js call that will set up the slideshow component.
-		response.renderOnLoadJavascript("{$(\"#" + slideShowId + "\").seqSlideshow();}");
+		response.renderOnLoadJavaScript("{$(\"#" + slideShowId + "\").seqSlideshow();}");
 	}
 }

@@ -19,13 +19,12 @@
  */
 package org.cast.isi;
 
-import org.apache.wicket.RequestCycle;
+import com.google.inject.Inject;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.injection.web.InjectorHolder;
+import org.apache.wicket.injection.Injector;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.cast.cwm.service.IEventService;
-
-import com.google.inject.Inject;
 
 /**
  * A behavior that can be attached to any wicket component that is inside a css styled 'collapseBox'.  
@@ -73,13 +72,13 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 	/** Public constructors call this to do essential setup. */
 	private CollapseBoxBehavior(final String event) {
 		super(event);
-		InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
 	}
 	
 	@Override
 	protected CharSequence generateCallbackScript(CharSequence partialCall) {
 		getComponent().setOutputMarkupId(true);
-		String callback = "var url = '" + getCallbackUrl(false) + "'; "; // the base url for the callback
+		String callback = "var url = '" + getCallbackUrl() + "'; "; // the base url for the callback
 		callback += " var parameters = 'action=' + collapseBoxStatus('" + getComponent().getMarkupId() + "'); "; // the parameters
 		callback += "wicketAjaxGet(url + '&' + parameters);";
 		return callback;
@@ -88,7 +87,7 @@ public class CollapseBoxBehavior extends AjaxEventBehavior {
 
 	@Override
 	protected void onEvent(AjaxRequestTarget target) {
-		String action = RequestCycle.get().getRequest().getParameter("action");
+		String action = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("action").toString();
 		action = "state=" + action;
 		if (!(detail == null || detail.isEmpty())) {
 			action += "," + detail;

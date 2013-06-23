@@ -20,20 +20,12 @@
 package org.cast.isi;
 
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.behavior.AbstractBehavior;
@@ -51,8 +43,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
-import org.cast.cwm.IRelativeLinkSource;
+import org.cast.cwm.IInputStreamProvider;
 import org.cast.cwm.components.DeployJava;
 import org.cast.cwm.components.ShyContainer;
 import org.cast.cwm.data.IResponseType;
@@ -122,7 +117,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.inject.Inject;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 /**
  * A component to display XML content in ISI.
@@ -173,7 +171,10 @@ public class ISIXmlComponent extends XmlComponent {
 
 	// FIXME - HACK:  For some reason, Unicode D7 (and that alone, as far as I can see) is getting swallowed up and not showing up
 	// when called for in XML content.  This fixes it.
-	protected String getMarkup() {
+
+    // heikki TODO
+    /*
+    protected String getMarkup() {
 		String x =  super.getMarkup();
 		if (x.contains("\u00d7")) {
 			log.debug ("Fixing instances of unicode D7");
@@ -182,6 +183,7 @@ public class ISIXmlComponent extends XmlComponent {
 		//log.debug(x);
 		return x;
 	}
+	*/
 
 	@Override
 	public Component getDynamicComponent(final String wicketId, final Element elt) {
@@ -203,8 +205,8 @@ public class ISIXmlComponent extends XmlComponent {
 			}
 			if(archive != null) {
 				
-				String jarUrl = RequestCycle.get().urlFor(getRelativeRef(archive+".jar")).toString();
-				String dataUrl = RequestCycle.get().urlFor(getRelativeRef(dataFile)).toString();
+				String jarUrl = RequestCycle.get().urlFor(getRelativeRef(archive+".jar"), new PageParameters()).toString();
+				String dataUrl = RequestCycle.get().urlFor(getRelativeRef(dataFile), new PageParameters()).toString();
 
 				DeployJava dj = new DeployJava(wicketId);
 				dj.setArchive(jarUrl);
@@ -248,7 +250,7 @@ public class ISIXmlComponent extends XmlComponent {
 			container = new WebMarkupContainer(wicketId) {
 				private static final long serialVersionUID = 1L;
 				@Override
-				protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
+				public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
 					replaceComponentTagBody(markupStream, openTag, def);
 				}
 			};
@@ -379,7 +381,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("videoplayer_")) {
 			final String videoSrc = elt.getAttribute("src");
 			ResourceReference videoRef = getRelativeRef(videoSrc);
-			String videoUrl = RequestCycle.get().urlFor(videoRef).toString();
+			String videoUrl = RequestCycle.get().urlFor(videoRef, new PageParameters()).toString();
 
 			Integer width = Integer.valueOf(elt.getAttribute("width"));
 			Integer height = Integer.valueOf(elt.getAttribute("height"));
@@ -415,7 +417,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("audioplayer_")) {
 			String audioSrc = elt.getAttribute("src");
 			ResourceReference audioRef = getRelativeRef(audioSrc);
-			String audioUrl = RequestCycle.get().urlFor(audioRef).toString();
+			String audioUrl = RequestCycle.get().urlFor(audioRef, new PageParameters()).toString();
 
 			int width = 400;
 			if (!elt.getAttribute("width").equals("")) {
@@ -719,7 +721,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 				@Override
 				public void onClick(AjaxRequestTarget target) {
-					target.prependJavascript("$('#iScienceVideo-" + wicketId.substring("iScienceLink-".length()) + "').jqmShow();");
+					target.prependJavaScript("$('#iScienceVideo-" + wicketId.substring("iScienceLink-".length()) + "').jqmShow();");
 					eventService.saveEvent("iscience:view", "Video #" + wicketId.substring("iScienceLink-".length()), ((ISIBasePage) getPage()).getPageName());
 				}
 			};
@@ -849,10 +851,12 @@ public class ISIXmlComponent extends XmlComponent {
 	}
 	
 	public ResourceReference getRelativeRef (String src) {
-		Resource xmlFile = ((XmlSection)getModel().getObject()).getXmlDocument().getXmlFile();
-		if (xmlFile instanceof IRelativeLinkSource)
-			return ((IRelativeLinkSource)xmlFile).getRelativeReference(src);
-		throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
+
+        IInputStreamProvider xmlFile = getModel().getObject().getXmlDocument().getXmlFile();
+		//if (xmlFile instanceof IRelativeLinkSource)
+		//	return ((IRelativeLinkSource)xmlFile).getRelativeReference(src);
+        // TODO heikki
+        throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
 	}
 	
 	public static class AttributeRemover extends AbstractBehavior {

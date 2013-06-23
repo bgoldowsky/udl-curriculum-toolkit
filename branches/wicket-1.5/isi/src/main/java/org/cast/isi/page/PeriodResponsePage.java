@@ -19,15 +19,12 @@
  */
 package org.cast.isi.page;
 
-import java.util.List;
-
+import com.google.inject.Inject;
 import lombok.Getter;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -39,6 +36,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.xml.XmlSectionModel;
@@ -63,7 +61,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.inject.Inject;
+import java.util.List;
 
 /**
  * Given a prompt id and period, list all the user responses
@@ -112,8 +110,8 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 		})).setOutputMarkupId(true));
 
 		// prompt id is sent in via parameters, get the prompt for this id
-		if (parameters.containsKey("promptId")) {
-			promptId = (parameters.getLong("promptId"));
+		if (parameters.getNamedKeys().contains("promptId")) {
+			promptId = (parameters.get("promptId").toLong());
 		} 
 
 		// get the prompt for this id

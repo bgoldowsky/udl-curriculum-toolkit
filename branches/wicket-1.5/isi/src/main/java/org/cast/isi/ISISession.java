@@ -19,17 +19,16 @@
  */
 package org.cast.isi;
 
-import java.util.Map;
-
 import lombok.Getter;
 import lombok.Setter;
-
-import org.apache.wicket.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.Request;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.User;
 import org.cast.isi.data.ContentLoc;
+
+import java.util.Map;
 
 /** Customized Session holds application-specific data */
 
@@ -83,7 +82,7 @@ public class ISISession extends CwmSession {
 	}
 	
 	@Override
-	protected void detach() {
+	public void detach() {
 		if (studentModel != null)
 			studentModel.detach();
 		super.detach();

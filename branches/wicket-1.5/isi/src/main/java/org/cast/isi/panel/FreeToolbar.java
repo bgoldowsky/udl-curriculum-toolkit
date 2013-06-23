@@ -19,15 +19,11 @@
  */
 package org.cast.isi.panel;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-
 import net.jeremybrooks.knicker.Knicker.SourceDictionary;
 import net.jeremybrooks.knicker.KnickerException;
 import net.jeremybrooks.knicker.WordApi;
 import net.jeremybrooks.knicker.dto.Definition;
-
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
@@ -43,6 +39,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * TODO: document
@@ -129,15 +129,15 @@ public class FreeToolbar extends Panel {
 					// 4. Do normal script, which means AJAX-submitting form to server.
 					// FIXME: Please wait should be a string property
 					// FIXME: does not properly get text selection from inside IFrame (e.g. TinyMCE)
-					@Override
-					public CharSequence decorateScript(final CharSequence script) { 
-						return "$('#selectedText').val(getSelectedText());" 
-							+ "$('#" + dictionaryModal.getMarkupId() + " .definitionContainer').text('Please wait...');"
-							+ dictionaryModal.getOpenString()
-							+ script
-							;
-					}
-				};
+                    @Override
+                    public CharSequence decorateScript(Component c, CharSequence script) {
+                        return "$('#selectedText').val(getSelectedText());"
+                                + "$('#" + dictionaryModal.getMarkupId() + " .definitionContainer').text('Please wait...');"
+                                + dictionaryModal.getOpenString()
+                                + script
+                                ;
+                    }
+                };
 			}
 			
 		};

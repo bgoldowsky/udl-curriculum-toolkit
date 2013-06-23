@@ -20,14 +20,13 @@
 package org.cast.isi.page;
 
 import lombok.Getter;
-
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.UrlUtils;
-import org.cast.cwm.components.service.JavascriptService;
+import org.cast.cwm.JQueryHeaderContributor;
 import org.cast.isi.ISIApplication;
 
 /**
@@ -47,7 +46,9 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 	}
 
 	public void renderHead(final IHeaderResponse response) {
-		JavascriptService.get().includeJQuery(response);
+
+        new JQueryHeaderContributor().renderHead(response);
+
 		renderThemeJS(response, "js/lang/en.js");
 		renderThemeJS(response, "js/jquery/jquery.form.js");
 		renderThemeJS(response, "js/functions.js");
@@ -95,15 +96,15 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 	}
 
 	public static void renderThemeCSS(IHeaderResponse response, String fileName) {
-		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()));
+		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get()));
 	}
 
 	public static void renderThemeCSS(IHeaderResponse response, String fileName, String media) {
-		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()), media);
+		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get()), media);
 	}
 
 	public static void renderThemeJS(IHeaderResponse response, String fileName) {
-		response.renderJavascriptReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()));
+		response.renderJavaScriptReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get()));
 	}
 
 

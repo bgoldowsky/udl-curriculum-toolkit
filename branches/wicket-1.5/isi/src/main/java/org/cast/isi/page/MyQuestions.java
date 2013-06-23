@@ -19,12 +19,12 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
+import com.google.inject.Inject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -39,6 +39,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
@@ -54,8 +56,6 @@ import org.cast.isi.service.IQuestionService;
 import org.cast.isi.validator.QuestionNameValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
 
 
 /**  
@@ -100,7 +100,12 @@ public class MyQuestions extends ISIStandardPage {
 		}
 
 		selectedQuestion = null;
-		Long questionId = parameters.getLong("question", -1);
+        Long questionId = -1l;
+        StringValue o = parameters.get("question");
+        if(o != null) {
+            questionId = o.toLong();
+        }
+
 		mSelectedQuestion = questionService.getQuestionModelById(questionId);
 		if (questionId != -1) {
 			selectedQuestion = mSelectedQuestion.getObject();
@@ -222,7 +227,7 @@ public class MyQuestions extends ISIStandardPage {
 						target.addComponent(NewQuestionForm.this);
 						target.addComponent(feedback);
 					}
-					target.appendJavascript("$('#newQuestionModal').hide();");
+					target.appendJavaScript("$('#newQuestionModal').hide();");
 				}
 				@Override
 				protected void onError(AjaxRequestTarget target, Form<?> form) {
