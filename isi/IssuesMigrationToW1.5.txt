@@ -41,4 +41,4 @@ org.apache.wicket.WicketRuntimeException: Error attaching this container for ren
 
 org.hibernate.QueryException: could not resolve property: responses of: org.cast.isi.data.ISIPrompt
 
-
+Same problem as 2)
