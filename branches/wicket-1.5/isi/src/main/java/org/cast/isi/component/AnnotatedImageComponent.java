@@ -23,9 +23,13 @@ import lombok.Getter;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.IInputStreamProvider;
+import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.page.ISIBasePage;
 import org.slf4j.Logger;
@@ -129,14 +133,14 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
             if (component.imgSrc != null && !component.imgSrc.trim().equals("")) {
                 // find the url of the image
                 IInputStreamProvider xmlFile = xmlSectionModel.getObject().getXmlDocument().getXmlFile();
-                // heikki TODO
-                //ResourceReference imageResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(component.imgSrc);
-                //String imageUrl = RequestCycle.get().urlFor(imageResourceRef).toString();
-                //if (imageUrl.equals(null))
-                //    log.warn("The URL for the hotspot image {} is not found", imageUrl);
-
+                ResourceReference imageResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(component.imgSrc);
+                // heikki TODO: pay attention to this in testing
+                String imageUrl = RequestCycle.get().mapUrlFor(imageResourceRef, new PageParameters()).toString();
+                if (imageUrl.equals(null)){
+                    log.warn("The URL for the hotspot image {} is not found", imageUrl);
+                }
                 hotSpotDetails.append("\"useImg\": " + "\"true" + "\"" + ", ");
-                //hotSpotDetails.append("\"imgSrc\": " + "\"" + imageUrl + "\"" + ", ");
+                hotSpotDetails.append("\"imgSrc\": " + "\"" + imageUrl + "\"" + ", ");
             }
             hotSpotDetails.append("\"xmlId\": " + "\"" + component.xmlId + "\"" + ", ");
             hotSpotDetails.append("\"id\": " + "\"" + component.hotSpotId + "\"" + " }");
