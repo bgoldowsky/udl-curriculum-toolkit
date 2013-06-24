@@ -289,6 +289,9 @@ public abstract class ISIApplication extends CwmApplication {
 	protected void init() {
 		log.debug("Starting ISI Application Init");
 
+        // TODO heikki find out which component requires this, and replace it with something empty in case this is not enabled
+        getDebugSettings().setDevelopmentUtilitiesEnabled(true);
+
 		// Set xml content Section and Page based on property file - these have to be set before
 		// the super.init is called
 		sectionElement = configuration.getProperty("isi.sectionElement");
