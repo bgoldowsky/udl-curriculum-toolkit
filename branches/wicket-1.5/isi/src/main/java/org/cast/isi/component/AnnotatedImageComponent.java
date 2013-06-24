@@ -134,8 +134,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
                 // find the url of the image
                 IInputStreamProvider xmlFile = xmlSectionModel.getObject().getXmlDocument().getXmlFile();
                 ResourceReference imageResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(component.imgSrc);
-                // heikki TODO: pay attention to this in testing
-                String imageUrl = RequestCycle.get().mapUrlFor(imageResourceRef, new PageParameters()).toString();
+                String imageUrl = RequestCycle.get().urlFor(imageResourceRef, new PageParameters()).toString();
                 if (imageUrl.equals(null)){
                     log.warn("The URL for the hotspot image {} is not found", imageUrl);
                 }
