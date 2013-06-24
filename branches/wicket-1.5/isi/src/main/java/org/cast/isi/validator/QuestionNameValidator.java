@@ -52,7 +52,7 @@ public class QuestionNameValidator extends AbstractValidator<String> {
 		Question other = questionService.getByTextAndStudent(questionText, ISISession.get().getUser());
 		if (other != null && !other.getId().equals(questionId)) {
 			error(validatable);
-		} else {
+		} else if(other != null) {
 			Databinder.getHibernateSession().evict(other); // Evict "other" person in case they are the same object
 		}
 	}
