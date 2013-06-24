@@ -26,7 +26,7 @@ MyQuestions->what is germany doing?
 org.apache.wicket.request.resource.PackageResource$PackageResourceBlockedException: Access denied to (static) package resource org/cast/cwm/components/audioapplet. See IPackageResourceGuard
 
 =======================
-4. Student:
+FIXED: 4. Student:
 
 MyQuestions->New Question->Save
 
