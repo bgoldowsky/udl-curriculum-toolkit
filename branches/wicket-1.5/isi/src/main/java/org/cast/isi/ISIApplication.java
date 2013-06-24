@@ -55,14 +55,12 @@ import org.apache.wicket.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.file.File;
-import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.IInputStreamProvider;
-import org.cast.cwm.InputStreamNotFoundException;
 import org.cast.cwm.ThemeDirectoryRequestMapper;
 import org.cast.cwm.components.CwmPopupSettings;
 import org.cast.cwm.components.Icon;
@@ -85,7 +83,7 @@ import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.service.SiteService;
 import org.cast.cwm.service.UserPreferenceService;
 import org.cast.cwm.tag.TagService;
-import org.cast.cwm.xml.FileResource;
+import org.cast.cwm.xml.FileXmlDocumentSource;
 import org.cast.cwm.xml.IDocumentObserver;
 import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlDocumentList;
@@ -140,7 +138,6 @@ import org.slf4j.LoggerFactory;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -707,26 +704,11 @@ public abstract class ISIApplication extends CwmApplication {
 		xmlService.registerTransformer("view-response", viewChain);
 		
 		// Construct transformation pipeline for student content: glossary -> XSL -> unique wicket:ids
-        IInputStreamProvider inputStreamProvider = new IInputStreamProvider() {
-            public InputStream getInputStream() throws InputStreamNotFoundException {
-                try {
-                    return new FileResource(studentXslFileFinal).getResourceStream().getInputStream();
-                }
-                catch (ResourceStreamNotFoundException x) {
-                    throw new InputStreamNotFoundException(x);
-                }
-            }
-
-            public Time lastModifiedTime() {
-                // TODO heikki
-                return Time.now();
-            }
-        };
-		TransformChain transformchain = new TransformChain(
+        TransformChain transformchain = new TransformChain(
 				new XslTransformer(xmlService.findXslResource("strip-class.xsl")),
 				new GlossaryTransformer(glossary),
 				new FilterElements(),
-				new XslTransformer(inputStreamProvider),
+				new XslTransformer(new FileXmlDocumentSource(studentXslFile)),
 				new EnsureUniqueWicketIds());
 		xmlService.registerTransformer("student", transformchain);	
 		
