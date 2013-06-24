@@ -98,7 +98,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		WebMarkupContainer body = new WebMarkupContainer("body") {
 			private static final long serialVersionUID = 1L;
 
-            /* heikki TODO
+            /* heikki TODO TransparentResolver stuff was removed from W1.5 w/o replacement. Test effects of not having this.
 			@Override
 			public boolean isTransparentResolver() {
 				return true;
