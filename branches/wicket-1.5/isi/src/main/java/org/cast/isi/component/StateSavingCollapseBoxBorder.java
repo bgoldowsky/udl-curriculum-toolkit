@@ -73,7 +73,7 @@ public class StateSavingCollapseBoxBorder extends Border {
 		// title of collapse box is in the application .properties file
 		collapseBoxToggle.add(new Label("collapseBoxLabel", new ResourceModel(userPreferenceName+".title", "default collapse box label")));
 		
-		collapseBox.add(getBodyContainer());
+		// TODO heikki: this seems to cause a rendering loop (says Wicket): collapseBox.add(getBodyContainer());
 		
 	}
 }
