@@ -31,6 +31,9 @@ import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.IMarkupFragment;
+import org.apache.wicket.markup.Markup;
+import org.apache.wicket.markup.MarkupResourceStream;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -46,6 +49,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.apache.wicket.util.resource.StringResourceStream;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.IInputStreamProvider;
 import org.cast.cwm.IRelativeLinkSource;
@@ -122,6 +128,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * A component to display XML content in ISI.
@@ -174,22 +184,88 @@ public class ISIXmlComponent extends XmlComponent {
 	// when called for in XML content.  This fixes it.
 
     // heikki TODO: test if this strange bug still happens without this hack.
-    // If so, it is not immediately clear to me how to create a IMarkupFragment from the replacement string (getMarkup() now
-    // returns IMarkupFragment).
-    /*
-    protected String getMarkup() {
-        IMarkupFragment iMarkupFragment = super.getMarkup();
-        String x = iMarkupFragment.toString(false);
-		if (x.contains("\u00d7")) {
-			log.debug ("Fixing instances of unicode D7");
-			x = x.replaceAll("\u00d7", "&#xd7;");
-		}
-		//log.debug(x);
-		return x;
+    @Override
+    public IMarkupFragment getMarkup() {
+        try {
+            IMarkupFragment fragment = super.getMarkup();
+            return hackUnicodeD7(fragment);
+        }
+        catch(ResourceStreamNotFoundException ex) {
+            throw new RuntimeException("ERROR fixing markupstream with unicode D7: " + ex.getMessage());
+        }
 	}
-    */
 
-	@Override
+    /**
+     *  If an IMarkupFragment contains unicode d7, converts it into one that uses the corresponding character entity.
+     * @param fragment
+     * @return
+     * @throws ResourceStreamNotFoundException
+     */
+    protected static IMarkupFragment hackUnicodeD7(IMarkupFragment fragment) throws ResourceStreamNotFoundException{
+        MarkupResourceStream markupStream = fragment.getMarkupResourceStream();
+        InputStream is = markupStream.getInputStream();
+        String x = getStringFromInputStream(is);
+        if (x.contains("\u00d7")) {
+            log.debug ("Fixing instances of unicode D7");
+            x = x.replaceAll("\u00d7", "&#xd7;");
+            return createMarkupFragmentFromString(x);
+        }
+        else {
+            return fragment;
+        }
+    }
+
+    /**
+     * TODO heikki move to utility class
+     *
+     * Creates an IMarkupFragment from a String.
+     *
+     * @param s
+     * @return
+     */
+    protected static IMarkupFragment createMarkupFragmentFromString(String s) {
+        IResourceStream resourceStream = new StringResourceStream(s);
+        MarkupResourceStream fixedMarkupStream = new MarkupResourceStream(resourceStream);
+        IMarkupFragment fixedFragment = new Markup(fixedMarkupStream);
+        return fixedFragment;
+    }
+
+    /**
+     * Creates a String from an InputStream.
+     *
+     * Thanks mkyong http://www.mkyong.com/java/how-to-convert-inputstream-to-string-in-java/.
+     * TODO heikki move to utility class
+     *
+     * @param is
+     * @return
+     */
+    protected static String getStringFromInputStream(InputStream is) {
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (br != null) {
+                try {
+                    br.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
 	public Component getDynamicComponent(final String wicketId, final Element elt) {
 		
 		if (wicketId.startsWith("object_")) {
