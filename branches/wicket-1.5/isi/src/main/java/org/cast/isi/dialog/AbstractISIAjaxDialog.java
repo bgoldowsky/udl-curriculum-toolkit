@@ -61,7 +61,7 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 		dialogBorder = newDialogBorder("dialogBorder", new PropertyModel<String>(this, "title"));
 
 		// This allows us to add components directly to the panel, even though they are enclosed in the DialogBorder
-        // TODO heikki
+        // TODO heikki setTransparentResolver no longer exists, without replacement.. test if this works fine if simply leave out that call
 		//dialogBorder.setTransparentResolver(true);
 		dialogBorder.setMoveContainer(this);		
 		dialogBorder.getContentContainer().add(new SimpleAttributeModifier("class", "visuraloverlaycontent modalContainer modalBody"));
