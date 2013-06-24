@@ -15,49 +15,49 @@
     <transactionManagerLookup class="net.sf.ehcache.transaction.manager.DefaultTransactionManagerLookup" properties="jndiName=java:/TransactionManager" propertySeparator=";"/>
 
 	<!-- Defaults for caches not mentioned below. -->
-    <defaultCache maxElementsInMemory="1000" eternal="false" timeToIdleSeconds="120" timeToLiveSeconds="120" memoryStoreEvictionPolicy="LRU" overflowToDisk="true">
+    <defaultCache eternal="false" timeToIdleSeconds="120" timeToLiveSeconds="120" memoryStoreEvictionPolicy="LRU" overflowToDisk="true">
     	<!-- <cacheEventListenerFactory class="org.cast.google.CacheLogger" /> -->
 	</defaultCache>
 
 	<!-- Hibernate's Cache for keeping 'lastUpdated' data on each table.  Should never expire. -->
-	<cache name="org.hibernate.cache.UpdateTimestampsCache" eternal="true" maxElementsInMemory="1000" overflowToDisk="true">
+	<cache name="org.hibernate.cache.UpdateTimestampsCache" eternal="true" overflowToDisk="true">
 	</cache>
 	
 	<!-- Hibernate's Query Cache - should probably be limited -->
-	<cache name="org.hibernate.cache.StandardQueryCache" eternal="false" maxElementsInMemory="1000" timeToLiveSeconds="3600" overflowToDisk="true">
+	<cache name="org.hibernate.cache.StandardQueryCache" eternal="false" timeToLiveSeconds="3600" overflowToDisk="true">
 	</cache>
 		
 	<!-- Transformed Content - Insert when cwm-xml is brought in -->
-    <cache name="org.cast.cwm.xml.DomCache" eternal="true" maxElementsInMemory="500" memoryStoreEvictionPolicy="LFU" overflowToDisk="true">
+    <cache name="org.cast.cwm.xml.DomCache" eternal="true" memoryStoreEvictionPolicy="LFU" overflowToDisk="true">
 	</cache>
 	
 	<!-- Most DB objects are set to cache up to 1000 item for 1 hour.  Don't cache to disk. -->
 	<!-- Keeping defaults for: memoryStoreEvictionPolicy="LRU" -->
 	<!-- CWM objects -->
-    <cache name="org.cast.cwm.data.User" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.UserPreference" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.Prompt" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.Response" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.LoginSession" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.ResponseData" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.BinaryFileData" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.Event" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.tag.model.Tag" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.tag.model.Tagging" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.User" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.UserPreference" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.Prompt" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.Response" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.LoginSession" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.ResponseData" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.BinaryFileData" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.Event" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.tag.model.Tag" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.tag.model.Tagging" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
 	
 	<!-- low usage -->
-    <cache name="org.cast.cwm.data.Initialization" maxElementsInMemory="10" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.Site" maxElementsInMemory="10" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
-    <cache name="org.cast.cwm.data.Period" maxElementsInMemory="10" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.Initialization" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.Site" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
+    <cache name="org.cast.cwm.data.Period" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"></cache>
 	
 	<!-- ISI objects -->
-    <cache name="org.cast.isi.data.ClassMessage" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
-    <cache name="org.cast.isi.data.ContentElement" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
-    <cache name="org.cast.isi.data.FeedbackMessage" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
-    <cache name="org.cast.isi.data.Question" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
-    <cache name="org.cast.isi.data.ScoreCounts" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
-    <cache name="org.cast.isi.data.SectionStatus" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
-    <cache name="org.cast.isi.data.StudentFlag" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
-    <cache name="org.cast.isi.data.WordCard" maxElementsInMemory="1000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
+    <cache name="org.cast.isi.data.ClassMessage" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
+    <cache name="org.cast.isi.data.ContentElement" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
+    <cache name="org.cast.isi.data.FeedbackMessage" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
+    <cache name="org.cast.isi.data.Question" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
+    <cache name="org.cast.isi.data.ScoreCounts" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
+    <cache name="org.cast.isi.data.SectionStatus" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
+    <cache name="org.cast.isi.data.StudentFlag" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
+    <cache name="org.cast.isi.data.WordCard" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false"/>
 
 </ehcache>
