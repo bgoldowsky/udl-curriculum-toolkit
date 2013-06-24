@@ -173,10 +173,13 @@ public class ISIXmlComponent extends XmlComponent {
 	// FIXME - HACK:  For some reason, Unicode D7 (and that alone, as far as I can see) is getting swallowed up and not showing up
 	// when called for in XML content.  This fixes it.
 
-    // heikki TODO
+    // heikki TODO: test if this strange bug still happens without this hack.
+    // If so, it is not immediately clear to me how to create a IMarkupFragment from the replacement string (getMarkup() now
+    // returns IMarkupFragment).
     /*
     protected String getMarkup() {
-		String x =  super.getMarkup();
+        IMarkupFragment iMarkupFragment = super.getMarkup();
+        String x = iMarkupFragment.toString(false);
 		if (x.contains("\u00d7")) {
 			log.debug ("Fixing instances of unicode D7");
 			x = x.replaceAll("\u00d7", "&#xd7;");
@@ -184,7 +187,7 @@ public class ISIXmlComponent extends XmlComponent {
 		//log.debug(x);
 		return x;
 	}
-	*/
+    */
 
 	@Override
 	public Component getDynamicComponent(final String wicketId, final Element elt) {
