@@ -48,6 +48,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.IInputStreamProvider;
+import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.components.DeployJava;
 import org.cast.cwm.components.ShyContainer;
 import org.cast.cwm.data.IResponseType;
@@ -851,11 +852,10 @@ public class ISIXmlComponent extends XmlComponent {
 	}
 	
 	public ResourceReference getRelativeRef (String src) {
-
         IInputStreamProvider xmlFile = getModel().getObject().getXmlDocument().getXmlFile();
-		//if (xmlFile instanceof IRelativeLinkSource)
-		//	return ((IRelativeLinkSource)xmlFile).getRelativeReference(src);
-        // TODO heikki
+        if (xmlFile instanceof IRelativeLinkSource) {
+            return ((IRelativeLinkSource)xmlFile).getRelativeReference(src);
+        }
         throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
 	}
 	
