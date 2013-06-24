@@ -102,8 +102,8 @@ public class MyQuestions extends ISIStandardPage {
 		selectedQuestion = null;
         Long questionId = -1l;
         StringValue o = parameters.get("question");
-        if(o != null) {
-            questionId = o.toLong();
+        if(o.toString() != null) {
+            questionId = Long.parseLong(o.toString());
         }
 
 		mSelectedQuestion = questionService.getQuestionModelById(questionId);
