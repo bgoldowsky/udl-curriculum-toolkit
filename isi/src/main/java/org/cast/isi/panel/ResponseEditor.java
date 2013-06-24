@@ -36,8 +36,12 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.cast.audioapplet.component.AbstractAudioRecorder;
 import org.cast.cwm.IInputStreamProvider;
+import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
@@ -112,13 +116,14 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 					// Drawing starters - need to convert to URLs.
 				    List<String> urls = new ArrayList<String>(typeMD.getFragments().size());
 					for (String frag : typeMD.getFragments()) {
-                        // heikki TODO
-						//ResourceReference fragResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(frag);
-						//String url = RequestCycle.get().urlFor(fragResourceRef).toString();
-						//if (url != null)
-						//	urls.add(url);
-						//else
-						//	log.warn("Drawing stamp image does not exist: {}", frag);
+						ResourceReference fragResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(frag);
+						String url = RequestCycle.get().urlFor(fragResourceRef, new PageParameters()).toString();
+						if (url != null) {
+							urls.add(url);
+                        }
+						else {
+							log.warn("Drawing stamp image does not exist: {}", frag);
+                        }
 					}
 					setStarters(urls);
 				} else {
@@ -127,10 +132,9 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 				}
 				// Template
 				if (typeMD.getTemplates() != null && !typeMD.getTemplates().isEmpty()) {
-                    // heikki TODO
-					//String templateRelativePath = typeMD.getTemplates().get(0);  // path from xml file
-					//ResourceReference templateResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(templateRelativePath);
-					//this.setTemplateURL(RequestCycle.get().urlFor(templateResourceRef).toString());
+					String templateRelativePath = typeMD.getTemplates().get(0);  // path from xml file
+					ResourceReference templateResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(templateRelativePath);
+					this.setTemplateURL(RequestCycle.get().urlFor(templateResourceRef, new PageParameters()).toString());
 				}
 			}
 		}
