@@ -68,18 +68,18 @@ public class HighlightControlPanel extends Panel {
 	
 	@Override
 	protected void onBeforeRender() {
-		Object hdpFound = getPage().visitChildren(HighlightDisplayPanel.class, new IVisitor<HighlightDisplayPanel, Void>() {
-            public void component(HighlightDisplayPanel object, IVisit<Void> visit) {
-                visit.stop();
+		Object hdpFound = getPage().visitChildren(HighlightDisplayPanel.class, new IVisitor<HighlightDisplayPanel, Object>() {
+            public void component(HighlightDisplayPanel object, IVisit<Object> visit) {
+                visit.stop(object);
             }
         });
 		
 		if (hdpFound == null)
 			throw new IllegalStateException("HighlightControlPanel must be on the same page as a HighlightDisplayPanel.");
 		
-		Object nhpFound = getPage().visitChildren(NoHighlightModal.class, new IVisitor<NoHighlightModal, Void>() {
-            public void component(NoHighlightModal object, IVisit<Void> visit) {
-                visit.stop();
+		Object nhpFound = getPage().visitChildren(NoHighlightModal.class, new IVisitor<NoHighlightModal, Object>() {
+            public void component(NoHighlightModal object, IVisit<Object> visit) {
+                visit.stop(object);
             }
         });
 
