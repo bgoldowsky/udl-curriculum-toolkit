@@ -197,6 +197,7 @@ public class ISIXmlComponent extends XmlComponent {
 
     /**
      *  If an IMarkupFragment contains unicode d7, converts it into one that uses the corresponding character entity.
+     *
      * @param fragment
      * @return
      * @throws ResourceStreamNotFoundException
@@ -220,14 +221,14 @@ public class ISIXmlComponent extends XmlComponent {
      *
      * Creates an IMarkupFragment from a String.
      *
-     * @param s
+     * @param s string to create IMarkupFragment from
      * @return
      */
     protected static IMarkupFragment createMarkupFragmentFromString(String s) {
         IResourceStream resourceStream = new StringResourceStream(s);
-        MarkupResourceStream fixedMarkupStream = new MarkupResourceStream(resourceStream);
-        IMarkupFragment fixedFragment = new Markup(fixedMarkupStream);
-        return fixedFragment;
+        MarkupResourceStream markupStream = new MarkupResourceStream(resourceStream);
+        IMarkupFragment fragment = new Markup(markupStream);
+        return fragment;
     }
 
     /**
