@@ -310,6 +310,7 @@ public class MyQuestions extends ISIStandardPage {
 				}
 			};
 			add(dialog);
+            // TODO: causes this warning: WARN  org.apache.wicket.Localizer Tried to retrieve a localized string for a component that has not yet been added to the page. This can sometimes lead to an invalid or no localized resource returned. Make sure you are not calling Component#getString() inside your Component's constructor. Offending component: [EditQuestionTitleForm [Component id = editQuestionTitleForm]]
 			dialog.setObjectName((new StringResourceModel("MyQuestions.delete.objectName", this, null, "Question").getString()));
 			add(new WebMarkupContainer("delete").add(dialog.getDialogBorder().getClickToOpenBehavior()));
 		}
