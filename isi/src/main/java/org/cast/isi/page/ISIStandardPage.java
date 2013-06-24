@@ -28,6 +28,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -76,34 +77,30 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	}
 	
 	public void commonInit(PageParameters parameters) {
+
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
-		
+
 		add(ISIApplication.get().getHeaderPanel("headerPanel", parameters).setOutputMarkupId(true));
+
 		// If teacher, then add a sub header panel
 		if (ISISession.get().getUser().getRole().subsumes(Role.TEACHER)) {
 			add(new TeacherSubHeaderPanel("teacherSubHeader", parameters));
 		} else {
-			add(new WebMarkupContainer("teacherSubHeader").setVisible(false));			
+			add(new WebMarkupContainer("teacherSubHeader").setVisible(false));
 		}
 
 		add(ISIApplication.get().getFooterPanel("footerPanel", parameters));
 		add(new ISISessionExpireWarningDialog("sessionWarning"));
 		
 		addToolbar("tht");
+
 	}
 	
 	@Override
 	protected void onInitialize() {
 
-		WebMarkupContainer body = new WebMarkupContainer("body") {
+        TransparentWebMarkupContainer body = new TransparentWebMarkupContainer("body") {
 			private static final long serialVersionUID = 1L;
-
-            /* heikki TODO TransparentResolver stuff was removed from W1.5 w/o replacement. Test effects of not having this.
-			@Override
-			public boolean isTransparentResolver() {
-				return true;
-			}
-			*/
 		};
 		add (body);
 
@@ -126,7 +123,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	 * Pages can override this method to use a different (or no) toolbar.
 	 */
 	protected void addToolbar (String id) {
-		add (ISIApplication.get().getToolbar(id, this));
+		add(ISIApplication.get().getToolbar(id, this));
 	}
 	
 	/** 
