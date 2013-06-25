@@ -21,6 +21,9 @@ package org.cast.isi;
 
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 
+/**
+ * TODO heikki: merge this class to CwmPackageResourceGuard.
+ */
 public class ISIPackageResourceGuard extends SecurePackageResourceGuard {
 
 		public ISIPackageResourceGuard() {
