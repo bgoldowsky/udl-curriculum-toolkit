@@ -188,9 +188,10 @@ public class ISIXmlComponent extends XmlComponent {
     public IMarkupFragment getMarkup() {
         try {
             IMarkupFragment fragment = super.getMarkup();
+            //return fragment;
             return hackUnicodeD7(fragment);
         }
-        catch(ResourceStreamNotFoundException ex) {
+        catch(Exception ex) {
             throw new RuntimeException("ERROR fixing markupstream with unicode D7: " + ex.getMessage());
         }
 	}
@@ -202,7 +203,7 @@ public class ISIXmlComponent extends XmlComponent {
      * @return
      * @throws ResourceStreamNotFoundException
      */
-    protected static IMarkupFragment hackUnicodeD7(IMarkupFragment fragment) throws ResourceStreamNotFoundException{
+    protected static IMarkupFragment hackUnicodeD7(IMarkupFragment fragment) throws IOException, ResourceStreamNotFoundException{
         MarkupResourceStream markupStream = fragment.getMarkupResourceStream();
         InputStream is = markupStream.getInputStream();
         String x = getStringFromInputStream(is);
