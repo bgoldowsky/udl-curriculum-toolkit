@@ -51,7 +51,7 @@ public class StateSavingCollapseBoxBorder extends Border {
 		super(id);
 
 		WebMarkupContainer collapseBox = new WebMarkupContainer("collapseBox");
-		add(collapseBox);
+		addToBorder(collapseBox);
 		
 		// add the id, if it has been supplied
 		if (collapseBoxId != null && !collapseBoxId.isEmpty()) {
@@ -71,9 +71,6 @@ public class StateSavingCollapseBoxBorder extends Border {
 		collapseBoxToggle.add(new StateSavingCollapseBoxBehavior(userPreferenceName, pageName, userPreferenceName));
 		
 		// title of collapse box is in the application .properties file
-		collapseBoxToggle.add(new Label("collapseBoxLabel", new ResourceModel(userPreferenceName+".title", "default collapse box label")));
-		
-		// TODO heikki: this seems to cause a rendering loop (says Wicket): collapseBox.add(getBodyContainer());
-		
+		collapseBoxToggle.add(new Label("collapseBoxLabel", new ResourceModel(userPreferenceName+".title", "default collapse box label")));		
 	}
 }
