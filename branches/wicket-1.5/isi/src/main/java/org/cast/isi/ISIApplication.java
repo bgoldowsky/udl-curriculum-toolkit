@@ -36,6 +36,7 @@ import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.PackageResourceGuard;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -334,7 +335,10 @@ public abstract class ISIApplication extends CwmApplication {
 		List<ResourceReference> noStylesheets = Collections.emptyList();
 		DialogBorder.setStyleReferences(noStylesheets);
 
-		getResourceSettings().setPackageResourceGuard(new ISIPackageResourceGuard());
+        // TODO heikki: SecurePackageResourceGuard subclasses cause errors for some resources. For the moment, use PackageResourceGuard.
+		//getResourceSettings().setPackageResourceGuard(new ISIPackageResourceGuard());
+        //getResourceSettings().setPackageResourceGuard(new CwmPackageResourceGuard());
+        getResourceSettings().setPackageResourceGuard(new PackageResourceGuard());
 
         this.getRequestCycleListeners().add(new AbstractRequestCycleListener() {
             @Override
