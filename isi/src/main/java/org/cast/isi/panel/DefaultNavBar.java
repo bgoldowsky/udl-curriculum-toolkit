@@ -30,7 +30,6 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.User;
@@ -164,7 +163,9 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 		// Nav Bar Tool Tips
 		// NOTE: Based on unstable, 2.0 version.  If replacing, take note of CSS style changes as well!
 		// response.renderJavascriptReference(new ResourceReference("js/jquery/jquery.qtip-2.0-rev411.min.js"));
-		response.renderJavaScriptReference(new JavaScriptResourceReference(this.getClass(), "js/jquery/jquery.qtip-1.0.min.js"));
+
+        // TODO heikki commented this out because the file is not there
+		// response.renderJavaScriptReference(new JavaScriptResourceReference(this.getClass(), "js/jquery/jquery.qtip-1.0.min.js"));
 		response.renderJavaScript("$(window).ready(function() { navBarToolTips(); });", "Nav Bar Tool Tip Init");
 	}
 	
