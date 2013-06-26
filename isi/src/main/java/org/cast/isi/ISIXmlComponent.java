@@ -188,8 +188,10 @@ public class ISIXmlComponent extends XmlComponent {
     public IMarkupFragment getMarkup() {
         try {
             IMarkupFragment fragment = super.getMarkup();
-            //return fragment;
-            return hackUnicodeD7(fragment);
+            return fragment;
+            // TODO heikki: disabled hack for now because it causes InputStream Closed exceptions
+            // see http://apache-wicket.1842946.n4.nabble.com/Is-it-possible-to-change-MarkupStream-td4659757.html#a4659832
+            //return hackUnicodeD7(fragment);
         }
         catch(Exception ex) {
             throw new RuntimeException("ERROR fixing markupstream with unicode D7: " + ex.getMessage());
@@ -462,10 +464,15 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("videoplayer_")) {
 			final String videoSrc = elt.getAttribute("src");
+            // heikki
+            System.out.println("video src " + videoSrc);
 			ResourceReference videoRef = getRelativeRef(videoSrc);
-			String videoUrl = RequestCycle.get().urlFor(videoRef, new PageParameters()).toString();
+            System.out.println("video ref " + videoRef.toString());
 
-			Integer width = Integer.valueOf(elt.getAttribute("width"));
+            String videoUrl = RequestCycle.get().urlFor(videoRef, null).toString();
+            System.out.println("video url " + videoUrl);
+
+            Integer width = Integer.valueOf(elt.getAttribute("width"));
 			Integer height = Integer.valueOf(elt.getAttribute("height"));
 			String preview = elt.getAttribute("poster");
 			String captions = elt.getAttribute("captions");
