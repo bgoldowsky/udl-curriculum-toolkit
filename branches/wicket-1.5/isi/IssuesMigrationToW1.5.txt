@@ -1,4 +1,5 @@
 This file lists known issues:
+(fixed issues moved to end of doc)
 
 =======================
 1. Student:
@@ -10,7 +11,18 @@ Unable to find component with id 'link' in [AgentLink [Component id = agent_]] E
 Possibly to do with discontinued support for dialogBorder.setTransparentResolver(true);
 
 =======================
-2. Student:
+6. Teacher:
+
+ManageClasses page does not work:
+
+org.apache.wicket.markup.MarkupNotFoundException: No Markup found for Fragment displayRowFragment in providing markup container [Page class = org.cast.isi.page.ManageClasses, id = 8, render count = 1]
+
+However, the markup is in the HTML. I suspect this is a manifestation of unresolved Wicket bug https://issues.apache.org/jira/browse/WICKET-4545.
+Will try the suggested workaround.
+
+
+=======================
+FIXED: 2. Student:
 
 Collections tab does not work:
 
@@ -19,7 +31,7 @@ org.apache.wicket.WicketRuntimeException: Can't instantiate page using construct
 org.hibernate.QueryException: could not resolve property: responses of: org.cast.isi.data.ISIPrompt [select distinct(p.collectionName) from org.cast.isi.data.ISIPrompt p join p.responses r where p.collectionName is not null and r.valid='true' and r.user.id=:userId]
 
 =======================
-3. Student:
+FIXED: 3. Student:
 
 MyQuestions->what is germany doing?
 
@@ -33,7 +45,7 @@ MyQuestions->New Question->Save
 org.apache.wicket.WicketRuntimeException: Exception 'null passed to Session.evict()' occurred during validation org.cast.isi.validator.QuestionNameValidator on component 11:newQuestion:text
 
 =======================
-5. Teacher:
+FIXED: 5. Teacher:
 
 Login
 
