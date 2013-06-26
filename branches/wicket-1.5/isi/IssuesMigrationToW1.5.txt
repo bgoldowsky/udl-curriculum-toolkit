@@ -6,10 +6,17 @@ This file lists known issues:
 
 Content Tab does not work:
 
+page 5, 23, 30, 62, 65: Agent Link
 Unable to find component with id 'link' in [AgentLink [Component id = agent_]] Expected: 'xmlContent:agent_.link'. Found with similar names: 'xmlContent:teacherBar_:feedbackButton_:link', xmlContent:agent_:contentContainer:agent__body:link', xmlContent:agent_1:contentContainer:agent_1_body:link', xmlContent:feedbackButton_:link', tagBox:tagPanel:taglist:tag:1:link', tagBox:tagPanel:taglist:tag:2:link', tagBox:tagPanel:taglist:tag:3:link', tagBox:tagPanel:taglist:tag:4:link', questionBox:questionBox_body:questionContainer:question:0:link', navbar:quickFlipForm:goLink' MarkupStream: [markup = D:\tmp\theme\org\cast\isi\panel\AgentLink.html
-
 Possibly to do with discontinued support for dialogBorder.setTransparentResolver(true);
 
+page 11: Package Resource Guard - fileLink related
+page 60: Package Resource Guard - ?
+page 64: Package Resource Guard - videoplayer related
+
+page 26: Expandable Information Areas - Example toggle area is not opening/closing
+
+Toggle Areas not working - right sidebar
 =======================
 6. Teacher:
 
