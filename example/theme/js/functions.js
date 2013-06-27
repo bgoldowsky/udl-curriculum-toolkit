@@ -94,6 +94,114 @@ function collapseBoxStatus(id) {
 	return null;
 }
 
+
+/*=========================================================*/
+/* Remote Collapse Toggle                                  */
+/*=========================================================*/
+
+var linkToggle_Count = 0;
+
+function linkToggle(scope) {
+    if (scope === undefined) { scope = null; }
+    scope = (scope ? $("#" + scope) : $("body"));
+
+    $(".linkToggle", scope).each(function() {
+        var toggleElm = $(this).get(0);
+        // Check to see if this box has already been parsed
+        if (jQuery.data(toggleElm, "ParsedToggle") != true) {
+            classMatch = null;
+            // Break out classes into array
+            classList = $(this).attr("class").split(" ");
+            if (classList.length > 0) {
+                for (var i in classList) {
+                    tempClass = classList[i];
+                    // Filter for matching class, and then strip id portion
+                    if (tempClass.match(/linkToggleBtn_*/)) {
+                        classMatch = classList[i].substring(classList[i].lastIndexOf('_') + 1);
+                    }
+                }
+            }
+            if ( (classMatch == null) || ($(".linkToggleBox_" + classMatch).length <= 0) ) { return false; }
+
+            // Set button/box items
+            var $currBtn = $(".linkToggleBtn_" + classMatch, scope);
+            var $currBox = $(".linkToggleBox_" + classMatch, scope);
+
+            // Check for presence of button/box id - set if not present
+            if ($currBtn.attr("id") === undefined) {
+                var $idBtn = ("linkToggle_btn_" + linkToggle_Count);
+                $currBtn.attr("id", $idBtn);
+            } else {
+                var $idBtn = $currBtn.attr("id");
+            }
+            // Set aria-labelledby on box items
+            $currBox.attr("aria-labelledby", $idBtn);
+
+            // A button can control multiple boxes so we need to id each on individually
+            var linkToggle_subCount = 0;
+            var linkToggle_boxList = "";
+            $currBox.each(function() {
+                if ($(this).attr("id") === undefined) {
+                    var $idBox = ("linkToggle_box_" + linkToggle_Count + "_" + linkToggle_subCount);
+                    $(this).attr("id", $idBox);
+                } else {
+                    var $idBox = $currBox.attr("id");
+                }
+                linkToggle_subCount++;
+                linkToggle_boxList += ($idBox + " ");
+            });
+            // Set aria-controls on button
+            $currBtn.attr("aria-controls", $.trim(linkToggle_boxList));
+
+            // Determine default state
+            $currBtn.append('<span class="toggle"></span>');
+            if ($currBtn.hasClass("open")) {
+                $currBtn.addClass("expOpen");
+                $currBox.show().attr("aria-expanded", "true").attr("aria-hidden", "false").addClass("expOpen");
+            }
+
+            // Bind click handler
+            $currBtn.bind("click", {targetId: classMatch}, function(event, scope) {
+                linkToggleSwitch(event.data.targetId, scope, event);
+                return false;
+            });
+        }
+        // Set parsed flag
+        jQuery.data(toggleElm, "ParsedToggle", true);
+
+        linkToggle_Count++;
+    });
+}
+
+function linkToggleSwitch(toggleId, scope, e) {
+    if (e) { e.stopPropagation(); }
+    $(".linkToggleBtn_" + toggleId, scope).toggleClass("expOpen");
+    if ($(".linkToggleBtn_" + toggleId, scope).hasClass("expOpen")) {
+        linkToggleShow(toggleId, scope, true);
+    } else {
+        linkToggleHide(toggleId, scope, true);
+    }
+}
+
+function linkToggleShow(toggleId, scope, follow) {
+    if (follow == null) { follow = true; }
+    $(".linkToggleBtn_" + toggleId, scope).addClass("expOpen");
+    $(".linkToggleBox_" + toggleId, scope).slideDown().attr("aria-expanded", "true").attr("aria-hidden", "false").addClass("expOpen");
+    if (follow) {
+        $(".linkToggleBox_" + toggleId, scope).attr("tabindex", "-1");
+        $(".linkToggleBox_" + toggleId, scope).get(0).focus();
+    }
+}
+
+function linkToggleHide(toggleId, scope, follow) {
+    if (follow == null) { follow = true; }
+    $(".linkToggleBtn_" + toggleId, scope).removeClass("expOpen");
+    $(".linkToggleBox_" + toggleId, scope).slideUp().attr("aria-expanded", "false").attr("aria-hidden", "true").removeClass("expOpen");
+    if (follow) {
+        $(".linkToggleBtn_" + toggleId, scope).get(0).focus();
+    }
+}
+
 /*=========================================================*/
 /* Show/Hide student names                                 */
 /*=========================================================*/
@@ -454,6 +562,7 @@ function togglespan(elt) {
 
 $(window).ready(function() {
     collapseBox();
+    linkToggle(null);
     thtInit();
     modalInit();
 });

@@ -241,6 +241,34 @@
 }
 
 /*================================================================*/
+/* Remote Collapse Toggle */
+
+.linkToggle {
+    position: relative;
+    padding: 0px 0px 0px 18px;
+}
+
+.linkToggle .toggle {
+    position: absolute;
+    top: 0.1em;
+    left: 0px;
+    background: transparent url("../img/icons/expand_closed.png") center center no-repeat;
+    width: 15px;
+    height: 15px;
+    display: block;
+}
+
+.linkToggle.expOpen .toggle {
+    background-image: url("../img/icons/expand_open.png");
+}
+
+.targetToggle {
+    outline: none;
+    display: none;
+    padding: 5px 0 0 17px;
+}
+
+/*================================================================*/
 /* Support Box */
 
 .supportBox {

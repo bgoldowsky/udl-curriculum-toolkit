@@ -668,6 +668,16 @@ ul li, ol li {
     margin: 0px;
 }
 
+.rightBox h5 a {
+    display: block;
+    color: #000000;
+    text-decoration: none;
+}
+.rightBox h5 a:hover, .rightBox h5 a:focus {
+    color: #000000;
+    text-decoration: underline;
+}
+
 .rightBox h6 {
     clear: both;
     font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
@@ -675,6 +685,20 @@ ul li, ol li {
     color: #000000;
     padding: 0px;
     margin: 0px;
+}
+
+.rightBox h6 a {
+    display: block;
+    color: #000000;
+    text-decoration: none;
+}
+.rightBox h6 a:hover, .rightBox h6 a:focus {
+    color: #000000;
+    text-decoration: underline;
+}
+
+.rightBox .targetToggle {
+    clear: both;
 }
 
 /*================================================================*/
@@ -906,8 +930,9 @@ ul li, ol li {
     display: inline;
 }
 .tagCurrentList {
-    float: left;
-    padding: 0.15em 0px 0px 17px;
+    display: block !important;
+    height: auto !important;
+    padding: 3px 0px 0px 17px !important;
 }
 
 .tagItem {
@@ -949,22 +974,11 @@ ul li, ol li {
 }
 
 /* To avoid displaying remove links in collapsed Tag panel. */
-.collapseBox .tagCurrentList .removeLink {
+.tagCurrentList.targetToggle .removeLink {
     display: none;
 }
-.expOpen .tagCurrentList {
-    display: block;
-    clear: left;
-    padding: 3px 0px 0px 17px;
-}
-.expOpen .tagCurrentList a.removeLink {
+.tagCurrentList.expOpen a.removeLink {
     display: inline-block;
-}
-.expOpen .tagCurrentList span.tagItem {
-    /*
-    display: block;
-    height: 1.75em;
-    */
 }
 
 .tagTerm {
