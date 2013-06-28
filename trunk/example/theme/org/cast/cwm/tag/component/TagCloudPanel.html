@@ -2,9 +2,7 @@
   <div wicket:id="container">
   <p>
     <span wicket:id="tagView">
-      <a wicket:id="link" href="#">
-        <span wicket:id="tag">rules</span>
-      </a>
+      <a wicket:id="link" href="#"><span wicket:id="tag">tag</span></a>
         <wicket:enclosure>
         (<span wicket:id="tagFreq">4</span>)
         <br />
@@ -13,20 +11,20 @@
   </p>
   </div>
         
-  <h6>Tag Options</h6>
+  <hr />
   <ul class="tagOptions">
     <wicket:enclosure>
-      <li>view as: <strong>cloud</strong> | <a wicket:id="setList" href="#">list</a></li>
+      <li>View as: <strong>cloud</strong> | <a wicket:id="setList" href="#">list</a></li>
     </wicket:enclosure>
     <wicket:enclosure>
-      <li>view as: <a wicket:id="setCloud">cloud</a> | <strong>list</strong></li>
+      <li>View as: <a wicket:id="setCloud">cloud</a> | <strong>list</strong></li>
     </wicket:enclosure>
 
     <wicket:enclosure>
-      <li>view by: <strong>alph</strong> | <a wicket:id="setFreq" href="#">frequency</a></li>
+      <li>Sort by: <strong>alph</strong> | <a wicket:id="setFreq" href="#">frequency</a></li>
     </wicket:enclosure>
     <wicket:enclosure>
-      <li>view by: <a wicket:id="setAlpha">alph</a> | <strong>frequency</strong></li>
+      <li>Sort by: <a wicket:id="setAlpha">alph</a> | <strong>frequency</strong></li>
     </wicket:enclosure>
   </ul>
 

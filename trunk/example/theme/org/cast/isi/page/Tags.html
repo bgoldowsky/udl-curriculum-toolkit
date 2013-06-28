@@ -33,35 +33,17 @@
     <div id="myWrapper">
         <div id="myContent">
             <div id="myContentLeft">
-	            <wicket:remove>
-	                <p class="tagStarsCloud">
-	                    <a href="#"><img src="../img/icons/star_3.png" width="42" height="13" alt="3 Stars" /></a>
-	                    <a href="#"><img src="../img/icons/star_2.png" width="27" height="13" alt="2 Stars" /></a>
-	                    <a href="#"><img src="../img/icons/star_1.png" width="13" height="13" alt="1 Star" /></a>
-	                </p>
-	            </wicket:remove>
-	            <div wicket:id="tagCloud">
-	                <p class="tagCloud">
-	                    <a href="#" class="s1">rules</a>
-	                    <a href="#" class="s2">my_words</a>
-	                    <a href="#" class="s3">big_ideas</a>
-	                </p>
-
-	                <h6>Tag Options</h6>
-	                <ul class="tagOptions">
-	                    <li>view as: <strong>cloud</strong> | <a href="#">list</a></li>
-	                    <li>sort by: <strong>alph</strong> | <a href="#">frequency</a></li>
-	                </ul>
-	            </div>
+            	<h2>My Tags:</h2>
+            	<br />
+	            <div wicket:id="tagCloud"></div>
             </div>
-
 
             <div id="myContentRight">
                 <div class="rightContainer">
                     <!-- BEGIN MAIN CONTENT -->
 
- 					<h1 wicket:id="noTagSelected">Click a tag in the Tag Cloud to view pages with that tag.</h1>
- 	               	<h1 wicket:id="noStudentSelected">No Student selected.</h1>
+ 					<p wicket:id="noTagSelected" class="notice">&lt; Click a tag to view pages with that tag.</p>
+ 	               	<h3 wicket:id="noStudentSelected">No Student selected.</h3>
 					<wicket:enclosure>
                     	<h1>Pages tagged "<span wicket:id="titletag">"something"</span>"</h1>
                     </wicket:enclosure>
