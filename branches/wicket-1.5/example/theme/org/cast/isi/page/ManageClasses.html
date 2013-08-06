@@ -26,17 +26,17 @@
     	<div id="mainContentLeft">
         	<!-- BEGIN - Main Content -->
             <div class="leftContainer">
-                <h2 wicket:id="period-title">
+                <h2 wicket:id="periodTitle">
 	            	<span wicket:id="name">Period A</span> 
 	            	<a href="#" wicket:id="edit" class="button">Edit</a>
 	            </h2>
                 <br />
 	            <form wicket:id="editPeriodForm">
+                    <div wicket:id="feedback" class="error"></div>
 	            	<div style="position:relative;float:left">
 	            		<input wicket:id="name" type="text" style="bottom:+3px;position:relative" />
 	            		<a href="#" wicket:id="save" class="button">Save</a>
 	                    <a href="#" wicket:id="cancel" class="button">Cancel</a>
-	                    <div wicket:id="feedback" class="myFeedback"></div>
 	            	</div>
 	            </form>
             <span wicket:id="addPeriodPanel"></span>
@@ -44,7 +44,7 @@
 	            <a href="#" wicket:id="addPeriodButton" class="button">Add a Class</a>
                 <a href="#" wicket:id="addStudentButton" class="button">Add a Student</a>
             </p>
-            <div wicket:id="feedback"></div>
+            <div class="error" wicket:id="feedback"></div>
  			<form wicket:id="editStudentForm">
 	            <table class="userTable">
 		            <thead>
@@ -60,7 +60,8 @@
 		            <tbody>
 		            	<tr wicket:id="newStudent" />
 		            	<wicket:container wicket:id="studentList">
-		            		<tr wicket:id="studentFragment" />
+		            			<tr wicket:id="studentPanel"></tr>
+<!-- 		            		<tr wicket:id="studentFragment" /> -->
 						</wicket:container>
 		            </tbody>
 	            </table>
@@ -73,24 +74,24 @@
     <div id="mainContentRight">
 		<div class="rightBox collapseBox open">
             <h5>Class Message</h5>
-            <div class="collapseBody" wicket:id="classMessage">
-            	<div wicket:id="deleteMessageModal"></div>
-                <div wicket:id="static">
-                	<p wicket:id="message">Dont' forget...</p>
-                	<p>
-	                	<a href="#" wicket:id="edit" class="button">Edit</a>
-	                  	<a href="#" wicket:id="delete" class="button deleteLink">Delete</a>
-                	</p>
-                </div>
-                <form wicket:id="classMessageForm">
-                	<div>
-                		<textarea wicket:id="message"></textarea><br />
-                		<a href="#" wicket:id="save" class="button">Save</a>
-                        <a href="#" wicket:id="cancel" class="button">Cancel</a>
-                        <div class="myFeedback" style="position:relative;left:-40px" wicket:id="feedback" />
-                	</div>
-                </form>
-            </div>
+	            <div class="collapseBody" wicket:id="classMessagePanel">
+<!-- 	            	<div wicket:id="deleteMessageModal"></div> -->
+<!-- 	                <div wicket:id="static"> -->
+<!-- 	                	<p wicket:id="message">Dont' forget...</p> -->
+<!-- 	                	<p> -->
+<!-- 		                	<a href="#" wicket:id="edit" class="button">Edit</a> -->
+<!-- 		                  	<a href="#" wicket:id="delete" class="button deleteLink">Delete</a> -->
+<!-- 	                	</p> -->
+<!-- 	                </div> -->
+<!-- 	                <form wicket:id="classMessageForm"> -->
+<!-- 	                	<div> -->
+<!-- 	                		<textarea wicket:id="message"></textarea><br /> -->
+<!-- 	                		<a href="#" wicket:id="save" class="button">Save</a> -->
+<!-- 	                        <a href="#" wicket:id="cancel" class="button">Cancel</a> -->
+<!-- 	                        <div class="myFeedback" style="position:relative;left:-40px" wicket:id="feedback" /> -->
+<!-- 	                	</div> -->
+<!-- 	                </form> -->
+	            </div>
         </div>
         <!-- END - Support Content -->
     </div>
@@ -120,7 +121,7 @@
 		                    <input wicket:id="moveLink" type="submit" value="Move" class="button" />
 	 		                <a href="javascript:void(0)" onclick="$('#moveModal .feedback').html(''); $('#moveModal').hide(); " class="button">Cancel</a>
 	                    </p>
-		                <div class="feedback" wicket:id="feedback" />
+		                <div class="error" wicket:id="feedback" />
 	                </form>
 	            </div>
 	        </div>
@@ -130,37 +131,35 @@
   </div>
 
 
-	<wicket:fragment wicket:id="displayRowFragment">
-		<td class="nowrap">
-			<span wicket:id="studentFlagPanelLabel"></span>
-			<span wicket:id="lastName">lastName</span>
-		</td>
-		<td><span wicket:id="firstName">firstName</span></td>
-		<td><span wicket:id="email">email</span></td>
-		<td><span wicket:id="username">userName</span></td>
-		<td><span wicket:id="password">***</span></td>
-		<td>
-			<a href="#" wicket:id="editLink" class="button editLink">Edit</a>
-		</td>
-	</wicket:fragment>
+<!-- 	<wicket:fragment wicket:id="displayRowFragment"> -->
+<!-- 		<td class="nowrap"> -->
+<!-- 			<span wicket:id="studentFlagPanelLabel"></span> -->
+<!-- 			<span wicket:id="lastName">lastName</span> -->
+<!-- 		</td> -->
+<!-- 		<td><span wicket:id="firstName">firstName</span></td> -->
+<!-- 		<td><span wicket:id="email">email</span></td> -->
+<!-- 		<td><span wicket:id="username">userName</span></td> -->
+<!-- 		<td><span wicket:id="password">***</span></td> -->
+<!-- 		<td> -->
+<!-- 			<a href="#" wicket:id="editLink" class="button editLink">Edit</a> -->
+<!-- 		</td> -->
+<!-- 	</wicket:fragment> -->
 	
-	<wicket:fragment wicket:id="editRowFragment">
-		<td class="nowrap">
-			<span wicket:id="studentFlagPanel"></span>
-           	<input type="text" wicket:id="lastName" />
-        </td>
-		<td><input type="text" wicket:id="firstName" /></td>
-        <td><input type="text" wicket:id="email" /></td>
-        <td><input type="text" wicket:id="username" /></td>
-        <td><input type="password" wicket:id="password" /></td>
-        <td>
-           	<a wicket:id="save" href="#" class="button">Save</a>
-          	<a wicket:id="cancel" href="#" class="button">Cancel</a>
-<!--            <a id="moveLink" onclick="$('#moveForm').show(); href="#" class="button">Move</a>-->
-            <a wicket:id="move" href="#moveModal" onclick="$('#moveModal').show();" class="button">Move</a>
-<!--          	<a href="#" wicket:id="move" class="button">Move</a>-->
-        </td>
-	</wicket:fragment>
+<!-- 	<wicket:fragment wicket:id="editRowFragment"> -->
+<!-- 		<td class="nowrap"> -->
+<!-- 			<span wicket:id="studentFlagPanel"></span> -->
+<!--            	<input type="text" wicket:id="lastName" /> -->
+<!--         </td> -->
+<!-- 		<td><input type="text" wicket:id="firstName" /></td> -->
+<!--         <td><input type="text" wicket:id="email" /></td> -->
+<!--         <td><input type="text" wicket:id="username" /></td> -->
+<!--         <td><input type="password" wicket:id="password" /></td> -->
+<!--         <td> -->
+<!--            	<a wicket:id="save" href="#" class="button">Save</a> -->
+<!--           	<a wicket:id="cancel" href="#" class="button">Cancel</a> -->
+<!--             <a wicket:id="move" href="#moveModal" onclick="$('#moveModal').show();" class="button">Move</a> -->
+<!--         </td> -->
+<!-- 	</wicket:fragment> -->
 
 </wicket:extend>
 </body>

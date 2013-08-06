@@ -99,7 +99,7 @@ public class StudentFlagPanel extends Panel {
                                 IModel<User> mOtherUser = component.getmUser();
                                 if (mOtherUser!=null && mOtherUser.getObject()!=null && mOtherUser.getObject().equals(mUser.getObject())) {
                                     component.toggleFlag();
-                                    target.addComponent(component);
+                                    target.add(component);
                                 }
                             }
                         });
