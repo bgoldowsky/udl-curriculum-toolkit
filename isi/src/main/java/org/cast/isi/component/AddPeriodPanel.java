@@ -19,13 +19,16 @@
  */
 package org.cast.isi.component;
 
-import com.google.inject.Inject;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -44,8 +47,7 @@ import org.cast.isi.panel.PeriodStudentSelectPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import com.google.inject.Inject;
 
 /**
  * Panel used by a teacher to add a new Period for the current Site.  Teacher is 
@@ -91,7 +93,7 @@ public class AddPeriodPanel extends Panel {
 			
 			// Ensure that no two periods in the same site have the same name.
 			periodName.add(new UniqueDataFieldValidator<String>(Period.class, "name").limitScope("site", ISISession.get().getCurrentSiteModel()));
-			periodName.add(new SimpleAttributeModifier("maxlength", "32"));
+			periodName.add(new AttributeModifier("maxlength", "32"));
 			periodName.setRequired(true);
 			periodName.setOutputMarkupId(true);
 
@@ -123,7 +125,7 @@ public class AddPeriodPanel extends Panel {
 						tempNewPeriodForm.setOutputMarkupId(true);
 						newPeriodForm.replaceWith(tempNewPeriodForm);
 						newPeriodForm = tempNewPeriodForm;
-						target.addComponent(newPeriodForm);
+						target.add(newPeriodForm);
 						
 						// hide the form
 						target.appendJavaScript("$('#" + addPeriodPanelMarkupId + "').hide();");
