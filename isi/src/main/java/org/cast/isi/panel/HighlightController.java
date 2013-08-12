@@ -21,11 +21,11 @@ package org.cast.isi.panel;
 
 import lombok.Getter;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -74,8 +74,6 @@ public class HighlightController extends Panel {
 	private boolean isTeacher;
 
 	private HighlightType type;
-
-	private ContentLoc loc;
 	
 	// The name for this highlighter set by the user, if any
 	private boolean editing = false; // Are we editing the label for the editable highlighter?
@@ -88,7 +86,6 @@ public class HighlightController extends Panel {
 	public HighlightController(String id, HighlightType type, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
 		this.type = type;
-		this.loc = loc;
 		setOutputMarkupId(true);
 		if (!type.isOn())
 			setVisible(false);
@@ -103,7 +100,7 @@ public class HighlightController extends Panel {
 		add(labelContainer);
 		
 		WebMarkupContainer link = new WebMarkupContainer("highlightLink");
-		link.add(new SimpleAttributeModifier("onclick", String.format("$().CAST_Highlighter('modify', '%c');return false;", type.getColor())));
+		link.add(new AttributeModifier("onclick", String.format("$().CAST_Highlighter('modify', '%c');return false;", type.getColor())));
 		labelContainer.add(link);
 
 		// The label may be editable, or may be retrieved from the properties file.
@@ -146,7 +143,7 @@ public class HighlightController extends Panel {
 		if (type.isEditable()) {
 			String color = type.getColor().toString().toLowerCase();
 	
-			IModel<Prompt> mPrompt = responseService.getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, loc, color);
+			IModel<Prompt> mPrompt = responseService.getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, color);
 	
 			EditHighlightLabelForm editHighlightLabelForm = new EditHighlightLabelForm("editHighlightNameForm", 
 					responseService.getResponseForPrompt(mPrompt, targetUser), 
@@ -168,7 +165,7 @@ public class HighlightController extends Panel {
 			
 			public void onClick(AjaxRequestTarget target) {
 				editing = true;
-				target.addComponent(container);
+				target.add(container);
 			}
 		};
 		editButton.setVisibilityAllowed(type.isEditable());
@@ -250,7 +247,7 @@ public class HighlightController extends Panel {
 				public boolean isVisible() {
 					return editing;
 				}				
-			}.setRequired(true).add(new SimpleAttributeModifier("maxlength", "32")).setOutputMarkupPlaceholderTag(true));
+			}.setRequired(true).add(new AttributeModifier("maxlength", "32")).setOutputMarkupPlaceholderTag(true));
 			
 			editContainer.add (new AjaxButton("save") {
 				private static final long serialVersionUID = 1L;
@@ -264,8 +261,7 @@ public class HighlightController extends Panel {
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 					editing = false;
 					if (target != null) {
-						target.addComponent(container);
-						target.appendJavaScript("showIndicators();");
+						target.add(container);
 					}
 				}
 				

@@ -147,8 +147,8 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IISIResponseService#getOrCreateHighlightPrompt(org.cast.isi.data.PromptType, org.cast.isi.data.ContentLoc, java.lang.String)
 	 */
-	public IModel<Prompt> getOrCreateHighlightPrompt(PromptType highlightlabel, ContentLoc loc, String color) {
-		return genericGetOrCreatePrompt(highlightlabel, loc, null, null, color, null);
+	public IModel<Prompt> getOrCreateHighlightPrompt(PromptType highlightlabel, String color) {
+		return genericGetOrCreatePrompt(highlightlabel, null, null, null, color, null);
 	}
 
 	

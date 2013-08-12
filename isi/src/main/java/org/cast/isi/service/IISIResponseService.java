@@ -38,7 +38,6 @@ import org.cast.isi.data.ISIEvent;
 import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.data.PromptType;
-import org.cast.isi.data.ScoreCounts;
 import org.cast.isi.data.StudentFlag;
 
 public interface IISIResponseService extends IResponseService {
@@ -61,7 +60,7 @@ public interface IISIResponseService extends IResponseService {
 			String xmlId, String collectionName);
 
 	IModel<Prompt> getOrCreateHighlightPrompt(PromptType highlightlabel,
-			ContentLoc loc, String color);
+			String color);
 
 	IModel<Prompt> genericGetOrCreatePrompt(PromptType type, ContentLoc loc,
 			String xmlId, IModel<User> targetUser, String identifier,
