@@ -19,11 +19,10 @@
  */
 package org.cast.isi.page;
 
-import com.google.inject.Inject;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -71,9 +70,13 @@ import org.cast.isi.validator.QuestionNameValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 @AuthorizeInstantiation("STUDENT")
 public class Reading extends ISIStandardPage implements IHeaderContributor {
 	
+	private static final long serialVersionUID = 1L;
+
 	protected final boolean showXmlContent;
 
 	protected static final Logger log = LoggerFactory.getLogger(Reading.class);
@@ -129,7 +132,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		addTaggingPanel();
 		addQuestionsPanel();
 		addTopNavigation(mSection, teacher);
-		addBottomNavigation(mSection, teacher);
+		addBottomNavigation(mSection, teacher);		
 	}
 
 	@Override
@@ -288,7 +291,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 			add(new TextArea<String>("text", textModel)
 					.add(new QuestionNameValidator(null))
 					.setRequired(true)
-					.add(new SimpleAttributeModifier("maxlength", "250")));
+					.add(new AttributeModifier("maxlength", "250")));
 			add(new AjaxButton("submit") {
 				private static final long serialVersionUID = 1L;
 
@@ -304,8 +307,8 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 							qstr = qstr.substring(0, 250);
 						questionService.createQuestion(new UserModel(mTargetUser.getObject()), qstr, getPageName());
 						questionList.doQuery();
-						target.addComponent(questionContainer);
-						target.addComponent(NewQuestionForm.this);
+						target.add(questionContainer);
+						target.add(NewQuestionForm.this);
 					}
 					target.appendJavaScript("$('#newQuestionModal').hide();");
 				}
@@ -313,7 +316,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 				protected void onError(AjaxRequestTarget target, Form<?> form) {
 					super.onError(target, form);
 					if (target != null)
-						target.addComponent(feedback);
+						target.add(feedback);
 				}	
 			});
 			add(feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(NewQuestionForm.this)));
@@ -323,6 +326,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 
 	
 	public void renderHead(IHeaderResponse response) {
+		renderThemeCSS(response, "css/highlight.css");
 		super.renderHead(response);
 	}
 	

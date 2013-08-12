@@ -15,7 +15,7 @@
 <link type="text/css" rel="stylesheet" media="screen" href="../css/theme.css" />
 
 <script type="text/javascript" src="../../../example/theme/js/jquery/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="../../../example/theme/js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/jquery/jquery-ui-1.9.2.custom.min.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/lang/en.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/functions.js"></script>
 <script type="text/javascript" src="../../../example/theme/js/jquery/jquery.annotate.js"></script>
@@ -23,7 +23,7 @@
 
 <!--
 <script type="text/javascript" src="../../../example/theme/js/rangy-1.2.3/rangy-core.js"></script>
-<script type="text/javascript" src="../../../example/theme/js/highlight.js"></script>
+<script type="text/javascript" src="../../../example/theme/js/new-highlight.js"></script>
 <script type="text/javascript">
     $(window).ready(function() {
         $().CAST_Highlighter({
@@ -733,9 +733,9 @@
         <div id="mainContentRight">
             <!-- BEGIN - Support Content -->
 
-            <div id="globalHighlight" class="rightBox collapseBox open">
-                <h5>Highlights</h5>
-                <div class="collapseBody">
+            <div id="globalHighlight" class="rightBox">
+                <h5><a href="#" class="linkToggle linkToggleBtn_RB0 open">Highlights</a></h5>
+                <div class="targetToggle linkToggleBox_RB0">
                     <div class="hlRow controlY helper has on">
                         <div class="hlGradient">
                             <a href="#" onclick="javascript:changeMode('Y'); return false;" class="hlIcon">
@@ -749,17 +749,17 @@
                             <p>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eleifend dolor vel libero pharetra sit amet bibendum metus tempus. Aliquam erat volutpat. Curabitur lacus felis, laoreet vel auctor id, luctus eget orci.
                             </p>
-                            <div class="supportBox collapseBox">
-                                <h5>Hint</h5>
-                                <div class="collapseBody">
+                            <div class="supportBox">
+                                <h5><a href="#" class="linkToggle linkToggleBtn_RB0-0">Hint</a></h5>
+                                <div class="targetToggle linkToggleBox_RB0-0">
                                     <p>
                                         Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
                                     </p>
                                 </div>
                             </div>
-                            <div class="supportBox collapseBox">
-                                <h5>Compare</h5>
-                                <div class="collapseBody">
+                            <div class="supportBox">
+                                <h5><a href="#" class="linkToggle linkToggleBtn_RB0-1">Compare</a></h5>
+                                <div class="targetToggle linkToggleBox_RB0-1">
                                     <p>
                                         Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
                                     </p>
@@ -810,9 +810,9 @@
                 </div>
             </div>
 
-            <div class="rightBox collapseBox open">
-                <h5>My Notes</h5>
-                <div class="collapseBody">
+            <div class="rightBox">
+                <h5><a href="#" class="linkToggle linkToggleBtn_RB1 open">My Notes</a></h5>
+                <div class="targetToggle linkToggleBox_RB1">
                     <div class="responseBar">
                         <div class="responseLeft">
                             <a href="#" class="button response"><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
@@ -857,9 +857,9 @@
                 </div>
             </div>
 
-            <div class="rightBox collapseBox open">
-                <h5>My Questions</h5>
-                <div class="collapseBody">
+            <div class="rightBox">
+                <h5><a href="#" class="linkToggle linkToggleBtn_RB2 open">My Questions</a></h5>
+                <div class="targetToggle linkToggleBox_RB2">
                     <p>
                         <a href="#">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?</a>
                     </p>
@@ -870,16 +870,16 @@
                 </div>
             </div>
 
-            <div wicket:id="tagpanel" class="rightBox collapseBox tagCurrent open">
-                <h5>My Tags:</h5>
-                <div class="tagCurrentList">
+            <div wicket:id="tagpanel" class="rightBox tagCurrent">
+                <h5><a href="#" class="linkToggle linkToggleBtn_RB3 open">My Tags:</a></h5>
+                <div class="tagCurrentList targetToggle linkToggleBox_RB3">
                     <!--
                     <span class="tagItem">smell <a href="#" class="button tag removeLink"><img src="../img/icons/close_tag.png" width="9" height="9" alt="" /></a></span>
                     <span class="tagItem">my_words <a href="#" class="button tag removeLink"><img src="../img/icons/close_tag.png" width="9" height="9" alt="" /></a></span>
                     -->
                     <span class="tagItem"><a href="#"><span>test</span></a> <a href="#" class="button removeLink">x</a></span>
                 </div>
-                <div class="collapseBody">
+                <div class="targetToggle linkToggleBox_RB3">
                     <h6>Add Tags:</h6>
                     <p class="tagStarsCloud">
                         <a href="#"><img src="../img/icons/star_3.png" width="42" height="13" alt="3 Stars" /></a>

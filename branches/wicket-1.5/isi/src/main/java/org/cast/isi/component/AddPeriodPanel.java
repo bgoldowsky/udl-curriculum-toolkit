@@ -135,7 +135,7 @@ public class AddPeriodPanel extends Panel {
 				@Override
 				protected void onError(AjaxRequestTarget target, Form<?> form) {
 					if (target != null)
-						target.addComponent(feedback);
+						target.add(feedback);
 				}
 				
 			});

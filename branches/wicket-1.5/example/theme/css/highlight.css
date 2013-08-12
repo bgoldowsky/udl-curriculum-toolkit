@@ -76,7 +76,7 @@
 #globalHighlight h5 {
     margin: 5px;
 }
-#globalHighlight > .collapseBody {
+#globalHighlight > .targetToggle {
     padding: 0px;
 }
 

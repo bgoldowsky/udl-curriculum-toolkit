@@ -116,7 +116,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		// refresh on section complete change for any section
 		// TODO: We really should only have to refresh the icon and link for the changed section, not the whole navbar.
-		target.addComponent(this);
+		target.add(this);
 	}
 	
 	private ISIXmlSection getCurrentSection() {
@@ -165,8 +165,8 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 		// response.renderJavascriptReference(new ResourceReference("js/jquery/jquery.qtip-2.0-rev411.min.js"));
 
         // TODO heikki commented this out because the file is not there
-		// response.renderJavaScriptReference(new JavaScriptResourceReference(this.getClass(), "js/jquery/jquery.qtip-1.0.min.js"));
-		response.renderJavaScript("$(window).ready(function() { navBarToolTips(); });", "Nav Bar Tool Tip Init");
+		// response.renderJavaScriptReference(new JavaScriptResourceReference(this.getClass(), "js/jquery/jquery.qtip.min.js"));
+		// response.renderJavaScript("$(window).ready(function() { navBarToolTips(); });", "Nav Bar Tool Tip Init");
 	}
 	
 	/**
