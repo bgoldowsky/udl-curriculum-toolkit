@@ -51,6 +51,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Login extends ISIBasePage implements IHeaderContributor {
+	private static final long serialVersionUID = 1L;
+
 	static final Logger log = LoggerFactory.getLogger(Login.class);
 
 	@Inject

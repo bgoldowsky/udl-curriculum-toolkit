@@ -54,6 +54,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Password extends ISIBasePage implements IHeaderContributor {
 
+	private static final long serialVersionUID = 1L;
+
 	private boolean haveKey = false;
 	
 	@Inject

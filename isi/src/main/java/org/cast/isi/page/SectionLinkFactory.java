@@ -87,7 +87,7 @@ public class SectionLinkFactory implements Serializable {
 			}
 			
 		};
-		link.setParameter("loc", loc.getLocation());
+		link.getPageParameters().add("loc", loc.getLocation());
 		return link;
 	}
 

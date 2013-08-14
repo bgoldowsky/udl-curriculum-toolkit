@@ -21,9 +21,10 @@ package org.cast.isi.dialog;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -64,7 +65,7 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
         // TODO heikki setTransparentResolver no longer exists, without replacement.. test if this works fine if simply leave out that call
 		//dialogBorder.setTransparentResolver(true);
 		dialogBorder.setMoveContainer(this);		
-		dialogBorder.getContentContainer().add(new SimpleAttributeModifier("class", "visuraloverlaycontent modalContainer modalBody"));
+		dialogBorder.getContentContainer().add(new AttributeModifier("class", "visuraloverlaycontent modalContainer modalBody"));
 		add(dialogBorder);
 	}
 	

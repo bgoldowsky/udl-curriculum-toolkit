@@ -41,6 +41,9 @@ import org.cast.isi.service.IQuestionService;
  *
  */
 public class QuestionPopup extends ISIBasePage {
+
+	private static final long serialVersionUID = 1L;
+
 	protected ResponseMetadata questionsMetadata;
 
 	protected boolean isTeacher;

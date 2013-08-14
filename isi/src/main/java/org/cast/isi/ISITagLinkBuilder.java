@@ -32,11 +32,14 @@ public class ISITagLinkBuilder implements ITagLinkBuilder {
 	private static final long serialVersionUID = 1L;
 
 	public WebMarkupContainer buildLink(String id, Tag tag) {
-		return new BookmarkablePageLink<Page>(id, Tags.class).setParameter("tag", tag.getName());
+		BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>(id, Tags.class);
+		bpl.getPageParameters().add("tag", tag.getName());
+		return bpl;
 	}
 
     public WebMarkupContainer buildLink(String id, Tag tag, PageParameters parameters) {
 		BookmarkablePageLink<Page> link = new BookmarkablePageLink<Page>(id, Tags.class, parameters);
-		return link.setParameter("tag", tag.getName());
+		link.getPageParameters().add("tag", tag.getName());
+		return link;
 	}
 }

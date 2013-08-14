@@ -73,7 +73,7 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 			response.setScore(score);
 		}
 		cwmService.flushChanges();
-		target.addComponent(TeacherScoreResponseButtonPanel.this);
+		target.add(TeacherScoreResponseButtonPanel.this);
 	}
 
 	private class GotItButton extends AjaxLink<Void> {

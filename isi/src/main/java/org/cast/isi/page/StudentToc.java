@@ -58,6 +58,8 @@ import java.util.List;
 @AuthorizeInstantiation("STUDENT")
 public class StudentToc extends ISIStandardPage {
 	
+	private static final long serialVersionUID = 1L;
+
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(StudentToc.class);
 	protected List<String> locsWithUnread;

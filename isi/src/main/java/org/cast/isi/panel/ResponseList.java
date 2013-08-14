@@ -139,9 +139,9 @@ public class ResponseList extends Panel {
 			@Override
 			protected void onDelete(AjaxRequestTarget target) {
 				super.onDelete(target);
-				target.addComponent(ResponseList.this);
+				target.add(ResponseList.this);
 				getDirectionsComponent().setVisibility();
-				target.addComponent(getDirectionsComponent());
+				target.add(getDirectionsComponent());
 			}
 		};
 		viewer.setAllowEdit(allowEdit);
@@ -168,14 +168,14 @@ public class ResponseList extends Panel {
 		Component panel = new EmptyPanel(getPlaceholderId()).setOutputMarkupId(true);
 		getPlaceholderComponent().replaceWith(panel);
 		getDirectionsComponent().setVisibility();
-		target.addComponent(getDirectionsComponent());
+		target.add(getDirectionsComponent());
 	}
 	
 	public void putPlaceholderComponent (Component component, AjaxRequestTarget target) {
 		getPlaceholderComponent().replaceWith(component);
-		target.addComponent(component);
+		target.add(component);
 		getDirectionsComponent().setVisibility();
-		target.addComponent(getDirectionsComponent()); 
+		target.add(getDirectionsComponent()); 
 	}
 	
 	/**

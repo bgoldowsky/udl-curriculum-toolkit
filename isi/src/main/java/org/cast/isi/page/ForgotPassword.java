@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ForgotPassword extends ISIBasePage implements IHeaderContributor {	
 
+	private static final long serialVersionUID = 1L;
+
 	boolean success = false; // has a successful send already happened?
 	
 	@SuppressWarnings("unused")

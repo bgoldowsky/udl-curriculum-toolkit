@@ -59,6 +59,8 @@ import org.slf4j.LoggerFactory;
  */
 abstract public class ISIStandardPage extends ISIBasePage {
 
+	private static final long serialVersionUID = 1L;
+
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ISIStandardPage.class);
 
@@ -185,7 +187,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	public void displayDialog(AbstractISIAjaxDialog<?> dialog, AjaxRequestTarget target) {
 		replace(dialog);
 		dialog.getDialogBorder().open(target);
-		target.addComponent(dialog);
+		target.add(dialog);
 	}
 	
 	/**
@@ -196,7 +198,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		WebMarkupContainer empty = new WebMarkupContainer(DISPLAY_DIALOG_ID);
 		empty.setOutputMarkupId(true);
 		replace(empty);
-		target.addComponent(empty);
+		target.add(empty);
 	}
 
 	

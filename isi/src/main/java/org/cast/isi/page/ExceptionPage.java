@@ -29,6 +29,8 @@ import org.cast.isi.ISIApplication;
 
 public class ExceptionPage extends ISIBasePage {
 
+	private static final long serialVersionUID = 1L;
+
 	public ExceptionPage(final PageParameters param, RuntimeException e) {
 		super(param);
 		

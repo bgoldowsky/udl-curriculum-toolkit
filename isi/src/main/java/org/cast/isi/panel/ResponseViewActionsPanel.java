@@ -182,7 +182,7 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 		@Override
 		public void onClick(AjaxRequestTarget target) {
 			responseService.addToWhiteboard((ISIResponse) getModelObject(), getPage());
-			target.addComponent(ResponseViewActionsPanel.this);
+			target.add(ResponseViewActionsPanel.this);
 		}
 	}
 
@@ -204,7 +204,7 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 		@Override
 		public void onClick(AjaxRequestTarget target) {
 			responseService.addToNotebook((ISIResponse) getModelObject(), getPage());
-			target.addComponent(ResponseViewActionsPanel.this);
+			target.add(ResponseViewActionsPanel.this);
 		}
 	}
 

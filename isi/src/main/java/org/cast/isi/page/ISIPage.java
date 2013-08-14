@@ -20,12 +20,11 @@
 package org.cast.isi.page;
 
 import lombok.Getter;
+
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.UrlUtils;
 import org.cast.cwm.JQueryHeaderContributor;
 import org.cast.isi.ISIApplication;
 
@@ -38,6 +37,8 @@ import org.cast.isi.ISIApplication;
  */
 
 public class ISIPage extends WebPage implements IHeaderContributor {
+
+	private static final long serialVersionUID = 1L;
 
 	@Getter protected String pageTitle = ISIApplication.get().getPageTitleBase() + " :: Default Page Title";
 
@@ -96,16 +97,14 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 	}
 
 	public static void renderThemeCSS(IHeaderResponse response, String fileName) {
-		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get()));
+		response.renderCSSReference(fileName);
 	}
 
 	public static void renderThemeCSS(IHeaderResponse response, String fileName, String media) {
-		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get()), media);
+		response.renderCSSReference(fileName, media);
 	}
 
 	public static void renderThemeJS(IHeaderResponse response, String fileName) {
-		response.renderJavaScriptReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get()));
+		response.renderJavaScriptReference(fileName);
 	}
-
-
 }

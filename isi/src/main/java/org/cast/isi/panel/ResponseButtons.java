@@ -137,14 +137,14 @@ public class ResponseButtons extends Panel {
 				private void removeFromPage (AjaxRequestTarget target) {
 					openEditor = null;
 					getListComponent().clearPlaceholderComponent(target);
-					target.addComponent(ResponseButtons.this);					
-					target.addComponent(getListComponent());
+					target.add(ResponseButtons.this);					
+					target.add(getListComponent());
 				}
 			};
 			editor.setContext(getContext());
 			editor.setNewResponse(true);
 			getListComponent().putPlaceholderComponent(editor, target);
-			target.addComponent(ResponseButtons.this);
+			target.add(ResponseButtons.this);
 		}
 
 	}

@@ -77,7 +77,7 @@ public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSe
 	protected void refreshListeners(final AjaxRequestTarget target) {
 		getPage().visitChildren(ISingleSelectFormListener.class, new IVisitor<Component, Void>() {
             public void component(Component object, IVisit<Void> visit) {
-                target.addComponent(object);
+                target.add(object);
             }
         });
 	}

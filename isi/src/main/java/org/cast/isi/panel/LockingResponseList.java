@@ -50,7 +50,7 @@ public class LockingResponseList extends ResponseList implements ISectionStatusC
 
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		if (location.equals(getLocation()))
-			target.addComponent(this);
+			target.add(this);
 	}
 	
 	private String getLocation() {

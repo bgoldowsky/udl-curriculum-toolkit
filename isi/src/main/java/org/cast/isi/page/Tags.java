@@ -58,6 +58,8 @@ import java.util.LinkedList;
 @AuthorizeInstantiation("STUDENT")
 public class Tags extends ISIStandardPage {
 	
+	private static final long serialVersionUID = 1L;
+
 	protected Tag selected;
 	private String pageTitleEnd;
 	

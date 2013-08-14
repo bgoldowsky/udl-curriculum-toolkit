@@ -52,6 +52,8 @@ import org.slf4j.LoggerFactory;
 @AuthorizeInstantiation("TEACHER")
 public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor {
 	
+	private static final long serialVersionUID = 1L;
+
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(TeacherNotesPopup.class);
 	private IModel<User> mStudent = ISISession.get().getStudentModel();

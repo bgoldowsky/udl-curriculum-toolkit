@@ -72,6 +72,8 @@ import java.util.TreeSet;
  */
 public class Register extends ISIBasePage implements IHeaderContributor{
 		
+	private static final long serialVersionUID = 1L;
+
 	private static final Logger log = LoggerFactory.getLogger(Register.class);
 	
 	boolean success = false; // has a successful registration already happened?

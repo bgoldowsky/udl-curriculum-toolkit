@@ -55,7 +55,7 @@ public class LockingResponseButtons extends ResponseButtons implements ISectionS
 
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		if (location.equals(getLocation()))
-			target.addComponent(this);
+			target.add(this);
 	}
 	
 	public String getLocation() {

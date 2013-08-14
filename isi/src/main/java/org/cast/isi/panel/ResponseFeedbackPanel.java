@@ -26,10 +26,10 @@ import java.util.List;
 import lombok.Getter;
 import net.databinder.hib.Databinder;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -137,9 +137,9 @@ public class ResponseFeedbackPanel extends ISIPanel {
 				messageList.add(0, (FeedbackMessage) form.getModelObject());
 				form.setDefaultModel(new CompoundPropertyModel<FeedbackMessage>(new FeedbackMessage()));
 				if (target != null) {
-					target.addComponent(form);
-					target.addComponent(responseContainer);
-					target.addComponent(callingButton);
+					target.add(form);
+					target.add(responseContainer);
+					target.add(callingButton);
 				}
 			}
 			
@@ -147,7 +147,7 @@ public class ResponseFeedbackPanel extends ISIPanel {
 			protected void onError(AjaxRequestTarget target, Form<?> form) {
 				form.error("Please type a message.");
 				if (target != null)
-					target.addComponent(feedbackPanel);
+					target.add(feedbackPanel);
 			}		
 		};
 		form.add(sendLink);
@@ -181,8 +181,8 @@ public class ResponseFeedbackPanel extends ISIPanel {
 								sectionService.adjustMessageCount(m.getStudent(), ((ISIStandardPage) getPage()).getLoc(), m.getAuthor().getRole(), -1);
 							}
 						}
-						target.addComponent(responseContainer);				
-						target.addComponent(callingButton);				
+						target.add(responseContainer);				
+						target.add(callingButton);				
 						target.addChildren(getPage(), IDisplayFeedbackStatus.class);
 					}
 				};
@@ -194,9 +194,9 @@ public class ResponseFeedbackPanel extends ISIPanel {
 					.setVisible(ISISession.get().getUser().equals(m.getAuthor())));
 
 				if (m.getAuthor().getRole().equals(Role.STUDENT)) {
-					item.add(new SimpleAttributeModifier("class", "respStudent"));
+					item.add(new AttributeModifier("class", "respStudent"));
 				} else if (m.getAuthor().getRole().equals(Role.TEACHER)){
-					item.add(new SimpleAttributeModifier("class", "respTeacher"));
+					item.add(new AttributeModifier("class", "respTeacher"));
 				}
 			}			
 		};

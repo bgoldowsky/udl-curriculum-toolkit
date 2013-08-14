@@ -35,6 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 public class AuthoredPopup extends ISIBasePage {
 	
+	private static final long serialVersionUID = 1L;
 	protected String xmlId;
 	protected XmlSectionModel mSection;	
 	protected PageParameters param;

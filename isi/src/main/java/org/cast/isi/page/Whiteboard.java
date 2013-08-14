@@ -19,13 +19,18 @@
  */
 package org.cast.isi.page;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -56,10 +61,7 @@ import org.hibernate.LockOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import com.google.inject.Inject;
 
 /**
  * This is a general purpose whiteboard shared by all users within a period.
@@ -68,6 +70,8 @@ import java.util.TreeMap;
  */
 @AuthorizeInstantiation("STUDENT")
 public class Whiteboard extends ISIBasePage implements IHeaderContributor {
+
+	private static final long serialVersionUID = 1L;
 
 	protected static final Logger log = LoggerFactory.getLogger(Whiteboard.class);
 
@@ -130,8 +134,8 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 		@Override
 		public void onClick(AjaxRequestTarget target) {
 			showNames = !showNames;
-			target.addComponent(Whiteboard.this.get("hideNamesLink"));	
-			target.addComponent(Whiteboard.this.get("rootContainer")); // Root Repeating View			
+			target.add(Whiteboard.this.get("hideNamesLink"));	
+			target.add(Whiteboard.this.get("rootContainer")); // Root Repeating View			
 		}
 
 		@Override
@@ -189,7 +193,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 						responseItem.setOutputMarkupId(true);
 						responses.add(responseItem);
 						responseItem.add(new WebMarkupContainer("responseAnchor")
-								.add(new SimpleAttributeModifier("name", String.valueOf(response.getId()))));
+								.add(new AttributeModifier("name", String.valueOf(response.getId()))));
 						responseItem.add(new ResponseViewerFactory().makeResponseViewComponent("response", new HibernateObjectModel<ISIResponse>(Response.class, response.getId())));
 
 						// Remove from Whiteboard link

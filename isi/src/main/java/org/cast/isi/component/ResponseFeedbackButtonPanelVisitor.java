@@ -34,7 +34,7 @@ public class ResponseFeedbackButtonPanelVisitor implements IVisitor<ResponseFeed
 	public ResponseFeedbackButtonPanelVisitor() {
 	}
 
-    public void component(ResponseFeedbackButtonPanel component, IVisit visit) {
+    public void component(ResponseFeedbackButtonPanel component, IVisit<Void> visit) {
         String currentState = component.getState();
 
         // once a new feedback is found - stop, this will be the indicator

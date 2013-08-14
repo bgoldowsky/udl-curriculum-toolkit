@@ -19,8 +19,10 @@
  */
 package org.cast.isi.page;
 
-import com.google.inject.Inject;
+import java.util.List;
+
 import lombok.Getter;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -61,7 +63,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.List;
+import com.google.inject.Inject;
 
 /**
  * Given a prompt id and period, list all the user responses
@@ -71,6 +73,8 @@ import java.util.List;
  */
 @AuthorizeInstantiation("TEACHER")
 public class PeriodResponsePage extends ISIBasePage implements IHeaderContributor {
+
+	private static final long serialVersionUID = 1L;
 
 	private long promptId;
 	protected String pageTitleEnd = null;
@@ -226,8 +230,8 @@ public class PeriodResponsePage extends ISIBasePage implements IHeaderContributo
 			WebMarkupContainer details = getDetailsPanel();
 			if (details instanceof PeriodResponseListPanel)
 				((PeriodResponseListPanel) details).setShowNames(showNames);
-			target.addComponent(getDetailsPanel());
-			target.addComponent(this);;			
+			target.add(getDetailsPanel());
+			target.add(this);;			
 		}				
 	}
 

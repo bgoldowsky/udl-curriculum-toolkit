@@ -275,7 +275,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
     	questionBox.add(questionContainer);
 		questionContainer.setOutputMarkupId(true);
 		PopupSettings questionPopupSettings = ISIApplication.questionPopupSettings;
-    	questionList = new QuestionListView("question", QuestionPopup.class, questionPopupSettings, null, null);
+    	questionList = new QuestionListView("question", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null, null);
 		questionContainer.add(questionList);
 		questionContainer.add(new WebMarkupContainer("qButtonVisible"));
     	add(new NewQuestionForm("newQuestion"));

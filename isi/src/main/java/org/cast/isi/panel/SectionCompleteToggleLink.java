@@ -100,7 +100,7 @@ public abstract class SectionCompleteToggleLink extends AjaxLink<XmlSection> imp
 
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		if (shouldRefreshFor(location))
-			target.addComponent(this);
+			target.add(this);
 	}
 	
 	public String getLocation() {

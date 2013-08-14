@@ -38,6 +38,8 @@ import org.cast.cwm.service.IEventService;
  */
 public abstract class ISIBasePage extends ISIPage {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Inject
 	private IEventService eventService;
 
