@@ -66,15 +66,15 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 				studentFlagPanel.setmUser(null); // Set Flag to no student
 				studentFlagPanel.setEnabled(false);
 				if (target != null) {
-					target.addComponent(studentFlagPanel);
-					target.addComponent(teacherNotesLink);
+					target.add(studentFlagPanel);
+					target.add(teacherNotesLink);
 				}
 			}
 
 			@Override
 			protected void onStudentUpdate(AjaxRequestTarget target) {
 				studentFlagPanel.setEnabled(false);
-				target.addComponent(studentFlagPanel);
+				target.add(studentFlagPanel);
 			}
 
 			@Override

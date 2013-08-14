@@ -19,9 +19,12 @@
  */
 package org.cast.isi.page;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -43,11 +46,9 @@ import org.cast.isi.panel.GlossaryPanel;
 import org.cast.isi.service.WordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
 public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(GlossaryPage.class);
 	protected Map<String, IGlossaryEntry> listUserEntries;
@@ -99,7 +100,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 			super(id);
 			add(new TextArea<String>("wordText", mWord)
 					.setRequired(true)
-					.add(new SimpleAttributeModifier("maxlength", "50")));
+					.add(new AttributeModifier("maxlength", "50")));
 			add(new AjaxButton("submit") {
 				private static final long serialVersionUID = 1L;
 

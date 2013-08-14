@@ -20,15 +20,25 @@
 package org.cast.isi;
 
 
-import com.google.inject.Inject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import lombok.Getter;
 import lombok.Setter;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.IMarkupFragment;
@@ -124,14 +134,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.google.inject.Inject;
 
 /**
  * A component to display XML content in ISI.
@@ -701,7 +704,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("compareResponses_")) {
 			IModel<Prompt> mPrompt = getPrompt(elt);
 			BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>(wicketId, ISIApplication.get().getPeriodResponsePageClass());
-			bpl.setParameter("promptId", mPrompt.getObject().getId());
+			bpl.getPageParameters().add("promptId", mPrompt.getObject().getId());
 			ISIApplication.get().setLinkProperties(bpl);
 			bpl.setVisible(isTeacher);
 			bpl.add(new AttributeRemover("rgid", "for", "type"));
@@ -947,7 +950,7 @@ public class ISIXmlComponent extends XmlComponent {
         throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
 	}
 	
-	public static class AttributeRemover extends AbstractBehavior {
+	public static class AttributeRemover extends Behavior {
 		
 		private String[] atts;
 

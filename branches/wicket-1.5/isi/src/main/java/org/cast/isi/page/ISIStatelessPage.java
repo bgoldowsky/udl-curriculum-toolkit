@@ -39,6 +39,8 @@ import java.util.List;
 @Slf4j
 public class ISIStatelessPage extends ISIPage {
 
+	private static final long serialVersionUID = 1L;
+
 	public ISIStatelessPage(PageParameters param) {
 		super(param);
 		setStatelessHint(true);

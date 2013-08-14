@@ -120,7 +120,7 @@ public class AnnotatedImageComponent extends WebMarkupContainer implements IHead
 		}
 
         */
-        public void component(HotSpotComponent component, IVisit visit) {
+        public void component(HotSpotComponent component, IVisit<Void> visit) {
             if (count != 0 )
                 hotSpotDetails.append(", ");
 

@@ -19,13 +19,16 @@
  */
 package org.cast.isi.page;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.databinder.models.hib.HibernateObjectModel;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -57,8 +60,7 @@ import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.inject.Inject;
 
 /**
  * ResponseCollections are groups of response areas that are collected under a response name.
@@ -70,6 +72,8 @@ import java.util.List;
 @AuthorizeInstantiation("STUDENT")
 public class ResponseCollections extends ISIStandardPage {
 	
+	private static final long serialVersionUID = 1L;
+
 	protected String paramCollectionName = null; // The name of the ResponseCollection currently being displayed
 	protected String pageTitleEnd;
 	protected UserModel mUser;
@@ -231,14 +235,14 @@ public class ResponseCollections extends ISIStandardPage {
 	}
 
 	protected BookmarkablePageLink<Page> makeCollectionLink(String collectionName) {
-		BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>("link", ISIApplication.get().getResponseCollectionsPageClass())
-										.setParameter("name", collectionName);
+		BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>("link", ISIApplication.get().getResponseCollectionsPageClass());
+		bpl.getPageParameters().add("name", collectionName);
 		bpl.add(new Label("name", collectionName));
 		
 		// if the param collection name is the same as this one set the indicator that this is the item clicked
 		if (haveSelectedCollection()) {
 			if (paramCollectionName.equals(collectionName)) {
-				bpl.add(new SimpleAttributeModifier("class", "selected"));
+				bpl.add(new AttributeModifier("class", "selected"));
 				bpl.setEnabled(false);
 			}
 		}

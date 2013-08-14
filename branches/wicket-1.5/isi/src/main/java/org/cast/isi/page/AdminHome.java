@@ -33,6 +33,8 @@ import java.util.List;
 @AuthorizeInstantiation("RESEARCHER")
 public class AdminHome extends org.cast.cwm.admin.AdminHome {
 
+	private static final long serialVersionUID = 1L;
+
 	public AdminHome(PageParameters parameters) {
 		super(parameters);
 	}

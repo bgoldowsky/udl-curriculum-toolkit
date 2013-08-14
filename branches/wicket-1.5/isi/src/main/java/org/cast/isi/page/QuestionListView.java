@@ -19,7 +19,7 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -86,10 +86,10 @@ class QuestionListView extends ListView<Question> {
 		
 		if (q.getOwner() != null) {
 			if (isCurrent) {
-				link.add(new SimpleAttributeModifier("class", "selected"));
+				link.add(new AttributeModifier("class", "selected"));
 			}
 			else
-				item.add(new SimpleAttributeModifier("class", "questionP"));
+				item.add(new AttributeModifier("class", "questionP"));
 		} else {
 			if (isCurrent)
 				link.add(new ClassAttributeModifier("selected"));

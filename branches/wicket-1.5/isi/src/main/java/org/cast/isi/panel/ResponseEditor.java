@@ -19,12 +19,15 @@
  */
 package org.cast.isi.panel;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -52,10 +55,10 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.inject.Inject;
 
 public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
@@ -207,7 +210,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 			setRenderBodyOnly(true);
 			// resource keys are, for example, "response.title.prompt.audio"
 			add(new Label("titleInstructions", new ResourceModel("response.title.prompt."+model.getObject().getType().getName().toLowerCase(), "Add a title")));
-			add(new TextField<String>("title", new PropertyModel<String>(model, "title")).add(new SimpleAttributeModifier("maxlength", "250")));
+			add(new TextField<String>("title", new PropertyModel<String>(model, "title")).add(new AttributeModifier("maxlength", "250")));
 		}
 		
 		@Override

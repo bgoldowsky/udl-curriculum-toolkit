@@ -121,7 +121,7 @@ public abstract class SectionCompleteTogglePanel extends Panel implements ISecti
 	
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		if (isVisible() && location.equals(getLocation()))
-			target.addComponent(this);
+			target.add(this);
 	}
 	
 	protected String getLocation() {

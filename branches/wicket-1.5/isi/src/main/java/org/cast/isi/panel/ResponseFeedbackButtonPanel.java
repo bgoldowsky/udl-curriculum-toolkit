@@ -19,12 +19,14 @@
  */
 package org.cast.isi.panel;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.databinder.models.hib.HibernateObjectModel;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
@@ -44,8 +46,7 @@ import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.inject.Inject;
 
 
 /**
@@ -118,15 +119,15 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 				responseFeedbackPanel.setCallingButton(ResponseFeedbackButtonPanel.this);
 				eventService.saveEvent("messagepanel:view", mPrompt.getObject().toString(), ((ISIStandardPage) getPage()).getPageName());
 				if (target != null) {
-					target.addComponent(responseFeedbackPanel);
-					target.addComponent(this);
+					target.add(responseFeedbackPanel);
+					target.add(this);
 					target.appendJavaScript(responseFeedbackPanel.getSidebarDialog().getOpenString());
 					target.addChildren(getPage(), IDisplayFeedbackStatus.class);
 				}				
 			}
 			
 		};
-		link.add(new SimpleAttributeModifier("href", ResponseFeedbackPanel.getDivName()));
+		link.add(new AttributeModifier("href", ResponseFeedbackPanel.getDivName()));
 		
 		button = new Icon("button", new AbstractReadOnlyModel<String>() {
 			private static final long serialVersionUID = 1L;

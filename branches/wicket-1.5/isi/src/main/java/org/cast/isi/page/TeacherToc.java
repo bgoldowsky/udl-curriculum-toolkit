@@ -19,10 +19,15 @@
  */
 package org.cast.isi.page;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import net.databinder.models.hib.HibernateObjectModel;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -56,10 +61,7 @@ import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.inject.Inject;
 
 /**
  * Teacher Table of Contents
@@ -74,6 +76,7 @@ import java.util.Map;
 @AuthorizeInstantiation("TEACHER")
 public class TeacherToc extends ISIStandardPage {
 
+	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(TeacherToc.class);
@@ -135,7 +138,7 @@ public class TeacherToc extends ISIStandardPage {
 					if (rootChild.isSuperSection()) {
 						superSectionContainer.add(new Label("superSectionTitle", rootChild.getTitle()));
 						if (rootChild.getChildren().size() > 1) {
-							superSectionContainer.add(new SimpleAttributeModifier("colspan", String.valueOf(rootChild.getChildren().size())));
+							superSectionContainer.add(new AttributeModifier("colspan", String.valueOf(rootChild.getChildren().size())));
 						}
 					} else {
 						superSectionContainer.add(new EmptyPanel("superSectionTitle"));

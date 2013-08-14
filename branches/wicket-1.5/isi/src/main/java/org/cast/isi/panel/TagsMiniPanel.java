@@ -44,7 +44,7 @@ public class TagsMiniPanel extends TagPanel {
 			public void onClick(AjaxRequestTarget target) {
 				if (target!=null) {
 					for (Component c : updatingComponents)
-						target.addComponent(c);
+						target.add(c);
 				}
 			}
 			

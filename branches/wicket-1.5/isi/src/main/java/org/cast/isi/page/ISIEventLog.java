@@ -26,6 +26,8 @@ import org.cast.cwm.admin.EventLog;
 @AuthorizeInstantiation("RESEARCHER")
 public class ISIEventLog extends EventLog {
 	
+	private static final long serialVersionUID = 1L;
+
 	public ISIEventLog(final PageParameters params) {
 		super(params);	
 	}

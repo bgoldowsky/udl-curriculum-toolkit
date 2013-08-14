@@ -47,6 +47,7 @@ public class SingleSelectDelayMessage extends WebMarkupContainer {
 
 	protected IModel<User> mUser;
 	
+	@SuppressWarnings("unused")
 	private String location;
 
 	private IModel<XmlSection> currentSectionModel;

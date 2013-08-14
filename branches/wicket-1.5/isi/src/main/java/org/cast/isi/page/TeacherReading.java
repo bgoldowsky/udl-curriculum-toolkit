@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 @AuthorizeInstantiation("TEACHER")
 public class TeacherReading extends Reading implements IHeaderContributor {
 
+	private static final long serialVersionUID = 1L;
+
 	protected static final Logger log = LoggerFactory.getLogger(TeacherReading.class);
 	
 	public TeacherReading(final PageParameters parameters) {
@@ -136,7 +138,7 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 		questionContainer.setOutputMarkupId(true);
     	questionBox.add(questionContainer);
 		PopupSettings questionPopupSettings = ISIApplication.get().questionPopupSettings;
-    	questionList = new QuestionListView("question", QuestionPopup.class, questionPopupSettings, null, 
+    	questionList = new QuestionListView("question", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null, 
     			(ISISession.get().getTargetUserModel().getObject().getId()));  
 		questionContainer.add(questionList);
 		questionContainer.add(new WebMarkupContainer("qButtonVisible").setVisible(false));

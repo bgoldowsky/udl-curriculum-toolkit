@@ -113,8 +113,8 @@ public class FreeToolbar extends Panel {
 				} else {
 					link.setVisibilityAllowed(false);
 				} 
-				target.addComponent(definition);
-				target.addComponent(link);
+				target.add(definition);
+				target.add(link);
 			}
 
 			@Override

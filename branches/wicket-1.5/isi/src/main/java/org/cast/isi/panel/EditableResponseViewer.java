@@ -133,7 +133,7 @@ public class EditableResponseViewer extends Panel {
 	private void setVisibility(AjaxRequestTarget target) {
 		editContainer.setVisible(editing);
 		viewContainer.setVisible(!editing);
-		target.addComponent(this);
+		target.add(this);
 	}
 
 	protected void addResponseViewActions(WebMarkupContainer container) {

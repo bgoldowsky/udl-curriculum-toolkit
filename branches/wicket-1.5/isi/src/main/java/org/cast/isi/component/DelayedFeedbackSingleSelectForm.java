@@ -87,7 +87,7 @@ public abstract class DelayedFeedbackSingleSelectForm extends SingleSelectForm i
 	
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		if (location.equals(getLocation()))
-			target.addComponent(this);
+			target.add(this);
 	}
 	
 	@Override
