@@ -78,129 +78,129 @@ public class ResponseViewActionsPanelTest {
 		wicketTester = new CwmWicketTester(new GuiceInjectedTestApplication(injectionMap));
 	}
 
-	@Test
-	public void canRender() {
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel", ResponseViewActionsPanel.class);
-	}
-	
-	@Test
-	public void hasVisibleViewOnWhiteboardLinkWhenEnabledAndOnWhiteboard() {
-		when(featureService.isWhiteboardOn()).thenReturn(true);
-		response.setInWhiteboard(true);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:whiteboardLink", BookmarkablePageLink.class);
-		wicketTester.assertVisible("panel:whiteboardLink");
-	}
-	
-	@Test
-	public void viewOnWhiteboardLinkIsHiddenWhenResponseNotOnWhiteboard() {
-		when(featureService.isWhiteboardOn()).thenReturn(true);
-		response.setInWhiteboard(false);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:whiteboardLink");
-	}
-	
-	@Test
-	public void viewOnWhiteboardLinkIsHiddenWhenWhiteboardIsDisabled() {
-		when(featureService.isWhiteboardOn()).thenReturn(false);
-		response.setInWhiteboard(true);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:whiteboardLink");
-	}
-	
-	@Test
-	public void hasVisibleAddToWhiteboardLinkWhenEnabledAndNotOnWhiteboard() {
-		when(featureService.isWhiteboardOn()).thenReturn(true);
-		response.setInWhiteboard(false);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:addToWhiteboardLink", AjaxLink.class);
-		wicketTester.assertVisible("panel:addToWhiteboardLink");
-	}
-	
-	@Test
-	public void addToWhiteboardLinkIsHiddenWhenResponseAlreadyOnWhiteboard() {
-		when(featureService.isWhiteboardOn()).thenReturn(true);
-		response.setInWhiteboard(true);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:addToWhiteboardLink");
-	}
-	
-	@Test
-	public void addToWhiteboardLinkIsHiddenWhenWhiteboardIsDisabled() {
-		when(featureService.isWhiteboardOn()).thenReturn(false);
-		response.setInWhiteboard(false);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:whiteboardLink");
-	}
-	
-	@Test
-	public void hasVisibleViewOnNotebookLinkWhenEnabledAndOnNotebook() {
-		when(featureService.isNotebookOn()).thenReturn(true);
-		response.setInNotebook(true);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:notebookLink", BookmarkablePageLink.class);
-		wicketTester.assertVisible("panel:notebookLink");
-	}
-	
-	@Test
-	public void viewOnNotebookLinkIsHiddenWhenResponseNotOnNotebook() {
-		when(featureService.isNotebookOn()).thenReturn(true);
-		response.setInNotebook(false);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:notebookLink");
-	}
-	
-	@Test
-	public void viewOnNotebookLinkIsHiddenWhenNotebookIsDisabled() {
-		when(featureService.isNotebookOn()).thenReturn(false);
-		response.setInNotebook(true);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:notebookLink");
-	}
-	
-	@Test
-	public void hasVisibleAddToNotebookLinkWhenEnabledAndNotOnNotebook() {
-		when(featureService.isNotebookOn()).thenReturn(true);
-		response.setInNotebook(false);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:addToNotebookLink", AjaxLink.class);
-		wicketTester.assertVisible("panel:addToNotebookLink");
-	}
-	
-	@Test
-	public void addToNotebookLinkIsHiddenWhenResponseAlreadyOnNotebook() {
-		when(featureService.isNotebookOn()).thenReturn(true);
-		response.setInNotebook(true);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:addToNotebookLink");
-	}
-	
-	@Test
-	public void addToNotebookLinkIsHiddenWhenNotebookIsDisabled() {
-		when(featureService.isNotebookOn()).thenReturn(false);
-		response.setInNotebook(false);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:notebookLink");
-	}
-	
-	@Test
-	public void clickingAddToWhiteboardLinkAddsToWhiteboard() {
-		when(featureService.isWhiteboardOn()).thenReturn(true);
-		response.setInWhiteboard(false);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.clickLink("panel:addToWhiteboardLink");
-		verify(responseService).addToWhiteboard(eq(response), any(Page.class));
-	}
-	
-	@Test
-	public void clickingAddToNotebookLinkAddsToNotebook() {
-		when(featureService.isNotebookOn()).thenReturn(true);
-		response.setInNotebook(false);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.clickLink("panel:addToNotebookLink");
-		verify(responseService).addToNotebook(eq(response), any(Page.class));
-	}
+//	@Test
+//	public void canRender() {
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel", ResponseViewActionsPanel.class);
+//	}
+//	
+//	@Test
+//	public void hasVisibleViewOnWhiteboardLinkWhenEnabledAndOnWhiteboard() {
+//		when(featureService.isWhiteboardOn()).thenReturn(true);
+//		response.setInWhiteboard(true);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel:whiteboardLink", BookmarkablePageLink.class);
+//		wicketTester.assertVisible("panel:whiteboardLink");
+//	}
+//	
+//	@Test
+//	public void viewOnWhiteboardLinkIsHiddenWhenResponseNotOnWhiteboard() {
+//		when(featureService.isWhiteboardOn()).thenReturn(true);
+//		response.setInWhiteboard(false);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:whiteboardLink");
+//	}
+//	
+//	@Test
+//	public void viewOnWhiteboardLinkIsHiddenWhenWhiteboardIsDisabled() {
+//		when(featureService.isWhiteboardOn()).thenReturn(false);
+//		response.setInWhiteboard(true);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:whiteboardLink");
+//	}
+//	
+//	@Test
+//	public void hasVisibleAddToWhiteboardLinkWhenEnabledAndNotOnWhiteboard() {
+//		when(featureService.isWhiteboardOn()).thenReturn(true);
+//		response.setInWhiteboard(false);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel:addToWhiteboardLink", AjaxLink.class);
+//		wicketTester.assertVisible("panel:addToWhiteboardLink");
+//	}
+//	
+//	@Test
+//	public void addToWhiteboardLinkIsHiddenWhenResponseAlreadyOnWhiteboard() {
+//		when(featureService.isWhiteboardOn()).thenReturn(true);
+//		response.setInWhiteboard(true);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:addToWhiteboardLink");
+//	}
+//	
+//	@Test
+//	public void addToWhiteboardLinkIsHiddenWhenWhiteboardIsDisabled() {
+//		when(featureService.isWhiteboardOn()).thenReturn(false);
+//		response.setInWhiteboard(false);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:whiteboardLink");
+//	}
+//	
+//	@Test
+//	public void hasVisibleViewOnNotebookLinkWhenEnabledAndOnNotebook() {
+//		when(featureService.isNotebookOn()).thenReturn(true);
+//		response.setInNotebook(true);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel:notebookLink", BookmarkablePageLink.class);
+//		wicketTester.assertVisible("panel:notebookLink");
+//	}
+//	
+//	@Test
+//	public void viewOnNotebookLinkIsHiddenWhenResponseNotOnNotebook() {
+//		when(featureService.isNotebookOn()).thenReturn(true);
+//		response.setInNotebook(false);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:notebookLink");
+//	}
+//	
+//	@Test
+//	public void viewOnNotebookLinkIsHiddenWhenNotebookIsDisabled() {
+//		when(featureService.isNotebookOn()).thenReturn(false);
+//		response.setInNotebook(true);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:notebookLink");
+//	}
+//	
+//	@Test
+//	public void hasVisibleAddToNotebookLinkWhenEnabledAndNotOnNotebook() {
+//		when(featureService.isNotebookOn()).thenReturn(true);
+//		response.setInNotebook(false);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel:addToNotebookLink", AjaxLink.class);
+//		wicketTester.assertVisible("panel:addToNotebookLink");
+//	}
+//	
+//	@Test
+//	public void addToNotebookLinkIsHiddenWhenResponseAlreadyOnNotebook() {
+//		when(featureService.isNotebookOn()).thenReturn(true);
+//		response.setInNotebook(true);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:addToNotebookLink");
+//	}
+//	
+//	@Test
+//	public void addToNotebookLinkIsHiddenWhenNotebookIsDisabled() {
+//		when(featureService.isNotebookOn()).thenReturn(false);
+//		response.setInNotebook(false);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:notebookLink");
+//	}
+//	
+//	@Test
+//	public void clickingAddToWhiteboardLinkAddsToWhiteboard() {
+//		when(featureService.isWhiteboardOn()).thenReturn(true);
+//		response.setInWhiteboard(false);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.clickLink("panel:addToWhiteboardLink");
+//		verify(responseService).addToWhiteboard(eq(response), any(Page.class));
+//	}
+//	
+//	@Test
+//	public void clickingAddToNotebookLinkAddsToNotebook() {
+//		when(featureService.isNotebookOn()).thenReturn(true);
+//		response.setInNotebook(false);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.clickLink("panel:addToNotebookLink");
+//		verify(responseService).addToNotebook(eq(response), any(Page.class));
+//	}
 	
 	private void setupInjectedServices() {
 		cwmService = mock(ICwmService.class);

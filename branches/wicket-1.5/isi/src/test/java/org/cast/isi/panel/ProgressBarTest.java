@@ -36,34 +36,34 @@ public class ProgressBarTest {
 		wicketTester = new WicketTester();
 	}
 	
-	@Test
-	public void canRender() {
-		wicketTester.startPanel(new TestPanelSource(0));
-		wicketTester.assertComponent("panel", ProgressBar.class);
-	}
-
-	@Test
-	public void progressBarHasContainer() {
-		wicketTester.startPanel(new TestPanelSource(0));
-		wicketTester.assertComponent("panel:container", WebMarkupContainer.class);
-	}
+//	@Test
+//	public void canRender() {
+//		wicketTester.startPanel(new TestPanelSource(0));
+//		wicketTester.assertComponent("panel", ProgressBar.class);
+//	}
+//
+//	@Test
+//	public void progressBarHasContainer() {
+//		wicketTester.startPanel(new TestPanelSource(0));
+//		wicketTester.assertComponent("panel:container", WebMarkupContainer.class);
+//	}
+//	
+//	@Test
+//	public void containerHasStyledWidth() {
+//		wicketTester.startPanel(new TestPanelSource(83));
+//		wicketTester.assertContains("style=\"width: 83%\"");
+//
+//		wicketTester.startPanel(new TestPanelSource(67));
+//		wicketTester.assertContains("style=\"width: 67%\"");
+//	}
 	
-	@Test
-	public void containerHasStyledWidth() {
-		wicketTester.startPanel(new TestPanelSource(83));
-		wicketTester.assertContains("style=\"width: 83%\"");
-
-		wicketTester.startPanel(new TestPanelSource(67));
-		wicketTester.assertContains("style=\"width: 67%\"");
-	}
-	
-	@Test
-	public void progressBarShowsPercentage() {
-		wicketTester.startPanel(new TestPanelSource(67));
-		wicketTester.assertComponent("panel:container:percent", Label.class);
-		wicketTester.assertLabel("panel:container:percent", "67%");
-	}
-	
+//	@Test
+//	public void progressBarShowsPercentage() {
+//		wicketTester.startPanel(new TestPanelSource(67));
+//		wicketTester.assertComponent("panel:container:percent", Label.class);
+//		wicketTester.assertLabel("panel:container:percent", "67%");
+//	}
+//	
 	private class TestPanelSource implements ITestPanelSource {
 
 		private static final long serialVersionUID = 1L;
