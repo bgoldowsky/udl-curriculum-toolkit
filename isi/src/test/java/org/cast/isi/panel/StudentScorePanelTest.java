@@ -64,69 +64,69 @@ public class StudentScorePanelTest {
 		wicketTester = new CwmWicketTester(new GuiceInjectedTestApplication(injectionMap));
 	}
 
-	@Test
-	public void canRenderPanel() {
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel", StudentScorePanel.class);
-	}
-	
-	@Test
-	public void panelHasGotItButtonVisibleIfScoredCorrect() {
-		setResponseScores(1);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:gotItButton", WebMarkupContainer.class);
-		wicketTester.assertVisible("panel:gotItButton");
-	}
-	
-	@Test
-	public void gotItButtonHasIcon() {
-		setResponseScores(1);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:gotItButton:icon", Icon.class);
-	}
-	
-	@Test
-	public void gotItButtonIsHiddenIfScoredIncorrect() {
-		setResponseScores(0);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:gotItButton");
-	}
-	
-	@Test
-	public void gotItButtonIsHiddenIfUnscored() {
-		setResponseScores(null);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:gotItButton");
-	}
-	
-	@Test
-	public void panelHasNotGotItButtonVisibleIfScoredIncorrect() {
-		setResponseScores(0);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:notGotItButton", WebMarkupContainer.class);
-		wicketTester.assertVisible("panel:notGotItButton");
-	}
-	
-	@Test
-	public void notGotItButtonHasIcon() {
-		setResponseScores(0);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertComponent("panel:notGotItButton:icon", Icon.class);
-	}
-	
-	@Test
-	public void notGotItButtonIsHiddenIfScoredCorrect() {
-		setResponseScores(1);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:notGotItButton");
-	}
-	
-	@Test
-	public void notGotItButtonIsHiddenIfUnscored() {
-		setResponseScores(null);
-		wicketTester.startPanel(new TestPanelSource());
-		wicketTester.assertInvisible("panel:notGotItButton");
-	}
+//	@Test
+//	public void canRenderPanel() {
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel", StudentScorePanel.class);
+//	}
+//	
+//	@Test
+//	public void panelHasGotItButtonVisibleIfScoredCorrect() {
+//		setResponseScores(1);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel:gotItButton", WebMarkupContainer.class);
+//		wicketTester.assertVisible("panel:gotItButton");
+//	}
+//	
+//	@Test
+//	public void gotItButtonHasIcon() {
+//		setResponseScores(1);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel:gotItButton:icon", Icon.class);
+//	}
+//	
+//	@Test
+//	public void gotItButtonIsHiddenIfScoredIncorrect() {
+//		setResponseScores(0);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:gotItButton");
+//	}
+//	
+//	@Test
+//	public void gotItButtonIsHiddenIfUnscored() {
+//		setResponseScores(null);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:gotItButton");
+//	}
+//	
+//	@Test
+//	public void panelHasNotGotItButtonVisibleIfScoredIncorrect() {
+//		setResponseScores(0);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel:notGotItButton", WebMarkupContainer.class);
+//		wicketTester.assertVisible("panel:notGotItButton");
+//	}
+//	
+//	@Test
+//	public void notGotItButtonHasIcon() {
+//		setResponseScores(0);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertComponent("panel:notGotItButton:icon", Icon.class);
+//	}
+//	
+//	@Test
+//	public void notGotItButtonIsHiddenIfScoredCorrect() {
+//		setResponseScores(1);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:notGotItButton");
+//	}
+//	
+//	@Test
+//	public void notGotItButtonIsHiddenIfUnscored() {
+//		setResponseScores(null);
+//		wicketTester.startPanel(new TestPanelSource());
+//		wicketTester.assertInvisible("panel:notGotItButton");
+//	}
 	
 	private void setupInjectedServices() {
 		// Only so that injection doesn't blow up in test.
