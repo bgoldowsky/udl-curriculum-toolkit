@@ -694,7 +694,7 @@ public abstract class ISIApplication extends CwmApplication {
 		if (!studentXslFile.exists())
 			studentXslFile = new File(getTransformationDir(), getStudentTransformationFile());
 
-        final File studentXslFileFinal = studentXslFile;
+        //final File studentXslFileFinal = studentXslFile;
 
 		// For comparing responses, need to filter down to a single response area and invoke custom XSL
 		TransformChain compareChain = new TransformChain(
@@ -755,6 +755,13 @@ public abstract class ISIApplication extends CwmApplication {
 
         File themeDir = new File(ISIApplication.get().getSkinDir());
         getRootRequestMapperAsCompound().add(new ThemeDirectoryRequestMapper(themeDir, "img", "css", "js"));
+        
+        // if the customSkinDir has been defined, add that to the mapper as well
+        String customSkinDir = ISIApplication.get().getCustomSkinDir();
+        if (customSkinDir != null) {
+            File customThemeDir = new File(ISIApplication.get().getCustomSkinDir());
+            getRootRequestMapperAsCompound().add(new ThemeDirectoryRequestMapper(customThemeDir, "img", "css", "js"));
+        }
 
 		mountPage("login", getSignInPageClass());
 		mountPage("home", getStudentTOCPageClass());
@@ -943,7 +950,7 @@ public abstract class ISIApplication extends CwmApplication {
 		}
 		
 		if (loc != null) {
-			link.setParameter("loc", loc.getLocation());
+			link.getPageParameters().add("loc", loc.getLocation());
 		}
 		
 		return link;
