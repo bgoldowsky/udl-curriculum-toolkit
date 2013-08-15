@@ -58,30 +58,30 @@ public class ISIXmlComponentTest extends TestCase {
         }
         catch(NullPointerException x) {}
     }
-
-    @Test
-    public void testHackUnicodeD7WithoutD7() throws Exception{
-        String s = "<span>no unicode d7 here</span>";
-        IMarkupFragment fragment = ISIXmlComponent.createMarkupFragmentFromString(s);
-
-        IMarkupFragment result = ISIXmlComponent.hackUnicodeD7(fragment);
-        MarkupResourceStream markupStream = result.getMarkupResourceStream();
-        InputStream is = markupStream.getInputStream();
-        String result$ = ISIXmlComponent.getStringFromInputStream(is);
-
-        assertEquals("Expected no changes to input string", s, result$);
-    }
-
-    @Test
-    public void testHackUnicodeD7WithD7() throws Exception{
-        String s = "<span>unicode \u00d7 here</span>";
-        IMarkupFragment fragment = ISIXmlComponent.createMarkupFragmentFromString(s);
-
-        IMarkupFragment result = ISIXmlComponent.hackUnicodeD7(fragment);
-        MarkupResourceStream markupStream = result.getMarkupResourceStream();
-        InputStream is = markupStream.getInputStream();
-        String result$ = ISIXmlComponent.getStringFromInputStream(is);
-
-        assertEquals("Expected conversion from unicode D7 to character entity", "<span>unicode &#xd7; here</span>", result$);
-    }
+// removed these because it was removed from code - ldm
+//    @Test
+//    public void testHackUnicodeD7WithoutD7() throws Exception{
+//        String s = "<span>no unicode d7 here</span>";
+//        IMarkupFragment fragment = ISIXmlComponent.createMarkupFragmentFromString(s);
+//
+//        IMarkupFragment result = ISIXmlComponent.hackUnicodeD7(fragment);
+//        MarkupResourceStream markupStream = result.getMarkupResourceStream();
+//        InputStream is = markupStream.getInputStream();
+//        String result$ = ISIXmlComponent.getStringFromInputStream(is);
+//
+//        assertEquals("Expected no changes to input string", s, result$);
+//    }
+//
+//    @Test
+//    public void testHackUnicodeD7WithD7() throws Exception{
+//        String s = "<span>unicode \u00d7 here</span>";
+//        IMarkupFragment fragment = ISIXmlComponent.createMarkupFragmentFromString(s);
+//
+//        IMarkupFragment result = ISIXmlComponent.hackUnicodeD7(fragment);
+//        MarkupResourceStream markupStream = result.getMarkupResourceStream();
+//        InputStream is = markupStream.getInputStream();
+//        String result$ = ISIXmlComponent.getStringFromInputStream(is);
+//
+//        assertEquals("Expected conversion from unicode D7 to character entity", "<span>unicode &#xd7; here</span>", result$);
+//    }
 }
