@@ -19,9 +19,11 @@
  */
 package org.cast.isi;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Scopes;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import net.databinder.auth.hib.AuthDataSession;
@@ -29,6 +31,7 @@ import net.databinder.hib.Databinder;
 import net.databinder.hib.SessionUnit;
 import net.jeremybrooks.knicker.AccountApi;
 import net.jeremybrooks.knicker.KnickerException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
@@ -136,13 +139,13 @@ import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.google.inject.Binder;
+import com.google.inject.Module;
+import com.google.inject.Scopes;
 
 public abstract class ISIApplication extends CwmApplication {
 	
@@ -753,14 +756,14 @@ public abstract class ISIApplication extends CwmApplication {
 	protected void configureMountPaths() {
 		super.configureMountPaths();
 
+        // if the customSkinDir has been defined, use the custom mapper  
         File themeDir = new File(ISIApplication.get().getSkinDir());
-        getRootRequestMapperAsCompound().add(new ThemeDirectoryRequestMapper(themeDir, "img", "css", "js"));
-        
-        // if the customSkinDir has been defined, add that to the mapper as well
         String customSkinDir = ISIApplication.get().getCustomSkinDir();
         if (customSkinDir != null) {
             File customThemeDir = new File(ISIApplication.get().getCustomSkinDir());
-            getRootRequestMapperAsCompound().add(new ThemeDirectoryRequestMapper(customThemeDir, "img", "css", "js"));
+            getRootRequestMapperAsCompound().add(new CustomThemeDirectoryRequestMapper(themeDir, customThemeDir, "img", "css", "js"));
+        } else {
+            getRootRequestMapperAsCompound().add(new ThemeDirectoryRequestMapper(themeDir, "img", "css", "js"));
         }
 
 		mountPage("login", getSignInPageClass());
