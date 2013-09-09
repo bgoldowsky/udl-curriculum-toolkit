@@ -82,7 +82,7 @@
 
 #globalHighlight .hlRow {
     position: relative;
-    width: 248px;
+    width: 228px;
     min-height: 30px;
     border-top: 1px solid #D4E1F0;
     padding: 0px;
@@ -140,7 +140,7 @@
 #globalHighlight .hlRow form a.button{
     position: absolute;
     top: 0px;
-    right: -66px;
+    right: -46px;
 }
 
 #globalHighlight input {
