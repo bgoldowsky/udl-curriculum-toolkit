@@ -233,6 +233,7 @@ public class DefaultNavBar extends AbstractNavBar<XmlSection> implements ISectio
 		
 		private static final String ICON_TYPE_CLASS = "class";
         private static final String ICON_TYPE_STATUS = "status";
+        // TODO: this looks like it will be a problem with custom theme mapping - ldm
         private static final String ACTIVITY_ICON_URI_PREFIX = "theme/img/icons/activity_";
 
 		@Inject
