@@ -142,7 +142,7 @@
 
     <!-- Slide Show -->
     <xsl:template match="dtb:div[@class='slideshow']">
-    	<xsl:variable name="tempId" select='count(preceding::dtb:div[@class="slideshow"])' />    
+    	<xsl:variable name="tempId" select='count(following::dtb:div[@class="slideshow"])' />    
 		<div wicket:id="slideShow_{$tempId}" class="slideshow" id="slideShow_{$tempId}">
 			<div class="slideshowTitle">
 				<xsl:value-of select="@title" />
@@ -156,7 +156,7 @@
 
 	<!-- put a unique id on the slide div  -->
     <xsl:template match="dtb:div" mode="slide">
-    	<xsl:variable name="tempId" select='count(preceding::dtb:div[@class="slide"])' /> 
+    	<xsl:variable name="tempId" select='count(following::dtb:div[@class="slide"])' /> 
     	<div id="slide_{$tempId}">
         	<xsl:apply-templates/>
     	</div>
@@ -164,7 +164,7 @@
 
 	<!-- these turn into buttons for the slide show with the bridgeheads used as titles -->
     <xsl:template match="dtb:div" mode="slideshowLink">
-    	<xsl:variable name="tempId" select='count(preceding::dtb:div[@class="slide"])' /> 
+    	<xsl:variable name="tempId" select='count(following::dtb:div[@class="slide"])' /> 
     	<li>
     		<a href="#slide_{$tempId}" title="{dtb:bridgehead/@title}"><xsl:value-of select="dtb:bridgehead" /></a>
     	</li>
