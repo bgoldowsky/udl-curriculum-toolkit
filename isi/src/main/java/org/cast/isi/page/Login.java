@@ -62,7 +62,9 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 	public Login(PageParameters params) {
 		super(params);
 
-		add(new Label("pageTitle", ISIApplication.get().getPageTitleBase() + " :: Login"));
+		pageTitle = (new StringResourceModel("Login.pageTitle", this, null, "Login").getString());
+		setPageTitle(pageTitle);
+		add(new Label("pageTitle", pageTitle));
 		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
 		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
 
