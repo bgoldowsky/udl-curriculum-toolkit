@@ -58,9 +58,6 @@ public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSe
 		super(id, mcPrompt);
 		this.mUser = userModel;
 		this.mTargetUser = targetUserModel;
-		if (!mTargetUser.getObject().equals(mUser.getObject()))
-			setEnabled(false);
-		
 	}
 	
 	@Override
@@ -116,6 +113,14 @@ public abstract class SingleSelectForm extends Form<Prompt> implements ISingleSe
 		if (mUser == null)
 			return null;
 		return mUser.getObject();
+	}
+
+	@Override
+	protected void onBeforeRender() {
+		// can't edit the form if this is a teacher/researcher viewing student work
+		if (!mTargetUser.getObject().equals(mUser.getObject()))
+			setEnabled(false);
+		super.onBeforeRender();
 	}
 
 }
