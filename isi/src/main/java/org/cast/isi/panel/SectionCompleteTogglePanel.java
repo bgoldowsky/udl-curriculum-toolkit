@@ -28,7 +28,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.component.DoneImage;
@@ -48,6 +50,9 @@ public abstract class SectionCompleteTogglePanel extends Panel implements ISecti
 
 	@Inject
 	protected ISectionService sectionService;
+	
+	@Inject 
+	protected ICwmSessionService sessionService;
 
 	protected IModel<XmlSection> mSection;
 
@@ -72,9 +77,12 @@ public abstract class SectionCompleteTogglePanel extends Panel implements ISecti
 	@Override
 	public void onConfigure() {
 		setVisible(visibilityEnabled && featureService.isSectionToggleTextLinksOn() && isLastPageInSection());
+		// don't allow researchers to change this toggle
+		if (isResearcher())
+			setEnabled(false);
 		super.onConfigure();
 	}
-	
+
 	@Override
 	public void onInitialize() {
 		super.onInitialize();
@@ -93,6 +101,10 @@ public abstract class SectionCompleteTogglePanel extends Panel implements ISecti
 		return (section != null) && (section.isLastPageInSection());
 	}
 
+	private boolean isResearcher() {
+		return sessionService.getUser().hasRole(Role.RESEARCHER);
+	}
+	
 	private ISIXmlSection getSection() {
 		return pageContentLocation.getSection();
 	}
