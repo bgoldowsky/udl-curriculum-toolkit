@@ -630,6 +630,7 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, ISISession.get().getTargetUserModel());
 			dataView.setContext(getResponseListContext(false));
+			dataView.setAllowEdit(!isTeacher);
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
 			dataView.add(new AttributeRemover("rgid", "group"));
@@ -877,8 +878,7 @@ public class ISIXmlComponent extends XmlComponent {
 		return builder.toString();
 	}
 	
-	private ScoredDelayedFeedbackSingleSelectForm makeDelayedResponseForm(final String wicketId,
-			final Element elt) {
+	private ScoredDelayedFeedbackSingleSelectForm makeDelayedResponseForm(String wicketId, Element elt) {
 		ISIXmlSection section = getISIXmlSection();
 		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
 		boolean compact = Boolean.parseBoolean(elt.getAttributeNS(null, "compact"));
@@ -888,15 +888,13 @@ public class ISIXmlComponent extends XmlComponent {
 		return selectForm;
 	}
 
-	private Component makeImmediateResponseForm(final String wicketId,
-			final Element elt) {
+	private Component makeImmediateResponseForm(String wicketId, Element elt) {
 		Component selectForm = new ScoredImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 		return selectForm;
 	}
 		
-	private Component makeDelayedResponseView(final String wicketId,
-			final Element elt) {
+	private Component makeDelayedResponseView(String wicketId, Element elt) {
 		ISIXmlSection section = getISIXmlSection();
 		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
 		DelayedFeedbackSingleSelectView component = new DelayedFeedbackSingleSelectView(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
@@ -905,8 +903,7 @@ public class ISIXmlComponent extends XmlComponent {
 		return component;
 	}
 
-	private Component makeImmediateResponseView(final String wicketId,
-			final Element elt) {
+	private Component makeImmediateResponseView(String wicketId, Element elt) {
 		ImmediateFeedbackSingleSelectForm selectForm = new ImmediateFeedbackSingleSelectView(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 		return selectForm;
