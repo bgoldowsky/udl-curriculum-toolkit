@@ -193,6 +193,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean mathMLOn = false;
 	@Getter protected boolean sectionToggleTextLinksOn = false;
 	@Getter protected boolean sectionToggleImageLinksOn = true;
+	@Getter protected boolean sectionToggleImmediateScoreOn = false; // don't require teacher intervention for submitting sections (exams)
 	@Getter protected boolean tocSectionTogglesOn = true;
 	@Getter protected boolean tocSectionCompleteIconsOn = false;
 	@Getter protected boolean tocSectionIncompleteIconsOn = false;
@@ -450,6 +451,7 @@ public abstract class ISIApplication extends CwmApplication {
 		mathMLOn = setBooleanProperty("isi.mathML.isOn", mathMLOn);
 		sectionToggleTextLinksOn = setBooleanProperty("isi.sectionToggleTextLinks.isOn", sectionToggleTextLinksOn);
 		sectionToggleImageLinksOn = setBooleanProperty("isi.sectionToggleImageLinks.isOn", sectionToggleImageLinksOn);
+		sectionToggleImmediateScoreOn = setBooleanProperty("isi.sectionToggleImmediateScore.isOn", sectionToggleImmediateScoreOn);
 		tocSectionTogglesOn = setBooleanProperty("isi.tocSectionToggles.isOn", tocSectionTogglesOn);
 		tocSectionCompleteIconsOn = setBooleanProperty("isi.tocSectionCompleteIcons.isOn", tocSectionCompleteIconsOn);
 		tocSectionIncompleteIconsOn = setBooleanProperty("isi.tocSectionIncompleteIcons.isOn", tocSectionIncompleteIconsOn);

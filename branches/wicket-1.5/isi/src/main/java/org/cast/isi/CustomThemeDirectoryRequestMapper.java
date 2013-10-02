@@ -39,6 +39,9 @@ public class CustomThemeDirectoryRequestMapper extends ThemeDirectoryRequestMapp
 	public CustomThemeDirectoryRequestMapper(File themeDirectory, File customThemeDirectory, String... prefixes) {
 		super(themeDirectory, prefixes);
 		this.customThemeDirectory = customThemeDirectory.getAbsolutePath();
+		
+		// don't display warnings when files aren't found in the custom directory
+		logWarning = false;
 	}
 
 	@Override
