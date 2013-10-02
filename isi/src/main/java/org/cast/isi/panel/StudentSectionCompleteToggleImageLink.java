@@ -56,7 +56,14 @@ public class StudentSectionCompleteToggleImageLink extends SectionCompleteToggle
 	
 	@Override
 	protected void handleClick() {
-		sectionService.setCompleted(getUser(), sectionContentLocation, !isComplete());
+		// when no teacher review is necessary && this is a lock-response section
+		if (isLockResponse() && featureService.isSectionToggleImmediateScoreOn()) {
+			sectionService.setCompleted(getUser(), sectionContentLocation, true);
+			sectionService.setReviewed(getUser(), sectionContentLocation, true);
+			sectionService.setLocked(getUser(), sectionContentLocation, true);
+		} else {
+			sectionService.setCompleted(getUser(), sectionContentLocation, !isComplete());
+		}
 	}
 
 	@Override
