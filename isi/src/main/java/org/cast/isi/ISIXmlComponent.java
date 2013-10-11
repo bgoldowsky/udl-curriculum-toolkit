@@ -466,17 +466,13 @@ public class ISIXmlComponent extends XmlComponent {
 			return videoLink;
 
 		} else if (wicketId.startsWith("videoplayer_")) {
-			final String videoSrc = elt.getAttribute("src");
-            // heikki
-            System.out.println("video src " + videoSrc);
+			String videoSrc = elt.getAttribute("src");
 			ResourceReference videoRef = getRelativeRef(videoSrc);
-            System.out.println("video ref " + videoRef.toString());
-
             String videoUrl = RequestCycle.get().urlFor(videoRef, null).toString();
-            System.out.println("video url " + videoUrl);
 
             Integer width = Integer.valueOf(elt.getAttribute("width"));
 			Integer height = Integer.valueOf(elt.getAttribute("height"));
+
 			String preview = elt.getAttribute("poster");
 			String captions = elt.getAttribute("captions");
 			String audioDescription = elt.getAttribute("audiodescription");
