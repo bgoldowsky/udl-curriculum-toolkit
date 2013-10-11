@@ -105,9 +105,9 @@ public class StudentEditRowPanel extends Panel {
 				FeedbackPanel feedback = getFeedbackPanel();
 				findParent(ManageClasses.class).visitChildren(EditDisableLink.class, EditDisableLink.getVisitor(target, true));
 				
+				target.add(findParent(ManageClasses.class).get("editStudentForm"));
 				// New Student hides the form editor and refreshes entire Form.
 				if (isNewStudent()) {
-					target.add(findParent(ManageClasses.class).get("editStudentForm"));
 					StudentEditRowPanel.this.replaceWith(new WebMarkupContainer("newStudent").setVisible(false).setOutputMarkupPlaceholderTag(true));
 				} else {
 					StudentDisplayRowPanel displayStudentRowPanel = new StudentDisplayRowPanel("studentPanel", getUserModel(), flagMap);
