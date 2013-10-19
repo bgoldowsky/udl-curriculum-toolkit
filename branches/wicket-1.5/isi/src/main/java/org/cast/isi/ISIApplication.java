@@ -56,6 +56,7 @@ import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.PageProvider;
 import org.apache.wicket.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.request.mapper.StalePageException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.file.File;
@@ -347,6 +348,8 @@ public abstract class ISIApplication extends CwmApplication {
         this.getRequestCycleListeners().add(new AbstractRequestCycleListener() {
             @Override
             public IRequestHandler onException(RequestCycle cycle, Exception x) {
+            	if (x instanceof StalePageException)
+            		return null; // use normal exception processing for these
                 PageParameters pageParameters = requestParameters2PageParameters(cycle.getRequest().getQueryParameters());
                 return new RenderPageRequestHandler(new PageProvider(new ExceptionPage(pageParameters, new RuntimeException(x))));
             }

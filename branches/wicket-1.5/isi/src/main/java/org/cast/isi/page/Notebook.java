@@ -32,6 +32,7 @@ import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -89,7 +90,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(Notebook.class);
 
-	boolean isTeacher = false;
+	protected boolean isTeacher = false;
 	
 	// A map of responses in the notebook grouped by prompt
 	protected Map<ISIPrompt, List<ISIResponse>> responseMap;
@@ -123,11 +124,15 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 		getChapterList();
 		getInitChapter(parameters);
-		addChapterChoice();
-		addNotebookResponses();
-
+		
+		addComponents(this);
+	}
+	
+	protected void addComponents(MarkupContainer container) {
+		addChapterChoice(container);
+		addNotebookResponses(container);
 		populateResponseMap();
-		addResponses();
+		addResponses(container);
 	}
 
 	
@@ -179,7 +184,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	/**
 	 * Add a drop down choice of chapters.
 	 */
-	protected void addChapterChoice() {
+	protected void addChapterChoice(MarkupContainer container) {
 		
 		// display only the titles in the dropdown
 		ChoiceRenderer<XmlSection> renderer = new ChoiceRenderer<XmlSection>("title");
@@ -187,7 +192,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		chapterChoice.add(new AttributeModifier("autocomplete", "off"));
 		chapterChoice.add(new AttributeModifier("ignore", "true"));
 
-		Form<XmlSection> chapterSelectForm = new Form<XmlSection>("chapterSelectForm") {
+		Form<Void> chapterSelectForm = new Form<Void>("chapterSelectForm") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -203,8 +208,8 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 				}
 			}			
 		};
-		add(chapterSelectForm);		
-		chapterSelectForm.add(chapterChoice);							
+		chapterSelectForm.add(chapterChoice);
+		container.add(chapterSelectForm);
 	}
 
 
@@ -212,7 +217,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	 * Add a response list to the notebook.  These are notes NOT associated with reading pages.
 	 * These responses are associated with the Chapter (level1).
 	 */
-	protected void addNotebookResponses () {
+	protected void addNotebookResponses (MarkupContainer container) {
 		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.NOTEBOOK_NOTES, currentChapterLoc);
 		ResponseList responseList = new ResponseList("nbResponseList", mPrompt, notebookMetadata, currentChapterLoc, ISISession.get().getTargetUserModel());
 		String context = "notebook" + (isTeacher ? ".teacher" : ""  );
@@ -220,11 +225,11 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		responseList.setAllowEdit(!isTeacher);
 		responseList.setAllowNotebook(false);
 		responseList.setAllowWhiteboard(false);
-		add(responseList);
+		container.add(responseList);
 		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mPrompt, notebookMetadata, currentLoc);
 		responseButtons.setContext("notebook");
 		responseButtons.setVisible(!isTeacher);
-		add(responseButtons);
+		container.add(responseButtons);
 	}
 
 
@@ -263,14 +268,14 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	/**
 	 * Add a repeater with the set of Prompts/Responses
 	 */
-	protected void addResponses() {
+	protected void addResponses(MarkupContainer container) {
 
 		// "No Responses" message
 		WebMarkupContainer noNotes = new WebMarkupContainer("noNotes");
-		add(noNotes.setVisible(responseMap.isEmpty()));
+		container.add(noNotes.setVisible(responseMap.isEmpty()));
 
 		RepeatingView noteRepeater = new RepeatingView("noteRepeater");
-		add(noteRepeater.setVisible(!responseMap.isEmpty()));
+		container.add(noteRepeater.setVisible(!responseMap.isEmpty()));
 
 		for (Entry<ISIPrompt, List<ISIResponse>> entry : responseMap.entrySet()) {
 			ISIPrompt currentPrompt = entry.getKey();
