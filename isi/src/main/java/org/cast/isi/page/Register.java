@@ -19,11 +19,16 @@
  */
 package org.cast.isi.page;
 
-import com.google.inject.Inject;
+import java.util.Date;
+import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import net.databinder.auth.valid.EqualPasswordConvertedInputValidator;
 import net.databinder.components.hib.DataForm;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
+
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -50,7 +55,7 @@ import org.cast.cwm.data.component.FeedbackBorder;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator.Field;
 import org.cast.cwm.service.IEventService;
-import org.cast.cwm.service.SiteService;
+import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
@@ -58,10 +63,7 @@ import org.cast.isi.service.ISIEmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.Random;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import com.google.inject.Inject;
 
 /**
  * This page enables anonymous user creation.  User must provide some basic validated
@@ -81,6 +83,9 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 
 	@Inject
 	private IEventService eventService;
+
+	@Inject
+	protected ISiteService siteService;
 
 	public Register(PageParameters params) {
 		super(params);
@@ -239,11 +244,11 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			userSet.add(user);
 			
 			// create a new site
-			Site newSite = SiteService.get().newSite();
+			Site newSite = siteService.newSite();
 			newSite.setName("Site_" + user.getUsername()); // make this unique
 
 			// create a new period
-			Period newPeriod = SiteService.get().newPeriod();
+			Period newPeriod = siteService.newPeriod();
 			newPeriod.setSite(newSite);
 			newPeriod.setName("Class_" + user.getUsername()); // make this unique
 			
