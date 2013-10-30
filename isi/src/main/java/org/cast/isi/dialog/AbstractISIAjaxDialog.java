@@ -39,6 +39,10 @@ import org.cast.isi.page.ISIStandardPage;
  * to show itself with a certain wicket:id.  Therefore, no wicket:id is required
  * for these dialogs.
  * 
+ * To add items into the dialog, use
+ * <code>dialogBorder.getBodyContainer().add( ... )</code>
+ * rather than just add(...), so that the new component gets inserted into the right place.
+ * 
  * @param <T>
  */
 public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderContributor {
@@ -61,9 +65,6 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 		
 		dialogBorder = newDialogBorder("dialogBorder", new PropertyModel<String>(this, "title"));
 
-		// This allows us to add components directly to the panel, even though they are enclosed in the DialogBorder
-        // TODO heikki setTransparentResolver no longer exists, without replacement.. test if this works fine if simply leave out that call
-		//dialogBorder.setTransparentResolver(true);
 		dialogBorder.setMoveContainer(this);		
 		dialogBorder.getContentContainer().add(new AttributeModifier("class", "visuraloverlaycontent modalContainer modalBody"));
 		add(dialogBorder);
