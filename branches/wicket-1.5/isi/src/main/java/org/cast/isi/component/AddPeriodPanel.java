@@ -40,7 +40,7 @@ import org.cast.cwm.data.Period;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.validator.UniqueDataFieldValidator;
 import org.cast.cwm.service.IEventService;
-import org.cast.cwm.service.SiteService;
+import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISISession;
 import org.cast.isi.panel.PeriodStudentSelectPanel;
@@ -67,6 +67,9 @@ public class AddPeriodPanel extends Panel {
 	@Inject
 	private IEventService eventService;
 
+	@Inject
+	protected ISiteService siteService;
+
 	public AddPeriodPanel(String wicketId) {
 		super(wicketId);
 		
@@ -86,7 +89,7 @@ public class AddPeriodPanel extends Panel {
 
 		public NewPeriodForm(String wicketId) {
 			super(wicketId);
-			setDefaultModel(new HibernateObjectModel<Period>(SiteService.get().newPeriod()));
+			setDefaultModel(new HibernateObjectModel<Period>(siteService.newPeriod()));
 			
 			TextField<String> periodName = new TextField<String>("name", new PropertyModel<String>(getModel(), "name"));
 			add(periodName);

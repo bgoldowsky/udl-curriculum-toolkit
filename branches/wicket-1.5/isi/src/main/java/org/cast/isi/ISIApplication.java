@@ -84,8 +84,8 @@ import org.cast.cwm.glossary.GlossaryTransformer;
 import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.IResponseService;
+import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.service.IUserPreferenceService;
-import org.cast.cwm.service.SiteService;
 import org.cast.cwm.service.UserPreferenceService;
 import org.cast.cwm.tag.TagService;
 import org.cast.cwm.xml.FileXmlDocumentSource;
@@ -145,6 +145,7 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
 import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
 
 import com.google.inject.Binder;
+import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 
@@ -246,6 +247,9 @@ public abstract class ISIApplication extends CwmApplication {
 	protected List<String> enabledFeatures = new ArrayList<String>();
 
 	protected IXmlService xmlService;
+	
+	@Inject
+	protected ISiteService siteService;
 
 	@Override
 	public void loadAppProperties() {
@@ -1071,7 +1075,7 @@ public abstract class ISIApplication extends CwmApplication {
 		String periodName =  configuration.getProperty("isi.defaultPeriod");
 		if (periodName != null) {
 			periodName = periodName.trim();
-			return SiteService.get().getPeriodByName(periodName);		
+			return siteService.getPeriodByName(periodName);		
 		} else {
 			// error if this period doesn't exist
 			log.error("No default period was found");
