@@ -61,6 +61,6 @@ public class VideoDialog extends AbstractISIAjaxDialog<Void> {
 		String objectValue = ".//dtb:object[@id='" + videoId + "']";
 		videoComponent.setTransformParameter("add-video-thumb-link", false);
 		videoComponent.setTransformParameter(FilterElements.XPATH, objectValue);		
-		add(videoComponent);
+		dialogBorder.getBodyContainer().add(videoComponent);
 	}	
 }
