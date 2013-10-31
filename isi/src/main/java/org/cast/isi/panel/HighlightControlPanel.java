@@ -26,6 +26,7 @@ import org.cast.cwm.data.Role;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.HighlightService.HighlightType;
+import org.cast.cwm.service.IHighlightService;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
@@ -56,7 +57,7 @@ public class HighlightControlPanel extends Panel {
 	public HighlightControlPanel(String id, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
 		this.loc = loc;
-		setMarkupId(HighlightService.GLOBAL_CONTROL_ID);
+		setMarkupId(IHighlightService.GLOBAL_CONTROL_ID);
 		setOutputMarkupId(true);
 
 		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
