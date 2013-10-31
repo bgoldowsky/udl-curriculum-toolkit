@@ -19,16 +19,14 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.Component;
+import java.util.Map;
+
+import org.apache.wicket.Page;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.Role;
 import org.cast.isi.ISIApplication;
-
-import java.util.List;
 
 @AuthorizeInstantiation("RESEARCHER")
 public class AdminHome extends org.cast.cwm.admin.AdminHome {
@@ -40,13 +38,12 @@ public class AdminHome extends org.cast.cwm.admin.AdminHome {
 	}
 
 	@Override
-	protected List<Component> homePageComponents() {
-		List<Component> list = super.homePageComponents();
+	protected Map<String,Class<? extends Page>> getHomePageLinkMap() {
+		Map<String, Class<? extends Page>> map = super.getHomePageLinkMap();
 		if (CwmSession.get().getUser().getRole().equals(Role.RESEARCHER)) {
-			list.add(new BookmarkablePageLink<ISIStandardPage>("link", ISIApplication.get().getTocPageClass(Role.TEACHER))
-					.add(new Label("label", "Teacher Interface")));
+			map.put("Teacher Interface", ISIApplication.get().getTocPageClass(Role.TEACHER));
 		}
-		return list;
+		return map;
 	}
 
 }
