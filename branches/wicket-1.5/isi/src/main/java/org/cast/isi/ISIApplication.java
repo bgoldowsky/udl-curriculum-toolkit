@@ -252,6 +252,9 @@ public abstract class ISIApplication extends CwmApplication {
 	@Inject
 	protected ISiteService siteService;
 
+	@Inject
+	protected IHighlightService highlightService;
+
 	@Override
 	public void loadAppProperties() {
 		super.loadAppProperties();
@@ -335,8 +338,6 @@ public abstract class ISIApplication extends CwmApplication {
 
 		configureResponseTypes();
 		configureResponseSort();
-		if (highlightsPanelOn) 
-			registerHighlighters();		
 		
 		// load the xml documents and xsl transformers
 		loadXmlFiles();
@@ -360,6 +361,9 @@ public abstract class ISIApplication extends CwmApplication {
                 return new RenderPageRequestHandler(new PageProvider(new ExceptionPage(pageParameters, new RuntimeException(x))));
             }
         });
+
+		if (highlightsPanelOn) 
+			registerHighlighters();		
 
 		// Generally helpful log statement.
 		if (!RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
@@ -397,9 +401,9 @@ public abstract class ISIApplication extends CwmApplication {
 		boolean gHighlighterOn = setBooleanProperty("isi.highlighter.green.isOn", true);
 		boolean gHighlighterEditable = setBooleanProperty("isi.highlighter.green.nameEditable", true);
 
-		HighlightService.get().addHighlighter('Y', yHighlighterOn, yHighlighterEditable);
-		HighlightService.get().addHighlighter('B', bHighlighterOn, bHighlighterEditable);
-		HighlightService.get().addHighlighter('G', gHighlighterOn, gHighlighterEditable);		
+		highlightService.addHighlighter('Y', yHighlighterOn, yHighlighterEditable);
+		highlightService.addHighlighter('B', bHighlighterOn, bHighlighterEditable);
+		highlightService.addHighlighter('G', gHighlighterOn, gHighlighterEditable);		
 	}
 
 	
