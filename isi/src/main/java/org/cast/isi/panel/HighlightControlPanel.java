@@ -24,7 +24,6 @@ import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
-import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.HighlightService.HighlightType;
 import org.cast.cwm.service.IHighlightService;
 import org.cast.cwm.xml.XmlSectionModel;
@@ -32,6 +31,8 @@ import org.cast.isi.ISISession;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * A page-level control panel for highlights.  The basic controls are handled
@@ -54,6 +55,9 @@ public class HighlightControlPanel extends Panel {
 	protected boolean isTeacher;
 	protected ContentLoc loc;
 	
+	@Inject
+	protected IHighlightService highlightService;
+	
 	public HighlightControlPanel(String id, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
 		this.loc = loc;
@@ -62,7 +66,7 @@ public class HighlightControlPanel extends Panel {
 
 		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
 
-		for (HighlightType type : HighlightService.get().getHighlighters()) {
+		for (HighlightType type : highlightService.getHighlighters()) {
 			add(new HighlightController(type.getColor().toString(), type, loc, mSection));
 		}
 	}
