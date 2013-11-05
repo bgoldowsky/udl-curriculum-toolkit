@@ -30,7 +30,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -42,6 +41,8 @@ import org.cast.cwm.service.IResponseService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 
+import com.aplombee.QuickView;
+import com.aplombee.ReUse;
 import com.google.inject.Inject;
 
 /**
@@ -76,6 +77,9 @@ public class ResponseList extends Panel {
 	@Getter @Setter
 	protected boolean allowWhiteboard = true;
 	
+	@Getter @Setter
+	protected Integer pageSize = null; // if not null, indicates how many responses to show initially.
+	
 	protected ResponseMetadata metadata;
 	protected ContentLoc loc;
 
@@ -106,16 +110,26 @@ public class ResponseList extends Panel {
 		super.onInitialize();
 		dataProvider = getResponseProvider();
 		
-		DataView<Response> dataView = new DataView<Response>("dataView", dataProvider) {
+		WebMarkupContainer container = new WebMarkupContainer("dataViewContainer");
+		container.setOutputMarkupId(true);
+		add(container);
+		
+		QuickView<Response> dataView = new QuickView<Response>("dataView", dataProvider, ReUse.ITEMSNAVIGATION) {
 			private static final long serialVersionUID = 1L;
 			@Override
-			protected void populateItem(Item<Response> item) {
+			protected void populate(Item<Response> item) {
 				item.add(getEditableResponseViewer("response", item.getModel(), metadata, loc));
-			}
+			}			
 		};
-		add(dataView);
-		add (new EmptyPanel("placeholder").setOutputMarkupId(true));
-		add (new Directions("directions"));
+		if (pageSize != null)
+			dataView.setItemsPerRequest(pageSize);
+		container.add(dataView);
+
+		ISIAjaxItemsNavigator more = new ISIAjaxItemsNavigator("more", Model.of("See more"), dataView);
+		add(more);
+		
+		add(new EmptyPanel("placeholder").setOutputMarkupId(true));
+		add(new Directions("directions"));
 	}
 
 	@Override
