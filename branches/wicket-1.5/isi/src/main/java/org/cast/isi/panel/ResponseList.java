@@ -78,7 +78,7 @@ public class ResponseList extends Panel {
 	protected boolean allowWhiteboard = true;
 	
 	@Getter @Setter
-	protected Integer pageSize = null; // if not null, indicates how many responses to show initially.
+	protected Integer pageSize = 5; // if not null, indicates how many responses to show initially.
 	
 	protected ResponseMetadata metadata;
 	protected ContentLoc loc;
