@@ -153,3 +153,10 @@
 .modalBody .imgBox.center {
 	margin: 0 auto 1em;
 }
+
+/*================================================================*/
+/* Modal Sizing */
+
+.modalSize_hotspot {
+    width: 400px;
+}

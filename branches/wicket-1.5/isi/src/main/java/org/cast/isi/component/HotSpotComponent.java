@@ -19,7 +19,9 @@
  */
 package org.cast.isi.component;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.Model;
+import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.component.DialogBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +78,11 @@ public class HotSpotComponent extends DialogBorder {
 		AnnotatedImageComponent container = findParent(AnnotatedImageComponent.class);
 		if (container == null)
 			throw new IllegalStateException("each hotspot must have an Annotated Image ancestor");
+
+		// add the appropriate css class to the modal
+		WebMarkupContainer contentContainer = this.getContentContainer();
+		contentContainer.add(new ClassAttributeModifier("modalSize_hotspot"));
+		
 		super.onInitialize();
 	}
 
