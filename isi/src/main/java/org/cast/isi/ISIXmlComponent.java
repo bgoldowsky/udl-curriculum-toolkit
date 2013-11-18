@@ -24,6 +24,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -71,6 +73,7 @@ import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
+import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.mediaplayer.AudioPlayerPanel;
@@ -428,7 +431,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("sectionIcon_")) {		
 			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttribute("class"));
-			icon.add(new AttributeModifier("class", true, new Model<String>("sectionIcon")));
+			icon.add(AttributeModifier.replace("class", new Model<String>("sectionIcon")));
 			return icon;
 	
 		} else if (wicketId.startsWith("thumbRating_")) {
@@ -652,7 +655,7 @@ public class ISIXmlComponent extends XmlComponent {
 			ResponseMetadata metadata = new ResponseMetadata(xmlElement);
 			if (!ISIApplication.get().isUseAuthoredResponseType()) {
 				// set all the response types to the default per application configuration here
-				metadata = addMetadata(metadata);
+				metadata = adjustResponseTypes(metadata);
 			}
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
 			ResponseButtons buttons = new ResponseButtons(wicketId, mPrompt, metadata, loc);
@@ -666,7 +669,7 @@ public class ISIXmlComponent extends XmlComponent {
 			ResponseMetadata metadata = new ResponseMetadata(xmlElement);
 			if (!ISIApplication.get().isUseAuthoredResponseType()) {
 				// set all the response types to the default per application configuration here
-				metadata = addMetadata(metadata);
+				metadata = adjustResponseTypes(metadata);
 			}
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
 			return new LockingResponseButtons(wicketId, mPrompt, metadata, loc, cwmSessionService.getUserModel());
@@ -927,11 +930,26 @@ public class ISIXmlComponent extends XmlComponent {
 		return metadata;
 	}
 
-	protected ResponseMetadata addMetadata (ResponseMetadata metadata) {
-		// Set the response types to be allowed for this application configuration
+	/** Rewrite the set of response types in the given metadata to match the set configured for the application.
+	 * keeping any actual configuration (sentence starters, etc).
+	 * @param metadata the metadata object parsed from the XML
+	 * @return metadata object after modification
+	 */	
+	protected ResponseMetadata adjustResponseTypes (ResponseMetadata metadata) {
+		Map<String, TypeMetadata> typesFromXml = metadata.getTypeMap();
+		HashMap<String, TypeMetadata> newMap = new HashMap<String,TypeMetadata>(6);
+		// Build the new map with all configured types
 		for (IResponseType responseType : ISIApplication.get().defaultResponseTypes) {
-			metadata.addType(responseType);
+			String typeName = responseType.getName();
+			if (typesFromXml.containsKey(typeName))
+				// keep existing type def. when we have one
+				newMap.put(typeName, typesFromXml.get(typeName)); 
+			else
+				// Otherwise add with default configuration
+				metadata.addType(responseType); 
 		}
+		// Any additional types that may have been configured in the XML are simply ignored.
+		metadata.setTypeMap(newMap);
 		return metadata;
 	}
 	
