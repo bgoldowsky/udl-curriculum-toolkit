@@ -19,13 +19,19 @@
  */
 package org.cast.isi.data.builder;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
+import org.apache.wicket.model.IModel;
+import org.cast.cwm.data.Site;
 import org.cast.cwm.data.builders.ResponseCriteriaBuilder;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 
 @Getter
 @Setter
@@ -34,15 +40,38 @@ public class ISIResponseCriteriaBuilder extends ResponseCriteriaBuilder {
 	private static final long serialVersionUID = 1L;
 	
 	private Boolean inNotebook;
-	private Boolean orderByNotebookInsert;
+	private Boolean orderByNotebookInsert;	
+	private IModel<List<Site>> siteListModel = null;
+	private Boolean canCache = true;
 
 	@Override
 	public void build(Criteria criteria) {
 		if (inNotebook != null)
 			criteria.add(Restrictions.eq("inNotebook", inNotebook.booleanValue()));
 		if (orderByNotebookInsert.equals(Boolean.TRUE))
-			criteria.addOrder(Order.desc("notebookInsertTime"));
+			criteria.addOrder(Order.desc("notebookInsertTime"));		
 		super.build(criteria);
 	}
 
+	@Override
+	public void buildUnordered(Criteria criteria) {
+		// only get responses related to specific site(s)
+		if (siteListModel != null && !siteListModel.getObject().isEmpty()) {
+			criteria.createAlias("user", "user").createAlias("user.periods", "period", JoinType.LEFT_OUTER_JOIN);
+			List<Site> siteList = siteListModel.getObject();
+			Disjunction siteRestriction = Restrictions.disjunction();
+			siteRestriction.add(Restrictions.in("period.site", siteList)); 
+			criteria.add(siteRestriction);
+			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);  // Remove duplicate rows as a result of the INNER JOIN
+		}		
+		super.buildUnordered(criteria);
+
+		// may want to push this to cwm - no cache used for large report data, more than 1000 objects
+		criteria.setCacheable(canCache);
+	}
+
+	public void detach() {
+		if (siteListModel != null)
+			siteListModel.detach();
+	}
 }
