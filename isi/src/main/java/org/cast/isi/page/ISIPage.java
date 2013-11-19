@@ -24,6 +24,8 @@ import lombok.Getter;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.JQueryHeaderContributor;
 import org.cast.isi.ISIApplication;
@@ -44,6 +46,13 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 
 	public ISIPage(final PageParameters params) {
 		super(params);
+	}
+	
+	protected void addApplicationTitles() {
+		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null))
+			.setEscapeModelStrings(false));
+		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null))
+			.setEscapeModelStrings(false));
 	}
 
 	public void renderHead(final IHeaderResponse response) {

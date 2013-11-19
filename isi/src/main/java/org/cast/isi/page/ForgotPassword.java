@@ -68,8 +68,9 @@ public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
 		String pageTitleEnd = (new StringResourceModel("ForgotPassword.pageTitle", this, null, "Forgot Password").getString());
 		setPageTitle(pageTitleEnd);
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
-		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
-		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+
+		addApplicationTitles();
+
 		add(new WebMarkupContainer("preSubmitMessage") {
 			private static final long serialVersionUID = 1L;
 
