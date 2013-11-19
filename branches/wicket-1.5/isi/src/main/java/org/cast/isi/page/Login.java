@@ -65,8 +65,8 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 		pageTitle = (new StringResourceModel("Login.pageTitle", this, null, "Login").getString());
 		setPageTitle(pageTitle);
 		add(new Label("pageTitle", pageTitle));
-		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
-		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+		
+		addApplicationTitles();
 
 		add (new BookmarkablePageLink<Void>("forgot", ISIApplication.get().getForgotPasswordPageClass()).setVisible(ISIApplication.get().isEmailOn()));
 		add (new BookmarkablePageLink<Void>("register", ISIApplication.get().getRegisterPageClass()).setVisible(ISIApplication.get().isSelfRegisterOn()));
@@ -93,7 +93,6 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 		add(ISIApplication.get().getFooterPanel("pageFooter", params));
 	}
 
-	
 	protected class SignInForm extends Form<User> {
 		private static final long serialVersionUID = 1L;
 		private RequiredTextField<String> username;

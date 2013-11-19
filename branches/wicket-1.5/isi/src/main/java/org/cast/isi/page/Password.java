@@ -69,8 +69,8 @@ public class Password extends ISIBasePage implements IHeaderContributor {
 		String pageTitleEnd = (new StringResourceModel("Password.pageTitle", this, null, "Password").getString());
 		setPageTitle(pageTitleEnd);
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
-		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
-		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+
+		addApplicationTitles();
 
 		// forgot password shows up when there is an error in the link - expired link
 		BookmarkablePageLink<Void> resetLink = new BookmarkablePageLink<Void>("reset", ISIApplication.get().getForgotPasswordPageClass());
