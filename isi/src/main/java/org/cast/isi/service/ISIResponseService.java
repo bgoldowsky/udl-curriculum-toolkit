@@ -670,10 +670,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	@SuppressWarnings("unchecked")
 	public List<ISIPrompt> getResponseCollectionNamePrompts(IModel<User> mUser) {
 	
-		//Query q = Databinder.getHibernateSession().createQuery("select p " +
-		//		"from ISIPrompt p join p.responses r where p.collectionName is not null and p.collectionName!='' and r.valid='true' and r.user.id=:userId");
-        // TODO heikki verify query is OK
-        Query q = Databinder.getHibernateSession().createQuery("select distinct(r.prompt.collectionName) from Response r where r.prompt.collectionName is not null and r.prompt.collectionName !='' and r.valid='true' and r.user.id=:userId");
+        Query q = Databinder.getHibernateSession().createQuery("select distinct(r.prompt) from Response r where r.prompt.collectionName is not null and r.prompt.collectionName !='' and r.valid='true' and r.user.id=:userId");
 
 		q.setLong("userId", mUser.getObject().getId());
 		q.setCacheable(true);
