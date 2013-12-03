@@ -66,6 +66,9 @@ ul li, ol li {
     padding: 0px 0px 0.5em 0px;
     margin: 0px 0px 0px 1.5em;
 }
+ul ul, ul ol, ol ol, ol ul {
+    padding: .5em 0px 0px 0px; /* For nested lists, keep spacing consistent with li items */
+}
 
 .error {
 	color: #FF0000;
