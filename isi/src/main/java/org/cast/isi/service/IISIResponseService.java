@@ -157,6 +157,9 @@ public interface IISIResponseService extends IResponseService {
 	void updateFeedbackMessage(IModel<FeedbackMessage> mFeedbackMessage,
 			Page page);
 
+	void saveFeedbackMessage(IModel<FeedbackMessage> mFeedbackMessage, IModel<Prompt> mPrompt);
+
+
 	/**
 	 * @param teacher
 	 * @return list of prompts

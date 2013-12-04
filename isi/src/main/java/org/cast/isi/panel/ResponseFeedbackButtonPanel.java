@@ -92,7 +92,6 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 			public void onClick(AjaxRequestTarget target) {
 
 				responseFeedbackPanel.setPromptModel(mPrompt);
-				responseFeedbackPanel.setMessageList(messageList);
 
 				if (role.subsumes(Role.RESEARCHER)) {
 					// Don't trigger any database changes if researcher clicks button.
@@ -149,7 +148,7 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 			}			
 		});
 
-		link.add(new AttributeModifier("title", true, new AbstractReadOnlyModel<String>() {
+		link.add(new AttributeModifier("title", new AbstractReadOnlyModel<String>() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
