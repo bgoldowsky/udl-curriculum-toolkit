@@ -436,12 +436,31 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		return q.list();
 	}
 	
+		
+	public void saveFeedbackMessage(IModel<FeedbackMessage> mFeedbackMessage, IModel<Prompt> mPrompt) {
+		FeedbackMessage feedbackMessage = mFeedbackMessage.getObject();
+
+		feedbackMessage.setUnread(true);
+		feedbackMessage.setVisible(true);
+
+		feedbackMessage.setAuthor(ISISession.get().getUser());
+		feedbackMessage.setStudent(ISISession.get().getTargetUserModel().getObject());
+		feedbackMessage.setTimestamp(new Date());
+		
+		ISIPrompt prompt = (ISIPrompt) mPrompt.getObject();
+		feedbackMessage.setPrompt(prompt);
+		String location = prompt.getContentLoc().getLocation();
+		feedbackMessage.setLocation(location);
+
+		Databinder.getHibernateSession().save(feedbackMessage);	
+		cwmService.flushChanges();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IISIResponseService#getFeedbackMessages(org.apache.wicket.model.IModel<org.cast.cwm.data.Prompt>, org.cast.cwm.data.User)
 	 */
 	@SuppressWarnings("unchecked")
 	public List<FeedbackMessage> getFeedbackMessages(IModel<Prompt> promptM, User student) {
-		// FIXME needs to query by prompt
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getAllMessagesByPromptAndStudent");
 		q.setParameter("prompt", promptM.getObject());
 		q.setParameter("student", student);

@@ -9,7 +9,7 @@
 <wicket:panel>
   <div wicket:id="sidebarDialog">
 	<div class="modalEdit">
-        	<form wicket:id="form">
+        	<form wicket:id="feedbackMessageForm">
         		<div>
         			<label wicket:id="messageLabel">Feedback:</label>
         			<textarea wicket:id="message" style="margins:auto;" name="message" tabindex="2" rows="6"></textarea><br />
@@ -25,7 +25,6 @@
         	<div wicket:id="responses" class="feedbackBox">
                 <div class="feedbackTime">
 	        		<strong><span wicket:id="date">1/1/2009</span></strong>, 
-	        		<span wicket:id="time">12:00:00 PM</span>
 	        	</div>
                 <div class="feedbackFrom">
         			<span wicket:id="name" ></span> wrote:
