@@ -42,8 +42,8 @@ public class ResponseViewer extends org.cast.cwm.data.component.ResponseViewer {
 	private ISIDateLabel date;
 	private Label author;
 	
-	private static int MAX_WIDTH = 700;
-	private static int MAX_HEIGHT = 700; 
+	private static int MAX_WIDTH = 600;
+	private static int MAX_HEIGHT = 600; 
 	
 	private static final long serialVersionUID = 1L;
 
