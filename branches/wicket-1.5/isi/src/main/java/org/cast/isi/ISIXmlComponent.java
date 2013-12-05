@@ -34,6 +34,7 @@ import javax.xml.xpath.XPathFactory;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -131,8 +132,6 @@ import org.cast.isi.panel.StudentSectionCompleteToggleImageLink;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.IISIResponseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -143,10 +142,10 @@ import com.google.inject.Inject;
  * A component to display XML content in ISI.
  *
  */
+@Slf4j
 public class ISIXmlComponent extends XmlComponent {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = LoggerFactory.getLogger(ISIXmlComponent.class);
 
 	@Inject 
 	private IISIResponseService responseService;
@@ -470,8 +469,8 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("videoplayer_")) {
 			String videoSrc = elt.getAttribute("src");
-			ResourceReference videoRef = getRelativeRef(videoSrc);
-            String videoUrl = RequestCycle.get().urlFor(videoRef, null).toString();
+			ResourceReference videoRef = getRelativeRef(videoSrc);			
+			String videoUrl = getRequestCycle().mapUrlFor(videoRef, null).toString();
 
             Integer width = Integer.valueOf(elt.getAttribute("width"));
 			Integer height = Integer.valueOf(elt.getAttribute("height"));
@@ -508,7 +507,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("audioplayer_")) {
 			String audioSrc = elt.getAttribute("src");
 			ResourceReference audioRef = getRelativeRef(audioSrc);
-			String audioUrl = RequestCycle.get().urlFor(audioRef, new PageParameters()).toString();
+			String audioUrl = getRequestCycle().mapUrlFor(audioRef, null).toString();
 
 			int width = 400;
 			if (!elt.getAttribute("width").equals("")) {
