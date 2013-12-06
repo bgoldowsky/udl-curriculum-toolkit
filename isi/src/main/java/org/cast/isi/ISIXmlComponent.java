@@ -945,7 +945,7 @@ public class ISIXmlComponent extends XmlComponent {
 				newMap.put(typeName, typesFromXml.get(typeName)); 
 			else
 				// Otherwise add with default configuration
-				metadata.addType(responseType); 
+				newMap.put(typeName, new TypeMetadata());
 		}
 		// Any additional types that may have been configured in the XML are simply ignored.
 		metadata.setTypeMap(newMap);
