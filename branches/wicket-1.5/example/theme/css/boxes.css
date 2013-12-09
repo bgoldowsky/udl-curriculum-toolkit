@@ -249,6 +249,11 @@ hr {
     height: 1.25em;
 }
 
+.responseBar span, .responseBar .button, .responseBar select, .responseBar input {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 /*================================================================*/
 /* Response - Multiple Choice  */
 
@@ -704,6 +709,11 @@ hr {
     padding: 0px;
     margin: 0px;
     list-style: none;
+}
+
+.teacherBar span, .teacherBar .button, .teacherBar select, .teacherBar input {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /*=========================================================*/
