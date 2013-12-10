@@ -36,11 +36,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.Strings;
-import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
+import org.cast.cwm.data.component.CollapseToggleLink;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.IUserPreferenceService;
@@ -51,8 +51,6 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlComponent;
 import org.cast.isi.ISIXmlSection;
-import org.cast.isi.component.StateSavingCollapseBoxBehavior;
-import org.cast.isi.component.StateSavingCollapseBoxBorder;
 import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.PromptType;
@@ -81,8 +79,6 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 
 	protected static final Logger log = LoggerFactory.getLogger(Reading.class);
 
-	protected QuestionListView questionList;
-	protected WebMarkupContainer questionContainer;
 	protected IModel<User> mTargetUser;
 	protected XmlSectionModel mSection;
 	protected IModel<Prompt> mNotesPrompt;
@@ -127,10 +123,10 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
     	
 		addXmlComponent((ISIXmlSection) mSection.getObject());
 		addSectionCompleteToggle((ISIXmlSection) mSection.getObject());
-    	addNotesPanel();		
 		addHighlightPanel();
-		addTaggingPanel();
+    	addNotesPanel();		
 		addQuestionsPanel();
+		addTaggingPanel();
 		addTopNavigation(mSection, teacher);
 		addBottomNavigation(mSection, teacher);		
 	}
@@ -214,35 +210,18 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		return (section != null) && section.isLockResponse();
 	}
 
-	protected void addNotesPanel () {
-		setPageNotesMetadata();
-		mNotesPrompt = responseService.getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
-		StateSavingCollapseBoxBorder noteBox = new StateSavingCollapseBoxBorder("noteBox", "noteToggle", null, getPageName());
-		add(noteBox);
-		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc, mTargetUser);
-		responseList.setContext("pagenote");
-		responseList.setAllowNotebook(ISIApplication.get().isNotebookOn());
-		responseList.setAllowWhiteboard(ISIApplication.get().isWhiteboardOn());
-		noteBox.add(responseList);
-		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mNotesPrompt, pageNotesMetadata, loc);
-		responseButtons.setContext("pagenote");
-		noteBox.add(responseButtons);
-		noteBox.setVisible(ISIApplication.get().isPageNotesOn());
-	}
-
-	
-	protected void setPageNotesMetadata() {
-		pageNotesMetadata.addType("TEXT");
-		pageNotesMetadata.addType("AUDIO");
-	}
-
 	public void addHighlightPanel() {	
 		boolean highlightsPanelOn = ISIApplication.get().isHighlightsPanelOn();
-
-		StateSavingCollapseBoxBorder highlightBox = new StateSavingCollapseBoxBorder("highlightBox", "highlightToggle", "globalHighlight", getPageName());
-		add(highlightBox);
-		highlightBox.setVisible(highlightsPanelOn);
-		highlightBox.add(new HighlightControlPanel("highlightControlPanel", loc, mSection));		
+		
+		CollapseToggleLink highlightToggleLink = new CollapseToggleLink("highlightToggleLink", "highlightToggleLink", "highlightToggle");
+		add(highlightToggleLink);
+		highlightToggleLink.setVisible(highlightsPanelOn);
+		highlightToggleLink.setEventPageName(getPageName());
+		
+		HighlightControlPanel highlightControlPanel = new HighlightControlPanel("highlightControlPanel", loc, mSection);
+		add(highlightControlPanel);		
+		highlightControlPanel.setVisible(highlightsPanelOn);
+		
 		HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", 
 					responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
 					ISISession.get().getTargetUserModel());
@@ -251,36 +230,57 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		add(new NoHighlightModal("noHighlightModal"));
 	}
 	
-	protected void addTaggingPanel () {
-		WebMarkupContainer tagBox = new WebMarkupContainer("tagBox");
-		add(tagBox);
-		Boolean toggleState = userPreferenceService.getUserPreferenceBoolean(ISISession.get().getUserModel(), "tagToggle");
-		if (toggleState != null) {
-			tagBox.add(new ClassAttributeModifier("open", !toggleState));
-		}				
-		tagBox.setVisible(ISIApplication.get().isTagsOn());
+	protected void addNotesPanel () {
+		boolean pageNotesOn = ISIApplication.get().isPageNotesOn();
 
-		StateSavingCollapseBoxBehavior behavior = new StateSavingCollapseBoxBehavior("tagToggle", getPageName(), "tagToggle");
-		tagBox.add(new WebMarkupContainer("tagBoxToggle").add(behavior));
+		CollapseToggleLink pageNotesToggleLink = new CollapseToggleLink("pageNotesToggleLink", "pageNotesToggleLink", "pageNotesToggle");
+		add(pageNotesToggleLink);
+		pageNotesToggleLink.setVisible(pageNotesOn);
 
-		ContentElement ce = responseService.getOrCreateContentElement(loc).getObject();
-		tagBox.add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()).setRenderBodyOnly(true));
+		setPageNotesMetadata();
+		mNotesPrompt = responseService.getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
+		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mNotesPrompt, pageNotesMetadata, loc);
+		responseButtons.setContext("pagenote");
+		add(responseButtons);
+		
+		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc, mTargetUser);
+		responseList.setContext("pagenote");
+		responseList.setAllowNotebook(ISIApplication.get().isNotebookOn());
+		responseList.setAllowWhiteboard(ISIApplication.get().isWhiteboardOn());
+		add(responseList);
 	}
 	
+	protected void setPageNotesMetadata() {
+		pageNotesMetadata.addType("TEXT");
+		pageNotesMetadata.addType("AUDIO");
+	}
+
 	protected void addQuestionsPanel () {
-		StateSavingCollapseBoxBorder questionBox = new StateSavingCollapseBoxBorder("questionBox", "questionToggle", null, getPageName());
-		add(questionBox);
-		questionBox.setVisible(ISIApplication.get().isMyQuestionsOn());
-    	questionContainer = new WebMarkupContainer("questionContainer");
-    	questionBox.add(questionContainer);
-		questionContainer.setOutputMarkupId(true);
+		boolean myQuestionsOn = ISIApplication.get().isMyQuestionsOn();
+
+		CollapseToggleLink myQuestionsToggleLink = new CollapseToggleLink("myQuestionsToggleLink", "myQuestionsToggleLink", "myQuestionsToggle");
+		add(myQuestionsToggleLink);
+		myQuestionsToggleLink.setVisible(myQuestionsOn);
+		
+    	WebMarkupContainer questionContainer = new WebMarkupContainer("questionContainer");
+    	add(questionContainer);
+    	questionContainer.setOutputMarkupId(true);
 		PopupSettings questionPopupSettings = ISIApplication.questionPopupSettings;
-    	questionList = new QuestionListView("question", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null, null);
+    	QuestionListView questionList = new QuestionListView("questionList", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null, null);
+    	questionList.setOutputMarkupId(true);
 		questionContainer.add(questionList);
 		questionContainer.add(new WebMarkupContainer("qButtonVisible"));
     	add(new NewQuestionForm("newQuestion"));
 	}
 	
+	private WebMarkupContainer getQuestionContainer() {
+		return (WebMarkupContainer) get("questionContainer");
+	}
+
+	private QuestionListView getQuestionList() {
+		return (QuestionListView) get("questionContainer:questionList");
+	}
+
 	protected class NewQuestionForm extends Form<Object> {
 		private static final long serialVersionUID = 1L;
 		Model<String> textModel = new Model<String>("");
@@ -306,12 +306,13 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 						if (qstr.length() > 250)
 							qstr = qstr.substring(0, 250);
 						questionService.createQuestion(new UserModel(mTargetUser.getObject()), qstr, getPageName());
-						questionList.doQuery();
-						target.add(questionContainer);
+						getQuestionList().doQuery();
+						target.add(getQuestionContainer());
 						target.add(NewQuestionForm.this);
 					}
 					target.appendJavaScript("$('#newQuestionModal').hide();");
 				}
+
 				@Override
 				protected void onError(AjaxRequestTarget target, Form<?> form) {
 					super.onError(target, form);
@@ -322,8 +323,26 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 			add(feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(NewQuestionForm.this)));
 			feedback.setOutputMarkupPlaceholderTag(true);
 		}
+
+		@Override
+		protected void onDetach() {
+			if (textModel != null)
+				textModel.detach();
+			super.onDetach();
+		}		
 	}
 
+	protected void addTaggingPanel () {
+		boolean myTagsOn = ISIApplication.get().isTagsOn();
+
+		CollapseToggleLink myTagsToggleLink = new CollapseToggleLink("myTagsToggleLink", "myTagsToggleLink", "myTagsToggle");
+		add(myTagsToggleLink);
+		myTagsToggleLink.setVisible(myTagsOn);
+
+		ContentElement ce = responseService.getOrCreateContentElement(loc).getObject();
+		add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()).setRenderBodyOnly(true));
+	}
+	
 	
 	public void renderHead(IHeaderResponse response) {
 		renderThemeCSS(response, "css/highlight.css");

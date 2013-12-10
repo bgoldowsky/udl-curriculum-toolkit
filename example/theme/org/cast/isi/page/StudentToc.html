@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
 <head>
 <title>Product Name</title>
 <link type="text/css" rel="stylesheet" media="screen" href="../css/main.css" />
@@ -208,19 +208,27 @@
         </div>
         <div id="mainContentRight">
             <!-- BEGIN - Support Content -->
-             <div wicket:id="classMessageBox" class="rightBox collapseBox open">
-                <h5>Class Message</h5>
-                <div class="collapseBody">
-                    <p wicket:id="classMessage">
-                        Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
-                    </p>
-                </div>
-            </div>
+	   		<wicket:enclosure child="classMessageToggleLink">
+		   		<div class="rightBox">
+	                <h5><a href="#" wicket:id="classMessageToggleLink">Class Message</a></h5>
+					<div class="targetToggle linkToggleBox_classMessageToggleLink">
+	                    <p wicket:id="classMessage">
+	                        Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+	                    </p>
+	                </div>
+				</div>
+			</wicket:enclosure>
 
-            <div wicket:id="tagsBox" class="rightBox collapseBox open">
-                <h5 wicket:id="tagCollapseToggle">My Tags</h5>
-                <div class="collapseBody">
-		    <div wicket:id="tagcloud"></div>
+	   		<!-- My Tags Panel -->
+	   		<wicket:enclosure child="myTagsToggleLink">
+		   		<div class="rightBox">
+	            	<h5><a href="#" wicket:id="myTagsToggleLink">My Tags</a></h5>
+					<div class="targetToggle linkToggleBox_myTagsToggleLink">
+ 		        		<div wicket:id="tagcloud"></div>
+ 		        	</div>
+ 		        </div>
+		 	</wicket:enclosure>
+            
 <wicket:remove>
                     <p  class="tagStarsCloud">
                         <a href="#"><img src="../img/icons/star_3.png" width="42" height="13" alt="3 Stars" /></a>
@@ -239,8 +247,6 @@
                         <li>sort by: <strong>alph</strong> | <a href="#">frequency</a></li>
                     </ul>
 </wicket:remove>
-                </div>
-            </div>
             <!-- END - Support Content -->
         </div>
     </div>
