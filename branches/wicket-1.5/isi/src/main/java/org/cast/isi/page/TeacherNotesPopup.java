@@ -19,7 +19,10 @@
  */
 package org.cast.isi.page;
 
-import com.google.inject.Inject;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -41,6 +44,8 @@ import org.cast.isi.panel.ResponseList;
 import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * This page is a notebook for a teacher.  It contains notes
@@ -71,6 +76,8 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		if (mStudent == null && mStudent.getObject() == null)
 			throw new IllegalStateException("Must specify a student.\n"); 
 
+		add(new CloseWindowLink("closeWindow"));
+		
 		// set the heading for this page - modify the properties file to change this
 		String pageTitleEnd = (new StringResourceModel("TeacherNotes.pageTitle", this, null, "Teacher Notes").getString());
 		setPageTitle(pageTitleEnd);
@@ -80,13 +87,7 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		if (ISISession.get().getUser().hasRole(Role.TEACHER))
 			heading +=  " for - " + mPeriod.getObject().getName() + " > " + mStudent.getObject().getFullName();
 		add(new Label("heading", heading));
-		
-		// FIXME? Notes are currently not location specific - LDM
-//		ContentLoc location = null;
-//		if (param.containsKey("loc") && param.get("loc") != null) {
-//			location = new ContentLoc(param.getString("loc"));
-//		}
-		
+				
 		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.TEACHER_NOTES, mStudent);
 		ResponseList responseList = new ResponseList("nbResponseList", mPrompt, notebookMetadata, null, ISISession.get().getUserModel());
 		add(responseList);
@@ -97,6 +98,7 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		responseButtons.setContext("TeacherNotes");
 		add(responseButtons);
 		add(ISIApplication.get().getToolbar("tht", this));
+
 	}
 
 	public void setNotebookMetadata(ResponseMetadata notebookMetadata) {
@@ -135,5 +137,42 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		if (mPeriod != null) {
 			mPeriod.detach();
 		}
+	}
+	
+	
+	/**
+	 * Autosave first and then close on success
+	 *
+	 */
+	public class CloseWindowLink extends AjaxLink<Void> {
+		private static final long serialVersionUID = 1L;
+
+		public CloseWindowLink(String id) {
+			super(id);
+		}
+
+		@Override
+		public void onClick(AjaxRequestTarget target) {
+		}
+
+	   	@Override
+    	public IAjaxCallDecorator getAjaxCallDecorator() {
+    		return new IAjaxCallDecorator() {
+
+    			private static final long serialVersionUID = 1L;
+
+    			public CharSequence decorateOnFailureScript(Component component, CharSequence script) {
+    				return script;
+    			}
+
+    			public CharSequence decorateOnSuccessScript(Component component, CharSequence script) {
+    				return "window.close()";
+    			}
+
+    			public CharSequence decorateScript(Component component, CharSequence script) {
+    				return "if (typeof AutoSaver !== 'undefined') { AutoSaver.autoSaveMaybeSave(null);}" + script;
+    			}
+    		};
+    	}
 	}
 }
