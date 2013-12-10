@@ -59,11 +59,6 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 
         new JQueryHeaderContributor().renderHead(response);
 
-		renderThemeJS(response, "js/lang/en.js");
-		renderThemeJS(response, "js/jquery/jquery.form.js");
-		renderThemeJS(response, "js/functions.js");
-		renderThemeJS(response, "js/jquery/jquery-ui-1.9.2.custom.min.js");
-	
 		renderThemeCSS(response, "css/toolbar.css");
 		renderThemeCSS(response, "css/buttons.css");
 		renderThemeCSS(response, "css/boxes.css");
@@ -78,14 +73,17 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 		// Theme CSS is loaded last, since it has overrides for any of the above CSS.
 		renderThemeCSS(response, "css/theme.css");
 
+		renderThemeJS(response, "js/lang/en.js");
+		renderThemeJS(response, "js/jquery/jquery.form.js");
+		renderThemeJS(response, "js/jquery/jquery-ui-1.9.2.custom.min.js");
+		renderThemeJS(response, "js/functions.js");
+
 		// if MathML is configured on, then link out to the MathJax site
 		if (ISIApplication.get().isMathMLOn()) {
 			response.renderString("<script type=\"text/javascript\" " +
 					"src=\"https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\">" +
 					"</script>\n");
-		}
-		
-	
+		}	
 	}
 
 	/**
