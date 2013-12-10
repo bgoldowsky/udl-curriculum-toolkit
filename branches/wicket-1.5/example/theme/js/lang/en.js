@@ -20,5 +20,5 @@ lang = {
     'IMGVIEW_MYDRAWING'     : 'my version',
 
     'DSLIDE_PREV'           : '&lt; Prev',
-    'DSLIDE_NEXT'           : 'Next &gt;',
+    'DSLIDE_NEXT'           : 'Next &gt;'
 };
