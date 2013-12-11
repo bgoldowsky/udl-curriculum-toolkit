@@ -631,10 +631,11 @@
       	    <div class="teacherBarRight">
 				<xsl:apply-templates select="key('annokey', @id)[@class='teacheronly']" mode="teacheronly" />
         		<a wicket:id="compareResponses_" href="#" class="button" rgid="{$rgid}" group="{ancestor-or-self::dtb:responsegroup/@group}" type="{$type}">Compare Responses</a>
+        		&#160;
             	<xsl:choose>
             		<!-- feedback not allowed for survey type questions -->
             		<xsl:when test="($noAnswer != 'true')">
- 			           	<span wicket:id="feedbackButton_" for="teacher" rgid="{$rgid}"></span>
+ 			           	<span wicket:id="feedbackButton_" for="teacher" rgid="{$rgid}"></span>&#160;
  			        </xsl:when>
  			    </xsl:choose>
             	<xsl:choose>
