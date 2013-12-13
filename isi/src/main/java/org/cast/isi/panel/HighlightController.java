@@ -20,6 +20,7 @@
 package org.cast.isi.panel;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -27,6 +28,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -41,6 +44,7 @@ import org.cast.cwm.data.Response;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.HighlightService.HighlightType;
+import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.transform.FilterElements;
 import org.cast.isi.ISISession;
@@ -63,11 +67,10 @@ import com.google.inject.Inject;
  * @author bgoldowsky
  *
  */
-public class HighlightController extends Panel {
+public class HighlightController extends Panel implements IHeaderContributor {
 
-	@Inject
-	protected IISIResponseService responseService;
-	
+	private static final long serialVersionUID = 1L;
+
 	// Target user to display (current user or student that teacher is viewing)
 	private IModel<User> targetUser;
 	
@@ -80,8 +83,15 @@ public class HighlightController extends Panel {
 	@Getter private String editedName;
 	
 	private boolean hasHint = false;
+	
+	@Setter private boolean highlightOn = false; // set the highlighter initial state
 
-	private static final long serialVersionUID = 1L;
+	@Inject
+	protected IISIResponseService responseService;
+	
+	@Inject
+	protected IUserPreferenceService preferenceService;
+	
 
 	public HighlightController(String id, HighlightType type, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
@@ -92,7 +102,7 @@ public class HighlightController extends Panel {
 		
 		targetUser = ISISession.get().getTargetUserModel();
 		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
-		
+				
 		String color = type.getColor().toString().toLowerCase();
 		
 		WebMarkupContainer labelContainer = new WebMarkupContainer("labelContainer");
@@ -131,6 +141,11 @@ public class HighlightController extends Panel {
 			hintContainer.setVisibilityAllowed(false);
 	}
 
+	public void renderHead(final IHeaderResponse response) {
+		if (highlightOn) {
+			response.renderOnLoadJavaScript(String.format("$().CAST_Highlighter('modify', '%c');return false;", type.getColor()));
+		}
+	}
 
 	/**
 	 * The highlighter has either an editable or non-editable label.  The non-editable label is found in the properties file.
@@ -286,4 +301,11 @@ public class HighlightController extends Panel {
 	}
 
 
+	@Override
+	protected void detachModel() {
+		if (targetUser != null) {
+			targetUser.detach();
+		}
+		super.detachModel();
+	}
 }

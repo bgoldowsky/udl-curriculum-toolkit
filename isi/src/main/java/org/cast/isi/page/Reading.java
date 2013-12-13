@@ -226,6 +226,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 					responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
 					ISISession.get().getTargetUserModel());
 		highlightDisplayPanel.setVisible(highlightsPanelOn);
+		highlightDisplayPanel.setSaveState(true);
 		add(highlightDisplayPanel);
 		add(new NoHighlightModal("noHighlightModal"));
 	}
