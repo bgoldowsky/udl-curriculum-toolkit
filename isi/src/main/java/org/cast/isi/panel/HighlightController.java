@@ -143,7 +143,7 @@ public class HighlightController extends Panel implements IHeaderContributor {
 
 	public void renderHead(final IHeaderResponse response) {
 		if (highlightOn) {
-			response.renderOnLoadJavaScript(String.format("$().CAST_Highlighter('modify', '%c');return false;", type.getColor()));
+			response.renderOnLoadJavaScript(String.format("$().CAST_Highlighter('modifyWithoutSave', '%c');return false;", type.getColor()));
 		}
 	}
 
