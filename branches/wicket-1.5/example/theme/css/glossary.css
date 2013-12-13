@@ -42,7 +42,7 @@ ul, ol {
 }
 ul li, ol li {
     padding: 0px 0px 0.5em 0px;
-    margin: 0px 0px 0px 1.5em;
+    margin: 0px 0px 0px .3em;
 }
 
 /*================================================================*/
@@ -135,7 +135,6 @@ ul li, ol li {
 
 #nav ul li.empty a {
 	color: #A4A4A4;
-	display: none;
 }
 
 #newword {

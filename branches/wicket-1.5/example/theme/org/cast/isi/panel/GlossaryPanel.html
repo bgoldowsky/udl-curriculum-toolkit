@@ -6,8 +6,8 @@
 <wicket:panel>
 <div id="nav">
     <div id="navContent">
-        <ul wicket:id="topnav">
-	    	<li wicket:id="topli"><a href="#" wicket:id="toplink"></a></li>
+        <ul>
+	    	<li wicket:id="topnav"><a href="#" wicket:id="toplink"></a></li>
         </ul>
         <wicket:enclosure child="newWordButton">
        		<wicket:container wicket:id="newWordButton"></wicket:container>
@@ -19,7 +19,7 @@
 <div id="leftcol">
     <div id="leftcolInner">
         <div id="glosslist" wicket:id="glosslist">
-    		<h2><a name="a" wicket:id="anchor"></a><span wicket:id="letter">A</span></h2>
+    		<h2 id="a" wicket:id="anchor" tabindex="-1"><span wicket:id="letter">A</span></h2>
 			<div wicket:id="list">
 				<a wicket:id="link">
 					<span wicket:id="label">Aardvark</span>					
