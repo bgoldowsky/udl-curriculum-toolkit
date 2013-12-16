@@ -120,50 +120,52 @@ function linkToggle(scope) {
                     }
                 }
             }
-            if ( (classMatch == null) || ($(".linkToggleBox_" + classMatch).length <= 0) ) { return false; }
+            var hasTarget = (classMatch !== null) && ($(".linkToggleBox_" + classMatch).length > 0);
 
-            // Set button/box items
-            var $currBtn = $(".linkToggleBtn_" + classMatch, scope);
-            var $currBox = $(".linkToggleBox_" + classMatch, scope);
+            if (hasTarget) {
+                // Set button/box items
+                var $currBtn = $(".linkToggleBtn_" + classMatch, scope);
+                var $currBox = $(".linkToggleBox_" + classMatch, scope);
 
-            // Check for presence of button/box id - set if not present
-            if ($currBtn.attr("id") === undefined) {
-                var $idBtn = ("linkToggle_btn_" + linkToggle_Count);
-                $currBtn.attr("id", $idBtn);
-            } else {
-                var $idBtn = $currBtn.attr("id");
-            }
-            // Set aria-labelledby on box items
-            $currBox.attr("aria-labelledby", $idBtn);
-
-            // A button can control multiple boxes so we need to id each on individually
-            var linkToggle_subCount = 0;
-            var linkToggle_boxList = "";
-            $currBox.each(function() {
-                if ($(this).attr("id") === undefined) {
-                    var $idBox = ("linkToggle_box_" + linkToggle_Count + "_" + linkToggle_subCount);
-                    $(this).attr("id", $idBox);
+                // Check for presence of button/box id - set if not present
+                if ($currBtn.attr("id") === undefined) {
+                    var $idBtn = ("linkToggle_btn_" + linkToggle_Count);
+                    $currBtn.attr("id", $idBtn);
                 } else {
-                    var $idBox = $currBox.attr("id");
+                    var $idBtn = $currBtn.attr("id");
                 }
-                linkToggle_subCount++;
-                linkToggle_boxList += ($idBox + " ");
-            });
-            // Set aria-controls on button
-            $currBtn.attr("aria-controls", $.trim(linkToggle_boxList));
+                // Set aria-labelledby on box items
+                $currBox.attr("aria-labelledby", $idBtn);
 
-            // Determine default state
-            $currBtn.append('<span class="toggle"></span>');
-            if ($currBtn.hasClass("open")) {
-                $currBtn.addClass("expOpen");
-                $currBox.show().attr("aria-expanded", "true").attr("aria-hidden", "false");
+                // A button can control multiple boxes so we need to id each on individually
+                var linkToggle_subCount = 0;
+                var linkToggle_boxList = "";
+                $currBox.each(function() {
+                    if ($(this).attr("id") === undefined) {
+                        var $idBox = ("linkToggle_box_" + linkToggle_Count + "_" + linkToggle_subCount);
+                        $(this).attr("id", $idBox);
+                    } else {
+                        var $idBox = $currBox.attr("id");
+                    }
+                    linkToggle_subCount++;
+                    linkToggle_boxList += ($idBox + " ");
+                });
+                // Set aria-controls on button
+                $currBtn.attr("aria-controls", $.trim(linkToggle_boxList));
+
+                // Determine default state
+                $currBtn.append('<span class="toggle"></span>');
+                if ($currBtn.hasClass("open")) {
+                    $currBtn.addClass("expOpen");
+                    $currBox.show().attr("aria-expanded", "true").attr("aria-hidden", "false");
+                }
+
+                // Bind click handler
+                $currBtn.bind("click", {targetId: classMatch}, function(event, scope) {
+                    linkToggleSwitch(event.data.targetId, scope, event);
+                    return false;
+                });
             }
-
-            // Bind click handler
-            $currBtn.bind("click", {targetId: classMatch}, function(event, scope) {
-                linkToggleSwitch(event.data.targetId, scope, event);
-                return false;
-            });
         }
         // Set parsed flag
         jQuery.data(toggleElm, "ParsedToggle", true);
