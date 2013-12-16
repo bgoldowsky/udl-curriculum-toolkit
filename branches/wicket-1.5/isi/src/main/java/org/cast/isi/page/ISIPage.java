@@ -80,8 +80,11 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 
 		// if MathML is configured on, then link out to the MathJax site
 		if (ISIApplication.get().isMathMLOn()) {
+			String mathJaxLocation = ISIApplication.get().getMathJaxLocation();
 			response.renderString("<script type=\"text/javascript\" " +
-					"src=\"https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\">" +
+					"src=\"" +
+					mathJaxLocation + 
+					"\">" +
 					"</script>\n");
 		}	
 	}

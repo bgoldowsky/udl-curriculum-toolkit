@@ -207,6 +207,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected String glossaryLinkType = DEFAULT_GLOSSARY_TYPE;
 	@Getter protected boolean useAuthoredResponseType = false; // false for backwards compatibility
 	@Getter protected String responseSortField = "createDate";
+	@Getter protected String mathJaxLocation = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML";
 	@Getter protected SortOrder responseSortState = SortOrder.DESCENDING;
 	@Getter protected ResponseMetadata responseMetadata; // the default type of responses
 	@Getter protected ArrayList<IResponseType> defaultResponseTypes = new ArrayList<IResponseType>();
@@ -462,6 +463,7 @@ public abstract class ISIApplication extends CwmApplication {
 		classMessageOn = setBooleanProperty("isi.classMessage.isOn", classMessageOn);
 		toolBarOn = setBooleanProperty("isi.toolBar.isOn", toolBarOn);
 		mathMLOn = setBooleanProperty("isi.mathML.isOn", mathMLOn);
+		mathJaxLocation = setStringProperty("isi.mathJax.location", mathJaxLocation);
 		sectionToggleTextLinksOn = setBooleanProperty("isi.sectionToggleTextLinks.isOn", sectionToggleTextLinksOn);
 		sectionToggleImageLinksOn = setBooleanProperty("isi.sectionToggleImageLinks.isOn", sectionToggleImageLinksOn);
 		sectionToggleImmediateScoreOn = setBooleanProperty("isi.sectionToggleImmediateScore.isOn", sectionToggleImmediateScoreOn);
