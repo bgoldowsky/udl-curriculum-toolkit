@@ -19,19 +19,25 @@
  */
 package org.cast.isi;
 
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import net.databinder.models.hib.HibernateObjectModel;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Request;
 import org.cast.cwm.CwmSession;
+import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.isi.data.ContentLoc;
 
-import java.util.Map;
-
 /** Customized Session holds application-specific data */
 
+@Slf4j
 public class ISISession extends CwmSession {
 	
 	@Getter @Setter
@@ -44,14 +50,46 @@ public class ISISession extends CwmSession {
 	@Getter @Setter
 	private IModel<User> studentModel;
 	
+	// Set to true if this session should be reported as a guest user
+	private boolean guestAccessAllowed = false;
+	
+	private static IModel<User> guestUserModel = Model.of(new User(Role.GUEST));
+	
 	private static final long serialVersionUID = 1L;
 
-	public ISISession(Request request) {
+	public ISISession(Request request, boolean guestAccessAllowed) {
 		super(request);
+		this.guestAccessAllowed = guestAccessAllowed;
 	}
 
 	public static ISISession get() {
 		return (ISISession) Session.get();
+	}
+	
+	public boolean isGuestUser() {
+		return (super.getUserModel()==null && guestAccessAllowed);
+	}
+	
+	@Override
+	public IModel<User> getUserModel() {
+		IModel<User> realUser = super.getUserModel();
+		if (realUser != null)
+			return realUser;
+		if (guestAccessAllowed)
+			return guestUserModel;
+		log.warn("Returning null user model");
+		return null;
+	}
+
+	@Override
+	public User getUser() {
+		User realUser = super.getUser();
+		if (realUser != null)
+			return realUser;
+		if (guestAccessAllowed)
+			return guestUserModel.getObject();
+		log.warn("Returning null user");
+		return null;
 	}
 	
 	/** Get the current student that a teacher is looking at; null if none */

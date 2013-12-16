@@ -40,7 +40,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.cast.audioapplet.component.AbstractAudioRecorder;
 import org.cast.cwm.IInputStreamProvider;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.data.IResponseType;
@@ -48,7 +47,10 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
+import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.service.IEventService;
+import org.cast.cwm.wami.AudioSkin;
+import org.cast.cwm.wami.RecorderResponsePanel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 import org.slf4j.Logger;
@@ -77,6 +79,9 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 	@Inject
 	private IEventService eventService;
+
+	@Inject
+	private ICwmService cwmService;
 
 	private final static Logger log = LoggerFactory.getLogger(ResponseEditor.class);	
 	private static final long serialVersionUID = 1L;
@@ -145,21 +150,24 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 	protected WebMarkupContainer getEditorFragment(String id, final IModel<Response> model, IResponseType type) {
 		final WebMarkupContainer editor = super.getEditorFragment(id, model, type);
 		
+		// Replace the default Java audio recorder with WAMI
 		if (type.getName().equals("AUDIO")) {
-			// Audio fragment does not by default include a form so title can be saved.
+			
+			// Superclass doesn't have a form for the title field to go in
 			Form<Response> form = new Form<Response>("form", model);
 			editor.add(form);
-			// Replace standard audio "save" link with one that also saves the form.
+
+			// Replace old audio applet with wami applet
+			editor.replace(new RecorderResponsePanel("applet", model, AudioSkin.STANDARD, pageName));
+		
+			// Replace standard audio "save" link with one that saves the form.  Audio data will be automatically saved.
 			AjaxSubmitLink saveLink = new AjaxSubmitLink("save", form) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-					// This gets invoked when user clicks "save" button.
-					// First, save the title to datastore (creating Response if necessary).
-					responseService.saveResponseWithoutData(model);
-					// Then get the audio data streamed back to the server
-					target.appendJavaScript(((AbstractAudioRecorder)editor.get("applet")).generateJavascriptMessage("SAVE"));
+					cwmService.flushChanges();
+					onSave(target);
 				}
 				
 			};
@@ -167,6 +175,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 			editor.replace(saveLink);			
 		}
 		
+		// Add title field to all editor types
 		((Form<?>)editor.get("form")).add(new TitleFragment("titleFragment", model));
 		
 		if (type.getName().equals("AUDIO")) {
