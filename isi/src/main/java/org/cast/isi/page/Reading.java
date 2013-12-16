@@ -19,6 +19,8 @@
  */
 package org.cast.isi.page;
 
+import lombok.Getter;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -45,6 +47,8 @@ import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.tag.component.TagPanel;
+import org.cast.cwm.wami.IWamiSupportingComponent;
+import org.cast.cwm.wami.WamiAppletHolder;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.ISIApplication;
@@ -71,7 +75,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 @AuthorizeInstantiation("STUDENT")
-public class Reading extends ISIStandardPage implements IHeaderContributor {
+public class Reading extends ISIStandardPage implements IHeaderContributor, IWamiSupportingComponent {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -96,6 +100,9 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 
 	@Inject
 	IUserPreferenceService userPreferenceService;
+	
+	@Getter
+	private WamiAppletHolder wamiAppletHolder;
 	
 
 	public Reading (PageParameters parameters) {
@@ -128,7 +135,8 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		addQuestionsPanel();
 		addTaggingPanel();
 		addTopNavigation(mSection, teacher);
-		addBottomNavigation(mSection, teacher);		
+		addBottomNavigation(mSection, teacher);
+		addWamiAppletHolder();
 	}
 
 	@Override
@@ -163,6 +171,10 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 	
 	protected void addBottomNavigation(IModel<XmlSection> mSection, boolean teacher) {
 		add (ISIApplication.get().getBottomNavigation("pageNavPanelBottom", mSection, teacher));
+	}
+
+	private void addWamiAppletHolder() {
+		add(new WamiAppletHolder("wami"));
 	}
 
 	protected void addSectionCompleteToggle(ISIXmlSection section) {

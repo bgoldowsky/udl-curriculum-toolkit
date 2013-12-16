@@ -56,6 +56,7 @@ import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.PageProvider;
 import org.apache.wicket.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.request.mapper.ICompoundRequestMapper;
 import org.apache.wicket.request.mapper.StalePageException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -63,6 +64,7 @@ import org.apache.wicket.util.file.File;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
+import org.cast.cwm.BinaryFileDataMapper;
 import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.IInputStreamProvider;
@@ -89,6 +91,7 @@ import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.service.UserPreferenceService;
 import org.cast.cwm.tag.TagService;
+import org.cast.cwm.wami.PlayerResponsePanel;
 import org.cast.cwm.xml.FileXmlDocumentSource;
 import org.cast.cwm.xml.IDocumentObserver;
 import org.cast.cwm.xml.XmlDocument;
@@ -202,6 +205,7 @@ public abstract class ISIApplication extends CwmApplication {
 	@Getter protected boolean tocSectionIncompleteIconsOn = false;
 	@Getter protected boolean collectionsScoreSummaryOn = false;
 	@Getter protected boolean compareScoreSummaryOn = false;
+	@Getter protected boolean guestAccessAllowed = false;
 
 	
 	@Getter protected String glossaryLinkType = DEFAULT_GLOSSARY_TYPE;
@@ -307,7 +311,7 @@ public abstract class ISIApplication extends CwmApplication {
 
         // TODO heikki find out which component requires this, and replace it with something empty in case this is not enabled
         getDebugSettings().setDevelopmentUtilitiesEnabled(true);
-
+        
 		// Set xml content Section and Page based on property file - these have to be set before
 		// the super.init is called
 		sectionElement = configuration.getProperty("isi.sectionElement");
@@ -477,6 +481,7 @@ public abstract class ISIApplication extends CwmApplication {
 		collectionsScoreSummaryOn = setBooleanProperty("isi.collectionsScoreSummary.isOn", collectionsScoreSummaryOn);
 		compareScoreSummaryOn = setBooleanProperty("isi.compareScoreSummary.isOn", compareScoreSummaryOn);
 		alternateNavBar = setStringProperty("isi.navBarType", alternateNavBar);
+		guestAccessAllowed = setBooleanProperty("isi.guestAccess.isOn", guestAccessAllowed);
 		
 		navbarSectionIconsTeacher = setStringProperty("isi.navbar.sectionIcons.teacher", navbarSectionIconsTeacher);
 		navbarSectionIconsStudent = setStringProperty("isi.navbar.sectionIcons.student", navbarSectionIconsStudent);
@@ -486,7 +491,6 @@ public abstract class ISIApplication extends CwmApplication {
 			url = urlValue.trim();
 			log.info("using this URL starter for email links: {}", url);
 		}
-		
 
 		/* if the glossary is on, decide what type of glossary link is used */
 		if (glossaryOn == true) {
@@ -755,7 +759,7 @@ public abstract class ISIApplication extends CwmApplication {
 	
 	@Override
 	public org.apache.wicket.Session newSession(Request request, Response response) {
-		return new ISISession(request);
+		return new ISISession(request, guestAccessAllowed);
 	}
 
 
@@ -768,7 +772,6 @@ public abstract class ISIApplication extends CwmApplication {
 	}
 	*/
 
-	// TODO: When shifting to the Cwm-Data 0.8-Snapshot, swap to the CwmApplication method
 	@Override
 	protected void configureMountPaths() {
 		super.configureMountPaths();
@@ -776,13 +779,17 @@ public abstract class ISIApplication extends CwmApplication {
         // if the customSkinDir has been defined, use the custom mapper  
         File themeDir = new File(ISIApplication.get().getSkinDir());
         String customSkinDir = ISIApplication.get().getCustomSkinDir();
-        if (customSkinDir != null) {
+        ICompoundRequestMapper requestMapper = getRootRequestMapperAsCompound();
+		if (customSkinDir != null) {
             File customThemeDir = new File(ISIApplication.get().getCustomSkinDir());
-            getRootRequestMapperAsCompound().add(new CustomThemeDirectoryRequestMapper(themeDir, customThemeDir, "img", "css", "js"));
+            requestMapper.add(new CustomThemeDirectoryRequestMapper(themeDir, customThemeDir, "img", "css", "js"));
         } else {
-            getRootRequestMapperAsCompound().add(new ThemeDirectoryRequestMapper(themeDir, "img", "css", "js"));
+            requestMapper.add(new ThemeDirectoryRequestMapper(themeDir, "img", "css", "js"));
         }
-
+        
+        // Mount audio data resources at expected URLs
+        requestMapper.add(new BinaryFileDataMapper(PlayerResponsePanel.BINARY_FILE_DATA_MAPPER_PREFIX));
+        
 		mountPage("login", getSignInPageClass());
 		mountPage("home", getStudentTOCPageClass());
         mountPage("thome", getTeacherTOCPageClass());
@@ -1103,11 +1110,13 @@ public abstract class ISIApplication extends CwmApplication {
 			return bookmark;
 		
 		// Not in session, need to do query.
-		ISIEvent e = ISIResponseService.get().findLatestMatchingEvent(ISISession.get().getUser(), "pageview:reading");
-		if (e != null && e.getPage() != null) {
-			bookmark = new ContentLoc(e.getPage());
-			session.setBookmark(bookmark);
-			return bookmark;
+		if (!session.isGuestUser()) {
+			ISIEvent e = ISIResponseService.get().findLatestMatchingEvent(session.getUser(), "pageview:reading");
+			if (e != null && e.getPage() != null) {
+				bookmark = new ContentLoc(e.getPage());
+				session.setBookmark(bookmark);
+				return bookmark;
+			}
 		}
 
 		// User has never visited a page before.  Set bookmark to first page.
