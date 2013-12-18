@@ -19,13 +19,11 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -76,7 +74,11 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		if (mStudent == null && mStudent.getObject() == null)
 			throw new IllegalStateException("Must specify a student.\n"); 
 
-		add(new CloseWindowLink("closeWindow"));
+		WebMarkupContainer closeWindowLink = new WebMarkupContainer("closeWindow");
+		add(closeWindowLink);
+		String onClickString = "if (typeof AutoSaver !== 'undefined') { AutoSaver.autoSaveMaybeSave(function() {window.close();});} else {window.close();}";
+		closeWindowLink.add(new AttributeAppender("onclick", onClickString));
+
 		
 		// set the heading for this page - modify the properties file to change this
 		String pageTitleEnd = (new StringResourceModel("TeacherNotes.pageTitle", this, null, "Teacher Notes").getString());
@@ -137,42 +139,5 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		if (mPeriod != null) {
 			mPeriod.detach();
 		}
-	}
-	
-	
-	/**
-	 * Autosave first and then close on success
-	 *
-	 */
-	public class CloseWindowLink extends AjaxLink<Void> {
-		private static final long serialVersionUID = 1L;
-
-		public CloseWindowLink(String id) {
-			super(id);
-		}
-
-		@Override
-		public void onClick(AjaxRequestTarget target) {
-		}
-
-	   	@Override
-    	public IAjaxCallDecorator getAjaxCallDecorator() {
-    		return new IAjaxCallDecorator() {
-
-    			private static final long serialVersionUID = 1L;
-
-    			public CharSequence decorateOnFailureScript(Component component, CharSequence script) {
-    				return script;
-    			}
-
-    			public CharSequence decorateOnSuccessScript(Component component, CharSequence script) {
-    				return "window.close()";
-    			}
-
-    			public CharSequence decorateScript(Component component, CharSequence script) {
-    				return "if (typeof AutoSaver !== 'undefined') { AutoSaver.autoSaveMaybeSave(null);}" + script;
-    			}
-    		};
-    	}
-	}
+	}	
 }
