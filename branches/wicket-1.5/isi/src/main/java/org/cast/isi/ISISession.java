@@ -24,7 +24,6 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
@@ -51,7 +50,7 @@ public class ISISession extends CwmSession {
 	private IModel<User> studentModel;
 	
 	// Set to true if this session should be reported as a guest user
-	private boolean guestAccessAllowed = false;
+	protected boolean guestAccessAllowed = false;
 	
 	private static IModel<User> guestUserModel = Model.of(new User(Role.GUEST));
 	
