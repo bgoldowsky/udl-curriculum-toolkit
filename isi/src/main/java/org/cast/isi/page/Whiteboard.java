@@ -193,7 +193,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 						responseItem.setOutputMarkupId(true);
 						responses.add(responseItem);
 						responseItem.add(new WebMarkupContainer("responseAnchor")
-								.add(new AttributeModifier("name", String.valueOf(response.getId()))));
+								.add(new AttributeModifier("id", "response_" + String.valueOf(response.getId()))));
 						responseItem.add(new ResponseViewerFactory().makeResponseViewComponent("response", new HibernateObjectModel<ISIResponse>(Response.class, response.getId())));
 
 						// Remove from Whiteboard link
