@@ -24,16 +24,13 @@ import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.cast.cwm.components.ShyLabel;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.wami.AudioSkin;
 import org.cast.cwm.wami.PlayerResponsePanel;
-import org.cast.cwm.wami.RecorderResponsePanel;
 import org.cast.isi.ISIDateLabel;
 
 public class ResponseViewer extends org.cast.cwm.data.component.ResponseViewer {

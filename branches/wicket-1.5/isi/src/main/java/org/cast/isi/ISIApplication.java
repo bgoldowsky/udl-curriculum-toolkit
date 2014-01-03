@@ -70,6 +70,7 @@ import org.cast.cwm.CwmApplication;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.IInputStreamProvider;
 import org.cast.cwm.ThemeDirectoryRequestMapper;
+import org.cast.cwm.UserResponseDataMapper;
 import org.cast.cwm.components.CwmPopupSettings;
 import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.IResponseType;
@@ -809,6 +810,10 @@ public abstract class ISIApplication extends CwmApplication {
         // Mount audio data resources at expected URLs
         requestMapper.add(new BinaryFileDataMapper(PlayerResponsePanel.BINARY_FILE_DATA_MAPPER_PREFIX));
         
+        // Mount response data at expected URLs
+        requestMapper.add(new UserResponseDataMapper(UserResponseDataMapper.USER_RESPONSE_DATA_MAPPER_PREFIX));
+
+
 		mountPage("login", getSignInPageClass());
 		mountPage("home", getStudentTOCPageClass());
         mountPage("thome", getTeacherTOCPageClass());
