@@ -40,6 +40,7 @@ import org.cast.cwm.data.User;
 import org.cast.cwm.glossary.BaseGlossaryPanel;
 import org.cast.cwm.glossary.Glossary;
 import org.cast.cwm.glossary.IGlossaryEntry;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.xml.IXmlPointer;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.component.XmlComponent;
@@ -47,9 +48,11 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISIXmlComponent;
 import org.cast.isi.data.WordCard;
-import org.cast.isi.service.WordService;
+import org.cast.isi.service.IWordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 public class GlossaryPanel extends BaseGlossaryPanel {
 	private static final long serialVersionUID = 1L;
@@ -58,15 +61,21 @@ public class GlossaryPanel extends BaseGlossaryPanel {
 	protected boolean readOnly;
 	protected Map<Character,List<IModel<WordCard>>> wordCardMap = null;
 	protected IModel<List<WordCard>> wordCardList = null;
+	
+	@Inject
+	protected IWordService wordService;
+	
+	@Inject
+	protected ICwmSessionService cwmSessionService;
 
 	public GlossaryPanel(String id, IModel<? extends IGlossaryEntry> entry) {
 		super(id, entry);
 			
-		boolean isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
+		boolean isTeacher = cwmSessionService.getUser().getRole().subsumes(Role.TEACHER);
 		if (isTeacher)
 			readOnly = true;
-		// don't allow teachers to add new word cards
-		add(new WebMarkupContainer("newWordButton").setVisible(!isTeacher));
+		// don't allow teachers or guests to add new word cards
+		add(new WebMarkupContainer("newWordButton").setVisible(!isTeacher && !cwmSessionService.getUser().isGuest()));
 	}
 
 	@Override
@@ -80,7 +89,7 @@ public class GlossaryPanel extends BaseGlossaryPanel {
 		synchronized(this) {
 			if (wordCardMap == null) {
 				wordCardMap = new HashMap<Character, List<IModel<WordCard>>>();
-				wordCardList = WordService.get().listWordCards(getMUser().getObject());
+				wordCardList = wordService.listWordCards(getMUser().getObject());
 
 				for (WordCard card : wordCardList.getObject()) {
 					if (card.isCurrent()) {

@@ -53,6 +53,8 @@ public class SectionService implements ISectionService {
 	 * @see org.cast.isi.service.ISectionService#getSectionStatus(org.cast.cwm.data.User, java.lang.String)
 	 */
 	public SectionStatus getSectionStatus(User person, String loc) {
+		if (person.isGuest())
+			return null;
 		return (SectionStatus) Databinder.getHibernateSession().createCriteria(SectionStatus.class)
 				.add(Restrictions.eq("user", person))
 				.add(Restrictions.eq("loc", loc))

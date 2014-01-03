@@ -123,7 +123,7 @@ public class MyQuestions extends ISIStandardPage {
 		questionContainer.setOutputMarkupId(true);
 		add(questionContainer);
 		if (mUser.getObject() != null) {
-			questionLister = new QuestionListView("question", ISIApplication.get().getMyQuestionsPageClass(), null, selectedQuestion, mUser.getObject().getId());
+			questionLister = new QuestionListView("question", ISIApplication.get().getMyQuestionsPageClass(), null, selectedQuestion);
 			questionContainer.add(questionLister);
 		} else {
 			questionContainer.add(new WebMarkupContainer("question").add(new WebMarkupContainer("link")));

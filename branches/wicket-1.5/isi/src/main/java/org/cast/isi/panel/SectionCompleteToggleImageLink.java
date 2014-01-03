@@ -19,6 +19,8 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.User;
@@ -29,7 +31,7 @@ import org.cast.isi.service.IFeatureService;
 
 import com.google.inject.Inject;
 
-
+@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", roles={"STUDENT"})})
 public abstract class SectionCompleteToggleImageLink extends SectionCompleteToggleLink {
 
 	private static final long serialVersionUID = 1L;

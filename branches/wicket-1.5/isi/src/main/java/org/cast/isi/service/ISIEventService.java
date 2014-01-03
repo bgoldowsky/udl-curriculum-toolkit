@@ -19,15 +19,32 @@
  */
 package org.cast.isi.service;
 
+import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.Event;
+import org.cast.cwm.data.Role;
 import org.cast.cwm.service.EventService;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.isi.data.ISIEvent;
 
+import com.google.inject.Inject;
+
 public class ISIEventService extends EventService {
+
+	@Inject
+	private ICwmSessionService cwmSessionService;
 
 	@Override
 	public Event newEvent() {
 		return new ISIEvent();
+	}
+	
+	@Override
+	protected IModel<? extends Event> saveEvent (Event e) {
+		if (!cwmSessionService.getUser().getRole().equals(Role.GUEST)) {
+			return super.saveEvent(e);
+		} else {
+			return null;
+		}
 	}
 
 }

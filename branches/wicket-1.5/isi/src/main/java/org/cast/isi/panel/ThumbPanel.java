@@ -66,13 +66,15 @@ public class ThumbPanel extends Panel {
 		IModel<User> mUser = session.getTargetUserModel();
 
 		// If teacher logged in, show ratings of the student they are looking at.
-		boolean isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
-		if (isTeacher)
+		Role role = ISISession.get().getUser().getRole();
+		if (role.equals(Role.GUEST) || role.subsumes(Role.TEACHER))
 			readOnly = true;
 
 		// Set up the prompt and response for this thumb panel
 		IModel<Prompt> mPrompt = ISIResponseService.get().getOrCreatePrompt(PromptType.RATING_THUMB, contentLoc, xmlId);
-		IModel<Response> mResponse = ISIResponseService.get().getResponseForPrompt(mPrompt, mUser);
+		IModel<Response> mResponse = null;
+		if (!role.equals(Role.GUEST))
+			ISIResponseService.get().getResponseForPrompt(mPrompt, mUser);
 		if (mResponse == null || mResponse.getObject() == null && !readOnly)
 			// TODO: this isn't really the correct ResponseType, but it's what we've used in the past.
 			mResponse = ISIResponseService.get().newResponse(mUser, CwmApplication.get().getResponseType("TEXT"), mPrompt);

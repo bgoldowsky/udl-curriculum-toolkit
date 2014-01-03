@@ -20,6 +20,7 @@
 package org.cast.isi.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseData;
+import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
@@ -519,6 +521,9 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getPagesWithNotes(User student, boolean isUnread) {
+		if (student.getRole().equals(Role.GUEST))
+			return Collections.EMPTY_LIST;
+		
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getPagesWithNotesByStudentAndUnreadStatus");
 		q.setParameter("student", student);
 		q.setParameter("isUnread", isUnread);
@@ -533,6 +538,9 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getPagesWithNotes(User student) {
+		if (student.getRole().equals(Role.GUEST))
+			return Collections.EMPTY_LIST;
+		
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getPagesWithNotesByStudent");
 		q.setParameter("student", student);
 		q.setCacheable(true);
@@ -544,6 +552,9 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<FeedbackMessage> getNotesForPage(User student, String loc) {
+		if (student.getRole().equals(Role.GUEST))
+			return Collections.EMPTY_LIST;
+
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getNotesForPage");
 		q.setParameter("student", student);
 		q.setParameter("loc", loc);
