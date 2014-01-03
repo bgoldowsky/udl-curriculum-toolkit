@@ -19,18 +19,19 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
-import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.service.HighlightService.HighlightType;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.service.IHighlightService;
 import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.xml.XmlSectionModel;
-import org.cast.isi.ISISession;
 import org.cast.isi.behavior.HighlightStateChangeBehavior;
 import org.cast.isi.data.ContentLoc;
 
@@ -50,34 +51,31 @@ import com.google.inject.Inject;
  * @author jbrookover
  *
  */
+@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", deny= {"GUEST"}, roles = {"STUDENT"})})
 public class HighlightControlPanel extends Panel {
 	
 	private static final long serialVersionUID = 1L;
 
-	protected boolean isTeacher;
-	protected ContentLoc loc;
-	protected boolean highlightOn = false;
-	protected String highlightColor = "";
-	
 	@Inject
 	protected IHighlightService highlightService;
 
 	@Inject
 	protected IUserPreferenceService preferenceService;
 	
+	@Inject
+	protected ICwmSessionService cwmSessionService;
 
 	public HighlightControlPanel(String id, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
-		this.loc = loc;
 		setMarkupId(IHighlightService.GLOBAL_CONTROL_ID);
 		setOutputMarkupId(true);
-
-		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
+		
+		IModel<User> mUser = cwmSessionService.getUserModel();
+		Boolean prefValue = preferenceService.getUserPreferenceBoolean(mUser, "highlightOn");
+		boolean highlightOn = (prefValue==null) ? false : prefValue;		
+		String highlightColor = "";
 		
 		// determine if any highlighter is on  - pass ON state into the correct controller below
-		IModel<User> mUser = ISISession.get().getUserModel();		
-		highlightOn = (preferenceService.getUserPreferenceBoolean(mUser, "highlightOn") != null  &&
-				preferenceService.getUserPreferenceBoolean(mUser, "highlightOn") == true);
 		if (highlightOn) {
 			highlightColor = preferenceService.getUserPreferenceString(mUser, "highlightColor");
 		}
@@ -86,7 +84,6 @@ public class HighlightControlPanel extends Panel {
 		for (HighlightType type : highlightService.getHighlighters()) {
 			highlightController = new HighlightController(type.getColor().toString(), type, loc, mSection);
 			add(highlightController);
-			// set this highlighter to ON
 			if (highlightOn && highlightColor.equals(Character.toString(type.getColor()))) {
 				highlightController.setHighlightOn(true);
 			}
@@ -94,9 +91,7 @@ public class HighlightControlPanel extends Panel {
 		
 		// add the behavior that will track js side changes to the highlight state
 		add(new HighlightStateChangeBehavior());
-
 	}
-	
 	
 	@Override
 	protected void onBeforeRender() {

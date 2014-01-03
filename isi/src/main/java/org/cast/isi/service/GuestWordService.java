@@ -19,68 +19,47 @@
  */
 package org.cast.isi.service;
 
+import java.util.Collections;
 import java.util.List;
 
-import net.databinder.hib.Databinder;
-import net.databinder.models.hib.HibernateListModel;
-import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.cast.cwm.data.User;
-import org.cast.cwm.service.ICwmService;
-import org.cast.cwm.service.IEventService;
 import org.cast.isi.data.WordCard;
-import org.cast.isi.data.builder.WordCardsQuery;
-
-import com.google.inject.Inject;
 
 /**
- * Methods to interface with the database representations of WordCards, WordConnections, etc.
+ * Variant of WordService for guest users; doesn't do any DB calls.
  * @author bgoldowsky
  *
  */
-public class WordService implements IWordService  {
+public class GuestWordService implements IWordService  {
 	
-	@Inject
-	private ICwmService cwmService;
-
-	@Inject
-	private IEventService eventService;
-
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IWordService#getWordCard(java.lang.Long)
 	 */
 	public IModel<WordCard> getWordCard (Long id) {
-		return new HibernateObjectModel<WordCard>(WordCard.class, id);
+		throw new RuntimeException("Cannot get word card for guest user");
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IWordService#getWordCard(java.lang.String, org.cast.cwm.data.User)
 	 */
 	public IModel<WordCard> getWordCard (String word, User user) {		
-		return new HibernateObjectModel<WordCard>(new WordCardsQuery().setWord(word).setUser(user));
+		throw new RuntimeException("Cannot get word card for guest user");
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IWordService#listWordCards(org.cast.cwm.data.User)
 	 */
+	@SuppressWarnings("unchecked")
 	public IModel<List<WordCard>> listWordCards(User user) {
-		return new HibernateListModel<WordCard>(new WordCardsQuery().setUser(user));
+		return Model.ofList(Collections.EMPTY_LIST);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IWordService#getWordCardCreate(java.lang.String, org.cast.cwm.data.User, boolean)
 	 */
 	public IModel<WordCard> getWordCardCreate (String word, User user, boolean inGlossary) {
-		IModel<WordCard> cardModel = getWordCard(word, user);
-		if (cardModel.getObject() != null)
-			return cardModel;
-		WordCard wc = new WordCard(word, user);
-		wc.setGlossaryWord(inGlossary);
-		Databinder.getHibernateSession().save(wc);
-		cwmService.flushChanges();
-		eventService.saveEvent("wordcard:create", word, "glossary");
-		cardModel.setObject(wc);
-		return cardModel;
+		throw new RuntimeException("Cannot get word card for guest user");
 	}
 }

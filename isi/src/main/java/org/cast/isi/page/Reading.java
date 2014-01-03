@@ -19,8 +19,6 @@
  */
 package org.cast.isi.page;
 
-import lombok.Getter;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -32,6 +30,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.link.PopupSettings;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -47,8 +46,6 @@ import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.tag.component.TagPanel;
-import org.cast.cwm.wami.IWamiSupportingComponent;
-import org.cast.cwm.wami.WamiAppletHolder;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.ISIApplication;
@@ -69,25 +66,23 @@ import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.IQuestionService;
 import org.cast.isi.validator.QuestionNameValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-@AuthorizeInstantiation("STUDENT")
-public class Reading extends ISIStandardPage implements IHeaderContributor, IWamiSupportingComponent {
+@AuthorizeInstantiation("GUEST")
+public class Reading extends ISIStandardPage implements IHeaderContributor {
 	
 	private static final long serialVersionUID = 1L;
 
 	protected final boolean showXmlContent;
-
-	protected static final Logger log = LoggerFactory.getLogger(Reading.class);
 
 	protected IModel<User> mTargetUser;
 	protected XmlSectionModel mSection;
 	protected IModel<Prompt> mNotesPrompt;
 	protected ResponseMetadata pageNotesMetadata = new ResponseMetadata();
 	protected boolean showSectionToggleTextLink;
+	protected boolean guest;
+
 
 	@Inject
 	protected IQuestionService questionService;
@@ -101,10 +96,6 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
 	@Inject
 	IUserPreferenceService userPreferenceService;
 	
-	@Getter
-	private WamiAppletHolder wamiAppletHolder;
-	
-
 	public Reading (PageParameters parameters) {
 		this(parameters, true);
 	}
@@ -125,7 +116,8 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
 
 		mTargetUser = ISISession.get().getTargetUserModel();
 		boolean teacher = ISISession.get().getUser().getRole().equals(Role.TEACHER);
-
+		guest = mTargetUser.getObject().isGuest();
+		
     	setLoc(parameters);
     	
 		addXmlComponent((ISIXmlSection) mSection.getObject());
@@ -136,7 +128,6 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
 		addTaggingPanel();
 		addTopNavigation(mSection, teacher);
 		addBottomNavigation(mSection, teacher);
-		addWamiAppletHolder();
 	}
 
 	@Override
@@ -171,10 +162,6 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
 	
 	protected void addBottomNavigation(IModel<XmlSection> mSection, boolean teacher) {
 		add (ISIApplication.get().getBottomNavigation("pageNavPanelBottom", mSection, teacher));
-	}
-
-	private void addWamiAppletHolder() {
-		add(new WamiAppletHolder("wami"));
 	}
 
 	protected void addSectionCompleteToggle(ISIXmlSection section) {
@@ -222,7 +209,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
 		return (section != null) && section.isLockResponse();
 	}
 
-	public void addHighlightPanel() {	
+	public void addHighlightPanel() {
 		boolean highlightsPanelOn = ISIApplication.get().isHighlightsPanelOn();
 		
 		CollapseToggleLink highlightToggleLink = new CollapseToggleLink("highlightToggleLink", "highlightToggleLink", "highlightToggle");
@@ -230,17 +217,23 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
 		highlightToggleLink.setVisible(highlightsPanelOn);
 		highlightToggleLink.setEventPageName(getPageName());
 		
-		HighlightControlPanel highlightControlPanel = new HighlightControlPanel("highlightControlPanel", loc, mSection);
-		add(highlightControlPanel);		
-		highlightControlPanel.setVisible(highlightsPanelOn);
-		
-		HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", 
+		add(new NoHighlightModal("noHighlightModal"));
+
+		if (!guest) {
+			HighlightControlPanel highlightControlPanel = new HighlightControlPanel("highlightControlPanel", loc, mSection);
+			add(highlightControlPanel);		
+			highlightControlPanel.setVisible(highlightsPanelOn);
+
+			HighlightDisplayPanel highlightDisplayPanel = new HighlightDisplayPanel("highlightDisplayPanel", 
 					responseService.getOrCreatePrompt(PromptType.PAGEHIGHLIGHT, loc), 
 					ISISession.get().getTargetUserModel());
-		highlightDisplayPanel.setVisible(highlightsPanelOn);
-		highlightDisplayPanel.setSaveState(true);
-		add(highlightDisplayPanel);
-		add(new NoHighlightModal("noHighlightModal"));
+			highlightDisplayPanel.setVisible(highlightsPanelOn);
+			highlightDisplayPanel.setSaveState(true);
+			add(highlightDisplayPanel);
+		} else {
+			add(ISIApplication.get().getLoginMessageComponent("highlightControlPanel"));
+			add(new EmptyPanel("highlightDisplayPanel"));
+		}
 	}
 	
 	protected void addNotesPanel () {
@@ -249,18 +242,23 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
 		CollapseToggleLink pageNotesToggleLink = new CollapseToggleLink("pageNotesToggleLink", "pageNotesToggleLink", "pageNotesToggle");
 		add(pageNotesToggleLink);
 		pageNotesToggleLink.setVisible(pageNotesOn);
-
-		setPageNotesMetadata();
-		mNotesPrompt = responseService.getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
-		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mNotesPrompt, pageNotesMetadata, loc);
-		responseButtons.setContext("pagenote");
-		add(responseButtons);
 		
-		ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc, mTargetUser);
-		responseList.setContext("pagenote");
-		responseList.setAllowNotebook(ISIApplication.get().isNotebookOn());
-		responseList.setAllowWhiteboard(ISIApplication.get().isWhiteboardOn());
-		add(responseList);
+		if (!guest) {
+			setPageNotesMetadata();
+			mNotesPrompt = responseService.getOrCreatePrompt(PromptType.PAGE_NOTES, loc);
+			ResponseButtons responseButtons = new ResponseButtons("responseButtons", mNotesPrompt, pageNotesMetadata, loc);
+			responseButtons.setContext("pagenote");
+			add(responseButtons);
+
+			ResponseList responseList = new ResponseList ("responseList", mNotesPrompt, pageNotesMetadata, loc, mTargetUser);
+			responseList.setContext("pagenote");
+			responseList.setAllowNotebook(ISIApplication.get().isNotebookOn());
+			responseList.setAllowWhiteboard(ISIApplication.get().isWhiteboardOn());
+			add(responseList);
+		} else {
+			add(new EmptyPanel("responseButtons"));
+			add(ISIApplication.get().getLoginMessageComponent("responseList"));
+		}
 	}
 	
 	protected void setPageNotesMetadata() {
@@ -279,7 +277,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
     	add(questionContainer);
     	questionContainer.setOutputMarkupId(true);
 		PopupSettings questionPopupSettings = ISIApplication.questionPopupSettings;
-    	QuestionListView questionList = new QuestionListView("questionList", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null, null);
+    	QuestionListView questionList = new QuestionListView("questionList", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null);
     	questionList.setOutputMarkupId(true);
 		questionContainer.add(questionList);
 		questionContainer.add(new WebMarkupContainer("qButtonVisible"));
@@ -352,8 +350,12 @@ public class Reading extends ISIStandardPage implements IHeaderContributor, IWam
 		add(myTagsToggleLink);
 		myTagsToggleLink.setVisible(myTagsOn);
 
-		ContentElement ce = responseService.getOrCreateContentElement(loc).getObject();
-		add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()).setRenderBodyOnly(true));
+		if (!guest) {
+			ContentElement ce = responseService.getOrCreateContentElement(loc).getObject();
+			add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()).setRenderBodyOnly(true));
+		} else {
+			add(ISIApplication.get().getLoginMessageComponent("tagPanel"));
+		}
 	}
 	
 	

@@ -19,11 +19,13 @@
  */
 package org.cast.isi.panel;
 
-import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -39,6 +41,13 @@ import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.service.IResponseService;
 import org.cast.isi.data.ContentLoc;
 
+import com.google.inject.Inject;
+
+/**
+ * Renders a button for creating each allowed type of response for a given prompt.
+ *
+ */
+@AuthorizeActions(actions = { @AuthorizeAction(action="ENABLE", roles={"STUDENT"})})
 public class ResponseButtons extends Panel {
 
 	@Getter @Setter
@@ -108,7 +117,7 @@ public class ResponseButtons extends Panel {
 			super.onComponentTag(tag);
 			if (openEditor == type)
 				tag.append("class", "selected", " ");
-			else if (openEditor != null)
+			else if (openEditor != null || !isEnabledInHierarchy())
 				tag.append("class", "off", " ");
 			if (metadata.getType(type).isPreferred()) 
 				tag.append("class", "preferred", " ");

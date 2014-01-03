@@ -19,11 +19,9 @@
  */
 package org.cast.isi.panel;
 
-import net.databinder.auth.hib.AuthDataSession;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.cast.cwm.data.User;
 import org.cast.isi.ISIApplication;
 
 /**
@@ -45,6 +43,7 @@ public abstract class HeaderPanel extends ISIPanel {
 		super(id);
 		this.parameters = parameters;
 		addCommonComponents();
+		addUserInfo();
 		addButtons();
 	}
 
@@ -52,13 +51,10 @@ public abstract class HeaderPanel extends ISIPanel {
 		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null))
 			.setEscapeModelStrings(false));
 		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null))
-			.setEscapeModelStrings(false));
-		
-		User user = (User) AuthDataSession.get().getUser();
-		add(new Label("userName", (user == null ? new StringResourceModel("unknownUserName", this, null).getString() : user.getFullName())));			
-
-		add(new ISIApplication.LogoutLink("logoutLink"));
+			.setEscapeModelStrings(false));		
 	}
+	
+	public abstract void addUserInfo();
 	
 	public abstract void addButtons();
 

@@ -116,6 +116,7 @@ import org.cast.isi.panel.GlossaryLink;
 import org.cast.isi.panel.ImageDetailButtonPanel;
 import org.cast.isi.panel.LockingResponseButtons;
 import org.cast.isi.panel.LockingResponseList;
+import org.cast.isi.panel.MessageBox;
 import org.cast.isi.panel.MiniGlossaryLink;
 import org.cast.isi.panel.MiniGlossaryModal;
 import org.cast.isi.panel.PageLinkPanel;
@@ -161,11 +162,13 @@ public class ISIXmlComponent extends XmlComponent {
 	@Getter @Setter private ResponseFeedbackPanel responseFeedbackPanel;
 	@Getter @Setter protected boolean inGlossary = false;
 	
-	protected boolean isTeacher = false;
+	protected boolean isGuest   = false;
+	protected boolean isTeacher = false; // will be true if user is teacher OR higher privilege
 
 	public ISIXmlComponent(String id, ICacheableModel<? extends IXmlPointer> rootEntry, String transformName) {
 		super(id, rootEntry, transformName);
 		User user = cwmSessionService.getUser();
+		isGuest = user.isGuest();
 		isTeacher = user!=null ? user.getRole().subsumes(Role.TEACHER) : false;
 	}
 
@@ -542,17 +545,20 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<Prompt> pm = responseService.getOrCreatePrompt(PromptType.FEEDBACK, loc, responseGroupId);
 			ResponseFeedbackButtonPanel component = new ResponseFeedbackButtonPanel(wicketId, pm, responseFeedbackPanel);
 			String forRole = elt.getAttribute("for");
-			boolean usesTeacherButton = cwmSessionService.getUser().getRole().subsumes(Role.TEACHER);
-			component.setVisibilityAllowed(usesTeacherButton ? forRole.equals("teacher") : forRole.equals("student"));
+			component.setVisibilityAllowed(isTeacher ? forRole.equals("teacher") : forRole.equals("student"));
 			component.add(new AttributeRemover("rgid", "for"));
 			return component;
 		} else if (wicketId.startsWith("scoreButtons_")) {
+			if (isGuest)
+				return new EmptyPanel(wicketId);
 			IModel<Prompt> promptModel = getPrompt(elt);
 			IModel<User> studentModel = ISISession.get().getTargetUserModel();
 			ISortableDataProvider<Response> responseProvider = responseService.getResponseProviderForPrompt(promptModel, studentModel);
 			TeacherScoreResponseButtonPanel component = new TeacherScoreResponseButtonPanel(wicketId, responseProvider);
 			return component;
 		} else if (wicketId.startsWith("showScore_")) {
+			if (isGuest)
+				return new EmptyPanel(wicketId);
 			IModel<Prompt> promptModel = getPrompt(elt);
 			IModel<User> studentModel = cwmSessionService.getUserModel();
 			ISortableDataProvider<Response> responseProvider = responseService.getResponseProviderForPrompt(promptModel, studentModel);
@@ -609,6 +615,8 @@ public class ISIXmlComponent extends XmlComponent {
 			return component.add(new AttributeRemover("for"));
 
 		} else if (wicketId.startsWith("responseList_")) {
+			if (isGuest)
+				return new MessageBox(wicketId, "guestResponseArea");
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
@@ -622,6 +630,8 @@ public class ISIXmlComponent extends XmlComponent {
 			return dataView;
 
 		} else if (wicketId.startsWith("locking_responseList_")) {
+			if (isGuest)
+				return new EmptyPanel(wicketId);
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
@@ -635,6 +645,8 @@ public class ISIXmlComponent extends XmlComponent {
 			return dataView;
 
 		} else if (wicketId.startsWith("period_responseList_")) {
+			if (isGuest)
+				return new EmptyPanel(wicketId);
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
@@ -697,7 +709,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("teacherBar_")) {
 			WebMarkupContainer teacherBar = new WebMarkupContainer(wicketId);
-			teacherBar.setVisible(!cwmSessionService.getUser().getRole().equals(Role.STUDENT) && !inGlossary);
+			teacherBar.setVisible(isTeacher && !inGlossary);
 			return teacherBar;
 
 		} else if (wicketId.startsWith("compareResponses_")) {
@@ -845,6 +857,7 @@ public class ISIXmlComponent extends XmlComponent {
 			String id = elt.getAttribute("id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			return new SectionCompleteImageContainer(wicketId, currentSectionModel);
+			
 		} else if (wicketId.startsWith("itemSummary_")) {
 			boolean noAnswer = Boolean.parseBoolean(elt.getAttributeNS(null, "noAnswer"));
 			Component singleSelectComponent = new SingleSelectSummaryXmlComponentHandler().makeComponent(wicketId, elt, getModel(), noAnswer);

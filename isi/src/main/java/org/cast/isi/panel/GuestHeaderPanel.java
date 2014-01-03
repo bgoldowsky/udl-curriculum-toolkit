@@ -21,47 +21,37 @@ package org.cast.isi.panel;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.databinder.auth.hib.AuthDataSession;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
-import org.cast.cwm.data.User;
 import org.cast.isi.ISIApplication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.cast.isi.page.Login;
 
 /**
  * This header panel implements the top level navigation for this application.  It adds
  * both the tabular buttons and the buttons for popup windows.
  * 
  * @author lynnmccormack
+ * @author bgoldowsky
  *
  */
-public class DefaultHeaderPanel extends HeaderPanel {
-	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(DefaultHeaderPanel.class);
+public class GuestHeaderPanel extends HeaderPanel {
 	
-	@Getter @Setter
-	BookmarkablePageLink<Page> notebookLink, whiteboardLink;
+	private static final long serialVersionUID = 1L;
 	
 	@Getter @Setter
 	GlossaryLink glossaryLink;
 	
-	public DefaultHeaderPanel(String id, PageParameters parameters) {
+	public GuestHeaderPanel(String id, PageParameters parameters) {
 		super(id, parameters);
 	}
-
+	
 	@Override
 	public void addUserInfo() {
-		User user = (User) AuthDataSession.get().getUser();
-		add(new Label("userName", (user == null ? new StringResourceModel("unknownUserName", this, null).getString() : user.getFullName())));
-		add(new ISIApplication.LogoutLink("logoutLink"));
+		add(new BookmarkablePageLink<Login>("loginLink", ISIApplication.get().getSignInPageClass()));
 	}
 
 	@Override
@@ -76,37 +66,10 @@ public class DefaultHeaderPanel extends HeaderPanel {
 		application.setLinkProperties(contentsLink);
 		add(contentsLink);
 		
-		BookmarkablePageLink<Void> rcLink = new BookmarkablePageLink<Void>("myResponseCollectionsLink", application.getResponseCollectionsPageClass());
-		rcLink.setVisible(application.isResponseCollectionsOn());
-		application.setLinkProperties(rcLink);
-		add(rcLink);
-
-		BookmarkablePageLink<Void> questionsLink = new BookmarkablePageLink<Void>("myQuestionsLink", application.getMyQuestionsPageClass());
-		questionsLink.setVisible(application.isMyQuestionsOn());
-		application.setLinkProperties(questionsLink);
-		add(questionsLink);
-
-		BookmarkablePageLink<Void> tagsLink = new BookmarkablePageLink<Void>("myTagsLink", application.getTagsPageClass());
-		tagsLink.setVisible(application.isTagsOn());
-		application.setLinkProperties(tagsLink);
-		add(tagsLink);
-
-		notebookLink = new BookmarkablePageLink<Page>("notebookLink", application.getNotebookPageClass());
-		application.setLinkProperties(notebookLink);
-		notebookLink.setVisible(application.isNotebookOn());
-		add(notebookLink);
-
-		whiteboardLink = new BookmarkablePageLink<Page>("whiteboardLink", application.getWhiteboardPageClass());
-		application.setLinkProperties(whiteboardLink);
-		whiteboardLink.setVisible(application.isWhiteboardOn());
-		add(whiteboardLink);
-		
 		glossaryLink = new GlossaryLink("glossaryLink", null);
 		application.setLinkProperties(glossaryLink);
 		glossaryLink.setVisible(application.isGlossaryOn());
 		add(glossaryLink);
-		
-
 	}
 
 	@Override
@@ -122,12 +85,6 @@ public class DefaultHeaderPanel extends HeaderPanel {
 			prefix="home";
 		else if (application.getReadingPageClass().isAssignableFrom(pageClass))
 			prefix = "contents";
-		else if (application.getResponseCollectionsPageClass().isAssignableFrom(pageClass))
-			prefix= "myResponseCollections";
-		else if (application.getMyQuestionsPageClass().isAssignableFrom(pageClass))
-			prefix = "myQuestions";
-		else if (application.getTagsPageClass().isAssignableFrom(pageClass))
-			prefix = "myTags";
 		
 		if (prefix != null) {
 			WebMarkupContainer link = (WebMarkupContainer) get(prefix + "Link");

@@ -25,6 +25,8 @@ import java.util.Map;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -43,9 +45,11 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.WordCard;
 import org.cast.isi.panel.GlossaryPanel;
-import org.cast.isi.service.WordService;
+import org.cast.isi.service.IWordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
 	private static final long serialVersionUID = 1L;
@@ -54,6 +58,9 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 	protected Map<String, IGlossaryEntry> listUserEntries;
 	protected IModel<List<WordCard>> wordCardList;
 	
+	@Inject
+	protected IWordService wordService;
+
 	/**
 	 * The glossary page is used to wrap the glossary panel.  It adds the header/footer
 	 * and also the form to add new user words (wordcard)
@@ -70,7 +77,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 			if (mEntry == null) {
 				// Try WordCards
 				Long id = params.get("word").toLong();
-				mEntry = WordService.get().getWordCard(id);
+				mEntry = wordService.getWordCard(id);
 			}
 		}
 		
@@ -110,7 +117,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 					PageParameters param = new PageParameters();
 					
 					if (ISIApplication.get().getGlossary().getEntryByForm(newWord) == null) { // TODO should this get by headword only?
-						IModel<WordCard> wc = WordService.get().getWordCardCreate(newWord, ISISession.get().getUser(), false);
+						IModel<WordCard> wc = wordService.getWordCardCreate(newWord, ISISession.get().getUser(), false);
 						param.add("wc", wc.getObject().getId().toString());
 					} else {
 						// word is already in the glossary

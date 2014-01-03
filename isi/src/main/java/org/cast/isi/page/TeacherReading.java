@@ -114,8 +114,7 @@ public class TeacherReading extends Reading implements IHeaderContributor {
     	add(questionContainer);
 		
     	PopupSettings questionPopupSettings = ISIApplication.get().questionPopupSettings;
-    	QuestionListView questionList = new QuestionListView("questionList", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null, 
-    			(ISISession.get().getTargetUserModel().getObject().getId()));  
+    	QuestionListView questionList = new QuestionListView("questionList", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null);  
 		questionContainer.add(questionList);
 		questionContainer.add(new WebMarkupContainer("qButtonVisible").setVisible(false));
 				

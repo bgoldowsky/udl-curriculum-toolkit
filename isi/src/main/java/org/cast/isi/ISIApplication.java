@@ -41,6 +41,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.PackageResourceGuard;
 import org.apache.wicket.markup.html.WebComponent;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -84,12 +85,13 @@ import org.cast.cwm.glossary.Glossary;
 import org.cast.cwm.glossary.GlossaryService;
 import org.cast.cwm.glossary.GlossaryTransformer;
 import org.cast.cwm.service.HighlightService;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.IHighlightService;
 import org.cast.cwm.service.IResponseService;
 import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.service.IUserPreferenceService;
-import org.cast.cwm.service.UserPreferenceService;
+import org.cast.cwm.service.UserPreferenceServiceProvider;
 import org.cast.cwm.tag.TagService;
 import org.cast.cwm.wami.PlayerResponsePanel;
 import org.cast.cwm.xml.FileXmlDocumentSource;
@@ -123,6 +125,7 @@ import org.cast.isi.panel.DefaultHeaderPanel;
 import org.cast.isi.panel.DefaultNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
+import org.cast.isi.panel.GuestHeaderPanel;
 import org.cast.isi.panel.HeaderPanel;
 import org.cast.isi.panel.PageNavPanel;
 import org.cast.isi.panel.TeacherHeaderPanel;
@@ -136,10 +139,12 @@ import org.cast.isi.service.ISIEmailService;
 import org.cast.isi.service.ISIEventService;
 import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
+import org.cast.isi.service.IWordService;
 import org.cast.isi.service.LinkPropertiesService;
 import org.cast.isi.service.PageClassService;
 import org.cast.isi.service.QuestionService;
 import org.cast.isi.service.SectionService;
+import org.cast.isi.service.WordServiceProvider;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
@@ -148,7 +153,7 @@ import org.slf4j.LoggerFactory;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 import wicket.contrib.tinymce.settings.TinyMCESettings.Theme;
 
-import com.google.inject.Binder;
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
@@ -256,6 +261,9 @@ public abstract class ISIApplication extends CwmApplication {
 	
 	@Inject
 	protected ISiteService siteService;
+	
+	@Inject
+	protected ICwmSessionService cwmSessionService;
 
 	@Inject
 	protected IHighlightService highlightService;
@@ -283,27 +291,38 @@ public abstract class ISIApplication extends CwmApplication {
 	@Override
 	protected List<Module> getInjectionModules() {
 		List<Module> modules = super.getInjectionModules();
-		modules.add(new Module() {
-        public void configure(Binder binder) {
-    		log.debug("Binding ISI Services");
-			// Temporary while we lose the singleton.
-   			binder.bind(IXmlService.class).toInstance(xmlService);
-			// Temporary while we lose the singleton.
-			binder.bind(IISIResponseService.class).toInstance(ISIResponseService.get());
-			//TODO: Deal with extended interfaces properly.
-			binder.bind(IResponseService.class).toInstance(ISIResponseService.get());
-   			binder.bind(ISectionService.class).to(SectionService.class).in(Scopes.SINGLETON);
-   			binder.bind(IPageClassService.class).to(PageClassService.class).in(Scopes.SINGLETON);
-   			binder.bind(IFeatureService.class).to(FeatureService.class).in(Scopes.SINGLETON);
-   			binder.bind(ILinkPropertiesService.class).to(LinkPropertiesService.class).in(Scopes.SINGLETON);
-   			binder.bind(IEventService.class).to(ISIEventService.class).in(Scopes.SINGLETON);
-   			binder.bind(IQuestionService.class).to(QuestionService.class);
-   			binder.bind(IUserPreferenceService.class).to(UserPreferenceService.class).in(Scopes.SINGLETON);
-			binder.bind(IHighlightService.class).to(HighlightService.class).in(Scopes.SINGLETON);
-   			log.debug("finished binding ISI Services");
-    		}
-        });
+		modules.add(new AbstractModule() {
+			protected void configure() {
+				log.debug("Binding ISI Services");
+				// Temporary while we lose the singleton.
+				bind(IXmlService.class).toInstance(xmlService);
+				// Temporary while we lose the singleton.
+				bind(IISIResponseService.class).toInstance(ISIResponseService.get());
+				//TODO: Deal with extended interfaces properly.
+				bind(IResponseService.class).toInstance(ISIResponseService.get());
+				bind(ISectionService.class).to(SectionService.class).in(Scopes.SINGLETON);
+				bind(IPageClassService.class).to(PageClassService.class).in(Scopes.SINGLETON);
+				bind(IFeatureService.class).to(FeatureService.class).in(Scopes.SINGLETON);
+				bind(ILinkPropertiesService.class).to(LinkPropertiesService.class).in(Scopes.SINGLETON);
+				bind(IEventService.class).to(ISIEventService.class).in(Scopes.SINGLETON);
+				bind(IQuestionService.class).to(QuestionService.class);
+				bind(IHighlightService.class).to(HighlightService.class).in(Scopes.SINGLETON);
+
+				// These get different implementations based on whether a user is a logged in or not
+				bind(IWordService.class).toProvider(WordServiceProvider.class);
+				bind(IUserPreferenceService.class).toProvider(UserPreferenceServiceProvider.class);
+				log.debug("finished binding ISI Services");
+			}
+		});
         return modules;
+	}
+	
+	@Override
+	protected void authInit() {
+		super.authInit();
+		// Set our custom authorization strategy, with needed bug fix.
+		// TODO: should be able to remove this after wicket 6 migration.
+		getSecuritySettings().setAuthorizationStrategy(new ISIAnnotationsRoleAuthorizationStrategy(this));
 	}
 	
 	protected void init() {
@@ -817,9 +836,7 @@ public abstract class ISIApplication extends CwmApplication {
 	public Class<? extends WebPage> getHomePage(Role role) {
 		if (role.equals(Role.ADMIN) || role.equals(Role.RESEARCHER)) 
 			return getAdminHomePageClass();
-		if (role.equals(Role.TEACHER) || role.equals(Role.STUDENT))
-			return getTocPageClass(role);
-		return getSignInPageClass();
+		return getTocPageClass(role);
 	}
 
 	@Override
@@ -845,8 +862,8 @@ public abstract class ISIApplication extends CwmApplication {
 	 */
 	public Class<? extends WebPage> getTocPageClass(Role role) {
 		if (role == null) {
-			if (ISISession.get().getUser() != null)
-				role = ISISession.get().getUser().getRole();
+			if (cwmSessionService.getUser() != null)
+				role = cwmSessionService.getUser().getRole();
 			else
 				return null;
 		}
@@ -854,6 +871,7 @@ public abstract class ISIApplication extends CwmApplication {
 			return getTeacherTOCPageClass();
 		return getStudentTOCPageClass();
 	}
+	
 	public Class<? extends ISIStandardPage> getReadingPageClass() {
 		User user = CwmSession.get().getUser();
 		if (user!=null && Role.TEACHER.equals(user.getRole()))
@@ -1307,11 +1325,15 @@ public abstract class ISIApplication extends CwmApplication {
 	 * @return
 	 */
 	public HeaderPanel getHeaderPanel(String id, PageParameters parameters) {
-//		the header panel expects the application to add buttons		
-		if (Role.TEACHER.equals(CwmSession.get().getUser().getRole()))
+		User user = cwmSessionService.getUser();
+		switch(user.getRole()) {
+		case TEACHER:
 			return new TeacherHeaderPanel(id, parameters);
-		else
+		case GUEST:
+			return new GuestHeaderPanel(id, parameters);
+		default:
 			return new DefaultHeaderPanel(id, parameters);
+		}
 	}
 
 	public FooterPanel getFooterPanel(String id, PageParameters parameters) {
@@ -1330,4 +1352,14 @@ public abstract class ISIApplication extends CwmApplication {
 	public AbstractNavBar<? extends XmlSection> getBottomNavigation (String id, IModel<XmlSection> mSection, boolean teacher) {
 		return new PageNavPanel("pageNavPanelBottom", mSection);
 	}
+	
+	/**
+	 * Return a component that asks users to login in to gain access to various features.
+	 * @param wicketId
+	 * @return
+	 */
+	public WebMarkupContainer getLoginMessageComponent(String wicketId) {
+		return new org.cast.isi.panel.LoginMessageBox(wicketId);
+	}
+
 }
