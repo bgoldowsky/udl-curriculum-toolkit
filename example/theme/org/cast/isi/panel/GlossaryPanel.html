@@ -9,10 +9,7 @@
         <ul>
 	    	<li wicket:id="topnav"><a href="#" wicket:id="toplink"></a></li>
         </ul>
-        <wicket:enclosure child="newWordButton">
-       		<wicket:container wicket:id="newWordButton"></wicket:container>
-			<a id="newword" target="_new" onclick="$('#newWordModal').show(); return false;" href="#newWordModal" class="button">Add a new word</a>
-	    </wicket:enclosure>	
+		<a wicket:id="newWordButton" onclick="$('#newWordModal').show(); return false;" href="#newWordModal" class="button">Add a new word</a>
     </div>
 </div>
 
