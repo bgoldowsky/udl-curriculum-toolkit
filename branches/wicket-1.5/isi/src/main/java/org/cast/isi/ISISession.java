@@ -74,6 +74,7 @@ public class ISISession extends CwmSession {
 		IModel<User> realUser = super.getUserModel();
 		if (realUser != null)
 			return realUser;
+
 		if (guestAccessAllowed)
 			return guestUserModel;
 		log.warn("Returning null user model");
@@ -87,7 +88,6 @@ public class ISISession extends CwmSession {
 			return realUser;
 		if (guestAccessAllowed)
 			return guestUserModel.getObject();
-		log.warn("Returning null user");
 		return null;
 	}
 	
