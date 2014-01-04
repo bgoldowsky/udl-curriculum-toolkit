@@ -51,7 +51,7 @@ import com.google.inject.Inject;
  * @author jbrookover
  *
  */
-@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", deny= {"GUEST"}, roles = {"STUDENT"})})
+@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", roles={"STUDENT"})})
 public class HighlightControlPanel extends Panel {
 	
 	private static final long serialVersionUID = 1L;
