@@ -198,14 +198,17 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 				@Override
 				protected void populateItem(ListItem<String> item) {
-					item.add(new Label("text", item.getModelObject()));
+					item.add(new Label("text", item.getModelObject())).setVisible(!item.getModelObject().equals("default"));
 				}
 
 				@Override
-				public boolean isVisible() {
-					return ! (getModelObject() == null || getModelObject().isEmpty());
+				protected void onBeforeRender() {
+					// If there are no starters, make the starters list invisible
+					if (getModelObject() == null || getModelObject().isEmpty()) {
+						setVisible(false);
+					}
+					super.onBeforeRender();
 				}
-				
 			});
 		}
 		
