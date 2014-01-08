@@ -48,6 +48,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
@@ -402,12 +403,12 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 		@Override
 		protected String getDialogTitle() {
-			return new StringResourceModel("Notebook.removeDialogTitle", this, null, "Remove from Notebook?").getString();
+			return new ResourceModel("Notebook.removeDialogTitle", "Remove from Notebook?").getObject();
 		}
 
 		@Override
 		protected String getDialogText() {
-			return new StringResourceModel("Notebook.removeDialogText", this, null, "Are you sure you want to remove this response from the Notebook?").getString();
+			return new ResourceModel("Notebook.removeDialogText", "Are you sure you want to remove this response from the Notebook?").getObject();
 		}
 	}	
 }

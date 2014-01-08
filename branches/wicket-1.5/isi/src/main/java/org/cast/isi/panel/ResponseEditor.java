@@ -53,6 +53,7 @@ import org.cast.cwm.wami.AudioSkin;
 import org.cast.cwm.wami.RecorderResponsePanel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
+import org.cast.isi.mapper.ContentDirectoryMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,8 +139,12 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 				// Template
 				if (typeMD.getTemplates() != null && !typeMD.getTemplates().isEmpty()) {
 					String templateRelativePath = typeMD.getTemplates().get(0);  // path from xml file
+
 					ResourceReference templateResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(templateRelativePath);
 					setTemplateResourceReference(templateResourceRef);
+
+					String absoluteUrl = ContentDirectoryMapper.CONTENT_DIRECTORY_MAPPER_PREFIX + "/" + templateRelativePath;
+					setTemplateURL(absoluteUrl);
 				}
 			}
 		}

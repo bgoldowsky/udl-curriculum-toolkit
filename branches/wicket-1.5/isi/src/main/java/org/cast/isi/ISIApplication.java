@@ -111,6 +111,8 @@ import org.cast.isi.data.ContentElement;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.ISIEvent;
 import org.cast.isi.data.SectionStatus;
+import org.cast.isi.mapper.ContentDirectoryMapper;
+import org.cast.isi.mapper.CustomThemeDirectoryRequestMapper;
 import org.cast.isi.page.AuthoredPopup;
 import org.cast.isi.page.ExceptionPage;
 import org.cast.isi.page.GlossaryPage;
@@ -806,6 +808,9 @@ public abstract class ISIApplication extends CwmApplication {
         } else {
             requestMapper.add(new ThemeDirectoryRequestMapper(themeDir, "img", "css", "js"));
         }
+		
+		// Mount authored content at expected URLs
+		requestMapper.add(new ContentDirectoryMapper(getContentDir(), getDavServer()));
         
         // Mount audio data resources at expected URLs
         requestMapper.add(new BinaryFileDataMapper(PlayerResponsePanel.BINARY_FILE_DATA_MAPPER_PREFIX));
