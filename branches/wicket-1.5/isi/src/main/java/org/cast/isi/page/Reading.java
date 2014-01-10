@@ -216,6 +216,8 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		add(highlightToggleLink);
 		highlightToggleLink.setVisible(highlightsPanelOn);
 		highlightToggleLink.setEventPageName(getPageName());
+		if (guest)
+			highlightToggleLink.setToggleState(false); // Default closed for guests
 		
 		add(new NoHighlightModal("noHighlightModal"));
 
@@ -258,6 +260,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 		} else {
 			add(new EmptyPanel("responseButtons"));
 			add(ISIApplication.get().getLoginMessageComponent("responseList"));
+			pageNotesToggleLink.setToggleState(false);
 		}
 	}
 	
@@ -355,6 +358,7 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
 			add(new TagPanel("tagPanel", ce, ISIApplication.get().getTagLinkBuilder()).setRenderBodyOnly(true));
 		} else {
 			add(ISIApplication.get().getLoginMessageComponent("tagPanel"));
+			myTagsToggleLink.setToggleState(false);
 		}
 	}
 	
