@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+	<title wicket:id="pageTitle"></title>
+</head>
+<body class="themeLogin">
+
+	<div id="homeBox">
+	    <div id="header">
+	         <div id="headerLeft">
+	            <div id="logo">
+	                <img src="img/logos/logo.png" width="50" height="50" alt="Product Logo" title="Product Logo" />
+	            </div>
+	            <div wicket:id="applicationTitle" id="title">
+	                CAST UDL Curriculum Toolkit
+	            </div>
+	            <div wicket:id="applicationSubTitle" id="tagline">
+	                Tagline
+	            </div>
+	        </div>
+	        <div id="headerRight">
+          			<a href="#" wicket:id="register">Create a Free Account</a>
+          			<br />
+          			<a href="#" wicket:id="forgot" >Forgot Password?</a>
+	        </div>
+	    </div>
+	
+	    <div id="loginBox">
+	        <div id="loginContent">
+	            <h1>Welcome! Please login:</h1>
+	            <div id="login">
+	            <form wicket:id="form" name="login" id="login" method="post" action="home.html">
+	                <div wicket:id="login-feedback" id="error">
+	                    Invalid Something or other - Error Message Goes Here
+	                </div>
+	                <div>
+	                    <label wicket:id="usernameLabel" for="username">Username:</label>
+	                    <span wicket:id="username-border"><input wicket:id="username" type="text" name="username" id="username" value="" /></span>
+	                </div>
+	                <div>
+	                    <label wicket:id="passwordLabel" for="password">Password:</label>
+	                    <span wicket:id="password-border"><input wicket:id="password" type="password" name="password" id="password" value="" /></span>
+	                    <input type="submit" value="Login" class="button" />
+	                 </div>
+	            </form>
+	            </div>
+	        </div>
+	        
+	    </div>
+	
+	    <div id="footer" wicket:id="pageFooter">
+	        <div id="copyright">
+	            <p>
+	                <strong>&copy; Copyright 2011</strong>, footer text
+	            </p>
+	        </div>
+	        <div id="build">
+	            <p>
+	                Built with [product name/image]
+	            </p>
+	        </div>
+	    </div>
+	</div>
+
+</body>
+</html>

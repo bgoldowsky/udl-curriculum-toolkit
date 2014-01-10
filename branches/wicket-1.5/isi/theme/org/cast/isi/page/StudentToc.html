@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+<title>Product Name</title>
+<link type="text/css" rel="stylesheet" media="screen" href="../css/main.css" />
+<!--[if lt IE 7]>
+<link type="text/css" rel="stylesheet" media="screen" href="../css/ie6.css" />
+<![endif]-->
+<link type="text/css" rel="stylesheet" media="screen" href="../css/buttons.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/boxes.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/toolbar.css" />
+
+<script type="text/javascript" src="./js/less/less-1.0.41.min.js"></script>
+<script type="text/javascript" src="./js/jquery/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="./js/lang/en.js"></script>
+<script type="text/javascript" src="./js/functions.js"></script>
+<!--
+<script type="text/javascript" src="http://portal.texthelp.com/EmbeddedBrowsealoud/v163/obfBATH.js"></script>
+<script type="text/javascript" src="./js/toolbar.js"></script>
+-->
+</head>
+<body>
+
+<div id="header">
+    <div id="logo">
+        Product Name
+    </div>
+    <p id="user">
+        <strong wicket:id="welcome">Welcome: Person's Name</strong>,
+        <a wicket:id="logout" href="#">Logout</a>
+    </p>
+</div>
+
+<div id="tabBar">
+    <ul id="tabs">
+        <li><span class="current"><img src="../img/icons/home.png" width="15" height="15" alt="" /> Home</span></li>
+        <li><a href="#">Contents</a></li>
+        <li><a href="#">My Models</a></li>
+        <li><a href="#">My Questions</a></li>
+        <li><a href="#">My Tags</a></li>
+    </ul>
+    <ul id="tabRight">
+        <li><a href="#" class="button">Notebook</a></li>
+        <li><a href="#" class="button off">Whiteboard</a></li>
+        <li><a href="#" class="button">Glossary</a></li>
+    </ul>
+</div>
+
+<wicket:extend>
+<div id="wrapper">
+    <div id="topnav">
+        <div id="pageTitle">
+            <!-- <h1>Table of Contents</h1> -->
+            <a href="javascript:expandAll('.tocList');">Expand All</a> | <a href="javascript:collapseAll('.tocList');">Collapse All</a>
+        </div>
+         <div id="pageJump">
+            <form wicket:id="quickFlipForm" action="#">
+            	<label wicket:id="numberFieldLabel"><strong>Quick Flip:</strong></label>
+                <input wicket:id="numberField" type="text" class="pageJumpVal" />
+                <a wicket:id="goLink" href="#" class="button">Go</a>
+            </form>
+        </div>
+    </div>
+
+    <div id="mainWrapper">
+        <div id="mainContent">
+            <div id="mainContentLeft">
+                <!-- BEGIN - Main Content -->
+                <div class="leftContainer">
+
+                    <ul class="tocList">
+                        <li wicket:id="chapterRepeater" class="collapseBox">
+						  <h2 wicket:id="chapterTitle">chap</h2>
+						  <wicket:container wicket:id="chapterContent">
+						    TOC content filled in from XML
+						  </wicket:container>
+						</li>
+<wicket:remove>
+                        <li class="collapseBox">
+                            <h2>Lesson 1: Something</h2>
+                            <div class="collapseBody">
+                                <h3>Consider</h3>
+                                <ul>
+                                    <li>
+                                        <div class="tocIcons">
+                                            <img src="../img/icons/check_done.png" width="17" height="15" alt="Completed" title="Completed" />
+                                            <img src="../img/icons/activity_overview.png" width="15" height="15" alt="Overview" title="Overview" />
+                                        </div>
+                                        <div class="tocPageLinks">
+                                            <a href="#">Lorem ipsum dolor sit amet, consectetur.</a>
+                                            <a href="#" class="button pagenum">1</a>
+                                            <a href="#" class="button pagenum">2</a>
+                                            <a href="#" class="button pagenum">3</a>
+                                            <a href="#" class="button pagenum">4</a>
+                                            <a href="#" class="button pagenum">5 <img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" /></a>
+                                        </div>
+                                    </li>
+                                    <li class="current">
+                                        <div class="tocIcons">
+                                            <img src="../img/icons/check_notdone.png" width="17" height="15" alt="Incomplete" title="Incomplete" />
+                                            <img src="../img/icons/activity_activity.png" width="15" height="15" alt="Activity" title="Activity" />
+                                        </div>
+                                        <div class="tocPageLinks">
+                                            <a href="#">Lorem ipsum dolor sit amet, consectetur.</a>
+                                            <a href="#" class="button pagenum">1</a>
+                                            <a href="#" class="button pagenum">2</a>
+                                            <a href="#" class="button pagenum">3</a>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="tocIcons">
+                                            <img src="../img/icons/check_notdone.png" width="17" height="15" alt="Incomplete" title="Incomplete" />
+                                            <img src="../img/icons/activity_brainstorm.png" width="15" height="15" alt="Brainstorm" title="Brainstorm" />
+                                        </div>
+                                        <div class="tocPageLinks">
+                                            <a href="#">Lorem ipsum dolor sit amet, consectetur.</a>
+                                            <a href="#" class="button pagenum">11</a>
+                                            <a href="#" class="button pagenum">12</a>
+                                            <a href="#" class="button pagenum">13</a>
+                                            <a href="#" class="button pagenum">14</a>
+                                            <a href="#" class="button pagenum">15</a>
+                                            <a href="#" class="button pagenum">16</a>
+                                            <a href="#" class="button pagenum">17</a>
+                                            <a href="#" class="button pagenum">18</a>
+                                            <a href="#" class="button pagenum">19</a>
+                                            <a href="#" class="button pagenum">20</a>
+                                            <a href="#" class="button pagenum">21</a>
+                                            <a href="#" class="button pagenum">22</a>
+                                            <a href="#" class="button pagenum">23</a>
+                                            <a href="#" class="button pagenum">24</a>
+                                            <a href="#" class="button pagenum">25</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <h3>Investigate</h3>
+                                <ul>
+                                    <li>x</li>
+                                    <li>y</li>
+                                    <li>z</li>
+                                </ul>
+                            </div>
+                        
+                        <li class="collapseBox">
+                            <h2>Lesson 2: Something</h2>
+                            <div class="collapseBody">
+                                <div class="tocImage">
+                                    <img src="../img/1x1.gif" width="100" height="100" alt="image placeholder" title="image placeholder" style="background: #CCCCCC;" />
+                                </div>
+                                <div class="tocImageOffset">
+                                    <h3>Consider</h3>
+                                    <ul>
+                                        <li>
+                                            <div class="tocIcons">
+                                                <img src="../img/icons/check_notdone.png" width="17" height="15" alt="Incomplete" title="Incomplete" />
+                                                <img src="../img/icons/activity_question.png" width="15" height="15" alt="Question" title="Question" />
+                                            </div>
+                                            <div class="tocPageLinks">
+                                                <a href="#">Lorem ipsum dolor sit amet, consectetur.</a>
+                                                <img src="../img/icons/envelope_new.png" width="15" height="15" alt="message" title="message" />
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tocIcons">
+                                                <img src="../img/icons/check_notdone.png" width="17" height="15" alt="Incomplete" title="Incomplete" />
+                                                <img src="../img/icons/activity_assess.png" width="15" height="15" alt="Assess" title="Assess" />
+                                            </div>
+                                            <div class="tocPageLinks">
+                                                <a href="#">Lorem ipsum dolor sit amet, consectetur.</a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tocIcons">
+                                                <img src="../img/icons/check_notdone.png" width="17" height="15" alt="Incomplete" title="Incomplete" />
+                                                <img src="../img/icons/activity_reading.png" width="15" height="15" alt="Read" title="Read" />
+                                            </div>
+                                            <div class="tocPageLinks">
+                                                <a href="#">Lorem ipsum dolor sit amet, consectetur.</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <h3>Investigate</h3>
+                                    <ul>
+                                        <li>x</li>
+                                        <li>y</li>
+                                        <li>z</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="collapseBox">
+                            <h2>Lesson 3: Something</h2>
+                            <div class="collapseBody">
+                                <h3>Investigate</h3>
+                                <ul>
+                                    <li>x</li>
+                                    <li>y</li>
+                                    <li>z</li>
+                                </ul>
+                            </div>
+                        </li>
+		      </li>
+</wicket:remove>
+                    </ul>
+
+                </div>
+               <!-- END - Main Content -->
+            </div>
+        </div>
+        <div id="mainContentRight">
+            <!-- BEGIN - Support Content -->
+	   		<wicket:enclosure child="classMessageToggleLink">
+		   		<div class="rightBox">
+	                <h5><a href="#" wicket:id="classMessageToggleLink">Class Message</a></h5>
+					<div class="targetToggle linkToggleBox_classMessageToggleLink">
+	                    <p wicket:id="classMessage">
+	                        Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem. Nullam pharetra est eget nisl elementum at volutpat lorem egestas.
+	                    </p>
+	                </div>
+				</div>
+			</wicket:enclosure>
+
+	   		<!-- My Tags Panel -->
+	   		<wicket:enclosure child="myTagsToggleLink">
+		   		<div class="rightBox">
+	            	<h5><a href="#" wicket:id="myTagsToggleLink">My Tags</a></h5>
+					<div class="targetToggle linkToggleBox_myTagsToggleLink">
+ 		        		<div wicket:id="tagcloud"></div>
+ 		        	</div>
+ 		        </div>
+		 	</wicket:enclosure>
+            
+<wicket:remove>
+                    <p  class="tagStarsCloud">
+                        <a href="#"><img src="../img/icons/star_3.png" width="42" height="13" alt="3 Stars" /></a>
+                        <a href="#"><img src="../img/icons/star_2.png" width="27" height="13" alt="2 Stars" /></a>
+                        <a href="#"><img src="../img/icons/star_1.png" width="13" height="13" alt="1 Star" /></a>
+                    </p>
+                    <p class="tagCloud">
+                        <a href="#" class="s1">rules</a>
+                        <a href="#" class="s2">my_words</a>
+                        <a href="#" class="s3">big_ideas</a>
+                    </p>
+
+                    <h6>Tag Options</h6>
+                    <ul class="tagOptions">
+                        <li>view as: <strong>cloud</strong> | <a href="#">list</a></li>
+                        <li>sort by: <strong>alph</strong> | <a href="#">frequency</a></li>
+                    </ul>
+</wicket:remove>
+            <!-- END - Support Content -->
+        </div>
+    </div>
+</div>
+</wicket:extend>
+
+<div id="footer" wicket:id="pageFooter">
+    <div id="copyright">
+        <p>
+            <strong>&copy; Copyright 2011</strong>, footer text
+        </p>
+    </div>
+    <div id="build">
+        <p>
+            Built with [product name/image]
+        </p>
+    </div>
+</div>
+
+<div id="tht" class="thtFull">
+    <ul id="thtActions">
+        <li>
+            <span>listen</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_play(); return false;" id="thtPlay" title="Play"><span>Play</span></a></li>
+                <li><a href="#" onclick="$rw_event_pause(); return false;" id="thtPause" title="Pause"><span>Pause</span></a></li>
+                <li><a href="#" onclick="$rw_stopSpeech(); return false;" id="thtStop" title="Stop"><span>Stop</span></a></li>
+            </ul>
+        </li>
+        <li>
+            <span>lookup</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_dict(); return false;" id="thtDictionary" title="Dictionary"><span>Dictionary</span></a></li>
+                <li><a href="#" onclick="$rw_event_trans(); return false;" id="thtTranslate" title="Translate"><span>Translate</span></a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

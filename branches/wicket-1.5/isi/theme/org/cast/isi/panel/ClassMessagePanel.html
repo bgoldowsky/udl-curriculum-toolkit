@@ -1,0 +1,18 @@
+<wicket:panel>
+	<div wicket:id="deleteMessageModal"></div>
+    <div wicket:id="static">
+    	<p wicket:id="message">Dont' forget...</p>
+    	<p>
+     	<a href="#" wicket:id="edit" class="button">Edit</a>
+       	<a href="#" wicket:id="delete" class="button deleteLink">Delete</a>
+    	</p>
+    </div>
+    <form wicket:id="classMessageForm">
+    	<div>
+    		<textarea wicket:id="message"></textarea><br />
+    		<a href="#" wicket:id="save" class="button">Save</a>
+            <a href="#" wicket:id="cancel" class="button">Cancel</a>
+            <div class="myFeedback" style="position:relative;left:-40px" wicket:id="feedback" />
+    	</div>
+    </form>
+</wicket:panel>
