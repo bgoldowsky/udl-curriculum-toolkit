@@ -19,8 +19,6 @@
  */
 package org.cast.isi.mapper;
 
-import java.util.List;
-
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
@@ -56,18 +54,17 @@ public class ContentDirectoryMapper extends AbstractMapper {
 
 	// Mapper finds the URL that starts with the content
 	public int getCompatibilityScore(Request request) {
-		String requestUrlString = request.getUrl().toString();
+		String requestUrlString = request.getUrl().getPath();
 		if (requestUrlString.startsWith(CONTENT_DIRECTORY_MAPPER_PREFIX))
 			return COMPATIBILITY_SCORE;
 		return 0;
 	}
 
 	public IRequestHandler mapRequest(Request request) {		
-		List<String> segments = request.getUrl().getSegments();
-		if (!segments.get(0).equals(CONTENT_DIRECTORY_MAPPER_PREFIX))
+		String path = request.getUrl().getPath();
+		if (!path.startsWith(CONTENT_DIRECTORY_MAPPER_PREFIX))
 			return null;
 
-		String path = request.getUrl().getPath();
 		// strip off the prefix
 		path = path.substring(CONTENT_DIRECTORY_MAPPER_PREFIX.length());		
 		
