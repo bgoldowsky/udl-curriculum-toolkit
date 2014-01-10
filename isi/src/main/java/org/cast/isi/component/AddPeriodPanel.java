@@ -23,7 +23,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.databinder.hib.Databinder;
-import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -39,11 +38,13 @@ import org.apache.wicket.model.PropertyModel;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.validator.UniqueDataFieldValidator;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISISession;
 import org.cast.isi.panel.PeriodStudentSelectPanel;
+import org.cwm.db.service.IModelProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,12 @@ public class AddPeriodPanel extends Panel {
 
 	@Inject
 	protected ISiteService siteService;
+	
+	@Inject
+	protected IModelProvider modelProvider;
+	
+	@Inject
+	protected ICwmSessionService cwmSessionService;
 
 	public AddPeriodPanel(String wicketId) {
 		super(wicketId);
@@ -89,13 +96,13 @@ public class AddPeriodPanel extends Panel {
 
 		public NewPeriodForm(String wicketId) {
 			super(wicketId);
-			setDefaultModel(new HibernateObjectModel<Period>(siteService.newPeriod()));
+			setDefaultModel(modelProvider.modelOf(siteService.newPeriod()));
 			
 			TextField<String> periodName = new TextField<String>("name", new PropertyModel<String>(getModel(), "name"));
 			add(periodName);
 			
 			// Ensure that no two periods in the same site have the same name.
-			periodName.add(new UniqueDataFieldValidator<String>(Period.class, "name").limitScope("site", ISISession.get().getCurrentSiteModel()));
+			periodName.add(new UniqueDataFieldValidator<String>(Period.class, "name").limitScope("site", cwmSessionService.getCurrentSiteModel()));
 			periodName.add(new AttributeModifier("maxlength", "32"));
 			periodName.setRequired(true);
 			periodName.setOutputMarkupId(true);
