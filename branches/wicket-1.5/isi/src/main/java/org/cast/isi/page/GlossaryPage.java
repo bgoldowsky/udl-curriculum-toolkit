@@ -25,8 +25,6 @@ import java.util.Map;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
-import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
