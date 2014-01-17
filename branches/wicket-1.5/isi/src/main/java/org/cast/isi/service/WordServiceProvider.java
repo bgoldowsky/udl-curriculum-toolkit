@@ -19,6 +19,7 @@
  */
 package org.cast.isi.service;
 
+import org.apache.wicket.injection.Injector;
 import org.cast.cwm.service.ICwmSessionService;
 
 import com.google.inject.Inject;
@@ -30,10 +31,14 @@ public class WordServiceProvider implements Provider<IWordService> {
 	protected ICwmSessionService cwmSessionService;
 
 	public IWordService get() {
+		IWordService service;
 		if (cwmSessionService.getUser().isGuest()) {
-			return new GuestWordService();
+			service = new GuestWordService();
+		} else {
+			service = new WordService();
 		}
-		return new WordService();
+		Injector.get().inject(service);
+		return service;
 	}
 
 	
