@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -39,6 +40,7 @@ import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.DialogBorder;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.xml.service.IXmlService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
@@ -67,6 +69,9 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	@Inject
 	static IXmlService xmlService;
 	
+	@Inject
+	protected ICwmSessionService cwmSessionService;
+	
 	@Getter @Setter protected ContentLoc loc = null;
 	
 	public static final String DISPLAY_DIALOG_ID = "displayDialog";
@@ -92,7 +97,13 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		}
 
 		add(ISIApplication.get().getFooterPanel("footerPanel", parameters));
-		add(new ISISessionExpireWarningDialog("sessionWarning"));
+		
+		// only check for expired sessions if the user is logged in
+		if (cwmSessionService.getUser().getRole() != Role.GUEST) {
+			add(new ISISessionExpireWarningDialog("sessionWarning"));
+		} else {
+			add(new EmptyPanel("sessionWarning"));
+		}
 		
 		addToolbar("tht");
 
