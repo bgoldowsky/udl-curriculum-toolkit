@@ -1113,17 +1113,16 @@ public abstract class ISIApplication extends CwmApplication {
 	/**
 	 * Configure the default period
 	 */
-	public IModel<? extends Period> getMDefaultPeriod() {
+	public IModel<Period> getMDefaultPeriod() {
 		// Set the default Period
-		String periodName =  configuration.getProperty("isi.defaultPeriod");
-		if (periodName != null) {
-			periodName = periodName.trim();
-			return siteService.getPeriodByName(periodName);		
-		} else {
-			// error if this period doesn't exist
-			log.error("No default period was found");
-		}		
-		return null;
+		String periodName =  configuration.getString("app.defaultPeriod");
+		periodName = periodName.trim();
+		IModel<Period> mDefaultPeriod = siteService.getPeriodByName(periodName);
+		if (mDefaultPeriod==null || mDefaultPeriod.getObject()==null) {
+			log.error("No default period was found, creating new default");
+			mDefaultPeriod = siteService.newPeriod(periodName);				
+		}
+		return mDefaultPeriod;
 	}
 
 
