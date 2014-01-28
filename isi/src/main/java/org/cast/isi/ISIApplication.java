@@ -126,6 +126,7 @@ import org.cast.isi.panel.AbstractNavBar;
 import org.cast.isi.panel.AlternateNavBar1;
 import org.cast.isi.panel.DefaultHeaderPanel;
 import org.cast.isi.panel.DefaultNavBar;
+import org.cast.isi.panel.DropDownNavBar;
 import org.cast.isi.panel.FooterPanel;
 import org.cast.isi.panel.FreeToolbar;
 import org.cast.isi.panel.GuestHeaderPanel;
@@ -1353,6 +1354,8 @@ public abstract class ISIApplication extends CwmApplication {
 		if (alternateNavBar != null) {
 			if (alternateNavBar.equals("alternate1")) {
 				return new AlternateNavBar1(id, sec, teacher);
+			} else if (alternateNavBar.equals("dropdown")) {
+				return new DropDownNavBar(id, sec, teacher);
 			}
 		}
 		return new DefaultNavBar(id, sec, teacher);
