@@ -131,7 +131,7 @@ public class DefaultHeaderPanel extends HeaderPanel {
 		
 		if (prefix != null) {
 			WebMarkupContainer link = (WebMarkupContainer) get(prefix + "Link");
-			link.add(new ClassAttributeModifier("current"));
+			link.add(new ClassAttributeModifier("current", false));
 		}
 		
 		super.onBeforeRender();
