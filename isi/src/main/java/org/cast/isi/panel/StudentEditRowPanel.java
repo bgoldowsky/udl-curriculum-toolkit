@@ -134,6 +134,7 @@ public class StudentEditRowPanel extends Panel {
 
 				FeedbackPanel feedback = getFeedbackPanel();
 				
+				target.add(findParent(ManageClasses.class).get("editStudentForm"));
 				// New Student just hides the form and replaces with placeholder.
 				if (isNewStudent()) {
 					WebMarkupContainer placeholder = new WebMarkupContainer("newStudent");
