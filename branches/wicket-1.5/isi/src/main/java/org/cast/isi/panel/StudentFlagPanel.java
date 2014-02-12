@@ -143,11 +143,13 @@ public class StudentFlagPanel extends Panel {
 	}
 	
 	@Override
-	public boolean isVisible() {
-		// Hide flags for researchers
-		return ISISession.get().getUser().hasRole(Role.RESEARCHER) ? false : true;
+	protected void onBeforeRender() {
+		if (ISISession.get().getUser().hasRole(Role.RESEARCHER)) {
+			setVisible(false);
+		} 
+		super.onBeforeRender();
 	}
-	
+
 	// Cache the flag for each person so related flags do not make repeated database calls
 	public void setFlagged(boolean isFlagged) {
 		this.isFlagged = isFlagged;
