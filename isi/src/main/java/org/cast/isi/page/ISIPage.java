@@ -21,11 +21,15 @@ package org.cast.isi.page;
 
 import lombok.Getter;
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.UrlUtils;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.JQueryHeaderContributor;
 import org.cast.isi.ISIApplication;
@@ -53,6 +57,12 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 			.setEscapeModelStrings(false));
 		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null))
 			.setEscapeModelStrings(false));
+	}
+
+	@Override
+	protected void onInitialize() {
+		add(new Favicon("favicon", "img/logos/favicon.png"));
+		super.onInitialize();
 	}
 
 	public void renderHead(final IHeaderResponse response) {
@@ -116,5 +126,23 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 
 	public static void renderThemeJS(IHeaderResponse response, String fileName) {
 		response.renderJavaScriptReference(fileName);
+	}
+	
+	
+	public class Favicon extends WebMarkupContainer {
+		private static final long serialVersionUID = 1L;
+
+		private String url;
+
+		public Favicon(String id, String url) {
+			super(id);
+			this.url = url;
+		}
+
+		@Override
+		protected void onComponentTag(ComponentTag tag) {
+			super.onComponentTag(tag);
+			tag.put("href", UrlUtils.rewriteToContextRelative(url, RequestCycle.get()));
+		}
 	}
 }
