@@ -168,7 +168,7 @@ public class ISIXmlComponent extends XmlComponent {
 	public ISIXmlComponent(String id, ICacheableModel<? extends IXmlPointer> rootEntry, String transformName) {
 		super(id, rootEntry, transformName);
 		User user = cwmSessionService.getUser();
-		isGuest = user.isGuest();
+		isGuest = user==null || user.isGuest();
 		isTeacher = user!=null ? user.getRole().subsumes(Role.TEACHER) : false;
 	}
 
