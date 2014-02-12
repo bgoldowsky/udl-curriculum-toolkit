@@ -109,7 +109,7 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 		if (studentChoice.getModelObject() == null) { // If session did not have a student or student was not in the session's period, reset session's student
 			ISISession.get().setStudentModel(null);
 		}
-		studentChoice.setOutputMarkupId(true);
+		studentChoice.setOutputMarkupPlaceholderTag(true);
 		
 		// Set Student onChange Behavior
 		studentChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {

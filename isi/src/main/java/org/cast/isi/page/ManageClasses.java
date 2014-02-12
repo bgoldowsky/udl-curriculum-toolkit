@@ -182,7 +182,7 @@ public class ManageClasses extends ISIStandardPage {
 		// A row for creating a new student; hidden by default.
 		editStudentForm.add(new WebMarkupContainer("newStudent").setVisible(false).setOutputMarkupPlaceholderTag(true));
 
-		studentListProvider = UserService.get().getUncachedUserListProvider(ISISession.get().getCurrentPeriodModel());
+		studentListProvider = UserService.get().getUncachedStudentListProvider(ISISession.get().getCurrentPeriodModel());
 
 		// A list of students
 		editStudentForm.add(new DataView<User>("studentList", studentListProvider) {
