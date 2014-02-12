@@ -103,14 +103,17 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public boolean isVisible() {
-				super.isVisible();
-				if (ISIApplication.get().getHomePage().isAssignableFrom(getPage().getClass()) ||
-						ISIApplication.get().getManageClassesPageClass().isAssignableFrom(getPage().getClass())) {
-					return false;
+			protected void onBeforeRender() {
+				if (ISIApplication.get().getHomePage().isAssignableFrom(getPage().getClass())
+						|| ISIApplication.get().getManageClassesPageClass().isAssignableFrom(getPage().getClass())
+						|| ISISession.get().getStudentModel() == null) {
+					setVisible(false);
+				} else {
+					setVisible(true);
 				}
-				return true;
+				super.onBeforeRender();
 			}			
+			
 		};
 		studentFlagPanel.setOutputMarkupId(true);
 		add(studentFlagPanel);	
