@@ -68,7 +68,7 @@ public class StudentFlagPanel extends Panel {
 		else 
 			this.setFlagged(false);
 		
-		setOutputMarkupId(true);
+		setOutputMarkupPlaceholderTag(true);
 		draw();
 
 	}

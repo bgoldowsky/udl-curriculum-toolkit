@@ -96,6 +96,7 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 		}
 		teacherNotesLink.setEnabled(ISISession.get().getStudentModel() != null);
 		teacherNotesLink.setVisible(!ISISession.get().getUser().hasRole(Role.RESEARCHER) || showStudents); // Researchers do not use Teacher Notes
+		teacherNotesLink.setOutputMarkupPlaceholderTag(true);
 		add(teacherNotesLink);
 
 		// Student Flag Panel for the current student
@@ -115,7 +116,6 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 			}			
 			
 		};
-		studentFlagPanel.setOutputMarkupId(true);
 		add(studentFlagPanel);	
 	}
 	
