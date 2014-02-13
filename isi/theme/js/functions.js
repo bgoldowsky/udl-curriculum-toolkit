@@ -299,6 +299,9 @@ function showImageDetail(id, show) {
             var glossLeft = (thumbPosition.left + thumbWidth) - detailWidth ;
             detail.css("left",  glossLeft + "px");
             detail.css("right", "auto");
+            if (thumbPosition.top < 0) {
+            	thumpPosition.top = 0;
+            }
         } else if (windowWidth < (thumbOffset.left + detailWidth)) {
 		    // Has bleed - align to top of thumbnail, right side of mainContent
 		    mainContent = $("#mainContent");
@@ -386,7 +389,7 @@ function modalInit() {
 /*=========================================================*/
 
 var moveStepSize = 3;
-var moveZIndex = 10;
+var moveZIndex = 410;
 
 function modalMove() {
     $(".modalBody").delegate(".modalMove", "mouseover", function() {
