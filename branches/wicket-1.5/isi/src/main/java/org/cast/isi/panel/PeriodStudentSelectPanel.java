@@ -20,7 +20,6 @@
 package org.cast.isi.panel;
 
 import lombok.Getter;
-import net.databinder.models.hib.HibernateObjectModel;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -38,6 +37,7 @@ import org.cast.cwm.data.builders.UserCriteriaBuilder;
 import org.cast.cwm.data.component.PeriodChoice;
 import org.cast.cwm.data.component.UserChoice;
 import org.cast.cwm.data.models.UserListModel;
+import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISISession;
 
 /**
@@ -67,6 +67,7 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 				super.onSubmit();
 			}
 		};
+    	add(periodStudentSelectForm);
     	periodStudentSelectForm.setOutputMarkupId(true);
     	
     	// Period Chooser
@@ -87,7 +88,8 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 				IModel<Site> mCurrentSite = new Model<Site>(currentSite);
 				ISISession.get().setCurrentSiteModel(mCurrentSite);
 				if (showStudents) {
-					studentChoice.setChoices(getUserListModel()); // Alert student drop-down of the change
+					studentChoice.setChoices(getUserListModel()); // Alert student drop-down of the change					
+					studentChoice.setModel(new UserModel());
 					target.add(studentChoice);
 				}
 				target.add(feedback); // Update Feedback Panel
@@ -103,9 +105,10 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 		// Student Chooser
 		IModel<User> studentModel = ISISession.get().getStudentModel();
 		if (studentModel == null) {
-			studentModel = new HibernateObjectModel<User>(User.class);
+			studentModel = new UserModel();
 		}
 		studentChoice = new UserChoice("studentChoice", studentModel, getUserListModel());
+    	periodStudentSelectForm.add(studentChoice);
 		studentChoice.setNullValid(true);
 		if (studentChoice.getModelObject() == null) { // If session did not have a student or student was not in the session's period, reset session's student
 			ISISession.get().setStudentModel(null);
@@ -130,13 +133,11 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 		// make sure the label is linked to the student dropdown		
 		FormComponentLabel studentChoiceLabel = (new FormComponentLabel("studentChoiceLabel", studentChoice));
 		periodStudentSelectForm.add(studentChoiceLabel);
-    	periodStudentSelectForm.add(studentChoice);
   	
     	feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(periodStudentSelectForm));
     	feedback.setOutputMarkupId(true);
     	feedback.setMaxMessages(1);
     	periodStudentSelectForm.add(feedback);
-    	add(periodStudentSelectForm);
 		
 	}
 	
