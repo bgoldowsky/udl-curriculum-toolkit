@@ -21,18 +21,18 @@
 	<div id="newWordModal" class="modalBody modalNarrow modalSidebar" style="display: none;">
 			<div class="modalHeader" role="banner">
 		        <div class="modalTitle">Create New Word</div>
-	    	    <a href="javascript:void(0)" onclick="$('#newWordModal textarea').attr('value', ''); $('#newWordModal .feedback').html(''); $('#newWordModal').hide();" class="modalClose button icon"><img src="img/icons/close.png" width="15" height="15" alt="Close"  title="Close" /></a>
+	    	    <a href="javascript:void(0)" onclick="$('#newWordModal textarea').attr('value', ''); $('#newWordModal .error').html(''); $('#newWordModal').hide();" class="modalClose button icon"><img src="img/icons/close.png" width="15" height="15" alt="Close"  title="Close" /></a>
 	    	</div>
 	    <div class="modalMainCol">
 	        <div class="modalContent">
 	            <div class="modalEdit">
 	                <form wicket:id="newWordForm" action="#">
-	                    <textarea wicket:id="wordText"></textarea>
+	                    <textarea wicket:id="wordText" maxlength="50"></textarea>
 	                    <p>
 		                    <input wicket:id="submit" type="submit" value="Save" class="button" />
-	 		                <a href="javascript:void(0)" onclick="$('#newWordModal textarea').attr('value', ''); $('#newWordModal .feedback').html(''); $('#newWordModal').hide(); " class="button">Cancel</a>
+	 		                <a href="javascript:void(0)" onclick="$('#newWordModal textarea').attr('value', ''); $('#newWordModal .error').html(''); $('#newWordModal').hide(); " class="button">Cancel</a>
 	                    </p>
-		                <div class="feedback" wicket:id="feedback" />
+						<div wicket:id="feedback" class="error">errors go here</div>
 	                </form>
 	            </div>
 	        </div>

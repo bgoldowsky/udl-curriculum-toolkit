@@ -118,14 +118,21 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 						IModel<WordCard> wc = wordService.getWordCardCreate(newWord, ISISession.get().getUser(), false);
 						param.add("wc", wc.getObject().getId().toString());
 					} else {
-						// word is already in the glossary
-						param.add("word", newWord);
+						// word is already in the glossary - load that entry
+						param.add("word", newWord.replaceAll("[^a-zA-Z0-9]", "").replaceAll("\\s+", ""));
 					}
 					this.setResponsePage(ISIApplication.get().getGlossaryPageClass(), param);
 				}
+
+				@Override
+				protected void onError(AjaxRequestTarget target, Form<?> form) {
+					target.add(getParent().get("feedback"));
+					super.onError(target, form);
+				}				
 			});                  
 			add(feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(NewWordForm.this)));
 			feedback.setOutputMarkupPlaceholderTag(true);
+			
 		}
 	}
 	

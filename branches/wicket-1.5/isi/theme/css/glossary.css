@@ -33,6 +33,12 @@ input {
     font-size: 1.0em;
 }
 
+.error {
+	color: #FF0000;
+}
+
+
+
 a { color: #364A77; }
 a:hover, a:focus { color: #1E2D56; }
 
@@ -99,6 +105,10 @@ ul li, ol li {
 
 #navContent {
     padding: 3px 10px 0px 10px;
+}
+
+#navContent a {
+	margin-left: 10px;
 }
 
 #nav ul {
