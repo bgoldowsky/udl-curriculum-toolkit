@@ -106,6 +106,7 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 			studentModel = new HibernateObjectModel<User>(User.class);
 		}
 		studentChoice = new UserChoice("studentChoice", studentModel, getUserListModel());
+		studentChoice.setNullValid(true);
 		if (studentChoice.getModelObject() == null) { // If session did not have a student or student was not in the session's period, reset session's student
 			ISISession.get().setStudentModel(null);
 		}
