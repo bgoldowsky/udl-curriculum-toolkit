@@ -300,7 +300,7 @@ function showImageDetail(id, show) {
             detail.css("left",  glossLeft + "px");
             detail.css("right", "auto");
             if (thumbPosition.top < 0) {
-            	thumpPosition.top = 0;
+            	thumbPosition.top = 0;
             }
         } else if (windowWidth < (thumbOffset.left + detailWidth)) {
 		    // Has bleed - align to top of thumbnail, right side of mainContent
