@@ -19,8 +19,6 @@
  */
 package org.cast.isi.panel;
 
-import java.util.HashMap;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -38,13 +36,13 @@ import org.cast.isi.page.ManageClasses;
 public class StudentDisplayRowPanel extends Panel {
 	private static final long serialVersionUID = 1L;
 
-	public StudentDisplayRowPanel(String id, IModel<User> mUser, 
-			final HashMap<Long, Boolean> flagMap) {
+
+	public StudentDisplayRowPanel(String id, IModel<User> mUser) {
 		super(id, mUser);
 		setOutputMarkupId(true);
 				
 		// Labels to display student information when not actively editing
-		add(new StudentFlagPanel("studentFlagPanelLabel", mUser.getObject(), flagMap));
+		add(new StudentFlagPanel("studentFlagPanelLabel", mUser.getObject(), null));
 		add(new Label("lastName", mUser.getObject().getLastName()));
 		add(new Label("firstName", mUser.getObject().getFirstName()));
 		add(new Label("email", mUser.getObject().getEmail()));
@@ -61,7 +59,7 @@ public class StudentDisplayRowPanel extends Panel {
 				
 				findParent(ManageClasses.class).get("editStudentForm").setDefaultModel(getUserModel());
 				findParent(ManageClasses.class).visitChildren(EditDisableLink.class, EditDisableLink.getVisitor(target, false));
-				StudentEditRowPanel newStudentRow = new StudentEditRowPanel("studentPanel", getUserModel(), flagMap);
+				StudentEditRowPanel newStudentRow = new StudentEditRowPanel("studentPanel", getUserModel());
 				StudentDisplayRowPanel.this.replaceWith(newStudentRow);
 				if (target != null) {
 					target.add(newStudentRow);
