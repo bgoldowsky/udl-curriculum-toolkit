@@ -19,8 +19,6 @@
  */
 package org.cast.isi.panel;
 
-import java.util.HashMap;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -50,12 +48,11 @@ import org.cast.isi.page.ManageClasses;
 public class StudentEditRowPanel extends Panel {
 	private static final long serialVersionUID = 1L;
 
-
-	public StudentEditRowPanel(String id, IModel<User> mUser, final HashMap<Long, Boolean> flagMap) {
+	public StudentEditRowPanel(String id, IModel<User> mUser) {
 		super(id, mUser);
 		setOutputMarkupId(true);
 		
-//		add(new StudentFlagPanel("studentFlagPanel", mUser.getObject(), flagMap).setVisible(!newStudent));
+//		add(new StudentFlagPanel("studentFlagPanel", mUser.getObject(), flagMap).setVisible(!isNewStudent()));
 
 		TextField<String> lastName = new TextField<String>("lastName", new PropertyModel<String>(mUser, "lastName"));
 		lastName.setRequired(true);
@@ -110,7 +107,7 @@ public class StudentEditRowPanel extends Panel {
 				if (isNewStudent()) {
 					StudentEditRowPanel.this.replaceWith(new WebMarkupContainer("newStudent").setVisible(false).setOutputMarkupPlaceholderTag(true));
 				} else {
-					StudentDisplayRowPanel displayStudentRowPanel = new StudentDisplayRowPanel("studentPanel", getUserModel(), flagMap);
+					StudentDisplayRowPanel displayStudentRowPanel = new StudentDisplayRowPanel("studentPanel", getUserModel());
 					StudentEditRowPanel.this.replaceWith(displayStudentRowPanel);
 					target.add(displayStudentRowPanel);
 				}
@@ -142,7 +139,7 @@ public class StudentEditRowPanel extends Panel {
 					StudentEditRowPanel.this.replaceWith(placeholder);
 					target.add(placeholder);
 				} else {
-					StudentDisplayRowPanel displayStudentRowPanel = new StudentDisplayRowPanel("studentPanel", getUserModel(), flagMap);
+					StudentDisplayRowPanel displayStudentRowPanel = new StudentDisplayRowPanel("studentPanel", getUserModel());
 					StudentEditRowPanel.this.replaceWith(displayStudentRowPanel);
 					target.add(displayStudentRowPanel);
 				}

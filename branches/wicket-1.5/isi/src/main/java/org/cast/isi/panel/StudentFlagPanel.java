@@ -19,7 +19,8 @@
  */
 package org.cast.isi.panel;
 
-import net.databinder.models.hib.HibernateObjectModel;
+import java.util.HashMap;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -31,10 +32,11 @@ import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
+import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISISession;
-import org.cast.isi.service.ISIResponseService;
+import org.cast.isi.service.IISIResponseService;
 
-import java.util.HashMap;
+import com.google.inject.Inject;
 
 /**
  * A simple flag icon can be toggled.
@@ -48,6 +50,9 @@ public class StudentFlagPanel extends Panel {
 	private IModel<User> mUser;
 	private String imagePrefix;
 	private boolean isFlagged = false;
+	
+	@Inject
+	private IISIResponseService responseService;
 
     /**
      * Creates a flag panel (use <span> tags) with the given id.
@@ -59,10 +64,10 @@ public class StudentFlagPanel extends Panel {
      */
 	public StudentFlagPanel(String id, User person, HashMap<Long, Boolean> flagList, String imagePrefix) {
 		super(id);
-		this.mUser = new HibernateObjectModel<User>(person);
+		this.mUser = new UserModel(person);
 		this.imagePrefix = imagePrefix;
 		if (flagList == null)
-			this.setFlagged(ISIResponseService.get().isFlagged(person));
+			this.setFlagged(responseService.isFlagged(person));
 		else if (flagList.containsKey(person.getId()))
 			this.setFlagged(flagList.get(person.getId()));
 		else 
@@ -92,7 +97,7 @@ public class StudentFlagPanel extends Panel {
 			@Override
 			public void onClick(final AjaxRequestTarget target) {
 				if (mUser != null) {
-					ISIResponseService.get().toggleFlag(mUser.getObject());
+					responseService.toggleFlag(mUser.getObject());
 					if(target != null) {
 						getPage().visitChildren(StudentFlagPanel.class, new IVisitor<StudentFlagPanel, Void>() {
                             public void component(StudentFlagPanel component, IVisit<Void> visit) {

@@ -20,8 +20,6 @@
 package org.cast.isi.page;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.TreeSet;
 
 import lombok.Getter;
@@ -61,7 +59,6 @@ import org.cast.isi.ISISession;
 import org.cast.isi.component.AddPeriodPanel;
 import org.cast.isi.component.EditDisableLink;
 import org.cast.isi.component.MoveStudentPeriodForm;
-import org.cast.isi.data.StudentFlag;
 import org.cast.isi.panel.ClassMessagePanel;
 import org.cast.isi.panel.PeriodStudentSelectPanel;
 import org.cast.isi.panel.StudentDisplayRowPanel;
@@ -84,9 +81,6 @@ public class ManageClasses extends ISIStandardPage {
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ManageClasses.class);
 	
-	@Getter @Setter
-	private HashMap<Long, Boolean> flagMap;
-
 	@Getter @Setter
 	private FeedbackPanel feedback;
 	
@@ -148,13 +142,6 @@ public class ManageClasses extends ISIStandardPage {
 		add(addPeriodButton);
 
 
-		// Load flags for this period and this teacher
-		// Do just once so we're not querying for every single flag.
-		flagMap = new HashMap<Long, Boolean>();
-		List<StudentFlag> l = responseService.getAllFlags();
-		for (StudentFlag f : l) {
-			flagMap.put(f.getFlagee().getId(), true);
-		}
 				
 		// "Add Student" button
 		add(new EditDisableLink<Void>("addStudentButton") {
@@ -164,7 +151,7 @@ public class ManageClasses extends ISIStandardPage {
 			public void onClick(AjaxRequestTarget target) {
 				IModel<User> mUser = new CompoundPropertyModel<User>(UserService.get().newUser());
 				ManageClasses.this.visitChildren(EditDisableLink.class, EditDisableLink.getVisitor(target, false));
-				StudentEditRowPanel newPanel = new StudentEditRowPanel("newStudent", mUser, flagMap);
+				StudentEditRowPanel newPanel = new StudentEditRowPanel("newStudent", mUser);
 				getEditStudentForm().setModel(mUser);
 				getEditStudentForm().replace(newPanel);
 
@@ -190,7 +177,7 @@ public class ManageClasses extends ISIStandardPage {
 
 			@Override
 			protected void populateItem(Item<User> item) {
-				StudentDisplayRowPanel studentDisplayRow = new StudentDisplayRowPanel("studentPanel", item.getModel(), flagMap);
+				StudentDisplayRowPanel studentDisplayRow = new StudentDisplayRowPanel("studentPanel", item.getModel());
 				item.add(studentDisplayRow);
 			}
 		});
