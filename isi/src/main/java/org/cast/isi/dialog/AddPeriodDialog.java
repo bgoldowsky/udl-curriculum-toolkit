@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cast.isi.component;
+package org.cast.isi.dialog;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -32,9 +32,9 @@ import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.validator.UniqueDataFieldValidator;
@@ -43,10 +43,9 @@ import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISISession;
+import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.panel.PeriodStudentSelectPanel;
 import org.cwm.db.service.IModelProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
@@ -57,13 +56,10 @@ import com.google.inject.Inject;
  * @author lynnmccormack
  *
  */
-public class AddPeriodPanel extends Panel {
+public class AddPeriodDialog extends AbstractISIAjaxDialog<Void> {
 
 	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(AddPeriodPanel.class);
-	protected NewPeriodForm newPeriodForm;
-	private String addPeriodPanelMarkupId;
+
 
 	@Inject
 	private IEventService eventService;
@@ -77,17 +73,27 @@ public class AddPeriodPanel extends Panel {
 	@Inject
 	protected ICwmSessionService cwmSessionService;
 
-	public AddPeriodPanel(String wicketId) {
-		super(wicketId);
-		
-		this.setOutputMarkupPlaceholderTag(true);
-		newPeriodForm = new NewPeriodForm("newPeriodForm");
-		add(newPeriodForm);
-		
-		addPeriodPanelMarkupId = this.getMarkupId();
-		this.setOutputMarkupId(true);
+	public AddPeriodDialog() {
+		super();
 	}
 	
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+
+		setTitle((new StringResourceModel("addPeriod.title", this, null, "Add a New Period").getString()));		
+
+		if (getPage() instanceof ISIBasePage) {
+			dialogBorder.setPageName(((ISIBasePage) getPage()).getPageName());
+			dialogBorder.setEventDetail("add period popup");
+		} else {
+			// Not on a base page
+			dialogBorder.setLogEvents(false);
+		}		
+
+		dialogBorder.getBodyContainer().add(new NewPeriodForm("newPeriodForm"));
+	}
+
 	/**
 	 * A form to add a new period.
 	 */
@@ -98,7 +104,7 @@ public class AddPeriodPanel extends Panel {
 			super(wicketId);
 			setDefaultModel(modelProvider.modelOf(siteService.newPeriod()));
 			
-			TextField<String> periodName = new TextField<String>("name", new PropertyModel<String>(getModel(), "name"));
+			TextField<String> periodName = new TextField<String>("periodName", new PropertyModel<String>(getModel(), "name"));
 			add(periodName);
 			
 			// Ensure that no two periods in the same site have the same name.
@@ -107,7 +113,7 @@ public class AddPeriodPanel extends Panel {
 			periodName.setRequired(true);
 			periodName.setOutputMarkupId(true);
 
-			final FeedbackPanel feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(this));
+			FeedbackPanel feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(this));
 			feedback.setMaxMessages(1);
 			feedback.setOutputMarkupId(true);
 			add(feedback);
@@ -117,7 +123,7 @@ public class AddPeriodPanel extends Panel {
 
 				@Override
 				public void onClick(AjaxRequestTarget target) {
-					target.appendJavaScript("$('#" + addPeriodPanelMarkupId + "').hide();");
+					target.appendJavaScript(dialogBorder.getCloseString());
 				}
 			});
 			
@@ -129,27 +135,16 @@ public class AddPeriodPanel extends Panel {
 					if (target != null) {
 						// update the period dropdown
 						target.addChildren(getPage(), PeriodStudentSelectPanel.class);
-						
-						// replace the form
-						NewPeriodForm tempNewPeriodForm =  new NewPeriodForm("newPeriodForm");
-						tempNewPeriodForm.setOutputMarkupId(true);
-						newPeriodForm.replaceWith(tempNewPeriodForm);
-						newPeriodForm = tempNewPeriodForm;
-						target.add(newPeriodForm);
-						
-						// hide the form
-						target.appendJavaScript("$('#" + addPeriodPanelMarkupId + "').hide();");
+						target.appendJavaScript(dialogBorder.getCloseString());
 					}	
 				}
 				
 				@Override
 				protected void onError(AjaxRequestTarget target, Form<?> form) {
 					if (target != null)
-						target.add(feedback);
-				}
-				
-			});
-			
+						target.add(getParent().get("feedback"));
+				}				
+			});			
 		}
 
 
