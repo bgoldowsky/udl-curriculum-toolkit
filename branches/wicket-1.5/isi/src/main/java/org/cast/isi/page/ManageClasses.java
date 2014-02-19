@@ -56,9 +56,9 @@ import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.service.IEventService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISISession;
-import org.cast.isi.component.AddPeriodPanel;
 import org.cast.isi.component.EditDisableLink;
 import org.cast.isi.component.MoveStudentPeriodForm;
+import org.cast.isi.dialog.AddPeriodDialog;
 import org.cast.isi.panel.ClassMessagePanel;
 import org.cast.isi.panel.PeriodStudentSelectPanel;
 import org.cast.isi.panel.StudentDisplayRowPanel;
@@ -103,12 +103,13 @@ public class ManageClasses extends ISIStandardPage {
 		WebMarkupContainer periodTitle = new WebMarkupContainer("periodTitle"); 
 		add(periodTitle);
 		periodTitle.setOutputMarkupPlaceholderTag(true);
-		periodTitle.add(new Label("name", new PropertyModel<String>(getCurrentPeriodModel(), "name")));
-		periodTitle.add(new AjaxFallbackLink<Object>("edit") {
+		periodTitle.add(new Label("periodName", new PropertyModel<String>(getCurrentPeriodModel(), "name")));
+		periodTitle.add(new EditDisableLink<Object>("edit") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
 			public void onClick(AjaxRequestTarget target) {
+				ManageClasses.this.visitChildren(EditDisableLink.class, EditDisableLink.getVisitor(target, false));
 				getPeriodTitleContainer().setVisible(false);
 				getEditPeriodForm().setVisible(true);
 				if (target != null) {
@@ -124,23 +125,17 @@ public class ManageClasses extends ISIStandardPage {
 		editPeriodForm.setVisible(false);
 		
 		// New Period
-		AddPeriodPanel addPeriodPanel = new AddPeriodPanel("addPeriodPanel");
-		add(addPeriodPanel);
-		addPeriodPanel.setOutputMarkupPlaceholderTag(true);
-		addPeriodPanel.setVisible(false);
-		AjaxFallbackLink<Object> addPeriodButton = new AjaxFallbackLink<Object>("addPeriodButton") {
+		EditDisableLink<Object> addPeriodButton = new EditDisableLink<Object>("addPeriodButton") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				getAddPeriodPanel().setVisible(true);
-				if (target != null) {
-					target.add(getAddPeriodPanel());
-				}				
+				AddPeriodDialog addPeriodDialog = new AddPeriodDialog();
+				ISIStandardPage page = (ISIStandardPage) getPage();
+				page.displayDialog(addPeriodDialog, target);
 			}			
 		};
 		add(addPeriodButton);
-
 
 				
 		// "Add Student" button
@@ -200,10 +195,6 @@ public class ManageClasses extends ISIStandardPage {
 	
 	private IModel<Period> getCurrentPeriodModel() {
 		return 	ISISession.get().getCurrentPeriodModel();
-	}
-
-	private AddPeriodPanel getAddPeriodPanel() {
-		return 	(AddPeriodPanel) get("addPeriodPanel");
 	}
 
 	private WebMarkupContainer getPeriodTitleContainer() {
@@ -289,7 +280,7 @@ public class ManageClasses extends ISIStandardPage {
 			feedback.setOutputMarkupPlaceholderTag(true);
 			add(feedback);
 
-			TextField<String> periodName = new TextField<String>("name", new PropertyModel<String>(getModel(), "name"));
+			TextField<String> periodName = new TextField<String>("periodName", new PropertyModel<String>(getModel(), "name"));
 			add(periodName);
 			
 			// Ensure that no two periods in the same site have the same name.
@@ -303,11 +294,15 @@ public class ManageClasses extends ISIStandardPage {
 				@Override
 				public void onClick(AjaxRequestTarget target) {
 					getPeriodTitleContainer().setVisible(true);
-					getEditPeriodForm().setVisible(false);
+					EditPeriodForm newEditPeriodForm = new EditPeriodForm("editPeriodForm", getCurrentPeriodModel());
+					add(newEditPeriodForm);
+					newEditPeriodForm.setOutputMarkupPlaceholderTag(true);
+					newEditPeriodForm.setVisible(false);
 					if (target != null) {
 						target.add(getPeriodTitleContainer());
-						target.add(getEditPeriodForm());	
+						target.add(getEditPeriodForm().replaceWith(newEditPeriodForm));	
 					}
+					ManageClasses.this.visitChildren(EditDisableLink.class, EditDisableLink.getVisitor(target, true));
 				}
 			});
 			
@@ -326,6 +321,7 @@ public class ManageClasses extends ISIStandardPage {
 						target.add(getEditPeriodForm());
 						target.addChildren(getPage(), PeriodStudentSelectPanel.class);
 					}	
+					ManageClasses.this.visitChildren(EditDisableLink.class, EditDisableLink.getVisitor(target, true));
 				}
 				
 				@Override

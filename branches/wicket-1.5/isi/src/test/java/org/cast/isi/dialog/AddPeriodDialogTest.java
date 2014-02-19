@@ -17,24 +17,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.cast.isi.component;
+package org.cast.isi.dialog;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 
+import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.test.CwmWicketTester;
 import org.cast.cwm.test.GuiceInjectedCwmTestApplication;
+import org.cast.isi.page.ISIStandardPage;
 import org.cwm.db.service.IModelProvider;
 import org.cwm.db.service.SimpleModelProvider;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AddPeriodPanelTest {
+public class AddPeriodDialogTest {
 	
 	private CwmWicketTester tester;
 	private HashMap<Class<? extends Object>, Object> injectionMap;
@@ -50,17 +56,43 @@ public class AddPeriodPanelTest {
 		injectionMap = new HashMap<Class<? extends Object>, Object>();
 		ISiteService siteServiceMock = mock(ISiteService.class);
 		when(siteServiceMock.newPeriod()).thenReturn(new Period());
-		injectionMap.put(ISiteService.class, siteServiceMock);
-		
-		injectionMap.put(IModelProvider.class, new SimpleModelProvider());
-		
+		injectionMap.put(ISiteService.class, siteServiceMock);		
+		injectionMap.put(IModelProvider.class, new SimpleModelProvider());		
 		injectionMap.put(ICwmSessionService.class,  mock(ICwmSessionService.class));
 	}
 
 	@Test
 	public void canRender() {
-		tester.startComponentInPage(new AddPeriodPanel("panel"));
-		tester.assertComponent("panel", AddPeriodPanel.class);
+		tester.startComponentInPage(new AddPeriodDialog());
+		tester.assertComponent(ISIStandardPage.DISPLAY_DIALOG_ID, AddPeriodDialog.class);
+	}
+	
+	@Test
+	public void hasForm() {
+		tester.startComponentInPage(new AddPeriodDialog());
+		tester.assertComponent("displayDialog:dialogBorder:contentContainer:dialogBorder_body:newPeriodForm", Form.class);
 	}
 
+	@Test
+	public void hasPeriodName() {
+		tester.startComponentInPage(new AddPeriodDialog());
+		tester.assertComponent("displayDialog:dialogBorder:contentContainer:dialogBorder_body:newPeriodForm:periodName", TextField.class);
+	}						
+	@Test
+	public void hasSaveLink() {
+		tester.startComponentInPage(new AddPeriodDialog());
+		tester.assertComponent("displayDialog:dialogBorder:contentContainer:dialogBorder_body:newPeriodForm:save", AjaxSubmitLink.class);
+	}						
+
+	@Test
+	public void hasCancelLink() {
+		tester.startComponentInPage(new AddPeriodDialog());
+		tester.assertComponent("displayDialog:dialogBorder:contentContainer:dialogBorder_body:newPeriodForm:cancel", AjaxFallbackLink.class);
+	}						
+
+	@Test
+	public void hasFeedbackPanel() {
+		tester.startComponentInPage(new AddPeriodDialog());
+		tester.assertComponent("displayDialog:dialogBorder:contentContainer:dialogBorder_body:newPeriodForm:feedback", FeedbackPanel.class);
+	}						
 }

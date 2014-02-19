@@ -27,19 +27,17 @@
         	<!-- BEGIN - Main Content -->
             <div class="leftContainer">
                 <h2 wicket:id="periodTitle">
-	            	<span wicket:id="name">Period A</span> 
+	            	<span wicket:id="periodName">Period A</span> 
 	            	<a href="#" wicket:id="edit" class="button">Edit</a>
 	            </h2>
-                <br />
 	            <form wicket:id="editPeriodForm">
                     <div wicket:id="feedback" class="error"></div>
-	            	<div style="position:relative;float:left">
-	            		<input wicket:id="name" type="text" style="bottom:+3px;position:relative" />
+	            	<div style="position:relative;">
+	            		<input wicket:id="periodName" type="text" style="position:relative" />
 	            		<a href="#" wicket:id="save" class="button">Save</a>
 	                    <a href="#" wicket:id="cancel" class="button">Cancel</a>
 	            	</div>
 	            </form>
-            <span wicket:id="addPeriodPanel"></span>
             <p class="userAdd">
 	            <a href="#" wicket:id="addPeriodButton" class="button">Add a Class</a>
                 <a href="#" wicket:id="addStudentButton" class="button">Add a Student</a>
