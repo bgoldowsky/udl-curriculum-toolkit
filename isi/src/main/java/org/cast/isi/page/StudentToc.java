@@ -51,8 +51,6 @@ import org.cast.isi.panel.TagCloudTocPanel;
 import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISectionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
@@ -61,8 +59,6 @@ public class StudentToc extends ISIStandardPage {
 	
 	private static final long serialVersionUID = 1L;
 
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(StudentToc.class);
 	protected List<String> locsWithUnread;
 	protected List<String> locsWithMessages;
 	
@@ -134,14 +130,19 @@ public class StudentToc extends ISIStandardPage {
 	}
 
 	private void addClassMessage() {
-		// Loads the Class Message for this period
-		boolean classMessageOn = ISIApplication.get().isClassMessageOn();
+		boolean classMessageOn = false;
+		// find the Class Message for this period
+		ClassMessage m = responseService.getClassMessage(ISISession.get().getCurrentPeriodModel());
+		if (ISIApplication.get().isClassMessageOn() && m == null) { // display default
+			classMessageOn = true;
+		} else if (ISIApplication.get().isClassMessageOn() && m != null && m.getMessage() != null && !m.getMessage().isEmpty()) { // teacher has deleted message
+			classMessageOn = true;
+		}
 
 		CollapseToggleLink classMessageToggleLink = new CollapseToggleLink("classMessageToggleLink", "classMessageToggleLink", "classMessageToggle");
 		add(classMessageToggleLink);
 		classMessageToggleLink.setVisible(classMessageOn);
 
-		ClassMessage m = responseService.getClassMessage(ISISession.get().getCurrentPeriodModel());
 		if (m == null) {
 			add(new Label("classMessage", new ResourceModel("classMessage")));
 		} else {
