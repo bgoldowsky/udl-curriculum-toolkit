@@ -19,7 +19,6 @@
  */
 package org.cast.isi.panel;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -32,11 +31,11 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.StringValidator.MaximumLengthValidator;
+import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.Period;
-import org.cast.cwm.data.component.DeletePersistedObjectDialog;
 import org.cast.isi.data.ClassMessage;
 import org.cast.isi.service.IISIResponseService;
 
@@ -44,136 +43,160 @@ import com.google.inject.Inject;
 
 
 /**
- * The panel for displaying, editing and deleting the class message
+ * The panel for displaying and editing the class message
  */
 public class ClassMessagePanel extends Panel {
 
 	private static final long serialVersionUID = 1L;
 
 	private ClassMessage m;
-	private IModel<Period> mPeriod;
+	private boolean hasClassMessage = true;
+	private boolean editing = false;
 
 	@Inject
 	private IISIResponseService responseService;
 
 
-	public ClassMessagePanel(String id, IModel<Period> mPeriod) {
+	public ClassMessagePanel(String id) {
 		super(id);
-		this.mPeriod = mPeriod;
 		setOutputMarkupId(true);
 	}
 	
-	@SuppressWarnings("unchecked")
-	protected Form<ClassMessage> getClassMessageForm() {
-		return (Form<ClassMessage>) get("classMessageForm");
-	}
-
-	private WebMarkupContainer getStaticContent() {
-		return (WebMarkupContainer) get("static");
-	}
-
 	@Override
 	protected void onInitialize() {
-		addStatic();
-		addForm();
-		m = responseService.getClassMessage(mPeriod);
-		if (m == null) {
-			m = new ClassMessage();
-			m.setMessage((new StringResourceModel("ManageClasses.noClassMessage", this, null, "No Class Message").getString()));
-		}	
-		setDefaultModel(new CompoundPropertyModel<ClassMessage>(m));
-		getClassMessageForm().setModel(new CompoundPropertyModel<ClassMessage>(m));
-		add(new AttributeModifier("style", "display:block"));
+		// determine if there is already a class message
+		m = responseService.getClassMessage(getCurrentPeriodModel());
+		if (m == null) { // no class message
+			hasClassMessage = false;
+			ClassMessage defaultMessage = new ClassMessage();
+			defaultMessage.setMessage(new ResourceModel("classMessage").getObject().toString());
+			add(new MessageViewer("messageViewer", new CompoundPropertyModel<ClassMessage>(defaultMessage)));
+			add(new MessageForm("messageForm", new CompoundPropertyModel<ClassMessage>(new ClassMessage())));
+		} else {  // class message exists
+			add(new MessageViewer("messageViewer", new CompoundPropertyModel<ClassMessage>(m)));
+			add(new MessageForm("messageForm", new CompoundPropertyModel<ClassMessage>(m)));
+		}
 		super.onInitialize();
 	}
-
 	
-	private void addStatic() {
-		WebMarkupContainer staticContent = new WebMarkupContainer("static");
-		add(staticContent);
-		staticContent.setOutputMarkupPlaceholderTag(true);
-		staticContent.add(new Label("message"));
-		staticContent.add(new AjaxFallbackLink<Object>("edit") {
+	
+	private class MessageViewer extends WebMarkupContainer {
 
-			private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1L;
 
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				getStaticContent().setVisible(false);
-				getClassMessageForm().setVisible(true);
+		public MessageViewer(String id, CompoundPropertyModel<ClassMessage> compoundPropertyModel) {
+			super(id, compoundPropertyModel);
+			setOutputMarkupPlaceholderTag(true);
+			
+			add(new Label("message"));
+			Label defaultIndicator = new Label("defaultIndicator", (new StringResourceModel("ManageClasses.noClassMessageDefaultIndicator", this, null, "(Default Message").getString())) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected void onConfigure() {
+					setVisible(!hasClassMessage);
+					super.onConfigure();
+				}
+			};
+			add(defaultIndicator);
+			defaultIndicator.setOutputMarkupPlaceholderTag(true);
+			
+			AjaxFallbackLink<Void> editLink = new AjaxFallbackLink<Void>("edit") {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onClick(AjaxRequestTarget target) {
+					editing = true;
+					target.add(getMessageForm());
+					target.add(getMessageViewer());
+				}
+			};
+			add(editLink);
+		}	
+		
+		@Override
+		protected void onConfigure() {
+			super.onConfigure();
+			setVisible(!editing);
+		}		
+	}
+	
+	
+	private class MessageForm extends Form<ClassMessage> {
+
+		private static final long serialVersionUID = 1L;
+
+		public MessageForm(String id, IModel<ClassMessage> model) {
+			super(id, model);
+			setOutputMarkupPlaceholderTag(true);
+			
+			TextArea<String> message = new TextArea<String>("message");
+			add(message);
+			message.add(new MaximumLengthValidator(255));
+			
+			AjaxSubmitLink saveLink = new AjaxSubmitLink("save") {
+				private static final long serialVersionUID = 1L;
 				
-				if (target != null) {
-					target.add(ClassMessagePanel.this);
+				@Override
+				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+					m = (ClassMessage) form.getModelObject();			
+					responseService.setClassMessage(getCurrentPeriodModel(), m.getMessage());
+					if (!hasClassMessage) {
+						hasClassMessage = true;
+					}
+					getMessageViewer().setDefaultModel(form.getModel());
+					editing = false;
+					target.add(getMessageForm());
+					target.add(getMessageViewer());
 				}
-			} 
-		});
-					
-		DeletePersistedObjectDialog<ClassMessage> dialog = new DeletePersistedObjectDialog<ClassMessage>("deleteMessageModal", new Model<ClassMessage>(m) ) {
+				
+				@Override
+				protected void onError(AjaxRequestTarget target, Form<?> form) {
+					target.add(getParent().get("feedback"));
+				}
+			};
+			add(saveLink);
+
+			AjaxFallbackLink<Void> cancelLink = new AjaxFallbackLink<Void>("cancel") {
 			private static final long serialVersionUID = 1L;
 
-			@Override
-			protected void deleteObject() {
-				responseService.deleteClassMessage(mPeriod);
-				m = null;
-			}
-		};
-		add(dialog);
-		dialog.setObjectName((new StringResourceModel("ManageClasses.delete.objectName", this, null, "Class Message").getString()));
-		dialog.setObjectName("Class Message");
-		staticContent.add(new WebMarkupContainer("delete").add(dialog.getDialogBorder().getClickToOpenBehavior()));
-	}
-	
-	private void addForm() {
-		Form<ClassMessage> classMessageForm = new Form<ClassMessage>("classMessageForm");
-		add(classMessageForm);
-		classMessageForm.setOutputMarkupPlaceholderTag(true);
-		classMessageForm.setVisible(false);
-		classMessageForm.add(new TextArea<String>("message").add(new MaximumLengthValidator(255)).setRequired(true));
-		classMessageForm.add(new AjaxSubmitLink("save") {
-			private static final long serialVersionUID = 1L;
+				@Override
+				public void onClick(AjaxRequestTarget target) {
+					editing = false;
+					target.add(getMessageForm());
+					target.add(getMessageViewer());
+				} 
+			};
+			add(cancelLink);
 			
-			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				m = (ClassMessage) form.getModelObject();			
-				responseService.setClassMessage(mPeriod, m.getMessage());
-				getStaticContent().setVisible(true);
-				getClassMessageForm().setVisible(false);
-				if (target != null) {
-					target.add(ClassMessagePanel.this);
-				}
-			}
-			
-			@Override
-			protected void onError(AjaxRequestTarget target, Form<?> form) {
-				if (target != null) {
-					target.add(ClassMessagePanel.this);
-				}
-			}
-		});
-		classMessageForm.add(new AjaxFallbackLink<Object>("cancel") {
-			private static final long serialVersionUID = 1L;
+			FeedbackPanel classMessageFeedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(this));
+			add(classMessageFeedback);
+			classMessageFeedback.setOutputMarkupPlaceholderTag(true);
 
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				getStaticContent().setVisible(true);
-				getClassMessageForm().setVisible(false);
-				if (target != null) {
-					target.add(ClassMessagePanel.this);
-				}
-			} 
-		});
 
-		FeedbackPanel classMessageFeedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(classMessageForm));
-		classMessageForm.add(classMessageFeedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(classMessageForm)));
-		classMessageFeedback.setOutputMarkupPlaceholderTag(true);
-	}
-
-	
-	@Override
-	protected void onDetach() {
-		if (mPeriod != null) {
-			mPeriod.detach();
 		}
-		super.onDetach();
-	}	
+
+		@Override
+		protected void onConfigure() {
+			super.onConfigure();
+			setVisible(editing);
+		}		
+	}
+
+
+	private IModel<Period> getCurrentPeriodModel() {
+		return 	CwmSession.get().getCurrentPeriodModel();
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	private Form<ClassMessage> getMessageForm() {
+		return (Form<ClassMessage>) get("messageForm");
+	}
+
+	
+	private WebMarkupContainer getMessageViewer() {
+		return (WebMarkupContainer) get("messageViewer");
+	}
+
 }

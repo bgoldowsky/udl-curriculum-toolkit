@@ -184,7 +184,7 @@ public class ManageClasses extends ISIStandardPage {
 		feedback.setOutputMarkupId(true);
 
 		// Container for editing the Class Message
-		add(new ClassMessagePanel("classMessagePanel", getCurrentPeriodModel()));
+		add(new ClassMessagePanel("classMessagePanel"));
 		
 		// move student form
 		MoveStudentPeriodForm moveForm = new MoveStudentPeriodForm("moveForm");
