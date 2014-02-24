@@ -701,7 +701,6 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	public List<ISIPrompt> getResponseCollectionNamePrompts(IModel<User> mUser) {
 	
         Query q = Databinder.getHibernateSession().createQuery("select distinct(r.prompt) from Response r where r.prompt.collectionName is not null and r.prompt.collectionName !='' and r.valid='true' and r.user.id=:userId");
-
 		q.setLong("userId", mUser.getObject().getId());
 		q.setCacheable(true);
 		return q.list();
@@ -713,19 +712,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ISIPrompt> getResponseCollectionPrompts(IModel<User> mUser, String collectionName) {
-/*
-		Criteria promptCriteria = Databinder.getHibernateSession()
-			.createCriteria(ISIPrompt.class)
-			.createAlias("responses", "r")
-		    .add(Restrictions.eq("collectionName", collectionName))
-			.add(Restrictions.eq("r.user", mUser.getObject()))
-			.add(Restrictions.eq("r.valid", true))
-			.setCacheable(true)
-			.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return promptCriteria.list();
-*/
-        // TODO heikki verify this is a correct replacement for the above
-        Query q = Databinder.getHibernateSession().createQuery("select r.prompt from Response r where r.prompt.collectionName=:collectionName and r.valid='true' and r.user.id=:userId");
+        Query q = Databinder.getHibernateSession().createQuery("select distinct(r.prompt) from Response r where r.prompt.collectionName=:collectionName and r.valid='true' and r.user.id=:userId");
         q.setString("collectionName", collectionName);
         q.setLong("userId", mUser.getObject().getId());
         return q.list();
