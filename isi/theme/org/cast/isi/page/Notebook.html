@@ -14,24 +14,24 @@
 <body class="themeWindow">
 
 <div id="header">
-    <div wicket:id="heading" id="logo">
+    <h1 wicket:id="heading" id="logo">
         Notebook
-    </div>
+    </h1>
     <div id="close">
         <a href="javascript:window.print();" class="button"><img src="img/icons/print.png" width="15" height="15" alt="" /> Print Page</a>
-        <a href="javascript:window.close();" class="button icon"><img src="img/icons/close.png" width="15" height="15" alt="Close Window" title="Close Window" /></a>
+        <a wicket:id="closeWindow" href="#" class="button icon"><img src="img/icons/close.png" width="15" height="15" alt="Close Window" title="Close Window" /></a>
     </div>
 </div>
 
 <div id="nav">
     <div id="navContent">
         <form wicket:id="chapterSelectForm" action="post">
-            <select wicket:id="chapterChoice"  title="Source of notes">
+            <select wicket:id="chapterChoice" id="chapterChoice" title="Source of notes">
                 <option>Option 1</option>
                 <option>Option 2</option>
                 <option>Option 3</option>
             </select>
-            <input type="submit" value="View Notes" class="button" />
+            <a wicket:id="submitLink" href="" class="button">View Notes</a>
         </form>
     </div>
 </div>

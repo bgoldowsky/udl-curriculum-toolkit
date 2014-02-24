@@ -33,7 +33,10 @@ import net.databinder.models.hib.HibernateObjectModel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -51,6 +54,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.cast.cwm.components.AttributePrepender;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
@@ -130,6 +134,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	}
 	
 	protected void addComponents(MarkupContainer container) {
+		addCloseButton(container);
 		addChapterChoice(container);
 		addNotebookResponses(container);
 		populateResponseMap();
@@ -182,17 +187,21 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		}
 	}
 
+
+	private void addCloseButton(MarkupContainer container) {
+		WebMarkupContainer closeWindowLink = new WebMarkupContainer("closeWindow");
+		add(closeWindowLink);
+		String onClickString = "if (typeof AutoSaver !== 'undefined') { AutoSaver.autoSaveMaybeSave(function() {window.close();});} else {window.close();}";
+		closeWindowLink.add(new AttributeAppender("onclick", onClickString));
+		container.add(closeWindowLink);
+	}
+
+
 	/**
 	 * Add a drop down choice of chapters.
 	 */
 	protected void addChapterChoice(MarkupContainer container) {
 		
-		// display only the titles in the dropdown
-		ChoiceRenderer<XmlSection> renderer = new ChoiceRenderer<XmlSection>("title");
-		chapterChoice = new DropDownChoice<XmlSection>("chapterChoice", new XmlSectionModel(currentChapterLoc.getSection()), mChapterList, renderer);
-		chapterChoice.add(new AttributeModifier("autocomplete", "off"));
-		chapterChoice.add(new AttributeModifier("ignore", "true"));
-
 		Form<Void> chapterSelectForm = new Form<Void>("chapterSelectForm") {
 			private static final long serialVersionUID = 1L;
 
@@ -209,8 +218,27 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 				}
 			}			
 		};
-		chapterSelectForm.add(chapterChoice);
 		container.add(chapterSelectForm);
+
+		// display only the titles in the dropdown
+		ChoiceRenderer<XmlSection> renderer = new ChoiceRenderer<XmlSection>("title");
+		chapterChoice = new DropDownChoice<XmlSection>("chapterChoice", new XmlSectionModel(currentChapterLoc.getSection()), mChapterList, renderer);
+		chapterChoice.add(new AttributeModifier("autocomplete", "off"));
+		chapterChoice.add(new AttributeModifier("ignore", "true"));
+		chapterSelectForm.add(chapterChoice);
+		
+		AjaxSubmitLink submitLink = new AjaxSubmitLink("submitLink", chapterSelectForm) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+				target.prependJavaScript("AutoSaver.autoSaveMaybeSave(null);");
+				super.onSubmit(target, form);
+			}
+		};
+		String onClickString = "if (typeof AutoSaver !== 'undefined') { AutoSaver.autoSaveMaybeSave(null);}";
+		submitLink.add(new AttributePrepender("onclick", onClickString, ";"));
+		chapterSelectForm.add(submitLink);
 	}
 
 
