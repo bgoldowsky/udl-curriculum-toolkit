@@ -34,8 +34,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.StringValidator.MaximumLengthValidator;
-import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.Period;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.isi.data.ClassMessage;
 import org.cast.isi.service.IISIResponseService;
 
@@ -56,6 +56,8 @@ public class ClassMessagePanel extends Panel {
 	@Inject
 	private IISIResponseService responseService;
 
+	@Inject
+	private ICwmSessionService sessionService;
 
 	public ClassMessagePanel(String id) {
 		super(id);
@@ -80,14 +82,17 @@ public class ClassMessagePanel extends Panel {
 	}
 	
 	
-	private class MessageViewer extends WebMarkupContainer {
+	public class MessageViewer extends WebMarkupContainer {
 
 		private static final long serialVersionUID = 1L;
 
 		public MessageViewer(String id, CompoundPropertyModel<ClassMessage> compoundPropertyModel) {
 			super(id, compoundPropertyModel);
-			setOutputMarkupPlaceholderTag(true);
-			
+			setOutputMarkupPlaceholderTag(true);			
+		}	
+		
+		@Override
+		protected void onInitialize() {
 			add(new Label("message"));
 			Label defaultIndicator = new Label("defaultIndicator", (new StringResourceModel("ManageClasses.noClassMessageDefaultIndicator", this, null, "(Default Message").getString())) {
 				private static final long serialVersionUID = 1L;
@@ -112,8 +117,9 @@ public class ClassMessagePanel extends Panel {
 				}
 			};
 			add(editLink);
-		}	
-		
+			super.onInitialize();
+		}
+
 		@Override
 		protected void onConfigure() {
 			super.onConfigure();
@@ -172,8 +178,6 @@ public class ClassMessagePanel extends Panel {
 			FeedbackPanel classMessageFeedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(this));
 			add(classMessageFeedback);
 			classMessageFeedback.setOutputMarkupPlaceholderTag(true);
-
-
 		}
 
 		@Override
@@ -185,7 +189,7 @@ public class ClassMessagePanel extends Panel {
 
 
 	private IModel<Period> getCurrentPeriodModel() {
-		return 	CwmSession.get().getCurrentPeriodModel();
+		return 	sessionService.getCurrentPeriodModel();
 	}
 
 	
