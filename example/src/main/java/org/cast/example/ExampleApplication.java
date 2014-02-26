@@ -19,63 +19,16 @@
  */
 package org.cast.example;
 
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.cast.cwm.CwmSession;
-import org.cast.cwm.data.Role;
 import org.cast.isi.ISIApplication;
-import org.cast.isi.page.AdminHome;
-import org.cast.isi.page.ISIStandardPage;
-import org.cast.isi.page.Reading;
-import org.cast.isi.page.TeacherReading;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExampleApplication extends ISIApplication {
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(ISIApplication.class);
 	
 	
-	@Override
-	protected void init() {
-		super.init();
-
-	}
-
-	/** Return the class of page that should be used to display a given XmlSection.
-	 *  If it is not a valid page, return null.
-	 * 
-	 * Rules for this application: a level2, 3, or 4 element can be a page.
-	 * If the level2 or 3 has children, then those will be the pages and the 
-	 * parent is not.
-	 * 
-	 * @param sec an ISIXmlSection
-	 * @return A subclass of ISIPage.
-	 */
-	@Override
-	public Class<? extends ISIStandardPage> getReadingPageClass() {
-		if (Role.TEACHER.equals(CwmSession.get().getUser().getRole()))
-			return TeacherReading.class;
-		else
-			return Reading.class;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.cast.isi.ISIApplication#getPageTitleBase()
-	 */
 	@Override
 	public String getPageTitleBase() {
 		return (new StringResourceModel("pageTitleBase", new Model<String>("pageTitleBase"), null, "Example")).getString();
-	}
-
-	@Override
-	public Class<? extends WebPage> getHomePage(Role role) {
-		if (role.equals(Role.ADMIN) || role.equals(Role.RESEARCHER)) 
-			return AdminHome.class;
-		if (role.equals(Role.TEACHER) || role.equals(Role.STUDENT))
-			return getTocPageClass(role);
-		return getSignInPageClass();
 	}
 
 	@Override
