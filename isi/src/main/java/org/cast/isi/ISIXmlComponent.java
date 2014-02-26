@@ -686,6 +686,8 @@ public class ISIXmlComponent extends XmlComponent {
 			return new LockingResponseButtons(wicketId, mPrompt, metadata, loc, cwmSessionService.getUserModel());
 
 		} else if (wicketId.startsWith("ratePanel_")) {
+			if (isGuest)
+				return ISIApplication.get().getLoginMessageComponent(wicketId);
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String promptText = null;
 			String ratingId = elt.getAttribute("id");

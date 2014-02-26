@@ -35,6 +35,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.components.Icon;
+import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.CollapseToggleLink;
 import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSection;
@@ -54,7 +55,7 @@ import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
 
-@AuthorizeInstantiation("STUDENT")
+@AuthorizeInstantiation("GUEST")
 public class StudentToc extends ISIStandardPage {
 	
 	private static final long serialVersionUID = 1L;
@@ -66,6 +67,8 @@ public class StudentToc extends ISIStandardPage {
 	
 	private transient ISIXmlSection currentPage;
 	private transient ISIXmlSection currentRootSection;
+	protected boolean guest;
+
 		
 	@Inject
 	protected ISectionService sectionService;
@@ -81,6 +84,9 @@ public class StudentToc extends ISIStandardPage {
 
 		pageTitle = (new StringResourceModel("StudentTOC.pageTitle", this, null, "Home").getString());
 		setPageTitle(pageTitle);
+		
+		User user = ISISession.get().getUser();
+		guest = user.isGuest();
 		
 		if (loc == null)
 			loc = ISIApplication.get().getBookmarkLoc();
@@ -98,8 +104,8 @@ public class StudentToc extends ISIStandardPage {
 		addTagsBox();
 
 		// Loads a list of locations that have Unread Messages and Regular Messages
-		locsWithUnread = responseService.getPagesWithNotes(ISISession.get().getUser(), true);
-		locsWithMessages = responseService.getPagesWithNotes(ISISession.get().getUser());
+		locsWithUnread = responseService.getPagesWithNotes(user, true);
+		locsWithMessages = responseService.getPagesWithNotes(user);
 		
 		
 		// This is the "Chapter" level
@@ -143,10 +149,15 @@ public class StudentToc extends ISIStandardPage {
 		add(classMessageToggleLink);
 		classMessageToggleLink.setVisible(classMessageOn);
 
-		if (m == null) {
-			add(new Label("classMessage", new ResourceModel("classMessage")));
+		if (!guest) {
+			if (m == null) {
+				add(new Label("classMessage", new ResourceModel("classMessage")));
+			} else {
+				add(new Label("classMessage", m.getMessage()));
+			}			
 		} else {
-			add(new Label("classMessage", m.getMessage()));
+			add(ISIApplication.get().getLoginMessageComponent("classMessage"));
+			classMessageToggleLink.setToggleState(false);
 		}
 	}
 
@@ -157,7 +168,14 @@ public class StudentToc extends ISIStandardPage {
 		add(myTagsToggleLink);
 		myTagsToggleLink.setVisible(myTagsOn);
 
-		add(new TagCloudTocPanel("tagcloud", getTagLinkBuilder()));
+		if (!guest) {
+			add(new TagCloudTocPanel("tagcloud", getTagLinkBuilder()));
+		} else {
+			add(ISIApplication.get().getLoginMessageComponent("tagcloud"));
+			myTagsToggleLink.setToggleState(false);
+			
+		}
+
 	}
 
 
