@@ -283,7 +283,14 @@ public class Reading extends ISIStandardPage implements IHeaderContributor {
     	QuestionListView questionList = new QuestionListView("questionList", ISIApplication.get().getQuestionPopupPageClass(), questionPopupSettings, null);
     	questionList.setOutputMarkupId(true);
 		questionContainer.add(questionList);
-		questionContainer.add(new WebMarkupContainer("qButtonVisible"));
+		questionContainer.add(new WebMarkupContainer("qButtonVisible").setVisible(!guest));
+		if (!guest) {
+			questionContainer.add(new WebMarkupContainer("guestMessage").setVisible(false));
+		} else {
+			questionContainer.add(ISIApplication.get().getLoginMessageComponent("guestMessage"));
+			questionList.setVisible(false);
+			myQuestionsToggleLink.setToggleState(false);
+		}
     	add(new NewQuestionForm("newQuestion"));
 	}
 	
