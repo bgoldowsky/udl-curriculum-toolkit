@@ -137,8 +137,12 @@ public class StudentToc extends ISIStandardPage {
 
 	private void addClassMessage() {
 		boolean classMessageOn = false;
+		ClassMessage m = null;
+		
 		// find the Class Message for this period
-		ClassMessage m = responseService.getClassMessage(ISISession.get().getCurrentPeriodModel());
+		if (!guest) {
+			m = responseService.getClassMessage(ISISession.get().getCurrentPeriodModel());
+		};
 		if (ISIApplication.get().isClassMessageOn() && m == null) { // display default
 			classMessageOn = true;
 		} else if (ISIApplication.get().isClassMessageOn() && m != null && m.getMessage() != null && !m.getMessage().isEmpty()) { // teacher has deleted message
