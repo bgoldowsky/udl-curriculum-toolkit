@@ -112,7 +112,7 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 	public void onConfigure() {
 		super.onConfigure();
 		ISIResponse isiResponse = getISIResponse();
-		setVisible((isiResponse != null) && belongsToUser(isiResponse));
+		setVisible((isiResponse != null) && (belongsToUser(isiResponse) || isTeacher()));
 	}
 	
 	private boolean belongsToUser(ISIResponse isiResponse) {
@@ -120,6 +120,14 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 		return (user != null) && Role.STUDENT.equals(user.getRole()) && user.equals(isiResponse.getUser());
 	}
 
+	private boolean isTeacher() {
+		User user = mUser.getObject();
+		if (Role.TEACHER.equals(user.getRole())) {
+			return true;
+		}
+		return false;
+	}
+	
 	protected boolean whiteboardEnabled() {
 		return allowWhiteboard && featureService.isWhiteboardOn();
 	}
@@ -182,7 +190,7 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 		@Override
 		public void onClick(AjaxRequestTarget target) {
 			responseService.addToWhiteboard((ISIResponse) getModelObject(), getPage());
-			target.addComponent(ResponseViewActionsPanel.this);
+			target.add(ResponseViewActionsPanel.this);
 		}
 	}
 
@@ -204,15 +212,14 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 		@Override
 		public void onClick(AjaxRequestTarget target) {
 			responseService.addToNotebook((ISIResponse) getModelObject(), getPage());
-			target.addComponent(ResponseViewActionsPanel.this);
+			target.add(ResponseViewActionsPanel.this);
 		}
 	}
 
 	private class WhiteboardAnchorLink extends AnchoredLink {
 		private static final long serialVersionUID = 1L;
 
-		private WhiteboardAnchorLink(String id,
-				Class<? extends WebPage> pageClass) {
+		private WhiteboardAnchorLink(String id, Class<? extends WebPage> pageClass) {
 			super(id, pageClass);
 		}
 
@@ -226,8 +233,7 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 	private class NotebookAnchorLink extends AnchoredLink {
 		private static final long serialVersionUID = 1L;
 
-		private NotebookAnchorLink(String id,
-				Class<? extends WebPage> pageClass) {
+		private NotebookAnchorLink(String id, Class<? extends WebPage> pageClass) {
 			super(id, pageClass);
 		}
 
@@ -256,7 +262,7 @@ public class ResponseViewActionsPanel extends Panel implements ISingleSelectForm
 		protected CharSequence appendAnchor(ComponentTag tag, CharSequence url) {
 			if (url.toString().indexOf('#')>-1)
 				return super.appendAnchor(tag, url);
-			return url + "#" + getResponseId();
+			return url + "#" + "response_" + getResponseId();
 		}
 
 	}

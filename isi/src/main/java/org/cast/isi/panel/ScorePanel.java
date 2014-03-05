@@ -87,7 +87,12 @@ public abstract class ScorePanel extends Panel {
 		ISIPrompt prompt = (ISIPrompt) response.getPrompt();
 		PromptType type = prompt.getType();
 		if (type.equals(PromptType.SINGLE_SELECT))
-			return response.getResponseData().getScore();
+			// return a 0 result if responsedata doesn't exist
+			if (response.getResponseData() != null) {
+				return response.getResponseData().getScore();
+			} else {
+				return 0;
+			}
 		else
 			return response.getScore();
 	}

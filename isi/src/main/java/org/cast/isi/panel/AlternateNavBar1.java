@@ -75,7 +75,7 @@ public class AlternateNavBar1 extends AbstractNavBar<XmlSection> implements ISec
 
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		// refresh on section complete change for any section
-		target.addComponent(this);
+		target.add(this);
 	}
 	
 	private ISIXmlSection getCurrentSection() {

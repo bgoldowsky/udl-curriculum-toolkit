@@ -30,8 +30,7 @@ import org.cast.isi.service.IFeatureService;
 
 import com.google.inject.Inject;
 
-public abstract class SectionCompleteToggleTextLink extends
-		SectionCompleteToggleLink {
+public abstract class SectionCompleteToggleTextLink extends	SectionCompleteToggleLink {
 
 	private static final long serialVersionUID = 1L;
 

@@ -20,9 +20,9 @@
 package org.cast.isi.panel;
 
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Role;
 import org.cast.isi.ISIApplication;
@@ -66,15 +66,15 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 				studentFlagPanel.setmUser(null); // Set Flag to no student
 				studentFlagPanel.setEnabled(false);
 				if (target != null) {
-					target.addComponent(studentFlagPanel);
-					target.addComponent(teacherNotesLink);
+					target.add(studentFlagPanel);
+					target.add(teacherNotesLink);
 				}
 			}
 
 			@Override
 			protected void onStudentUpdate(AjaxRequestTarget target) {
 				studentFlagPanel.setEnabled(false);
-				target.addComponent(studentFlagPanel);
+				target.add(studentFlagPanel);
 			}
 
 			@Override
@@ -96,6 +96,7 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 		}
 		teacherNotesLink.setEnabled(ISISession.get().getStudentModel() != null);
 		teacherNotesLink.setVisible(!ISISession.get().getUser().hasRole(Role.RESEARCHER) || showStudents); // Researchers do not use Teacher Notes
+		teacherNotesLink.setOutputMarkupPlaceholderTag(true);
 		add(teacherNotesLink);
 
 		// Student Flag Panel for the current student
@@ -103,16 +104,18 @@ public class TeacherSubHeaderPanel extends ISIPanel {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public boolean isVisible() {
-				super.isVisible();
-				if (ISIApplication.get().getHomePage().isAssignableFrom(getPage().getClass()) ||
-						ISIApplication.get().getManageClassesPageClass().isAssignableFrom(getPage().getClass())) {
-					return false;
+			protected void onBeforeRender() {
+				if (ISIApplication.get().getHomePage().isAssignableFrom(getPage().getClass())
+						|| ISIApplication.get().getManageClassesPageClass().isAssignableFrom(getPage().getClass())
+						|| ISISession.get().getStudentModel() == null) {
+					setVisible(false);
+				} else {
+					setVisible(true);
 				}
-				return true;
+				super.onBeforeRender();
 			}			
+			
 		};
-		studentFlagPanel.setOutputMarkupId(true);
 		add(studentFlagPanel);	
 	}
 	

@@ -38,7 +38,7 @@ public class PageNumberLink extends BookmarkablePageLink<Void> {
 		super(id, ISIApplication.get().getReadingPageClass());
 		ISIXmlSection target = ISIApplication.get().getPageNum(targetPageNum);
 		if (target!=null)
-			setParameter("loc", target.getContentLoc().getLocation());
+			getPageParameters().add("loc", target.getContentLoc().getLocation());
 		else {
 			setEnabled(false);
 			this.add(new ClassAttributeModifier("off"));

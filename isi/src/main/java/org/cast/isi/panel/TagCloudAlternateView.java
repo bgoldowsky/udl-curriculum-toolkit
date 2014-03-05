@@ -19,11 +19,15 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.cast.cwm.tag.component.TagCloudPanel;
 import org.cast.cwm.tag.model.Tag;
 import org.cast.isi.ISIApplication;
 
+@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", roles={"STUDENT"})})
 public class TagCloudAlternateView extends TagCloudPanel {
+	
 	private static final long serialVersionUID = 1L;
 
 	public TagCloudAlternateView(String id, Tag tag) {

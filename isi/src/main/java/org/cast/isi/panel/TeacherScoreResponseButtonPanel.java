@@ -29,7 +29,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Response;
+import org.cast.cwm.data.Role;
 import org.cast.cwm.service.ICwmService;
+import org.cast.cwm.service.ICwmSessionService;
 
 import com.google.inject.Inject;
 
@@ -39,7 +41,11 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 	
 	@Inject
 	private ICwmService cwmService;
-	
+
+	@Inject 
+	protected ICwmSessionService sessionService;
+
+
 	public TeacherScoreResponseButtonPanel(String id, ISortableDataProvider<Response> responseProvider) {
 		this(id, getResponses(responseProvider));
 	}
@@ -73,7 +79,11 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 			response.setScore(score);
 		}
 		cwmService.flushChanges();
-		target.addComponent(TeacherScoreResponseButtonPanel.this);
+		target.add(TeacherScoreResponseButtonPanel.this);
+	}
+
+	private boolean isResearcher() {
+		return sessionService.getUser().hasRole(Role.RESEARCHER);
 	}
 
 	private class GotItButton extends AjaxLink<Void> {
@@ -85,6 +95,8 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 			add(new Icon("icon", "img/icons/response_positive.png", getAltText()));
 			if (isMarkedCorrect()) 
 				add(new AttributeAppender("class", new Model<String>("current"), " "));
+			if (isResearcher())
+				setEnabled(false);
 		}
 		
 		private String getAltText() {
@@ -113,6 +125,8 @@ public class TeacherScoreResponseButtonPanel extends ScorePanel {
 			add(new Icon("icon", "img/icons/response_negative.png", getAltText()));
 			if (isMarkedIncorrect()) 
 				add(new AttributeAppender("class", new Model<String>("current"), " "));
+			if (isResearcher())
+				setEnabled(false);
 		}
 
 		private String getAltText() {

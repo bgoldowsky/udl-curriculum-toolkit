@@ -20,17 +20,17 @@
 
 package org.cast.isi.component;
 
-import java.util.Date;
-
+import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.User;
@@ -42,7 +42,7 @@ import org.cast.isi.page.ISIBasePage;
 import org.cast.isi.panel.ISectionStatusChangeListener;
 import org.cast.isi.service.ISectionService;
 
-import com.google.inject.Inject;
+import java.util.Date;
 
 /**
  * A multiple choice form.  This will have a {@link RadioGroup}&lt;String&gt; child with
@@ -87,7 +87,7 @@ public abstract class DelayedFeedbackSingleSelectForm extends SingleSelectForm i
 	
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		if (location.equals(getLocation()))
-			target.addComponent(this);
+			target.add(this);
 	}
 	
 	@Override
@@ -139,15 +139,13 @@ public abstract class DelayedFeedbackSingleSelectForm extends SingleSelectForm i
 	}
 
 	private boolean locateChild(final SingleSelectItem selectedItem) {
-		Object found = visitChildren(SingleSelectItem.class, new IVisitor<Component>(){
-
-			public Object component(Component component) {
-				if (component == selectedItem) {
-					return component;
-				}
-				else
-					return CONTINUE_TRAVERSAL;
-			}});
+		Object found = visitChildren(SingleSelectItem.class, new IVisitor<Component, Component>(){
+            public void component(Component component, IVisit<Component> visit) {
+                if (component == selectedItem) {
+                    visit.stop(component);
+                }
+            }
+        });
 		
 		return (found != null);
 	}

@@ -20,9 +20,6 @@
 package org.cast.isi.page;
 
 import net.databinder.hib.Databinder;
-
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -35,6 +32,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.cast.cwm.data.User;
@@ -56,6 +55,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ForgotPassword extends ISIBasePage implements IHeaderContributor {	
 
+	private static final long serialVersionUID = 1L;
+
 	boolean success = false; // has a successful send already happened?
 	
 	@SuppressWarnings("unused")
@@ -67,8 +68,9 @@ public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
 		String pageTitleEnd = (new StringResourceModel("ForgotPassword.pageTitle", this, null, "Forgot Password").getString());
 		setPageTitle(pageTitleEnd);
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
-		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
-		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+
+		addApplicationTitles();
+
 		add(new WebMarkupContainer("preSubmitMessage") {
 			private static final long serialVersionUID = 1L;
 
@@ -134,7 +136,7 @@ public class ForgotPassword extends ISIBasePage implements IHeaderContributor {
 
 	public void renderHead(final IHeaderResponse response) {
 		renderThemeCSS(response, "css/main.css");
-		response.renderCSSReference(new ResourceReference("/css/main.css"));
+		response.renderCSSReference(new CssResourceReference(this.getClass(), "/css/main.css"));
 		super.renderHead(response);		
 	}
 

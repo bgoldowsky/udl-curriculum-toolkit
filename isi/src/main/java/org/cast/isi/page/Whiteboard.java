@@ -27,11 +27,10 @@ import java.util.TreeMap;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
 
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -43,6 +42,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.Role;
@@ -70,6 +70,8 @@ import com.google.inject.Inject;
  */
 @AuthorizeInstantiation("STUDENT")
 public class Whiteboard extends ISIBasePage implements IHeaderContributor {
+
+	private static final long serialVersionUID = 1L;
 
 	protected static final Logger log = LoggerFactory.getLogger(Whiteboard.class);
 
@@ -132,8 +134,8 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 		@Override
 		public void onClick(AjaxRequestTarget target) {
 			showNames = !showNames;
-			target.addComponent(Whiteboard.this.get("hideNamesLink"));	
-			target.addComponent(Whiteboard.this.get("rootContainer")); // Root Repeating View			
+			target.add(Whiteboard.this.get("hideNamesLink"));	
+			target.add(Whiteboard.this.get("rootContainer")); // Root Repeating View			
 		}
 
 		@Override
@@ -191,7 +193,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 						responseItem.setOutputMarkupId(true);
 						responses.add(responseItem);
 						responseItem.add(new WebMarkupContainer("responseAnchor")
-								.add(new SimpleAttributeModifier("name", String.valueOf(response.getId()))));
+								.add(new AttributeModifier("id", "response_" + String.valueOf(response.getId()))));
 						responseItem.add(new ResponseViewerFactory().makeResponseViewComponent("response", new HibernateObjectModel<ISIResponse>(Response.class, response.getId())));
 
 						// Remove from Whiteboard link
@@ -289,7 +291,7 @@ public class Whiteboard extends ISIBasePage implements IHeaderContributor {
 		super.renderHead(response);
 		renderThemeCSS(response, "css/window.css");
 		renderThemeCSS(response, "css/window_print.css", "print");
-		response.renderOnLoadJavascript("bindSectionOpenerLinks()");
+		response.renderOnLoadJavaScript("bindSectionOpenerLinks()");
 	}
 
 

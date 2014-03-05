@@ -20,11 +20,10 @@
 package org.cast.isi.panel;
 
 import lombok.Getter;
-import net.databinder.models.hib.HibernateObjectModel;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponentLabel;
@@ -38,9 +37,8 @@ import org.cast.cwm.data.builders.UserCriteriaBuilder;
 import org.cast.cwm.data.component.PeriodChoice;
 import org.cast.cwm.data.component.UserChoice;
 import org.cast.cwm.data.models.UserListModel;
+import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISISession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A panel that displays Period and Student Drop Down Choice menus for the logged in teacher.  Changing the 
@@ -56,7 +54,7 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 	@Getter private UserChoice studentChoice;
 	private FeedbackPanel feedback;
 	private Form<Void> periodStudentSelectForm;
-	private static final Logger log = LoggerFactory.getLogger(PeriodStudentSelectPanel.class);
+	//private static final Logger log = LoggerFactory.getLogger(PeriodStudentSelectPanel.class);
 	
 	public PeriodStudentSelectPanel(String id, final boolean showStudents) {
 		super(id);
@@ -69,11 +67,12 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 				super.onSubmit();
 			}
 		};
+    	add(periodStudentSelectForm);
     	periodStudentSelectForm.setOutputMarkupId(true);
     	
     	// Period Chooser
     	periodChoice = new PeriodChoice("periodChoice", ISISession.get().getCurrentPeriodModel()); // Set default period from session
-    	periodChoice.add(new SimpleAttributeModifier("autocomplete", "off"));
+    	periodChoice.add(new AttributeModifier("autocomplete", "off"));
 		periodChoice.setOutputMarkupId(true);
 		
 		// Set Period onChange Behavior
@@ -89,11 +88,12 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 				IModel<Site> mCurrentSite = new Model<Site>(currentSite);
 				ISISession.get().setCurrentSiteModel(mCurrentSite);
 				if (showStudents) {
-					studentChoice.setChoices(getUserListModel()); // Alert student drop-down of the change
-					target.addComponent(studentChoice);
+					studentChoice.setChoices(getUserListModel()); // Alert student drop-down of the change					
+					studentChoice.setModel(new UserModel());
+					target.add(studentChoice);
 				}
-				target.addComponent(feedback); // Update Feedback Panel
-				target.addComponent(periodChoice);
+				target.add(feedback); // Update Feedback Panel
+				target.add(periodChoice);
 				PeriodStudentSelectPanel.this.onPeriodUpdate(target);  // Subclass defined actions
 			}	
 		});
@@ -105,13 +105,15 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 		// Student Chooser
 		IModel<User> studentModel = ISISession.get().getStudentModel();
 		if (studentModel == null) {
-			studentModel = new HibernateObjectModel<User>(User.class);
+			studentModel = new UserModel();
 		}
 		studentChoice = new UserChoice("studentChoice", studentModel, getUserListModel());
+    	periodStudentSelectForm.add(studentChoice);
+		studentChoice.setNullValid(true);
 		if (studentChoice.getModelObject() == null) { // If session did not have a student or student was not in the session's period, reset session's student
 			ISISession.get().setStudentModel(null);
 		}
-		studentChoice.setOutputMarkupId(true);
+		studentChoice.setOutputMarkupPlaceholderTag(true);
 		
 		// Set Student onChange Behavior
 		studentChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -120,8 +122,8 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
 				ISISession.get().setStudentModel(studentChoice.getModel()); // Save student change in session
-				target.addComponent(feedback);
-				target.addComponent(studentChoice);
+				target.add(feedback);
+				target.add(studentChoice);
 				PeriodStudentSelectPanel.this.onStudentUpdate(target);  // Subclass defined actions
 			}			
 		});		
@@ -131,13 +133,11 @@ public abstract class PeriodStudentSelectPanel extends ISIPanel {
 		// make sure the label is linked to the student dropdown		
 		FormComponentLabel studentChoiceLabel = (new FormComponentLabel("studentChoiceLabel", studentChoice));
 		periodStudentSelectForm.add(studentChoiceLabel);
-    	periodStudentSelectForm.add(studentChoice);
   	
     	feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(periodStudentSelectForm));
     	feedback.setOutputMarkupId(true);
     	feedback.setMaxMessages(1);
     	periodStudentSelectForm.add(feedback);
-    	add(periodStudentSelectForm);
 		
 	}
 	

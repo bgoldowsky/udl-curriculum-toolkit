@@ -44,8 +44,8 @@ public class GlossaryLink extends BookmarkablePageLink<String> {
 	protected void onBeforeRender() {
 		super.onBeforeRender();
 		if (!Strings.isEmpty(getModelObject())) {
-			setParameter("word", getModelObject());
-			setParameter("link", "mini");
+			getPageParameters().add("word", getModelObject());
+			getPageParameters().add("link", "mini");
 		}
 	}
 

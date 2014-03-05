@@ -19,13 +19,11 @@
  */
 package org.cast.isi.page;
 
+import com.google.inject.Inject;
 import net.databinder.auth.AuthApplication;
 import net.databinder.auth.hib.AuthDataSession;
 import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.wicket.Application;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -40,6 +38,8 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Site;
 import org.cast.cwm.data.User;
@@ -50,9 +50,9 @@ import org.cast.isi.ISISession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-
 public class Login extends ISIBasePage implements IHeaderContributor {
+	private static final long serialVersionUID = 1L;
+
 	static final Logger log = LoggerFactory.getLogger(Login.class);
 
 	@Inject
@@ -62,9 +62,11 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 	public Login(PageParameters params) {
 		super(params);
 
-		add(new Label("pageTitle", ISIApplication.get().getPageTitleBase() + " :: Login"));
-		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
-		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+		pageTitle = (new StringResourceModel("Login.pageTitle", this, null, "Login").getString());
+		setPageTitle(pageTitle);
+		add(new Label("pageTitle", pageTitle));
+		
+		addApplicationTitles();
 
 		add (new BookmarkablePageLink<Void>("forgot", ISIApplication.get().getForgotPasswordPageClass()).setVisible(ISIApplication.get().isEmailOn()));
 		add (new BookmarkablePageLink<Void>("register", ISIApplication.get().getRegisterPageClass()).setVisible(ISIApplication.get().isSelfRegisterOn()));
@@ -74,8 +76,8 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 		if (app == null || !app.getSignInPageClass().isInstance(this))
 			throw new UnauthorizedInstantiationException(Login.class);
 		if (params != null) {
-			String username = params.getString("username");
-			String token = params.getString("token");
+			String username = params.get("username").toString();
+			String token = params.get("token").toString();
 
 			if (username != null && token != null) {
 				User user = app.getUser(username);
@@ -83,7 +85,7 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 					AuthDataSession.get().signIn(user, true);
 				}
 				setResponsePage(((Application)app).getHomePage());
-				setRedirect(true);
+				getSession().bind();
 				return;
 			}
 		}
@@ -91,7 +93,6 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 		add(ISIApplication.get().getFooterPanel("pageFooter", params));
 	}
 
-	
 	protected class SignInForm extends Form<User> {
 		private static final long serialVersionUID = 1L;
 		private RequiredTextField<String> username;
@@ -135,7 +136,7 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 
 				if (!continueToOriginalDestination()) {
 					setResponsePage(getApplication().getHomePage());
-					setRedirect(true);
+					session.bind();
 				}
 				
 			} else {
@@ -153,7 +154,7 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 		renderThemeCSS(response, "css/login.css");
 		renderThemeCSS(response, "css/main.css");
 		// setup jwplayer to enable videos to be run on the login page
-		response.renderJavascriptReference(new ResourceReference(MediaPlayerPanel.class, "jwplayer.js"));
+		response.renderJavaScriptReference(new JavaScriptResourceReference(MediaPlayerPanel.class, "jwplayer.js"));
 		super.renderHead(response);
 	}
 

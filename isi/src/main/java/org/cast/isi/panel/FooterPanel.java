@@ -19,7 +19,8 @@
  */
 package org.cast.isi.panel;
 
-import org.apache.wicket.PageParameters;
+
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 @SuppressWarnings("serial")
 public class FooterPanel extends ISIPanel {

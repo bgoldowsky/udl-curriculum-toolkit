@@ -19,11 +19,14 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.data.SectionStatus;
 
+@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", roles={"STUDENT"})})
 public class StudentSectionCompleteToggleImageLink extends SectionCompleteToggleImageLink {
 	
 	private static final long serialVersionUID = 1L;
@@ -56,7 +59,14 @@ public class StudentSectionCompleteToggleImageLink extends SectionCompleteToggle
 	
 	@Override
 	protected void handleClick() {
-		sectionService.setCompleted(getUser(), sectionContentLocation, !isComplete());
+		// when no teacher review is necessary && this is a lock-response section
+		if (isLockResponse() && featureService.isSectionToggleImmediateScoreOn()) {
+			sectionService.setCompleted(getUser(), sectionContentLocation, true);
+			sectionService.setReviewed(getUser(), sectionContentLocation, true);
+			sectionService.setLocked(getUser(), sectionContentLocation, true);
+		} else {
+			sectionService.setCompleted(getUser(), sectionContentLocation, !isComplete());
+		}
 	}
 
 	@Override

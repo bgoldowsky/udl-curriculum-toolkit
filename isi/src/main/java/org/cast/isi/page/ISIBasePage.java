@@ -19,7 +19,7 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.CwmSession;
 import org.cast.cwm.data.behavior.JsEventLoggingBehavior;
 import org.cast.cwm.service.EventService;
@@ -39,6 +39,8 @@ import com.google.inject.Inject;
  */
 public abstract class ISIBasePage extends ISIPage {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Inject
 	private IEventService eventService;
 

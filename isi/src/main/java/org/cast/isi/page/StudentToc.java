@@ -22,12 +22,9 @@ package org.cast.isi.page;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -35,12 +32,14 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.components.Icon;
+import org.cast.cwm.data.User;
+import org.cast.cwm.data.component.CollapseToggleLink;
 import org.cast.cwm.xml.XmlDocument;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
-import org.cast.isi.CollapseBoxBehavior;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.ISITagLinkBuilder;
@@ -53,16 +52,14 @@ import org.cast.isi.panel.TagCloudTocPanel;
 import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.cast.isi.service.ISectionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-@AuthorizeInstantiation("STUDENT")
+@AuthorizeInstantiation("GUEST")
 public class StudentToc extends ISIStandardPage {
 	
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(StudentToc.class);
+	private static final long serialVersionUID = 1L;
+
 	protected List<String> locsWithUnread;
 	protected List<String> locsWithMessages;
 	
@@ -70,6 +67,8 @@ public class StudentToc extends ISIStandardPage {
 	
 	private transient ISIXmlSection currentPage;
 	private transient ISIXmlSection currentRootSection;
+	protected boolean guest;
+
 		
 	@Inject
 	protected ISectionService sectionService;
@@ -86,6 +85,9 @@ public class StudentToc extends ISIStandardPage {
 		pageTitle = (new StringResourceModel("StudentTOC.pageTitle", this, null, "Home").getString());
 		setPageTitle(pageTitle);
 		
+		User user = ISISession.get().getUser();
+		guest = user.isGuest();
+		
 		if (loc == null)
 			loc = ISIApplication.get().getBookmarkLoc();
 
@@ -98,26 +100,13 @@ public class StudentToc extends ISIStandardPage {
 		// Jump to a certain page
 		add(new QuickFlipForm("quickFlipForm", true));
 		
-		// Loads the Class Message for this period
-		WebMarkupContainer classMessageBox = new WebMarkupContainer("classMessageBox");
-		add(classMessageBox);
-		ClassMessage m = responseService.getClassMessage(ISISession.get().getCurrentPeriodModel());
-		if (m == null) {
-			classMessageBox.add(new Label("classMessage", new ResourceModel("classMessage")));
-		} else {
-			classMessageBox.add(new Label("classMessage", m.getMessage()));
-		}
-		classMessageBox.setVisible(ISIApplication.get().isClassMessageOn());
+		addClassMessage();
+		addTagsBox();
 
 		// Loads a list of locations that have Unread Messages and Regular Messages
-		locsWithUnread = responseService.getPagesWithNotes(ISISession.get().getUser(), true);
-		locsWithMessages = responseService.getPagesWithNotes(ISISession.get().getUser());
+		locsWithUnread = responseService.getPagesWithNotes(user, true);
+		locsWithMessages = responseService.getPagesWithNotes(user);
 		
-		WebMarkupContainer tagsBox = new WebMarkupContainer("tagsBox");
-		add(tagsBox);
-		tagsBox.setVisible(ISIApplication.get().isTagsOn());
-		tagsBox.add(new WebMarkupContainer("tagCollapseToggle").add(new CollapseBoxBehavior("onclick", "tagpanel:studenttoc", getPageName())));
-		tagsBox.add(new TagCloudTocPanel("tagcloud", getTagLinkBuilder()));
 		
 		// This is the "Chapter" level
 	   	RepeatingView chapterRepeater = new RepeatingView("chapterRepeater");
@@ -146,6 +135,54 @@ public class StudentToc extends ISIStandardPage {
 	   	}
 	}
 
+	private void addClassMessage() {
+		boolean classMessageOn = false;
+		ClassMessage m = null;
+		
+		// find the Class Message for this period
+		if (!guest) {
+			m = responseService.getClassMessage(ISISession.get().getCurrentPeriodModel());
+		};
+		if (ISIApplication.get().isClassMessageOn() && m == null) { // display default
+			classMessageOn = true;
+		} else if (ISIApplication.get().isClassMessageOn() && m != null && m.getMessage() != null && !m.getMessage().isEmpty()) { // teacher has deleted message
+			classMessageOn = true;
+		}
+
+		CollapseToggleLink classMessageToggleLink = new CollapseToggleLink("classMessageToggleLink", "classMessageToggleLink", "classMessageToggle");
+		add(classMessageToggleLink);
+		classMessageToggleLink.setVisible(classMessageOn);
+
+		if (!guest) {
+			if (m == null) {
+				add(new Label("classMessage", new ResourceModel("classMessage")));
+			} else {
+				add(new Label("classMessage", m.getMessage()));
+			}			
+		} else {
+			add(ISIApplication.get().getLoginMessageComponent("classMessage"));
+			classMessageToggleLink.setToggleState(false);
+		}
+	}
+
+	private void addTagsBox() {
+		boolean myTagsOn = ISIApplication.get().isTagsOn();
+
+		CollapseToggleLink myTagsToggleLink = new CollapseToggleLink("myTagsToggleLink", "myTagsToggleLink", "myTagsToggle");
+		add(myTagsToggleLink);
+		myTagsToggleLink.setVisible(myTagsOn);
+
+		if (!guest) {
+			add(new TagCloudTocPanel("tagcloud", getTagLinkBuilder()));
+		} else {
+			add(ISIApplication.get().getLoginMessageComponent("tagcloud"));
+			myTagsToggleLink.setToggleState(false);
+			
+		}
+
+	}
+
+
 	private String getSectionToggleParameter() {
 		return Boolean.toString(featureService.isTocSectionTogglesOn());
 	}
@@ -170,9 +207,9 @@ public class StudentToc extends ISIStandardPage {
 				ContentLoc loc = new ContentLoc(sec3);
 				BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("link", sec3);
 				if (locsWithUnread.contains(loc.getLocation()))
-					link.add(new Image("messageIcon", new ResourceReference("img/icons/envelope_new.png")));
+					link.add(new Icon("messageIcon", "img/icons/envelope_new.png"));
 				else if (locsWithMessages.contains(loc.getLocation()))
-					link.add(new Image("messageIcon", new ResourceReference("img/icons/envelope_old.png")));
+					link.add(new Icon("messageIcon", "img/icons/envelope_old.png"));
 				else
 					link.add(new WebMarkupContainer("messageIcon").setVisible(false));
 				item.add(link);
@@ -193,7 +230,7 @@ public class StudentToc extends ISIStandardPage {
 	 * Provides an image indicating whether a section has been completed or not.
 	 * 
 	 * @param id wicket id
-	 * @param completed true if the section has been completed, false otherwise.
+	 * @param model
 	 * @return the appropriate image component for the 'completed' parameter
 	 */
 	public Component getCompletedImage(String id, IModel<XmlSection> model) {

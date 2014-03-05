@@ -20,6 +20,13 @@
 package org.cast.isi;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -27,18 +34,19 @@ import javax.xml.xpath.XPathFactory;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.IMarkupFragment;
+import org.apache.wicket.markup.Markup;
+import org.apache.wicket.markup.MarkupResourceStream;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -51,7 +59,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.apache.wicket.util.resource.StringResourceStream;
 import org.apache.wicket.util.string.Strings;
+import org.cast.cwm.IInputStreamProvider;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.components.DeployJava;
 import org.cast.cwm.components.ShyContainer;
@@ -59,6 +74,7 @@ import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
+import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.mediaplayer.AudioPlayerPanel;
@@ -100,6 +116,7 @@ import org.cast.isi.panel.GlossaryLink;
 import org.cast.isi.panel.ImageDetailButtonPanel;
 import org.cast.isi.panel.LockingResponseButtons;
 import org.cast.isi.panel.LockingResponseList;
+import org.cast.isi.panel.MessageBox;
 import org.cast.isi.panel.MiniGlossaryLink;
 import org.cast.isi.panel.MiniGlossaryModal;
 import org.cast.isi.panel.PageLinkPanel;
@@ -116,8 +133,6 @@ import org.cast.isi.panel.StudentSectionCompleteToggleImageLink;
 import org.cast.isi.panel.TeacherScoreResponseButtonPanel;
 import org.cast.isi.panel.ThumbPanel;
 import org.cast.isi.service.IISIResponseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -128,10 +143,10 @@ import com.google.inject.Inject;
  * A component to display XML content in ISI.
  *
  */
+@Slf4j
 public class ISIXmlComponent extends XmlComponent {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = LoggerFactory.getLogger(ISIXmlComponent.class);
 
 	@Inject 
 	private IISIResponseService responseService;
@@ -147,11 +162,13 @@ public class ISIXmlComponent extends XmlComponent {
 	@Getter @Setter private ResponseFeedbackPanel responseFeedbackPanel;
 	@Getter @Setter protected boolean inGlossary = false;
 	
-	protected boolean isTeacher = false;
+	protected boolean isGuest   = false;
+	protected boolean isTeacher = false; // will be true if user is teacher OR higher privilege
 
 	public ISIXmlComponent(String id, ICacheableModel<? extends IXmlPointer> rootEntry, String transformName) {
 		super(id, rootEntry, transformName);
 		User user = cwmSessionService.getUser();
+		isGuest = user==null || user.isGuest();
 		isTeacher = user!=null ? user.getRole().subsumes(Role.TEACHER) : false;
 	}
 
@@ -173,17 +190,94 @@ public class ISIXmlComponent extends XmlComponent {
 
 	// FIXME - HACK:  For some reason, Unicode D7 (and that alone, as far as I can see) is getting swallowed up and not showing up
 	// when called for in XML content.  This fixes it.
-	protected String getMarkup() {
-		String x =  super.getMarkup();
-		if (x.contains("\u00d7")) {
-			log.debug ("Fixing instances of unicode D7");
-			x = x.replaceAll("\u00d7", "&#xd7;");
-		}
-		//log.debug(x);
-		return x;
+
+    // heikki TODO: test if this strange bug still happens without this hack.
+    @Override
+    public IMarkupFragment getMarkup() {
+        try {
+            IMarkupFragment fragment = super.getMarkup();
+            return fragment;
+            // TODO heikki: disabled hack for now because it causes InputStream Closed exceptions
+            // see http://apache-wicket.1842946.n4.nabble.com/Is-it-possible-to-change-MarkupStream-td4659757.html#a4659832
+            //return hackUnicodeD7(fragment);
+        }
+        catch(Exception ex) {
+            throw new RuntimeException("ERROR fixing markupstream with unicode D7: " + ex.getMessage());
+        }
 	}
 
-	@Override
+    /**
+     *  If an IMarkupFragment contains unicode d7, converts it into one that uses the corresponding character entity.
+     *
+     * @param fragment
+     * @return
+     * @throws ResourceStreamNotFoundException
+     */
+    protected static IMarkupFragment hackUnicodeD7(IMarkupFragment fragment) throws IOException, ResourceStreamNotFoundException{
+        MarkupResourceStream markupStream = fragment.getMarkupResourceStream();
+        InputStream is = markupStream.getInputStream();
+        String x = getStringFromInputStream(is);
+        if (x.contains("\u00d7")) {
+            log.debug ("Fixing instances of unicode D7");
+            x = x.replaceAll("\u00d7", "&#xd7;");
+            return createMarkupFragmentFromString(x);
+        }
+        else {
+            return fragment;
+        }
+    }
+
+    /**
+     * TODO heikki move to utility class
+     *
+     * Creates an IMarkupFragment from a String.
+     *
+     * @param s string to create IMarkupFragment from
+     * @return
+     */
+    protected static IMarkupFragment createMarkupFragmentFromString(String s) {
+        IResourceStream resourceStream = new StringResourceStream(s);
+        MarkupResourceStream markupStream = new MarkupResourceStream(resourceStream);
+        IMarkupFragment fragment = new Markup(markupStream);
+        return fragment;
+    }
+
+    /**
+     * Creates a String from an InputStream.
+     *
+     * Thanks mkyong http://www.mkyong.com/java/how-to-convert-inputstream-to-string-in-java/.
+     * TODO heikki move to utility class
+     *
+     * @param is
+     * @return
+     */
+    protected static String getStringFromInputStream(InputStream is) {
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (br != null) {
+                try {
+                    br.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
 	public Component getDynamicComponent(final String wicketId, final Element elt) {
 		
 		if (wicketId.startsWith("object_")) {
@@ -203,8 +297,8 @@ public class ISIXmlComponent extends XmlComponent {
 			}
 			if(archive != null) {
 				
-				String jarUrl = RequestCycle.get().urlFor(getRelativeRef(archive+".jar")).toString();
-				String dataUrl = RequestCycle.get().urlFor(getRelativeRef(dataFile)).toString();
+				String jarUrl = RequestCycle.get().urlFor(getRelativeRef(archive+".jar"), new PageParameters()).toString();
+				String dataUrl = RequestCycle.get().urlFor(getRelativeRef(dataFile), new PageParameters()).toString();
 
 				DeployJava dj = new DeployJava(wicketId);
 				dj.setArchive(jarUrl);
@@ -248,7 +342,7 @@ public class ISIXmlComponent extends XmlComponent {
 			container = new WebMarkupContainer(wicketId) {
 				private static final long serialVersionUID = 1L;
 				@Override
-				protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
+				public void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
 					replaceComponentTagBody(markupStream, openTag, def);
 				}
 			};
@@ -339,7 +433,7 @@ public class ISIXmlComponent extends XmlComponent {
 			
 		} else if (wicketId.startsWith("sectionIcon_")) {		
 			WebComponent icon = ISIApplication.get().makeIcon(wicketId, elt.getAttribute("class"));
-			icon.add(new AttributeModifier("class", true, new Model<String>("sectionIcon")));
+			icon.add(AttributeModifier.replace("class", new Model<String>("sectionIcon")));
 			return icon;
 	
 		} else if (wicketId.startsWith("thumbRating_")) {
@@ -377,12 +471,13 @@ public class ISIXmlComponent extends XmlComponent {
 			return videoLink;
 
 		} else if (wicketId.startsWith("videoplayer_")) {
-			final String videoSrc = elt.getAttribute("src");
-			ResourceReference videoRef = getRelativeRef(videoSrc);
-			String videoUrl = RequestCycle.get().urlFor(videoRef).toString();
+			String videoSrc = elt.getAttribute("src");
+			ResourceReference videoRef = getRelativeRef(videoSrc);			
+			String videoUrl = getRequestCycle().mapUrlFor(videoRef, null).toString();
 
-			Integer width = Integer.valueOf(elt.getAttribute("width"));
+            Integer width = Integer.valueOf(elt.getAttribute("width"));
 			Integer height = Integer.valueOf(elt.getAttribute("height"));
+
 			String preview = elt.getAttribute("poster");
 			String captions = elt.getAttribute("captions");
 			String audioDescription = elt.getAttribute("audiodescription");
@@ -415,7 +510,7 @@ public class ISIXmlComponent extends XmlComponent {
 		} else if (wicketId.startsWith("audioplayer_")) {
 			String audioSrc = elt.getAttribute("src");
 			ResourceReference audioRef = getRelativeRef(audioSrc);
-			String audioUrl = RequestCycle.get().urlFor(audioRef).toString();
+			String audioUrl = getRequestCycle().mapUrlFor(audioRef, null).toString();
 
 			int width = 400;
 			if (!elt.getAttribute("width").equals("")) {
@@ -450,17 +545,20 @@ public class ISIXmlComponent extends XmlComponent {
 			IModel<Prompt> pm = responseService.getOrCreatePrompt(PromptType.FEEDBACK, loc, responseGroupId);
 			ResponseFeedbackButtonPanel component = new ResponseFeedbackButtonPanel(wicketId, pm, responseFeedbackPanel);
 			String forRole = elt.getAttribute("for");
-			boolean usesTeacherButton = cwmSessionService.getUser().getRole().subsumes(Role.TEACHER);
-			component.setVisibilityAllowed(usesTeacherButton ? forRole.equals("teacher") : forRole.equals("student"));
+			component.setVisibilityAllowed(isTeacher ? forRole.equals("teacher") : forRole.equals("student"));
 			component.add(new AttributeRemover("rgid", "for"));
 			return component;
 		} else if (wicketId.startsWith("scoreButtons_")) {
+			if (isGuest)
+				return new EmptyPanel(wicketId);
 			IModel<Prompt> promptModel = getPrompt(elt);
 			IModel<User> studentModel = ISISession.get().getTargetUserModel();
 			ISortableDataProvider<Response> responseProvider = responseService.getResponseProviderForPrompt(promptModel, studentModel);
 			TeacherScoreResponseButtonPanel component = new TeacherScoreResponseButtonPanel(wicketId, responseProvider);
 			return component;
 		} else if (wicketId.startsWith("showScore_")) {
+			if (isGuest)
+				return new EmptyPanel(wicketId);
 			IModel<Prompt> promptModel = getPrompt(elt);
 			IModel<User> studentModel = cwmSessionService.getUserModel();
 			ISortableDataProvider<Response> responseProvider = responseService.getResponseProviderForPrompt(promptModel, studentModel);
@@ -517,6 +615,8 @@ public class ISIXmlComponent extends XmlComponent {
 			return component.add(new AttributeRemover("for"));
 
 		} else if (wicketId.startsWith("responseList_")) {
+			if (isGuest)
+				return new MessageBox(wicketId, "guestResponseArea");
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
@@ -530,18 +630,23 @@ public class ISIXmlComponent extends XmlComponent {
 			return dataView;
 
 		} else if (wicketId.startsWith("locking_responseList_")) {
+			if (isGuest)
+				return new EmptyPanel(wicketId);
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, responseGroupId, metadata.getCollection());
 			ResponseList dataView = new LockingResponseList (wicketId, mPrompt, metadata, loc, ISISession.get().getTargetUserModel());
 			dataView.setContext(getResponseListContext(false));
+			dataView.setAllowEdit(!isTeacher);
 			dataView.setAllowNotebook(!inGlossary && !isTeacher && ISIApplication.get().isNotebookOn());
 			dataView.setAllowWhiteboard(!inGlossary && ISIApplication.get().isWhiteboardOn());
 			dataView.add(new AttributeRemover("rgid", "group"));
 			return dataView;
 
 		} else if (wicketId.startsWith("period_responseList_")) {
+			if (isGuest)
+				return new EmptyPanel(wicketId);
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);
@@ -561,7 +666,7 @@ public class ISIXmlComponent extends XmlComponent {
 			ResponseMetadata metadata = new ResponseMetadata(xmlElement);
 			if (!ISIApplication.get().isUseAuthoredResponseType()) {
 				// set all the response types to the default per application configuration here
-				metadata = addMetadata(metadata);
+				metadata = adjustResponseTypes(metadata);
 			}
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
 			ResponseButtons buttons = new ResponseButtons(wicketId, mPrompt, metadata, loc);
@@ -575,12 +680,14 @@ public class ISIXmlComponent extends XmlComponent {
 			ResponseMetadata metadata = new ResponseMetadata(xmlElement);
 			if (!ISIApplication.get().isUseAuthoredResponseType()) {
 				// set all the response types to the default per application configuration here
-				metadata = addMetadata(metadata);
+				metadata = adjustResponseTypes(metadata);
 			}
 			IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.RESPONSEAREA, loc, metadata.getId(), metadata.getCollection());
 			return new LockingResponseButtons(wicketId, mPrompt, metadata, loc, cwmSessionService.getUserModel());
 
 		} else if (wicketId.startsWith("ratePanel_")) {
+			if (isGuest)
+				return ISIApplication.get().getLoginMessageComponent(wicketId);
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String promptText = null;
 			String ratingId = elt.getAttribute("id");
@@ -604,13 +711,13 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("teacherBar_")) {
 			WebMarkupContainer teacherBar = new WebMarkupContainer(wicketId);
-			teacherBar.setVisible(!cwmSessionService.getUser().getRole().equals(Role.STUDENT) && !inGlossary);
+			teacherBar.setVisible(isTeacher && !inGlossary);
 			return teacherBar;
 
 		} else if (wicketId.startsWith("compareResponses_")) {
 			IModel<Prompt> mPrompt = getPrompt(elt);
 			BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>(wicketId, ISIApplication.get().getPeriodResponsePageClass());
-			bpl.setParameter("promptId", mPrompt.getObject().getId());
+			bpl.getPageParameters().add("promptId", mPrompt.getObject().getId());
 			ISIApplication.get().setLinkProperties(bpl);
 			bpl.setVisible(isTeacher);
 			bpl.add(new AttributeRemover("rgid", "for", "type"));
@@ -719,7 +826,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 				@Override
 				public void onClick(AjaxRequestTarget target) {
-					target.prependJavascript("$('#iScienceVideo-" + wicketId.substring("iScienceLink-".length()) + "').jqmShow();");
+					target.prependJavaScript("$('#iScienceVideo-" + wicketId.substring("iScienceLink-".length()) + "').jqmShow();");
 					eventService.saveEvent("iscience:view", "Video #" + wicketId.substring("iScienceLink-".length()), ((ISIBasePage) getPage()).getPageName());
 				}
 			};
@@ -752,6 +859,7 @@ public class ISIXmlComponent extends XmlComponent {
 			String id = elt.getAttribute("id");
 			IModel<XmlSection> currentSectionModel = new XmlSectionModel(getModel().getObject().getXmlDocument().getById(id));
 			return new SectionCompleteImageContainer(wicketId, currentSectionModel);
+			
 		} else if (wicketId.startsWith("itemSummary_")) {
 			boolean noAnswer = Boolean.parseBoolean(elt.getAttributeNS(null, "noAnswer"));
 			Component singleSelectComponent = new SingleSelectSummaryXmlComponentHandler().makeComponent(wicketId, elt, getModel(), noAnswer);
@@ -783,8 +891,7 @@ public class ISIXmlComponent extends XmlComponent {
 		return builder.toString();
 	}
 	
-	private ScoredDelayedFeedbackSingleSelectForm makeDelayedResponseForm(final String wicketId,
-			final Element elt) {
+	private ScoredDelayedFeedbackSingleSelectForm makeDelayedResponseForm(String wicketId, Element elt) {
 		ISIXmlSection section = getISIXmlSection();
 		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
 		boolean compact = Boolean.parseBoolean(elt.getAttributeNS(null, "compact"));
@@ -794,15 +901,13 @@ public class ISIXmlComponent extends XmlComponent {
 		return selectForm;
 	}
 
-	private Component makeImmediateResponseForm(final String wicketId,
-			final Element elt) {
+	private Component makeImmediateResponseForm(String wicketId, Element elt) {
 		Component selectForm = new ScoredImmediateFeedbackSingleSelectForm(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 		return selectForm;
 	}
 		
-	private Component makeDelayedResponseView(final String wicketId,
-			final Element elt) {
+	private Component makeDelayedResponseView(String wicketId, Element elt) {
 		ISIXmlSection section = getISIXmlSection();
 		IModel<XmlSection> currentSectionModel = new XmlSectionModel(section);
 		DelayedFeedbackSingleSelectView component = new DelayedFeedbackSingleSelectView(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT), currentSectionModel);
@@ -811,8 +916,7 @@ public class ISIXmlComponent extends XmlComponent {
 		return component;
 	}
 
-	private Component makeImmediateResponseView(final String wicketId,
-			final Element elt) {
+	private Component makeImmediateResponseView(String wicketId, Element elt) {
 		ImmediateFeedbackSingleSelectForm selectForm = new ImmediateFeedbackSingleSelectView(wicketId, getPrompt(elt, PromptType.SINGLE_SELECT));
 		selectForm.add(new AttributeRemover("rgid", "title", "group", "type"));
 		return selectForm;
@@ -840,22 +944,38 @@ public class ISIXmlComponent extends XmlComponent {
 		return metadata;
 	}
 
-	protected ResponseMetadata addMetadata (ResponseMetadata metadata) {
-		// Set the response types to be allowed for this application configuration
+	/** Rewrite the set of response types in the given metadata to match the set configured for the application.
+	 * keeping any actual configuration (sentence starters, etc).
+	 * @param metadata the metadata object parsed from the XML
+	 * @return metadata object after modification
+	 */	
+	protected ResponseMetadata adjustResponseTypes (ResponseMetadata metadata) {
+		Map<String, TypeMetadata> typesFromXml = metadata.getTypeMap();
+		HashMap<String, TypeMetadata> newMap = new HashMap<String,TypeMetadata>(6);
+		// Build the new map with all configured types
 		for (IResponseType responseType : ISIApplication.get().defaultResponseTypes) {
-			metadata.addType(responseType);
+			String typeName = responseType.getName();
+			if (typesFromXml.containsKey(typeName))
+				// keep existing type def. when we have one
+				newMap.put(typeName, typesFromXml.get(typeName)); 
+			else
+				// Otherwise add with default configuration
+				newMap.put(typeName, new TypeMetadata());
 		}
+		// Any additional types that may have been configured in the XML are simply ignored.
+		metadata.setTypeMap(newMap);
 		return metadata;
 	}
 	
 	public ResourceReference getRelativeRef (String src) {
-		Resource xmlFile = ((XmlSection)getModel().getObject()).getXmlDocument().getXmlFile();
-		if (xmlFile instanceof IRelativeLinkSource)
-			return ((IRelativeLinkSource)xmlFile).getRelativeReference(src);
-		throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
+        IInputStreamProvider xmlFile = getModel().getObject().getXmlDocument().getXmlFile();
+        if (xmlFile instanceof IRelativeLinkSource) {
+            return ((IRelativeLinkSource)xmlFile).getRelativeReference(src);
+        }
+        throw new IllegalStateException("Can't find reference relative to file " + xmlFile);
 	}
 	
-	public static class AttributeRemover extends AbstractBehavior {
+	public static class AttributeRemover extends Behavior {
 		
 		private String[] atts;
 

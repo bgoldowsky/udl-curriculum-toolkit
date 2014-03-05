@@ -22,9 +22,9 @@ package org.cast.isi.dialog;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -38,6 +38,10 @@ import org.cast.isi.page.ISIStandardPage;
  * coordinates with {@link ISIBasePage#displayDialog(AbstractISIAjaxDialog, AjaxRequestTarget)}
  * to show itself with a certain wicket:id.  Therefore, no wicket:id is required
  * for these dialogs.
+ * 
+ * To add items into the dialog, use
+ * <code>dialogBorder.getBodyContainer().add( ... )</code>
+ * rather than just add(...), so that the new component gets inserted into the right place.
  * 
  * @param <T>
  */
@@ -61,10 +65,8 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 		
 		dialogBorder = newDialogBorder("dialogBorder", new PropertyModel<String>(this, "title"));
 
-		// This allows us to add components directly to the panel, even though they are enclosed in the DialogBorder
-		dialogBorder.setTransparentResolver(true); 
 		dialogBorder.setMoveContainer(this);		
-		dialogBorder.getContentContainer().add(new SimpleAttributeModifier("class", "visuraloverlaycontent modalContainer modalBody"));
+		dialogBorder.getContentContainer().add(new AttributeModifier("class", "visuraloverlaycontent modalContainer modalBody"));
 		add(dialogBorder);
 	}
 	
@@ -75,14 +77,15 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 	public void renderHead(final IHeaderResponse response) {
 		ISIStandardPage.renderThemeCSS(response, "css/modal.css");
 		// set up any collapse boxes in the modal
-		response.renderOnLoadJavascript("collapseBox();");
+		response.renderOnLoadJavaScript("collapseBox();");
 	}
-	
-	/**
+
+
+    /**
 	 * Add this behavior to a link and clicking the link will Open the dialog.
 	 * @return
 	 */
-	public IBehavior getClickToOpenBehavior() {
+	public Behavior getClickToOpenBehavior() {
 		return getDialogBorder().getClickToOpenBehavior();
 	}
 	
@@ -90,7 +93,7 @@ public abstract class AbstractISIAjaxDialog<T> extends Panel implements IHeaderC
 	 * Add this behavior to a link and clicking the link will Close the dialog.
 	 * @return
 	 */
-	public IBehavior getClickToCloseBehavior() {
+	public Behavior getClickToCloseBehavior() {
 		return getDialogBorder().getClickToCloseBehavior();
 	}
 	

@@ -20,14 +20,16 @@
 package org.cast.isi.page;
 
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.protocol.http.PageExpiredException;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.isi.ISIApplication;
 
 public class ExceptionPage extends ISIBasePage {
+
+	private static final long serialVersionUID = 1L;
 
 	public ExceptionPage(final PageParameters param, RuntimeException e) {
 		super(param);

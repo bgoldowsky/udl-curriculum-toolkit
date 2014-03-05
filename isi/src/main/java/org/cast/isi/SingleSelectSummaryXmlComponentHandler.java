@@ -19,14 +19,9 @@
  */
 package org.cast.isi;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import com.google.inject.Inject;
 import org.apache.wicket.Component;
-import org.apache.wicket.injection.web.InjectorHolder;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.CwmSession;
@@ -45,7 +40,11 @@ import org.cast.isi.service.IISIResponseService;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.google.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 public class SingleSelectSummaryXmlComponentHandler {
 
 	@Inject 
@@ -55,7 +54,7 @@ public class SingleSelectSummaryXmlComponentHandler {
 	protected IXmlService xmlService;
 	
 	public SingleSelectSummaryXmlComponentHandler() {
-		InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
 	}
 	
 	public Component makeComponent(final String wicketId, final Element elt, XmlSectionModel model, boolean noAnswer) {

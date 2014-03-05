@@ -21,7 +21,6 @@ package org.cast.isi.component;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -31,6 +30,8 @@ import org.apache.wicket.markup.html.form.FormComponentLabel;
 import org.apache.wicket.markup.html.form.Radio;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 
 /**
  * A simple radio button.  It can be told whether it is the correct
@@ -70,14 +71,11 @@ public class SingleSelectItem extends WebMarkupContainer {
 
 	public void notifyListeners(final AjaxRequestTarget target, final SingleSelectItem source) {
 		if (target != null) {
-			getPage().visitChildren(ISingleSelectItemChangeListener.class, new IVisitor<Component>() {
-				public Object component(Component component) {
-					ISingleSelectItemChangeListener listener = (ISingleSelectItemChangeListener) component;
-					listener.onSelectionChanged(target, source);
-					return CONTINUE_TRAVERSAL;
-				}
-
-			});
+			getPage().visitChildren(ISingleSelectItemChangeListener.class, new IVisitor<Component, Void>() {
+                public void component(Component component, IVisit<Void> visit) {
+                    ISingleSelectItemChangeListener listener = (ISingleSelectItemChangeListener) component;
+                    listener.onSelectionChanged(target, source);                }
+            });
 		}
 	}
 	/**

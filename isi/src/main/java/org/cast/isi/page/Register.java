@@ -29,7 +29,6 @@ import net.databinder.components.hib.DataForm;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -44,6 +43,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.PatternValidator;
 import org.apache.wicket.validation.validator.StringValidator;
@@ -55,7 +55,7 @@ import org.cast.cwm.data.component.FeedbackBorder;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator;
 import org.cast.cwm.data.validator.UniqueUserFieldValidator.Field;
 import org.cast.cwm.service.IEventService;
-import org.cast.cwm.service.SiteService;
+import org.cast.cwm.service.ISiteService;
 import org.cast.cwm.service.UserService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
@@ -74,6 +74,8 @@ import com.google.inject.Inject;
  */
 public class Register extends ISIBasePage implements IHeaderContributor{
 		
+	private static final long serialVersionUID = 1L;
+
 	private static final Logger log = LoggerFactory.getLogger(Register.class);
 	
 	boolean success = false; // has a successful registration already happened?
@@ -82,14 +84,18 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 	@Inject
 	private IEventService eventService;
 
+	@Inject
+	protected ISiteService siteService;
+
 	public Register(PageParameters params) {
 		super(params);
 		
 		String pageTitleEnd = (new StringResourceModel("Register.pageTitle", this, null, "Register").getString());
 		setPageTitle(pageTitleEnd);
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
-		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null)));
-		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null)));
+
+		addApplicationTitles();
+
 		add(new WebMarkupContainer("preSubmitMessage") {
 			private static final long serialVersionUID = 1L;
 
@@ -100,9 +106,9 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 		});
 		
 		// If user comes in with a registration key, confirm their account.
-		if (params.containsKey("username") && params.containsKey("key")) {
-			User user = UserService.get().getByUsername(params.getString("username")).getObject();
-			if (user != null && params.getString("key").equals(user.getSecurityToken())) {
+		if (params.getNamedKeys().contains("username") && params.getNamedKeys().contains("key")) {
+			User user = UserService.get().getByUsername(params.get("username").toString()).getObject();
+			if (user != null && params.get("key").toString().equals(user.getSecurityToken())) {
 				UserService.get().confirmUser(user);
 				ISISession.get().signIn(user, false);
 				eventService.createLoginSession(getRequest());
@@ -114,8 +120,8 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 				success = true;
 			} else {
 				// Incorrect credentials or already confirmed: redirect to login page here.
-				log.warn("Failed confirmation attempt: username={}, key={}", params.getString("username"), params.getString("key"));
-				this.setRedirect(true);
+				log.warn("Failed confirmation attempt: username={}, key={}", params.get("username").toString(), params.get("key").toString());
+                this.getSession().bind();
 				this.setResponsePage(ISIApplication.get().getSignInPageClass());
 				return;
 			}
@@ -239,11 +245,11 @@ public class Register extends ISIBasePage implements IHeaderContributor{
 			userSet.add(user);
 			
 			// create a new site
-			Site newSite = SiteService.get().newSite();
+			Site newSite = siteService.newSite();
 			newSite.setName("Site_" + user.getUsername()); // make this unique
 
 			// create a new period
-			Period newPeriod = SiteService.get().newPeriod();
+			Period newPeriod = siteService.newPeriod();
 			newPeriod.setSite(newSite);
 			newPeriod.setName("Class_" + user.getUsername()); // make this unique
 			

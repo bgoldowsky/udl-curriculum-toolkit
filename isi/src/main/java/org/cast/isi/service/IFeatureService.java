@@ -38,5 +38,6 @@ public interface IFeatureService {
 	boolean isTocSectionIncompleteIconsOn();
 	boolean isCollectionsScoreSummaryOn();
 	boolean isCompareScoreSummaryOn();
+	boolean isSectionToggleImmediateScoreOn();
 
 }

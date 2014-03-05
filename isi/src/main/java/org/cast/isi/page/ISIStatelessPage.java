@@ -19,14 +19,15 @@
  */
 package org.cast.isi.page;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base page for ISI pages that should be stateless.
@@ -37,6 +38,8 @@ import org.apache.wicket.PageParameters;
  */
 @Slf4j
 public class ISIStatelessPage extends ISIPage {
+
+	private static final long serialVersionUID = 1L;
 
 	public ISIStatelessPage(PageParameters param) {
 		super(param);
@@ -53,13 +56,13 @@ public class ISIStatelessPage extends ISIPage {
 		if (!p.isPageStateless()) {
 			// find out why
 			final List<Component> statefulComponents = new ArrayList<Component>();
-			p.visitChildren(Component.class, new IVisitor<Component>() {
-				public Object component(Component component) {
-					if (!component.isStateless())
-						statefulComponents.add(component);
-					return CONTINUE_TRAVERSAL;
-				}
-			});
+			p.visitChildren(Component.class, new IVisitor<Component, Void>() {
+                public void component(Component component, IVisit<Void> visit) {
+                    if (!component.isStateless()){
+                        statefulComponents.add(component);
+                    }
+                }
+            });
  
 			String message = "Whoops! this page is no longer stateless";
 			if (statefulComponents.size() > 0) {

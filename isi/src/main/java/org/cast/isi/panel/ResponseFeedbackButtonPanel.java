@@ -27,13 +27,13 @@ import net.databinder.models.hib.HibernateObjectModel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.cast.cwm.components.Icon;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.service.IEventService;
@@ -45,7 +45,6 @@ import org.cast.isi.service.ISIResponseService;
 import org.cast.isi.service.ISectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.cast.cwm.components.Icon;
 
 import com.google.inject.Inject;
 
@@ -93,7 +92,6 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 			public void onClick(AjaxRequestTarget target) {
 
 				responseFeedbackPanel.setPromptModel(mPrompt);
-				responseFeedbackPanel.setMessageList(messageList);
 
 				if (role.subsumes(Role.RESEARCHER)) {
 					// Don't trigger any database changes if researcher clicks button.
@@ -120,15 +118,15 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 				responseFeedbackPanel.setCallingButton(ResponseFeedbackButtonPanel.this);
 				eventService.saveEvent("messagepanel:view", mPrompt.getObject().toString(), ((ISIStandardPage) getPage()).getPageName());
 				if (target != null) {
-					target.addComponent(responseFeedbackPanel);
-					target.addComponent(this);
-					target.appendJavascript(responseFeedbackPanel.getSidebarDialog().getOpenString());
+					target.add(responseFeedbackPanel);
+					target.add(this);
+					target.appendJavaScript(responseFeedbackPanel.getSidebarDialog().getOpenString());
 					target.addChildren(getPage(), IDisplayFeedbackStatus.class);
 				}				
 			}
 			
 		};
-		link.add(new SimpleAttributeModifier("href", ResponseFeedbackPanel.getDivName()));
+		link.add(new AttributeModifier("href", ResponseFeedbackPanel.getDivName()));
 		
 		button = new Icon("button", new AbstractReadOnlyModel<String>() {
 			private static final long serialVersionUID = 1L;
@@ -150,7 +148,7 @@ public class ResponseFeedbackButtonPanel extends ISIPanel {
 			}			
 		});
 
-		link.add(new AttributeModifier("title", true, new AbstractReadOnlyModel<String>() {
+		link.add(new AttributeModifier("title", new AbstractReadOnlyModel<String>() {
 			private static final long serialVersionUID = 1L;
 
 			@Override

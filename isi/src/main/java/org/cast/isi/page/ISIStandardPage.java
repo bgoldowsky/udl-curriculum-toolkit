@@ -19,24 +19,28 @@
  */
 package org.cast.isi.page;
 
+import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 import net.databinder.auth.hib.AuthDataSession;
-
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxCallDecorator;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.DialogBorder;
 import org.cast.cwm.data.component.SessionExpireWarningDialog;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.xml.service.IXmlService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
@@ -45,8 +49,6 @@ import org.cast.isi.dialog.AbstractISIAjaxDialog;
 import org.cast.isi.panel.TeacherSubHeaderPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
 
 /**
  * Base for "main" (non-popup) pages of the ISI application.  
@@ -59,11 +61,16 @@ import com.google.inject.Inject;
  */
 abstract public class ISIStandardPage extends ISIBasePage {
 
+	private static final long serialVersionUID = 1L;
+
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(ISIStandardPage.class);
 
 	@Inject
 	static IXmlService xmlService;
+	
+	@Inject
+	protected ICwmSessionService cwmSessionService;
 	
 	@Getter @Setter protected ContentLoc loc = null;
 	
@@ -77,32 +84,36 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	}
 	
 	public void commonInit(PageParameters parameters) {
+
 		add(new Label("pageTitle", new PropertyModel<String>(this, "pageTitle")));
-		
+
 		add(ISIApplication.get().getHeaderPanel("headerPanel", parameters).setOutputMarkupId(true));
+
 		// If teacher, then add a sub header panel
 		if (ISISession.get().getUser().getRole().subsumes(Role.TEACHER)) {
 			add(new TeacherSubHeaderPanel("teacherSubHeader", parameters));
 		} else {
-			add(new WebMarkupContainer("teacherSubHeader").setVisible(false));			
+			add(new WebMarkupContainer("teacherSubHeader").setVisible(false));
 		}
 
 		add(ISIApplication.get().getFooterPanel("footerPanel", parameters));
-		add(new ISISessionExpireWarningDialog("sessionWarning"));
+		
+		// only check for expired sessions if the user is logged in
+		if (cwmSessionService.getUser().getRole() != Role.GUEST) {
+			add(new ISISessionExpireWarningDialog("sessionWarning"));
+		} else {
+			add(new EmptyPanel("sessionWarning"));
+		}
 		
 		addToolbar("tht");
+
 	}
 	
 	@Override
 	protected void onInitialize() {
 
-		WebMarkupContainer body = new WebMarkupContainer("body") {
+        TransparentWebMarkupContainer body = new TransparentWebMarkupContainer("body") {
 			private static final long serialVersionUID = 1L;
-
-			@Override
-			public boolean isTransparentResolver() {
-				return true;
-			}
 		};
 		add (body);
 
@@ -125,13 +136,13 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	 * Pages can override this method to use a different (or no) toolbar.
 	 */
 	protected void addToolbar (String id) {
-		add (ISIApplication.get().getToolbar(id, this));
+		add(ISIApplication.get().getToolbar(id, this));
 	}
 	
 	/** 
 	 * By default returns null.  Override to provide more detail.
 	 * 
-	 * @see org.cast.isi.page.IEventInfoProvider#getPageViewDetail()
+	 * @see org.cast.isi.page.ISIBasePage#getPageViewDetail()
 	 */
 	public String getPageViewDetail() {
 		return null;
@@ -187,7 +198,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 	public void displayDialog(AbstractISIAjaxDialog<?> dialog, AjaxRequestTarget target) {
 		replace(dialog);
 		dialog.getDialogBorder().open(target);
-		target.addComponent(dialog);
+		target.add(dialog);
 	}
 	
 	/**
@@ -198,7 +209,7 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		WebMarkupContainer empty = new WebMarkupContainer(DISPLAY_DIALOG_ID);
 		empty.setOutputMarkupId(true);
 		replace(empty);
-		target.addComponent(empty);
+		target.add(empty);
 	}
 
 	
@@ -230,23 +241,22 @@ abstract public class ISIStandardPage extends ISIBasePage {
 		return new AjaxCallDecorator() {
 
 			private static final long serialVersionUID = 1L;
-			@Override
-			public CharSequence decorateScript(CharSequence script) {
-				return (dialog == null ? "" : dialog.getDialogBorder().getCloseString(false)) + loadingDialog.getOpenString(dialog == null) + script;
-			}
-			
-			@Override
-			public CharSequence decorateOnSuccessScript(CharSequence script)
-			{
-				return loadingDialog.getCloseString(false) + script;	
-			}
 
-			@Override
-			public CharSequence decorateOnFailureScript(CharSequence script)
-			{
-				return loadingDialog.getCloseString(false) + script;
-			}
-		};
+            @Override
+            public CharSequence decorateScript(Component c, CharSequence script) {
+                return (dialog == null ? "" : dialog.getDialogBorder().getCloseString(false)) + loadingDialog.getOpenString(dialog == null) + script;
+            }
+
+            @Override
+            public CharSequence decorateOnSuccessScript(Component c, CharSequence script) {
+                return loadingDialog.getCloseString(false) + script;
+            }
+
+            @Override
+            public CharSequence decorateOnFailureScript(Component c, CharSequence script) {
+                return loadingDialog.getCloseString(false) + script;
+            }
+        };
 	}
 	
 

@@ -25,12 +25,9 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -42,16 +39,21 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
-import org.cast.audioapplet.component.AbstractAudioRecorder;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.cast.cwm.IInputStreamProvider;
 import org.cast.cwm.IRelativeLinkSource;
 import org.cast.cwm.data.IResponseType;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.ResponseMetadata.TypeMetadata;
+import org.cast.cwm.service.ICwmService;
 import org.cast.cwm.service.IEventService;
+import org.cast.cwm.wami.AudioSkin;
+import org.cast.cwm.wami.RecorderResponsePanel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
+import org.cast.isi.mapper.ContentDirectoryMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +81,9 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 	@Inject
 	private IEventService eventService;
 
+	@Inject
+	private ICwmService cwmService;
+
 	private final static Logger log = LoggerFactory.getLogger(ResponseEditor.class);	
 	private static final long serialVersionUID = 1L;
 
@@ -101,7 +106,8 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 	 */
 	@Override
 	protected void onInitialize() {
-		Resource xmlFile = null;
+
+        IInputStreamProvider xmlFile = null;
 		if (loc != null) {
 			this.setPageName(loc.getLocation());
 			xmlFile = loc.getSection().getXmlDocument().getXmlFile();  
@@ -114,17 +120,18 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 			TypeMetadata typeMD = metadata.getType(thisType);
 			if (typeMD != null) {
 				if (thisType.getName().equals("SVG") && typeMD.getFragments() != null) {
-					// Drawing starters - need to convert to URLs.
-					ArrayList<String> urls = new ArrayList<String>(typeMD.getFragments().size());
+					// Drawing starters 
+				    List<ResourceReference> starterResourceRefs = new ArrayList<ResourceReference>(typeMD.getFragments().size());
 					for (String frag : typeMD.getFragments()) {
 						ResourceReference fragResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(frag);
-						String url = RequestCycle.get().urlFor(fragResourceRef).toString();
-						if (url != null)
-							urls.add(url);
-						else
+						if (fragResourceRef != null) {
+							starterResourceRefs.add(fragResourceRef);
+						}
+						else {
 							log.warn("Drawing stamp image does not exist: {}", frag);
+                        }
 					}
-					setStarters(urls);
+					setStarterResourceReferences(starterResourceRefs);
 				} else {
 					// Sentence starters
 					this.setStarters(typeMD.getFragments());
@@ -132,8 +139,12 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 				// Template
 				if (typeMD.getTemplates() != null && !typeMD.getTemplates().isEmpty()) {
 					String templateRelativePath = typeMD.getTemplates().get(0);  // path from xml file
+
 					ResourceReference templateResourceRef = ((IRelativeLinkSource)xmlFile).getRelativeReference(templateRelativePath);
-					this.setTemplateURL(RequestCycle.get().urlFor(templateResourceRef).toString());
+					setTemplateResourceReference(templateResourceRef);
+
+					String absoluteUrl = ContentDirectoryMapper.CONTENT_DIRECTORY_MAPPER_PREFIX + "/" + templateRelativePath;
+					setTemplateURL(absoluteUrl);
 				}
 			}
 		}
@@ -144,21 +155,24 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 	protected WebMarkupContainer getEditorFragment(String id, final IModel<Response> model, IResponseType type) {
 		final WebMarkupContainer editor = super.getEditorFragment(id, model, type);
 		
+		// Replace the default Java audio recorder with WAMI
 		if (type.getName().equals("AUDIO")) {
-			// Audio fragment does not by default include a form so title can be saved.
+			
+			// Superclass doesn't have a form for the title field to go in
 			Form<Response> form = new Form<Response>("form", model);
 			editor.add(form);
-			// Replace standard audio "save" link with one that also saves the form.
+
+			// Replace old audio applet with wami applet
+			editor.replace(new RecorderResponsePanel("applet", model, AudioSkin.STANDARD, pageName));
+		
+			// Replace standard audio "save" link with one that saves the form.  Audio data will be automatically saved.
 			AjaxSubmitLink saveLink = new AjaxSubmitLink("save", form) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-					// This gets invoked when user clicks "save" button.
-					// First, save the title to datastore (creating Response if necessary).
-					responseService.saveResponseWithoutData(model);
-					// Then get the audio data streamed back to the server
-					target.appendJavascript(((AbstractAudioRecorder)editor.get("applet")).generateJavascriptMessage("SAVE"));
+					cwmService.flushChanges();
+					onSave(target);
 				}
 				
 			};
@@ -166,6 +180,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 			editor.replace(saveLink);			
 		}
 		
+		// Add title field to all editor types
 		((Form<?>)editor.get("form")).add(new TitleFragment("titleFragment", model));
 		
 		if (type.getName().equals("AUDIO")) {
@@ -183,14 +198,17 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 
 				@Override
 				protected void populateItem(ListItem<String> item) {
-					item.add(new Label("text", item.getModelObject()));
+					item.add(new Label("text", item.getModelObject())).setVisible(!item.getModelObject().equals("default"));
 				}
 
 				@Override
-				public boolean isVisible() {
-					return ! (getModelObject() == null || getModelObject().isEmpty());
+				protected void onBeforeRender() {
+					// If there are no starters, make the starters list invisible
+					if (getModelObject() == null || getModelObject().isEmpty()) {
+						setVisible(false);
+					}
+					super.onBeforeRender();
 				}
-				
 			});
 		}
 		
@@ -206,7 +224,7 @@ public class ResponseEditor extends org.cast.cwm.data.component.ResponseEditor {
 			setRenderBodyOnly(true);
 			// resource keys are, for example, "response.title.prompt.audio"
 			add(new Label("titleInstructions", new ResourceModel("response.title.prompt."+model.getObject().getType().getName().toLowerCase(), "Add a title")));
-			add(new TextField<String>("title", new PropertyModel<String>(model, "title")).add(new SimpleAttributeModifier("maxlength", "250")));
+			add(new TextField<String>("title", new PropertyModel<String>(model, "title")).add(new AttributeModifier("maxlength", "250")));
 		}
 		
 		@Override

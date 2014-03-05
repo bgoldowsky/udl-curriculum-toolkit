@@ -19,11 +19,11 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ShyLabel;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.cwm.xml.XmlSectionModel;
@@ -35,6 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 public class AuthoredPopup extends ISIBasePage {
 	
+	private static final long serialVersionUID = 1L;
 	protected String xmlId;
 	protected XmlSectionModel mSection;	
 	protected PageParameters param;
@@ -108,7 +109,7 @@ public class AuthoredPopup extends ISIBasePage {
 
 	@Override
 	public String getPageName() {
-		return param.getString("callingPageDetail");
+		return param.get("callingPageDetail").toString();
 	}
 
 	@Override

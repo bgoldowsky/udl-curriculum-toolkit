@@ -4,11 +4,11 @@
 ## Source code compilation is done through maven, not make.
 
 APP = example
-VERSION = 1.0-SNAPSHOT
+VERSION = 2.0-SNAPSHOT
 
 ISI_DIR = ../isi
-CWM_DIR = ../../../cast-wicket-modules/trunk
-DRAW_DIR = ../../../cwm-drawtool/trunk
+CWM_DIR = ../../../../cast-wicket-modules/branches/wicket-1.5
+DRAW_DIR = ../../../../cwm-drawtool/branches/wicket-1.5
 
 MODULES = $(DRAW_DIR) $(CWM_DIR) $(ISI_DIR)
 

@@ -7,14 +7,96 @@
     <property name="hibernate.connection.url">jdbc:postgresql://localhost/exampledb</property>
     <property name="hibernate.connection.username">user</property>
     <property name="hibernate.connection.password">password</property>
-    
     <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-    <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-    <property name="hibernate.connection.pool_size">10</property>
+
+    <!-- hibernate connection pool size should not be set when using c3p0 - for development use only
+    <property name="hibernate.connection.pool_size">10</property> -->
+
     <property name="show_sql">false</property>
+    <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
     <property name="hibernate.hbm2ddl.auto">update</property>
+    <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</property>
+    <property name="hibernate.cache.use_query_cache">true</property>
+    <property name="hibernate.cache.use_second_level_cache">true</property>
+      
+      <!-- Tell hibernate to use c3po to connect to the database -->
+      <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+      
+      
+      <!-- There are 6 c3po settings that have a hibernate specific and a different c3p0 name. If c3p0 values are set in this file, the values will override any configuration set in a c3p0.properties file -->
+      
+      
+      <!-- BASIC POOL CONFIGURATION -->
+
+      <!-- Number of new connections to add at a time - should be aggressive as aquiring is an expensive transaction - 3 may be ok if you are expecting large number of users to join at the same time.  1 is likely to work for many CAST servers.  This doubles as the initial pool for hibernate.  Use c3p0.initialPoolSize in c3po property file to override inital size. Same as c3p0 acquireIncrement setting -->
+      <property name="hibernate.c3p0.acquire_increment">1</property>
+
+      <!-- The largest number of pooled connections to the database that can be allocated.  Needs to be less than min_size.  Same as maxPoolSize setting in c3p0 -->
+      <property name="hibernate.c3p0.max_size">100</property>
+      
+      <!-- The minimum number of Connections a pool will maintain at any given time - default is 3.  Use 3 for active server 0 for servers not in current use -->
+      <property name="hibernate.c3p0.min_size">1</property>
+      
+      <!-- should be set at least as large as the min_size -->
+      <property name="hibernate.c3p0.initialPoolSize">1</property>
+      
+      
+
+      <!-- MANAGING POOL SIZE AND CONNECTION AGE -->
+
+      <!-- get rid of connections older than this - default to 0 - which does not expire old connections -->
+      <property name="hibernate.c3p0.maxConnectionAge">0</property>
+
+      <!-- Seconds a connection can remain pooled but unused before being discarded. Zero means idle connections never expire. 30 minutes is considered aggressive.  -->
+      <!-- don't set this if you have set hibernate.c3p0.timeout -->
+      <property name="hibernate.c3p0.max_idle_time">1800</property>
+      
+      <!-- Release connections beyond the minimum number needed - should generally be set to a few minutes or less -->
+      <property name="hibernate.c3p0.maxIdleTimeExcessConnections">180</property>
+      
+      
+      
+      <!-- CONFIGURING CONNECTION TESTING -->
     
-    <property name="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</property>
-    
-  </session-factory>
+      <!-- Test all idle, pooled but unchecked-out connections, every this number of seconds. Same as c3po idleConnectionTestPeriod setting. -->
+      <property name="hibernate.c3p0.idle_test_period">600</property>
+      <!-- don't set this if you have set idle_test_period
+       <property name="hibernate.c3p0.idleConnectionTestPeriod">20</property> -->
+
+      <!-- may not be needed if you have set a long idle connection test period - default false - checkout has higher overhead -->
+      <property name="hibernate.c3p0.testConnectionsOnCheckIn">false</property>
+      <property name="hibernate.c3p0.testConnectionsOnCheckOut">false</property>
+      
+      <!-- the query that will run to test a connection, simple and easily identifiable -->
+      <property name="hibernate.c3p0.preferredTestQuery">select 3;</property>
+      
+      
+      <!-- CONFIGURING STATEMENT POOLING -->
+      <!-- The total number PreparedStatements a DataSource will cache.  Default is zero.  Need to benchmark with and without statement pooling to determine if it helps - recommend leveaing it at 0.  hibernate max_statements is the same as 3cp0 maxStatements setting.  This was set to 20, but no testing was done on this. -->
+      <property name="hibernate.c3p0.max_statements">0</property>
+      <property name="hibernate.c3p0.maxStatementsPerConnection">0</property>      
+      <property name="hibernate.c3p0.statementCacheNumDeferredCloseThreads">0</property>      
+      
+      
+      <!-- DEBUGGING STALE CONNECTIONS -->
+      <!-- thse two properties are used to debug connections.  High overhead, so don't leave on when not needed.
+      <property name="hibernate.c3p0.debugUnreturnedConnectionStackTraces">true</property>
+      <property name="hibernate.c3p0.unreturnedConnectionTimeout">10</property>
+      -->
+           
+      <!-- auditing of changes.  See http://docs.jboss.org/envers/docs/ -->
+      <!-- 
+      <listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert" />
+      <listener class="org.hibernate.envers.event.AuditEventListener" type="post-update" />
+      <listener class="org.hibernate.envers.event.AuditEventListener" type="post-delete" />
+      <listener class="org.hibernate.envers.event.AuditEventListener" type="pre-collection-update" />
+      <listener class="org.hibernate.envers.event.AuditEventListener" type="pre-collection-remove" />
+      <listener class="org.hibernate.envers.event.AuditEventListener" type="post-collection-recreate" />
+      -->
+     
+    </session-factory>    
+  
 </hibernate-configuration>
+
+
+ 

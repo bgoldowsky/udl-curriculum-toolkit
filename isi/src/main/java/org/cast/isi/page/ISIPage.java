@@ -21,13 +21,17 @@ package org.cast.isi.page;
 
 import lombok.Getter;
 
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.util.string.UrlUtils;
-import org.cast.cwm.components.service.JavascriptService;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.UrlUtils;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.cast.cwm.JQueryHeaderContributor;
 import org.cast.isi.ISIApplication;
 
 /**
@@ -40,19 +44,31 @@ import org.cast.isi.ISIApplication;
 
 public class ISIPage extends WebPage implements IHeaderContributor {
 
+	private static final long serialVersionUID = 1L;
+
 	@Getter protected String pageTitle = ISIApplication.get().getPageTitleBase() + " :: Default Page Title";
 
 	public ISIPage(final PageParameters params) {
 		super(params);
 	}
+	
+	protected void addApplicationTitles() {
+		add(new Label("applicationTitle", new StringResourceModel("applicationTitle", this, null))
+			.setEscapeModelStrings(false));
+		add(new Label("applicationSubTitle", new StringResourceModel("applicationSubTitle", this, null))
+			.setEscapeModelStrings(false));
+	}
+
+	@Override
+	protected void onInitialize() {
+		add(new Favicon("favicon", "img/logos/favicon.png"));
+		super.onInitialize();
+	}
 
 	public void renderHead(final IHeaderResponse response) {
-		JavascriptService.get().includeJQuery(response);
-		renderThemeJS(response, "js/lang/en.js");
-		renderThemeJS(response, "js/jquery/jquery.form.js");
-		renderThemeJS(response, "js/functions.js");
-		renderThemeJS(response, "js/jquery/jquery-ui-1.9.2.custom.min.js");
-	
+
+        new JQueryHeaderContributor().renderHead(response);
+
 		renderThemeCSS(response, "css/toolbar.css");
 		renderThemeCSS(response, "css/buttons.css");
 		renderThemeCSS(response, "css/boxes.css");
@@ -67,14 +83,20 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 		// Theme CSS is loaded last, since it has overrides for any of the above CSS.
 		renderThemeCSS(response, "css/theme.css");
 
+		renderThemeJS(response, "js/lang/en.js");
+		renderThemeJS(response, "js/jquery/jquery.form.js");
+		renderThemeJS(response, "js/jquery/jquery-ui-1.9.2.custom.min.js");
+		renderThemeJS(response, "js/functions.js");
+
 		// if MathML is configured on, then link out to the MathJax site
 		if (ISIApplication.get().isMathMLOn()) {
+			String mathJaxLocation = ISIApplication.get().getMathJaxLocation();
 			response.renderString("<script type=\"text/javascript\" " +
-					"src=\"https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\">" +
+					"src=\"" +
+					mathJaxLocation + 
+					"\">" +
 					"</script>\n");
-		}
-		
-	
+		}	
 	}
 
 	/**
@@ -95,16 +117,32 @@ public class ISIPage extends WebPage implements IHeaderContributor {
 	}
 
 	public static void renderThemeCSS(IHeaderResponse response, String fileName) {
-		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()));
+		response.renderCSSReference(fileName);
 	}
 
 	public static void renderThemeCSS(IHeaderResponse response, String fileName, String media) {
-		response.renderCSSReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()), media);
+		response.renderCSSReference(fileName, media);
 	}
 
 	public static void renderThemeJS(IHeaderResponse response, String fileName) {
-		response.renderJavascriptReference(UrlUtils.rewriteToContextRelative(fileName, RequestCycle.get().getRequest()));
+		response.renderJavaScriptReference(fileName);
 	}
+	
+	
+	public class Favicon extends WebMarkupContainer {
+		private static final long serialVersionUID = 1L;
 
+		private String url;
 
+		public Favicon(String id, String url) {
+			super(id);
+			this.url = url;
+		}
+
+		@Override
+		protected void onComponentTag(ComponentTag tag) {
+			super.onComponentTag(tag);
+			tag.put("href", UrlUtils.rewriteToContextRelative(url, RequestCycle.get()));
+		}
+	}
 }

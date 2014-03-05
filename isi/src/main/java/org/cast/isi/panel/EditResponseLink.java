@@ -46,8 +46,7 @@ public class EditResponseLink extends AjaxLink<Response> {
 	public void onClick(final AjaxRequestTarget target) {
 		ResponseEditor editor = new ResponseEditor(placeholder.getId(), getModel(), metadata, loc);
 		placeholder.replaceWith(editor);
-		target.addComponent(editor);
-		System.out.println("ONCLICK ERL");
+		target.add(editor);
 	}
 
 }

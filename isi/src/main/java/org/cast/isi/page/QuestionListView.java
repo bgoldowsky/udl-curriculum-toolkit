@@ -19,7 +19,7 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -27,8 +27,11 @@ import org.apache.wicket.markup.html.link.PopupSettings;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.util.ListModel;
-import org.cast.cwm.CwmSession;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
+import org.cast.cwm.data.User;
+import org.cast.cwm.service.ICwmSessionService;
+import org.cast.isi.ISISession;
 import org.cast.isi.data.Question;
 import org.cast.isi.service.IQuestionService;
 
@@ -45,63 +48,55 @@ class QuestionListView extends ListView<Question> {
 	Question current;
 	Class<? extends WebPage> linkPage;
 	PopupSettings popupSettings;
-	Long userId;
 	
 	@Inject
 	protected IQuestionService questionService;
+	
+	@Inject
+	protected ICwmSessionService cwmSessionService;
 
 	private static final long serialVersionUID = 1L;
 
-	public QuestionListView (String id, Class<? extends WebPage>linkPage, PopupSettings popupSettings, Question current, Long userId) {
+	public QuestionListView (String id, Class<? extends WebPage>linkPage, PopupSettings popupSettings, Question current) {
 		super(id);
 		this.current = current;
 		this.linkPage = linkPage;
 		this.popupSettings = popupSettings;
-		if (userId == null) {
-			this.userId = CwmSession.get().getUser().getId();
-		} else {
-			this.userId = userId;
-		}
 		doQuery();
 	}
 
 	void doQuery() {
 		// TODO: This won't get detached when used in this manner.
-		setModel(new ListModel<Question>(questionService.getQuestionsByUser(userId)));		
+		User user = ISISession.get().getTargetUserModel().getObject();
+		if (!user.isGuest())
+			setModel(new ListModel<Question>(questionService.getQuestionsByUser(user.getId())));
 	}
 
 	@Override
 	protected void populateItem(ListItem<Question> item) {
-		Question q = (Question)item.getModelObject();
+		Question q = item.getModelObject();
 		boolean isCurrent = q.equals(current);
 		
-		BookmarkablePageLink<WebPage> link = new BookmarkablePageLink<WebPage>("link", linkPage);
-		item.add(link);
-		link.setParameter("question", q.getId());
-		link.setParameter("callingPageName", ((ISIStandardPage) getPage()).getPageName());
-		link.add(new Label("text", q.getText()));
+		PageParameters pp = new PageParameters();
+		pp.set("question", q.getId());
+		pp.set("callingPageName", ((ISIStandardPage) getPage()).getPageName());
+		BookmarkablePageLink<WebPage> link = new BookmarkablePageLink<WebPage>("link", linkPage, pp);
 		link.setPopupSettings(popupSettings);
+		item.add(link);
 		if (isCurrent)
 			link.setEnabled(false);
+
+		link.add(new Label("text", q.getText()));
 		
 		if (q.getOwner() != null) {
-			if (isCurrent) {
-				link.add(new SimpleAttributeModifier("class", "selected"));
-			}
+			if (isCurrent)
+				link.add(new AttributeModifier("class", "selected"));
 			else
-				item.add(new SimpleAttributeModifier("class", "questionP"));
+				item.add(new AttributeModifier("class", "questionP"));
 		} else {
 			if (isCurrent)
 				link.add(new ClassAttributeModifier("selected"));
-
 		}
 	}
 
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
 }

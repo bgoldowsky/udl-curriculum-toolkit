@@ -19,12 +19,8 @@
  */
 package org.cast.isi.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.inject.Inject;
 import net.databinder.hib.Databinder;
-
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
@@ -33,10 +29,12 @@ import org.cast.cwm.service.IEventService;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.data.SectionStatus;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import com.google.inject.Inject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Database service methods for Section, SectionStatus, etc.
@@ -55,6 +53,8 @@ public class SectionService implements ISectionService {
 	 * @see org.cast.isi.service.ISectionService#getSectionStatus(org.cast.cwm.data.User, java.lang.String)
 	 */
 	public SectionStatus getSectionStatus(User person, String loc) {
+		if (person.isGuest())
+			return null;
 		return (SectionStatus) Databinder.getHibernateSession().createCriteria(SectionStatus.class)
 				.add(Restrictions.eq("user", person))
 				.add(Restrictions.eq("loc", loc))

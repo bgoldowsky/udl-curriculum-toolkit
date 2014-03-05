@@ -19,10 +19,8 @@
  */
 package org.cast.isi.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.wicket.injection.web.InjectorHolder;
+import com.google.inject.Inject;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.EmailService;
@@ -35,7 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.google.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ISIEmailService extends EmailService {
 
@@ -52,7 +51,7 @@ public class ISIEmailService extends EmailService {
 
 	public ISIEmailService() {
 		super();
-		InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
 	}
 	
 	public static ISIEmailService get() {

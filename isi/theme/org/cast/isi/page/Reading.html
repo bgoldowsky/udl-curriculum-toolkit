@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+	<title wicket:id="pageTitle">Product Name</title>
+<wicket:link>
+<link type="text/css" rel="stylesheet" media="screen" href="../css/main.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/buttons.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/boxes.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/modal.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/highlight.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/toolbar.css" />
+
+<script type="text/javascript" src="./js/less/less-1.0.41.min.js"></script>
+<script type="text/javascript" src="./js/jquery/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="./js/lang/en.js"></script>
+<script type="text/javascript" src="./js/functions.js"></script>
+</wicket:link>
+</head>
+<body>
+	<wicket:extend>
+		<div id="wrapper">
+		   	<div wicket:id="navbar" id="navbar" class="navbar"></div>
+		
+		    <div id="mainWrapper">
+		        <div id="mainContent">
+		            <div id="mainContentLeft">
+		                <!-- BEGIN - Main Content -->
+		                <div class="leftContainer">
+		                	
+						   <div class="hlregion">
+		                   		<div wicket:id="xmlContent" /> <!-- Actual Content -->
+								<div wicket:id="highlightDisplayPanel" /> <!-- Hidden Form for Page Highlights -->
+						   </div>
+	                   		<div wicket:id="toggleCompletePanel">
+	                   		</div>
+						   
+		                </div>
+		               <!-- END - Main Content -->
+		            </div>
+		        </div>
+
+	            <!-- BEGIN - Support Content Right-->
+		        <div id="mainContentRight">
+
+			   		<!-- Highlight Toggle button followed by panel -->
+			   		<wicket:enclosure child="highlightToggleLink">
+				   		<div class="rightBox">
+			                <h5><a href="#" wicket:id="highlightToggleLink">Highlights</a></h5>
+							<div class="targetToggle linkToggleBox_highlightToggleLink">
+						    	<div wicket:id="highlightControlPanel"></div>
+    						</div>        
+						</div>
+					</wicket:enclosure>
+		        		
+			   		<!-- My Notes button followed by panel -->
+			   		<wicket:enclosure child="pageNotesToggleLink">
+				   		<div class="rightBox">
+			                <h5><a href="#" wicket:id="pageNotesToggleLink">My Notes</a></h5>
+							<div class="targetToggle linkToggleBox_pageNotesToggleLink">
+			                    <div class="responseBar">
+			                    	<div wicket:id="responseButtons" rgid="{@id}" class="responseLeft"></div>
+			                    	<div class="responseRight"></div>
+			                    </div>
+			                    <div wicket:id="responseList"></div>
+			                </div>
+						</div>
+					</wicket:enclosure>
+			
+			   		<!-- Questions Panel -->
+			   		<wicket:enclosure child="myQuestionsToggleLink">
+				   		<div class="rightBox">
+			            	<h5><a href="#" wicket:id="myQuestionsToggleLink">My Questions</a></h5>
+		                	<div class="targetToggle linkToggleBox_myQuestionsToggleLink">
+			                	<div wicket:id="questionContainer">
+				                    <p wicket:id="questionList">
+				                        <a wicket:id="link" href="#">
+				                        	<span wicket:id="text">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?
+				                        	</span>
+				                        </a>
+				                    </p>
+				                    <p wicket:id="guestMessage"></p>
+				                    <wicket:remove>
+				                    <p>
+				                        <a href="#">Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem?</a>
+				                    </p>
+				                    </wicket:remove>
+				                    <wicket:enclosure child="qButtonVisible">
+				                    	<wicket:container wicket:id="qButtonVisible"></wicket:container>
+				                    	<a id="newQMLink" target="_new" onclick="$('#newQuestionModal').show(); return false;" href="#newQuestionModal" class="button">Create New Question</a>
+				                    </wicket:enclosure>
+			                    </div>
+			               </div>
+		               </div>
+	               </wicket:enclosure>
+		            
+	 				<div id="newQuestionModal" class="modalBody modalNarrow" style="display: none;">
+					    <div class="modalHeader" role="banner">
+					        <div class="modalTitle">Create New Question</div>
+					        <a href="javascript:void(0)" onclick="$('#newQuestionModal textarea').attr('value', ''); $('#newQuestionModal .feedback').html(''); $('#newQuestionModal').hide();" class="modalClose button icon"><img src="img/icons/close.png" width="15" height="15" alt="Close"  title="Close" /></a>
+					    </div>
+					    <div class="modalMainCol">
+					        <div class="modalContent">
+					            <div class="modalEdit">
+					                <form wicket:id="newQuestion" action="#">
+					                    <textarea wicket:id="text"></textarea>
+					                    <p>
+						                    <input wicket:id="submit" type="submit" value="Save" class="button" />
+					 		                <a href="javascript:void(0)" onclick="$('#newQuestionModal textarea').attr('value', ''); $('#newQuestionModal .feedback').html(''); $('#newQuestionModal').hide(); " class="button">Cancel</a>
+					                    </p>
+						                <div class="feedback" wicket:id="feedback" />
+					                </form>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+			
+			   		<!-- My Tags Panel -->
+			   		<wicket:enclosure child="myTagsToggleLink">
+				   		<div class="rightBox">
+			            	<h5><a href="#" wicket:id="myTagsToggleLink">My Tags</a></h5>
+		 		        		<div wicket:id="tagPanel" class="targetToggle linkToggleBox_myTagsToggleLink"></div>
+		 		        	</div>
+		 		    </wicket:enclosure>
+		        </div>
+	            <!-- END - Support Content Right -->
+		    </div>
+		 	<div wicket:id="pageNavPanelBottom"></div>
+		</div>
+
+		<div wicket:id="responseFeedbackPanel"></div>
+		<div wicket:id="miniGlossaryModal"></div>
+		<div wicket:id="noHighlightModal"></div>
+	</wicket:extend>
+</body>
+</html>

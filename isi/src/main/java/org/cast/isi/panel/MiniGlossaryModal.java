@@ -40,7 +40,7 @@ public class MiniGlossaryModal extends Panel {
 	@Getter
 	private SidebarDialog dialog;
 	
-	private String contentPage;
+	//private String contentPage;
 	private GlossaryLink glossaryLink;
 	
 	@SuppressWarnings("unused")
@@ -49,7 +49,7 @@ public class MiniGlossaryModal extends Panel {
 
 	public MiniGlossaryModal(String id, String contentPage) {
 		super(id, new Model<String>(null));
-		this.contentPage = contentPage;
+		//this.contentPage = contentPage;
 		setOutputMarkupId(true);
 
 		dialog = new SidebarDialog("dialogBorder", new PropertyModel<String>(this, "modelObject.headword"), null);

@@ -25,7 +25,6 @@ import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateListModel;
 import net.databinder.models.hib.HibernateObjectModel;
 
-import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.ICwmService;
@@ -40,9 +39,7 @@ import com.google.inject.Inject;
  * @author bgoldowsky
  *
  */
-public class WordService  {
-	
-	private static WordService INSTANCE = new WordService();
+public class WordService implements IWordService  {
 	
 	@Inject
 	private ICwmService cwmService;
@@ -50,24 +47,30 @@ public class WordService  {
 	@Inject
 	private IEventService eventService;
 
-	public WordService () {
-		InjectorHolder.getInjector().inject(this);
-	}
-	
-	public static WordService get() { return INSTANCE; }
-
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IWordService#getWordCard(java.lang.Long)
+	 */
 	public IModel<WordCard> getWordCard (Long id) {
 		return new HibernateObjectModel<WordCard>(WordCard.class, id);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IWordService#getWordCard(java.lang.String, org.cast.cwm.data.User)
+	 */
 	public IModel<WordCard> getWordCard (String word, User user) {		
 		return new HibernateObjectModel<WordCard>(new WordCardsQuery().setWord(word).setUser(user));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IWordService#listWordCards(org.cast.cwm.data.User)
+	 */
 	public IModel<List<WordCard>> listWordCards(User user) {
 		return new HibernateListModel<WordCard>(new WordCardsQuery().setUser(user));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.cast.isi.service.IWordService#getWordCardCreate(java.lang.String, org.cast.cwm.data.User, boolean)
+	 */
 	public IModel<WordCard> getWordCardCreate (String word, User user, boolean inGlossary) {
 		IModel<WordCard> cardModel = getWordCard(word, user);
 		if (cardModel.getObject() != null)

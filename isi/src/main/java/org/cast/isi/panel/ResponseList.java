@@ -25,12 +25,13 @@ import lombok.Setter;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -42,6 +43,9 @@ import org.cast.cwm.service.IResponseService;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.data.ContentLoc;
 
+import com.aplombee.QuickView;
+import com.aplombee.ReUse;
+import com.aplombee.RepeaterUtilReference;
 import com.google.inject.Inject;
 
 /**
@@ -76,6 +80,9 @@ public class ResponseList extends Panel {
 	@Getter @Setter
 	protected boolean allowWhiteboard = true;
 	
+	@Getter @Setter
+	protected Integer pageSize = 5; // if not null, indicates how many responses to show initially.
+	
 	protected ResponseMetadata metadata;
 	protected ContentLoc loc;
 
@@ -106,16 +113,20 @@ public class ResponseList extends Panel {
 		super.onInitialize();
 		dataProvider = getResponseProvider();
 		
-		DataView<Response> dataView = new DataView<Response>("dataView", dataProvider) {
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected void populateItem(Item<Response> item) {
-				item.add(getEditableResponseViewer("response", item.getModel(), metadata, loc));
-			}
-		};
-		add(dataView);
-		add (new EmptyPanel("placeholder").setOutputMarkupId(true));
-		add (new Directions("directions"));
+		WebMarkupContainer container = new WebMarkupContainer("dataViewContainer");
+		container.setOutputMarkupId(true);
+		add(container);
+		
+		QuickView<Response> dataView = new ResponseQuickView("dataView", dataProvider, ReUse.ITEMSNAVIGATION);
+		if (pageSize != null)
+			dataView.setItemsPerRequest(pageSize);
+		container.add(dataView);
+
+		ISIAjaxItemsNavigator more = new ISIAjaxItemsNavigator("more", Model.of("See more"), dataView);
+		add(more);
+		
+		add(new EmptyPanel("placeholder").setOutputMarkupId(true));
+		add(new Directions("directions"));
 	}
 
 	@Override
@@ -139,9 +150,9 @@ public class ResponseList extends Panel {
 			@Override
 			protected void onDelete(AjaxRequestTarget target) {
 				super.onDelete(target);
-				target.addComponent(ResponseList.this);
+				target.add(ResponseList.this);
 				getDirectionsComponent().setVisibility();
-				target.addComponent(getDirectionsComponent());
+				target.add(getDirectionsComponent());
 			}
 		};
 		viewer.setAllowEdit(allowEdit);
@@ -168,14 +179,14 @@ public class ResponseList extends Panel {
 		Component panel = new EmptyPanel(getPlaceholderId()).setOutputMarkupId(true);
 		getPlaceholderComponent().replaceWith(panel);
 		getDirectionsComponent().setVisibility();
-		target.addComponent(getDirectionsComponent());
+		target.add(getDirectionsComponent());
 	}
 	
 	public void putPlaceholderComponent (Component component, AjaxRequestTarget target) {
 		getPlaceholderComponent().replaceWith(component);
-		target.addComponent(component);
+		target.add(component);
 		getDirectionsComponent().setVisibility();
-		target.addComponent(getDirectionsComponent()); 
+		target.add(getDirectionsComponent()); 
 	}
 	
 	/**
@@ -184,6 +195,34 @@ public class ResponseList extends Panel {
 	public Directions getDirectionsComponent() {
 		return (Directions) get("directions");
 	}
+	
+	
+	/**
+	 * QuickView repeater for the list of responses.
+	 */
+	private final class ResponseQuickView extends QuickView<Response> {
+		private static final long serialVersionUID = 1L;
+
+		private ResponseQuickView(String id, IDataProvider<Response> dataProvider, ReUse reUse) {
+			super(id, dataProvider, reUse);
+		}
+
+		@Override
+		protected void populate(Item<Response> item) {
+			item.add(getEditableResponseViewer("response", item.getModel(), metadata, loc));
+		}
+
+		// FIXME warning fragile... this removes the request for jQuery that QuickView makes
+		// since it requests a different version and we end up with two.
+		// We will have to look at this again for wicket 6.
+	    @Override
+	    public void renderHead(IHeaderResponse response) {
+	    	// do not call super
+	        response.renderJavaScriptReference(RepeaterUtilReference.get());
+	    }
+	    
+	}
+
 	
 	/**
 	 * The directions component shows a helpful message if there are no current responses.

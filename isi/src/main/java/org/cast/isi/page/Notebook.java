@@ -30,10 +30,13 @@ import lombok.Getter;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -48,7 +51,10 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.cast.cwm.components.AttributePrepender;
 import org.cast.cwm.components.ClassAttributeModifier;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
@@ -89,7 +95,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(Notebook.class);
 
-	boolean isTeacher = false;
+	protected boolean isTeacher = false;
 	
 	// A map of responses in the notebook grouped by prompt
 	protected Map<ISIPrompt, List<ISIResponse>> responseMap;
@@ -123,11 +129,16 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 		getChapterList();
 		getInitChapter(parameters);
-		addChapterChoice();
-		addNotebookResponses();
-
+		
+		addComponents(this);
+	}
+	
+	protected void addComponents(MarkupContainer container) {
+		addCloseButton(container);
+		addChapterChoice(container);
+		addNotebookResponses(container);
 		populateResponseMap();
-		addResponses();
+		addResponses(container);
 	}
 
 	
@@ -155,8 +166,8 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	 */
 	protected void getInitChapter(PageParameters parameters) {
 		// check if there is a location passed in otherwise default to the current bookmarked location
-		if (parameters.containsKey("loc")) {
-			currentLoc = new ContentLoc(parameters.getString("loc"));
+		if (parameters.getNamedKeys().contains("loc")) {
+			currentLoc = new ContentLoc(parameters.get("loc").toString());
 		} else {
 			currentLoc = ISIApplication.get().getBookmarkLoc();
 		}
@@ -176,18 +187,22 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		}
 	}
 
+
+	private void addCloseButton(MarkupContainer container) {
+		WebMarkupContainer closeWindowLink = new WebMarkupContainer("closeWindow");
+		add(closeWindowLink);
+		String onClickString = "if (typeof AutoSaver !== 'undefined') { AutoSaver.autoSaveMaybeSave(function() {window.close();});} else {window.close();}";
+		closeWindowLink.add(new AttributeAppender("onclick", onClickString));
+		container.add(closeWindowLink);
+	}
+
+
 	/**
 	 * Add a drop down choice of chapters.
 	 */
-	protected void addChapterChoice() {
+	protected void addChapterChoice(MarkupContainer container) {
 		
-		// display only the titles in the dropdown
-		ChoiceRenderer<XmlSection> renderer = new ChoiceRenderer<XmlSection>("title");
-		chapterChoice = new DropDownChoice<XmlSection>("chapterChoice", new XmlSectionModel(currentChapterLoc.getSection()), mChapterList, renderer);
-		chapterChoice.add(new SimpleAttributeModifier("autocomplete", "off"));
-		chapterChoice.add(new SimpleAttributeModifier("ignore", "true"));
-
-		Form<XmlSection> chapterSelectForm = new Form<XmlSection>("chapterSelectForm") {
+		Form<Void> chapterSelectForm = new Form<Void>("chapterSelectForm") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -203,8 +218,27 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 				}
 			}			
 		};
-		add(chapterSelectForm);		
-		chapterSelectForm.add(chapterChoice);							
+		container.add(chapterSelectForm);
+
+		// display only the titles in the dropdown
+		ChoiceRenderer<XmlSection> renderer = new ChoiceRenderer<XmlSection>("title");
+		chapterChoice = new DropDownChoice<XmlSection>("chapterChoice", new XmlSectionModel(currentChapterLoc.getSection()), mChapterList, renderer);
+		chapterChoice.add(new AttributeModifier("autocomplete", "off"));
+		chapterChoice.add(new AttributeModifier("ignore", "true"));
+		chapterSelectForm.add(chapterChoice);
+		
+		AjaxSubmitLink submitLink = new AjaxSubmitLink("submitLink", chapterSelectForm) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+				target.prependJavaScript("AutoSaver.autoSaveMaybeSave(null);");
+				super.onSubmit(target, form);
+			}
+		};
+		String onClickString = "if (typeof AutoSaver !== 'undefined') { AutoSaver.autoSaveMaybeSave(null);}";
+		submitLink.add(new AttributePrepender("onclick", onClickString, ";"));
+		chapterSelectForm.add(submitLink);
 	}
 
 
@@ -212,7 +246,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	 * Add a response list to the notebook.  These are notes NOT associated with reading pages.
 	 * These responses are associated with the Chapter (level1).
 	 */
-	protected void addNotebookResponses () {
+	protected void addNotebookResponses (MarkupContainer container) {
 		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.NOTEBOOK_NOTES, currentChapterLoc);
 		ResponseList responseList = new ResponseList("nbResponseList", mPrompt, notebookMetadata, currentChapterLoc, ISISession.get().getTargetUserModel());
 		String context = "notebook" + (isTeacher ? ".teacher" : ""  );
@@ -220,11 +254,11 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		responseList.setAllowEdit(!isTeacher);
 		responseList.setAllowNotebook(false);
 		responseList.setAllowWhiteboard(false);
-		add(responseList);
+		container.add(responseList);
 		ResponseButtons responseButtons = new ResponseButtons("responseButtons", mPrompt, notebookMetadata, currentLoc);
 		responseButtons.setContext("notebook");
 		responseButtons.setVisible(!isTeacher);
-		add(responseButtons);
+		container.add(responseButtons);
 	}
 
 
@@ -263,14 +297,14 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 	/**
 	 * Add a repeater with the set of Prompts/Responses
 	 */
-	protected void addResponses() {
+	protected void addResponses(MarkupContainer container) {
 
 		// "No Responses" message
 		WebMarkupContainer noNotes = new WebMarkupContainer("noNotes");
-		add(noNotes.setVisible(responseMap.isEmpty()));
+		container.add(noNotes.setVisible(responseMap.isEmpty()));
 
 		RepeatingView noteRepeater = new RepeatingView("noteRepeater");
-		add(noteRepeater.setVisible(!responseMap.isEmpty()));
+		container.add(noteRepeater.setVisible(!responseMap.isEmpty()));
 
 		for (Entry<ISIPrompt, List<ISIResponse>> entry : responseMap.entrySet()) {
 			ISIPrompt currentPrompt = entry.getKey();
@@ -322,7 +356,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 				// Anchor so links can jump to this id
 				item.add(new WebMarkupContainer("responseAnchor")
-				.add(new SimpleAttributeModifier("name", String.valueOf(item.getModelObject().getId()))));
+				.add(new AttributeModifier("name", String.valueOf(item.getModelObject().getId()))));
 
 				// Actual response
 				item.add(factory.makeResponseViewComponent("response", item.getModel()));
@@ -369,7 +403,7 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 		super.renderHead(response);
 		renderThemeCSS(response, "css/window.css");
 		renderThemeCSS(response, "css/window_print.css", "print");
-		response.renderOnLoadJavascript("bindSectionOpenerLinks()");
+		response.renderOnLoadJavaScript("bindSectionOpenerLinks()");
 	}
 
 
@@ -397,12 +431,12 @@ public class Notebook extends ISIBasePage implements IHeaderContributor {
 
 		@Override
 		protected String getDialogTitle() {
-			return new StringResourceModel("Notebook.removeDialogTitle", this, null, "Remove from Notebook?").getString();
+			return new ResourceModel("Notebook.removeDialogTitle", "Remove from Notebook?").getObject();
 		}
 
 		@Override
 		protected String getDialogText() {
-			return new StringResourceModel("Notebook.removeDialogText", this, null, "Are you sure you want to remove this response from the Notebook?").getString();
+			return new ResourceModel("Notebook.removeDialogText", "Are you sure you want to remove this response from the Notebook?").getObject();
 		}
 	}	
 }

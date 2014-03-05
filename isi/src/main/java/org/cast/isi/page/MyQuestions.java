@@ -19,13 +19,12 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -39,6 +38,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
@@ -67,6 +68,8 @@ import com.google.inject.Inject;
  */
 @AuthorizeInstantiation("STUDENT")
 public class MyQuestions extends ISIStandardPage {
+
+	private static final long serialVersionUID = 1L;
 
 	private QuestionListView questionLister = null;
 	private Question selectedQuestion;
@@ -100,7 +103,12 @@ public class MyQuestions extends ISIStandardPage {
 		}
 
 		selectedQuestion = null;
-		Long questionId = parameters.getLong("question", -1);
+        Long questionId = -1l;
+        StringValue o = parameters.get("question");
+        if(o.toString() != null) {
+            questionId = Long.parseLong(o.toString());
+        }
+
 		mSelectedQuestion = questionService.getQuestionModelById(questionId);
 		if (questionId != -1) {
 			selectedQuestion = mSelectedQuestion.getObject();
@@ -115,7 +123,7 @@ public class MyQuestions extends ISIStandardPage {
 		questionContainer.setOutputMarkupId(true);
 		add(questionContainer);
 		if (mUser.getObject() != null) {
-			questionLister = new QuestionListView("question", ISIApplication.get().getMyQuestionsPageClass(), null, selectedQuestion, mUser.getObject().getId());
+			questionLister = new QuestionListView("question", ISIApplication.get().getMyQuestionsPageClass(), null, selectedQuestion);
 			questionContainer.add(questionLister);
 		} else {
 			questionContainer.add(new WebMarkupContainer("question").add(new WebMarkupContainer("link")));
@@ -159,8 +167,8 @@ public class MyQuestions extends ISIStandardPage {
 					editQuestionTitleForm.setVisible(true);
 					editQuestionTitleForm.setModel(new CompoundPropertyModel<Question>(selectedQuestion));
 					if (target != null) {
-						target.addComponent(questionTitleContainer);
-						target.addComponent(editQuestionTitleForm);
+						target.add(questionTitleContainer);
+						target.add(editQuestionTitleForm);
 					}
 				}
 			};
@@ -200,7 +208,7 @@ public class MyQuestions extends ISIStandardPage {
 			TextArea<String> questionTextArea = new TextArea<String>("text", textModel);
 			questionTextArea.add(new QuestionNameValidator(null))
 					.setRequired(true)
-					.add(new SimpleAttributeModifier("maxlength", "250"));
+					.add(new AttributeModifier("maxlength", "250"));
 			add(new FormComponentLabel("questionLabel", questionTextArea));
 			add(questionTextArea);
 			add(new AjaxButton("submit") {
@@ -218,17 +226,17 @@ public class MyQuestions extends ISIStandardPage {
 							qstr = qstr.substring(0, 250);
 						questionService.createQuestion(mUser, qstr, getPageName());
 						questionLister.doQuery();
-						target.addComponent(questionContainer);
-						target.addComponent(NewQuestionForm.this);
-						target.addComponent(feedback);
+						target.add(questionContainer);
+						target.add(NewQuestionForm.this);
+						target.add(feedback);
 					}
-					target.appendJavascript("$('#newQuestionModal').hide();");
+					target.appendJavaScript("$('#newQuestionModal').hide();");
 				}
 				@Override
 				protected void onError(AjaxRequestTarget target, Form<?> form) {
 					super.onError(target, form);
 					if (target != null)
-						target.addComponent(feedback);
+						target.add(feedback);
 				}				
 			});
 
@@ -249,7 +257,7 @@ public class MyQuestions extends ISIStandardPage {
 
 		private void addContent() {
 			TextField<String> questionName = new TextField<String>("text");
-			questionName.add(new SimpleAttributeModifier("maxlength", "250"));
+			questionName.add(new AttributeModifier("maxlength", "250"));
 			questionName.add(new QuestionNameValidator(selectedQuestion));
 			questionName.setRequired(true);
 			add(questionName);
@@ -262,8 +270,8 @@ public class MyQuestions extends ISIStandardPage {
 					questionTitleContainer.setVisible(true);
 					editQuestionTitleForm.setVisible(false);
 					if (target != null) {
-						target.addComponent(questionTitleContainer);
-						target.addComponent(editQuestionTitleForm);	
+						target.add(questionTitleContainer);
+						target.add(editQuestionTitleForm);	
 					}				
 				}
 			});
@@ -276,16 +284,16 @@ public class MyQuestions extends ISIStandardPage {
 					questionTitleContainer.setVisible(true);
 					editQuestionTitleForm.setVisible(false);
 					if (target != null) {
-						target.addComponent(questionTitleContainer);
-						target.addComponent(editQuestionTitleForm);	
-						target.addComponent(questionContainer);
+						target.add(questionTitleContainer);
+						target.add(editQuestionTitleForm);	
+						target.add(questionContainer);
 					}
 				}
 
 				@Override
 				protected void onError(AjaxRequestTarget target, Form<?> form) {
 					if (target != null) {
-						target.addComponent(editQuestionTitleForm);
+						target.add(editQuestionTitleForm);
 					}
 				}
 			});
@@ -303,9 +311,16 @@ public class MyQuestions extends ISIStandardPage {
 					questionLister.doQuery();
 					setResponsePage(ISIApplication.get().getMyQuestionsPageClass());
 				}
+
+				@Override
+				protected void onBeforeRender() {
+					this.setObjectName((new StringResourceModel("MyQuestions.delete.objectName", this, null, "Question").getString()));
+					super.onBeforeRender();
+				}
 			};
 			add(dialog);
-			dialog.setObjectName((new StringResourceModel("MyQuestions.delete.objectName", this, null, "Question").getString()));
+            // TODO: causes this warning: WARN  org.apache.wicket.Localizer Tried to retrieve a localized string for a component that has not yet been added to the page. This can sometimes lead to an invalid or no localized resource returned. Make sure you are not calling Component#getString() inside your Component's constructor. Offending component: [EditQuestionTitleForm [Component id = editQuestionTitleForm]]
+			//dialog.setObjectName((new StringResourceModel("MyQuestions.delete.objectName", this, null, "Question").getString()));
 			add(new WebMarkupContainer("delete").add(dialog.getDialogBorder().getClickToOpenBehavior()));
 		}
 

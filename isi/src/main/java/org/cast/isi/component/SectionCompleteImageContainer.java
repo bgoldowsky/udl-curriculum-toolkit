@@ -19,6 +19,8 @@
  */
 package org.cast.isi.component;
 
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.components.Icon;
@@ -33,6 +35,7 @@ import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
 
+@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", roles={"STUDENT"})})
 public class SectionCompleteImageContainer extends WebMarkupContainer {
 
 	private static final long serialVersionUID = 1L;

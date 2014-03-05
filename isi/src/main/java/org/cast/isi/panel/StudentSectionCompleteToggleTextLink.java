@@ -24,8 +24,7 @@ import org.cast.cwm.data.User;
 import org.cast.cwm.xml.XmlSection;
 import org.cast.isi.data.SectionStatus;
 
-public class StudentSectionCompleteToggleTextLink extends
-		SectionCompleteToggleTextLink {
+public class StudentSectionCompleteToggleTextLink extends SectionCompleteToggleTextLink {
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,8 +44,15 @@ public class StudentSectionCompleteToggleTextLink extends
 	}
 	
 	@Override
-	protected void handleClick() {
-		sectionService.setCompleted(getUser(), sectionContentLocation, !isComplete());
+	protected void handleClick() {	
+		// when no teacher review is necessary && this is a lock-response section
+		if (isLockResponse() && featureService.isSectionToggleImmediateScoreOn()) {
+			sectionService.setCompleted(getUser(), sectionContentLocation, true);
+			sectionService.setReviewed(getUser(), sectionContentLocation, true);
+			sectionService.setLocked(getUser(), sectionContentLocation, true);
+		} else {
+			sectionService.setCompleted(getUser(), sectionContentLocation, !isComplete());
+		}
 	}
 
 	@Override

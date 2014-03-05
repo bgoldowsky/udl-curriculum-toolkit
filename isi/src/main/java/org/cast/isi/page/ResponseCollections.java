@@ -22,39 +22,29 @@ package org.cast.isi.page;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.cast.cwm.components.ClassAttributeModifier;
-import org.cast.cwm.data.Response;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
-import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
-import org.cast.isi.ISIXmlSection;
-import org.cast.isi.ResponseViewerFactory;
-import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.ISIResponse;
 import org.cast.isi.data.ScoreCounts;
+import org.cast.isi.panel.ResponseCollectionListing;
 import org.cast.isi.panel.ResponseCollectionSummary;
-import org.cast.isi.panel.StudentScorePanel;
 import org.cast.isi.service.IFeatureService;
 import org.cast.isi.service.IISIResponseService;
 import org.slf4j.Logger;
@@ -72,6 +62,8 @@ import com.google.inject.Inject;
 @AuthorizeInstantiation("STUDENT")
 public class ResponseCollections extends ISIStandardPage {
 	
+	private static final long serialVersionUID = 1L;
+
 	protected String paramCollectionName = null; // The name of the ResponseCollection currently being displayed
 	protected String pageTitleEnd;
 	protected UserModel mUser;
@@ -92,8 +84,6 @@ public class ResponseCollections extends ISIStandardPage {
 		responseMetadata.addType("UPLOAD");
 	}
 
-	private static final ResponseViewerFactory factory = new ResponseViewerFactory();
-
 	public ResponseCollections(final PageParameters parameters) {
 		super(parameters);
 
@@ -108,7 +98,7 @@ public class ResponseCollections extends ISIStandardPage {
 		pageTitleEnd = (new StringResourceModel("ResponseCollections.pageTitle", this, null, "Collections").getString());
 		setPageTitle(pageTitleEnd);
 		
-		paramCollectionName = parameters.getString("name");
+		paramCollectionName = parameters.get("name").toString();
 		
 		if (!haveSelectedCollection()) {
 			add(new WebMarkupContainer("collectionTitle").setVisible(false));
@@ -138,11 +128,11 @@ public class ResponseCollections extends ISIStandardPage {
 		
 		if (haveSelectedCollection()) {
 			add(makeSummary("promptResponseSummary"));
-			add(makePromptResponseRepeater("promptResponseRepeater"));
+			add(new ResponseCollectionListing("listing", mUser, paramCollectionName));
 		}
 		else {
 			add(new EmptyPanel("promptResponseSummary"));
-			add(new RepeatingView("promptResponseRepeater"));
+			add(new EmptyPanel("listing"));
 		}
 		
 	}
@@ -176,14 +166,6 @@ public class ResponseCollections extends ISIStandardPage {
 		return StringUtils.isNotEmpty(paramCollectionName);
 	}
 
-	protected RepeatingView makePromptResponseRepeater(String id) {
-		RepeatingView rvPromptResponseList = new RepeatingView(id);
-		for (ISIPrompt prompt : responseService.getResponseCollectionPrompts(mUser, paramCollectionName)) {
-			rvPromptResponseList.add(makePromptContainer(rvPromptResponseList.newChildId(), prompt));
-		}
-		return rvPromptResponseList;
-	}
-
 	protected RepeatingView makeCollectionNameRepeater(List<String> listNames) {
 		RepeatingView rvCollectionList = new RepeatingView("collectionList");
 		
@@ -195,52 +177,16 @@ public class ResponseCollections extends ISIStandardPage {
 		return rvCollectionList;
 	}
 
-	protected WebMarkupContainer makePromptContainer(String newChildId, ISIPrompt prompt) {
-		WebMarkupContainer rvPromptList = new WebMarkupContainer(newChildId);
-		
-		ISIXmlSection section = getSection(prompt);
-		rvPromptList.add(new Label("responseHeader", section.getCrumbTrailAsString(1, 1)));
-			
-		// Prompt Icon
-		rvPromptList.add(ISIApplication.get().iconFor(section.getSectionAncestor()));
-		
-		// Add the title and link to the page where this note is located
-		BookmarkablePageLink<ISIStandardPage> link = new SectionLinkFactory().linkToPage("contentLink", section);
-		link.add(new Label("contentLinkTitle", section.getTitle()));
-		rvPromptList.add(link);
-		List<ISIResponse> responses = getResponsesFor(prompt);
-
-		// Show the score
-		rvPromptList.add(new StudentScorePanel("responseScore", getModels(responses)));
-		
-		// Text associated with Prompt
-		rvPromptList.add(factory.makeQuestionTextComponent("question", prompt));
-		
-		rvPromptList.add(makeResponseListView(prompt, responses));
-		return rvPromptList;
-	}
-
-	protected List<IModel<Response>> getModels(List<ISIResponse> responses) {
-		List<IModel<Response>> result = new ArrayList<IModel<Response>>();
-		for (ISIResponse response: responses) {
-			result.add(new HibernateObjectModel<Response>(response));
-		}
-		return result;
-	}
-
-	protected ISIXmlSection getSection(ISIPrompt prompt) {
-		return prompt.getContentElement().getContentLocObject().getSection();
-	}
 
 	protected BookmarkablePageLink<Page> makeCollectionLink(String collectionName) {
-		BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>("link", ISIApplication.get().getResponseCollectionsPageClass())
-										.setParameter("name", collectionName);
+		BookmarkablePageLink<Page> bpl = new BookmarkablePageLink<Page>("link", ISIApplication.get().getResponseCollectionsPageClass());
+		bpl.getPageParameters().add("name", collectionName);
 		bpl.add(new Label("name", collectionName));
 		
 		// if the param collection name is the same as this one set the indicator that this is the item clicked
 		if (haveSelectedCollection()) {
 			if (paramCollectionName.equals(collectionName)) {
-				bpl.add(new SimpleAttributeModifier("class", "selected"));
+				bpl.add(new AttributeModifier("class", "selected"));
 				bpl.setEnabled(false);
 			}
 		}
@@ -252,29 +198,6 @@ public class ResponseCollections extends ISIStandardPage {
 			return responseService.getResponseCollectionNames(userModel);
 		}
 		return new ArrayList<String>();
-	}
-
-	protected Component makeResponseListView(final ISIPrompt prompt, List<ISIResponse> responses) {
-		return new ListView<ISIResponse>("responseList", responses) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void populateItem(ListItem<ISIResponse> item) {
-				item.add(factory.makeResponseViewComponent("response", item.getModel()));
-				// Link back to content
-				BookmarkablePageLink<ISIStandardPage> editLink = new SectionLinkFactory().linkTo(
-						"editLink",
-						prompt.getContentElement().getContentLocObject().getSection(),
-						prompt.getContentElement().getXmlId());
-				editLink.add(new ClassAttributeModifier("sectionLink"));
-				item.add(editLink);
-			}
-
-		};
-	}
-
-	protected List<ISIResponse> getResponsesFor(ISIPrompt prompt) {
-		return responseService.getAllResponsesForPromptByStudent(new PromptModel(prompt), mUser);
 	}
 
 	@Override

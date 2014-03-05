@@ -22,10 +22,9 @@ package org.cast.isi.page;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -37,22 +36,29 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.glossary.IGlossaryEntry;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.WordCard;
 import org.cast.isi.panel.GlossaryPanel;
-import org.cast.isi.service.WordService;
+import org.cast.isi.service.IWordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(GlossaryPage.class);
 	protected Map<String, IGlossaryEntry> listUserEntries;
 	protected IModel<List<WordCard>> wordCardList;
 	
+	@Inject
+	protected IWordService wordService;
+
 	/**
 	 * The glossary page is used to wrap the glossary panel.  It adds the header/footer
 	 * and also the form to add new user words (wordcard)
@@ -64,12 +70,12 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
 		// Look up word
 		IModel<? extends IGlossaryEntry> mEntry = null;
-		if (params.containsKey("word")) {
-			mEntry = ISIApplication.get().getGlossary().getEntryById(params.getString("word"));
+		if (params.getNamedKeys().contains("word")) {
+			mEntry = ISIApplication.get().getGlossary().getEntryById(params.get("word").toString());
 			if (mEntry == null) {
 				// Try WordCards
-				Long id = params.getLong("word");
-				mEntry = WordService.get().getWordCard(id);
+				Long id = params.get("word").toLong();
+				mEntry = wordService.getWordCard(id);
 			}
 		}
 		
@@ -99,7 +105,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 			super(id);
 			add(new TextArea<String>("wordText", mWord)
 					.setRequired(true)
-					.add(new SimpleAttributeModifier("maxlength", "50")));
+					.add(new AttributeModifier("maxlength", "50")));
 			add(new AjaxButton("submit") {
 				private static final long serialVersionUID = 1L;
 
@@ -109,17 +115,24 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 					PageParameters param = new PageParameters();
 					
 					if (ISIApplication.get().getGlossary().getEntryByForm(newWord) == null) { // TODO should this get by headword only?
-						IModel<WordCard> wc = WordService.get().getWordCardCreate(newWord, ISISession.get().getUser(), false);
+						IModel<WordCard> wc = wordService.getWordCardCreate(newWord, ISISession.get().getUser(), false);
 						param.add("wc", wc.getObject().getId().toString());
 					} else {
-						// word is already in the glossary
-						param.add("word", newWord);
+						// word is already in the glossary - load that entry
+						param.add("word", newWord.replaceAll("[^a-zA-Z0-9]", "").replaceAll("\\s+", ""));
 					}
 					this.setResponsePage(ISIApplication.get().getGlossaryPageClass(), param);
 				}
+
+				@Override
+				protected void onError(AjaxRequestTarget target, Form<?> form) {
+					target.add(getParent().get("feedback"));
+					super.onError(target, form);
+				}				
 			});                  
 			add(feedback = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(NewWordForm.this)));
 			feedback.setOutputMarkupPlaceholderTag(true);
+			
 		}
 	}
 	
@@ -127,7 +140,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 		renderThemeCSS(response, "css/glossary.css");
 		renderThemeCSS(response, "css/window_print.css", "print");
 		super.renderHead(response);
-		response.renderOnLoadJavascript("bindSectionOpenerLinks()");		
+		response.renderOnLoadJavaScript("bindSectionOpenerLinks()");
 	}
 
 	@Override
@@ -137,7 +150,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
 	@Override
 	public String getPageType() {
-		String linkFrom = getPageParameters().getString("link");
+		String linkFrom = getPageParameters().get("link").toString();
 		if (linkFrom != null)
 			return "glossary:" + linkFrom;
 		return "glossary";
@@ -145,7 +158,7 @@ public class GlossaryPage extends ISIBasePage implements IHeaderContributor{
 
 	@Override
 	public String getPageViewDetail() {
-		return getPageParameters().getString("word");
+		return getPageParameters().get("word").toString();
 	}
 
 }

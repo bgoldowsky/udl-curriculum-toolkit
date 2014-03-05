@@ -19,6 +19,7 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -60,18 +61,18 @@ public class ImageDetailButtonPanel extends ISIPanel{
 
 					private static final long serialVersionUID = 1L;
 
-					public CharSequence decorateOnFailureScript(CharSequence script) {
-						return script;
-					}
+                    public CharSequence decorateScript(Component component, CharSequence script) {
+                        return "showImageDetail('" + imageId + "', true); " + script;
+                    }
 
-					public CharSequence decorateOnSuccessScript(CharSequence script) {
-						return script;
-					}
+                    public CharSequence decorateOnSuccessScript(Component component, CharSequence script) {
+                        return script;
+                    }
 
-					public CharSequence decorateScript(CharSequence script) {
-						return "showImageDetail('" + imageId + "', true); " + script;
-					}
-				};
+                    public CharSequence decorateOnFailureScript(Component component, CharSequence script) {
+                        return script;
+                    }
+                };
 			}
 		};
 		

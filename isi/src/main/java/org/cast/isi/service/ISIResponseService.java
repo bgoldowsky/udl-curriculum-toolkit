@@ -20,6 +20,7 @@
 package org.cast.isi.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.Response;
 import org.cast.cwm.data.ResponseData;
+import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.PromptModel;
 import org.cast.cwm.data.models.UserModel;
@@ -147,8 +149,8 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IISIResponseService#getOrCreateHighlightPrompt(org.cast.isi.data.PromptType, org.cast.isi.data.ContentLoc, java.lang.String)
 	 */
-	public IModel<Prompt> getOrCreateHighlightPrompt(PromptType highlightlabel, ContentLoc loc, String color) {
-		return genericGetOrCreatePrompt(highlightlabel, loc, null, null, color, null);
+	public IModel<Prompt> getOrCreateHighlightPrompt(PromptType highlightlabel, String color) {
+		return genericGetOrCreatePrompt(highlightlabel, null, null, null, color, null);
 	}
 
 	
@@ -436,12 +438,31 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 		return q.list();
 	}
 	
+		
+	public void saveFeedbackMessage(IModel<FeedbackMessage> mFeedbackMessage, IModel<Prompt> mPrompt) {
+		FeedbackMessage feedbackMessage = mFeedbackMessage.getObject();
+
+		feedbackMessage.setUnread(true);
+		feedbackMessage.setVisible(true);
+
+		feedbackMessage.setAuthor(ISISession.get().getUser());
+		feedbackMessage.setStudent(ISISession.get().getTargetUserModel().getObject());
+		feedbackMessage.setTimestamp(new Date());
+		
+		ISIPrompt prompt = (ISIPrompt) mPrompt.getObject();
+		feedbackMessage.setPrompt(prompt);
+		String location = prompt.getContentLoc().getLocation();
+		feedbackMessage.setLocation(location);
+
+		Databinder.getHibernateSession().save(feedbackMessage);	
+		cwmService.flushChanges();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.cast.isi.service.IISIResponseService#getFeedbackMessages(org.apache.wicket.model.IModel<org.cast.cwm.data.Prompt>, org.cast.cwm.data.User)
 	 */
 	@SuppressWarnings("unchecked")
 	public List<FeedbackMessage> getFeedbackMessages(IModel<Prompt> promptM, User student) {
-		// FIXME needs to query by prompt
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getAllMessagesByPromptAndStudent");
 		q.setParameter("prompt", promptM.getObject());
 		q.setParameter("student", student);
@@ -476,6 +497,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ISIPrompt> getTeacherNotes(IModel<User> teacher) {
+        /*
 		Criteria promptCriteria = Databinder.getHibernateSession()
 			.createCriteria(ISIPrompt.class)
 			.createAlias("responses", "r")
@@ -485,6 +507,12 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 			.setCacheable(true)
 			.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return promptCriteria.list();
+        */
+        // TODO heikki verify this is a correct replacement for the above
+        Query q = Databinder.getHibernateSession().createQuery("select r.prompt from Response r where r.prompt.type=:type and r.valid='true' and r.user.id=:userId");
+        q.setString("type", PromptType.TEACHER_NOTES.name());
+        q.setLong("userId", teacher.getObject().getId());
+        return q.list();
 	}
 
 	
@@ -493,6 +521,9 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getPagesWithNotes(User student, boolean isUnread) {
+		if (student.getRole().equals(Role.GUEST))
+			return Collections.EMPTY_LIST;
+		
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getPagesWithNotesByStudentAndUnreadStatus");
 		q.setParameter("student", student);
 		q.setParameter("isUnread", isUnread);
@@ -507,6 +538,9 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getPagesWithNotes(User student) {
+		if (student.getRole().equals(Role.GUEST))
+			return Collections.EMPTY_LIST;
+		
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getPagesWithNotesByStudent");
 		q.setParameter("student", student);
 		q.setCacheable(true);
@@ -518,6 +552,9 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<FeedbackMessage> getNotesForPage(User student, String loc) {
+		if (student.getRole().equals(Role.GUEST))
+			return Collections.EMPTY_LIST;
+
 		Query q = Databinder.getHibernateSession().getNamedQuery("FeedbackMessage.getNotesForPage");
 		q.setParameter("student", student);
 		q.setParameter("loc", loc);
@@ -644,8 +681,11 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 
 	@SuppressWarnings("unchecked")
 	public List<String> getResponseCollectionNames(IModel<User> mUser) {
-		Query q = Databinder.getHibernateSession().createQuery("select distinct(p.collectionName) " +
-				"from ISIPrompt p join p.responses r where p.collectionName is not null and r.valid='true' and r.user.id=:userId"); 
+		//Query q = Databinder.getHibernateSession().createQuery("select distinct(p.collectionName) " +
+		//		"from ISIPrompt p join p.responses r where p.collectionName is not null and r.valid='true' and r.user.id=:userId");
+        // TODO heikki verify query is OK
+        Query q = Databinder.getHibernateSession().createQuery("select distinct(r.prompt.collectionName) from Response r where r.prompt.collectionName is not null and r.valid='true' and r.user.id=:userId");
+
 		q.setLong("userId", mUser.getObject().getId());
 		q.setCacheable(true);
 		return q.list();
@@ -660,8 +700,7 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	@SuppressWarnings("unchecked")
 	public List<ISIPrompt> getResponseCollectionNamePrompts(IModel<User> mUser) {
 	
-		Query q = Databinder.getHibernateSession().createQuery("select p " +
-				"from ISIPrompt p join p.responses r where p.collectionName is not null and p.collectionName!='' and r.valid='true' and r.user.id=:userId"); 
+        Query q = Databinder.getHibernateSession().createQuery("select distinct(r.prompt) from Response r where r.prompt.collectionName is not null and r.prompt.collectionName !='' and r.valid='true' and r.user.id=:userId");
 		q.setLong("userId", mUser.getObject().getId());
 		q.setCacheable(true);
 		return q.list();
@@ -673,15 +712,10 @@ public class ISIResponseService extends ResponseService implements IISIResponseS
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ISIPrompt> getResponseCollectionPrompts(IModel<User> mUser, String collectionName) {
-		Criteria promptCriteria = Databinder.getHibernateSession()
-			.createCriteria(ISIPrompt.class)
-			.createAlias("responses", "r")
-		    .add(Restrictions.eq("collectionName", collectionName))
-			.add(Restrictions.eq("r.user", mUser.getObject()))
-			.add(Restrictions.eq("r.valid", true))
-			.setCacheable(true)
-			.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return promptCriteria.list();
+        Query q = Databinder.getHibernateSession().createQuery("select distinct(r.prompt) from Response r where r.prompt.collectionName=:collectionName and r.valid='true' and r.user.id=:userId");
+        q.setString("collectionName", collectionName);
+        q.setLong("userId", mUser.getObject().getId());
+        return q.list();
 	}
 
 	/* (non-Javadoc)

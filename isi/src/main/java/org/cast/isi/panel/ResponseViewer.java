@@ -29,6 +29,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.cast.cwm.components.ShyLabel;
 import org.cast.cwm.data.Response;
+import org.cast.cwm.wami.AudioSkin;
+import org.cast.cwm.wami.PlayerResponsePanel;
 import org.cast.isi.ISIDateLabel;
 
 public class ResponseViewer extends org.cast.cwm.data.component.ResponseViewer {
@@ -42,8 +44,8 @@ public class ResponseViewer extends org.cast.cwm.data.component.ResponseViewer {
 	private ISIDateLabel date;
 	private Label author;
 	
-	private static int MAX_WIDTH = 700;
-	private static int MAX_HEIGHT = 700; 
+	private static int MAX_WIDTH = 600;
+	private static int MAX_HEIGHT = 600; 
 	
 	private static final long serialVersionUID = 1L;
 
@@ -65,7 +67,7 @@ public class ResponseViewer extends org.cast.cwm.data.component.ResponseViewer {
 	 * @param w - maximum width of an image response
 	 * @param h - maximum height of an image response
 	 */
-	public ResponseViewer(String id, IModel<? extends Response> model, Integer w, Integer h) {
+	public <T extends Response> ResponseViewer(String id, IModel<T> model, Integer w, Integer h) {
 		super(id, model, w, h);
 	
 		// Title associated with this response
@@ -77,6 +79,11 @@ public class ResponseViewer extends org.cast.cwm.data.component.ResponseViewer {
 		// Last-updated timestamp
 		date = new ISIDateLabel("date", new PropertyModel<Date>(model, "lastUpdated"));
 		add(date);
+		
+		// Replace audio player with WAMI player
+		if (model.getObject().getType().getName().equals("AUDIO")) {
+			get("response").get("applet").replaceWith(new PlayerResponsePanel<T>("applet", model, AudioSkin.STANDARD));
+		}
 
 		// FIXME -- drawings should be zoomable
 //			// Containers for the two images (can add captions in the future)

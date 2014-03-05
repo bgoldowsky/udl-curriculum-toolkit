@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<wicket:panel>
+
+	  <div wicket:id="current" class="tagCurrentList">
+	      <span class="tagItem">smell <a href="#" class="button tag removeLink"><img src="img/icons/close_tag.png" width="9" height="9" alt="" /></a></span>
+	  </div>
+
+    	<div class="targetToggle linkToggleBox_myTagsToggleLink">
+	  	  <br />
+	      <h6 wicket:id="tagsSubHeader">Add Tags:</h6>
+	      <form wicket:id="form" method="post" action="#" name="something" id="something" class="tagAddForm">
+	          <div>
+			      <input wicket:id="term" type="text" value="" class="tagTerm" maxlength="15"/>
+      			  <input wicket:id="add" class="button" type="submit" value="Add" />
+	          </div>
+	      </form>
+	      <p wicket:id="taglist" class="tagCloud">
+		      <wicket:container wicket:id="tag">
+	          	<a wicket:id="link" class="tagItem" href="#"><span wicket:id="name">Name</span></a>
+	          </wicket:container>
+	      </p>
+        </div>
+
+</wicket:panel>
+</html>

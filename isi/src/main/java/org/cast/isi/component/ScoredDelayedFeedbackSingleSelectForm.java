@@ -21,8 +21,6 @@ package org.cast.isi.component;
 
 import java.util.Arrays;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.components.ShyContainer;
 import org.cast.cwm.data.Prompt;
@@ -38,7 +36,6 @@ import org.cast.isi.panel.StudentScorePanel;
  * @author Don Roby
  *
  */
-@Slf4j
 public class ScoredDelayedFeedbackSingleSelectForm extends DelayedFeedbackSingleSelectForm {
 
 	private static final long serialVersionUID = 1L;

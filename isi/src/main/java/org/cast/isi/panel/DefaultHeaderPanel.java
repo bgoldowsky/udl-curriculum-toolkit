@@ -21,15 +21,17 @@ package org.cast.isi.panel;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.databinder.auth.hib.AuthDataSession;
 
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.components.ClassAttributeModifier;
+import org.cast.cwm.data.User;
 import org.cast.isi.ISIApplication;
-import org.cast.isi.panel.GlossaryLink;
-import org.cast.isi.panel.HeaderPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +58,16 @@ public class DefaultHeaderPanel extends HeaderPanel {
 	}
 
 	@Override
-	public void addButtons() {
+	public void addUserInfo() {
+		User user = (User) AuthDataSession.get().getUser();
+		add(new Label("userName", (user == null ? new StringResourceModel("unknownUserName", this, null).getString() : user.getFullName())));
+		add(new ISIApplication.LogoutLink("logoutLink"));
+	}
 
+	@Override
+	public void addButtons() {
 		ISIApplication application = ISIApplication.get();
+		
 		BookmarkablePageLink<Void> homeLink = new BookmarkablePageLink<Void>("homeLink", application.getHomePage());
 		application.setLinkProperties(homeLink);
 		add(homeLink);
@@ -122,7 +131,7 @@ public class DefaultHeaderPanel extends HeaderPanel {
 		
 		if (prefix != null) {
 			WebMarkupContainer link = (WebMarkupContainer) get(prefix + "Link");
-			link.add(new ClassAttributeModifier("current"));
+			link.add(new ClassAttributeModifier("current", false));
 		}
 		
 		super.onBeforeRender();

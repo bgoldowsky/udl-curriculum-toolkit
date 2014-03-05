@@ -19,14 +19,16 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.ResponseMetadata;
@@ -53,6 +55,8 @@ import com.google.inject.Inject;
 @AuthorizeInstantiation("TEACHER")
 public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor {
 	
+	private static final long serialVersionUID = 1L;
+
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(TeacherNotesPopup.class);
 	private IModel<User> mStudent = ISISession.get().getStudentModel();
@@ -70,6 +74,12 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		if (mStudent == null && mStudent.getObject() == null)
 			throw new IllegalStateException("Must specify a student.\n"); 
 
+		WebMarkupContainer closeWindowLink = new WebMarkupContainer("closeWindow");
+		add(closeWindowLink);
+		String onClickString = "if (typeof AutoSaver !== 'undefined') { AutoSaver.autoSaveMaybeSave(function() {window.close();});} else {window.close();}";
+		closeWindowLink.add(new AttributeAppender("onclick", onClickString));
+
+		
 		// set the heading for this page - modify the properties file to change this
 		String pageTitleEnd = (new StringResourceModel("TeacherNotes.pageTitle", this, null, "Teacher Notes").getString());
 		setPageTitle(pageTitleEnd);
@@ -79,13 +89,7 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		if (ISISession.get().getUser().hasRole(Role.TEACHER))
 			heading +=  " for - " + mPeriod.getObject().getName() + " > " + mStudent.getObject().getFullName();
 		add(new Label("heading", heading));
-		
-		// FIXME? Notes are currently not location specific - LDM
-//		ContentLoc location = null;
-//		if (param.containsKey("loc") && param.get("loc") != null) {
-//			location = new ContentLoc(param.getString("loc"));
-//		}
-		
+				
 		IModel<Prompt> mPrompt = responseService.getOrCreatePrompt(PromptType.TEACHER_NOTES, mStudent);
 		ResponseList responseList = new ResponseList("nbResponseList", mPrompt, notebookMetadata, null, ISISession.get().getUserModel());
 		add(responseList);
@@ -96,6 +100,7 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		responseButtons.setContext("TeacherNotes");
 		add(responseButtons);
 		add(ISIApplication.get().getToolbar("tht", this));
+
 	}
 
 	public void setNotebookMetadata(ResponseMetadata notebookMetadata) {
@@ -122,7 +127,7 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		super.renderHead(response);
 		renderThemeCSS(response, "css/window.css");
 		renderThemeCSS(response, "css/window_print.css", "print");
-		response.renderOnLoadJavascript("bindSectionOpenerLinks()");		
+		response.renderOnLoadJavaScript("bindSectionOpenerLinks()");
 	}
 	
 	@Override
@@ -134,5 +139,5 @@ public class TeacherNotesPopup extends ISIBasePage implements IHeaderContributor
 		if (mPeriod != null) {
 			mPeriod.detach();
 		}
-	}
+	}	
 }

@@ -19,16 +19,14 @@
  */
 package org.cast.isi.validator;
 
+import com.google.inject.Inject;
 import net.databinder.hib.Databinder;
-
-import org.apache.wicket.injection.web.InjectorHolder;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
 import org.cast.isi.ISISession;
 import org.cast.isi.data.Question;
 import org.cast.isi.service.IQuestionService;
-
-import com.google.inject.Inject;
 
 public class QuestionNameValidator extends AbstractValidator<String> {
 	
@@ -45,7 +43,7 @@ public class QuestionNameValidator extends AbstractValidator<String> {
 			this.questionId = question.getId();
 		else
 			questionId = 0L;
-		InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
 	}
 
 	@Override
@@ -54,7 +52,7 @@ public class QuestionNameValidator extends AbstractValidator<String> {
 		Question other = questionService.getByTextAndStudent(questionText, ISISession.get().getUser());
 		if (other != null && !other.getId().equals(questionId)) {
 			error(validatable);
-		} else {
+		} else if(other != null) {
 			Databinder.getHibernateSession().evict(other); // Evict "other" person in case they are the same object
 		}
 	}

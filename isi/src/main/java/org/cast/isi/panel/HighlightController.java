@@ -20,13 +20,16 @@
 package org.cast.isi.panel;
 
 import lombok.Getter;
+import lombok.Setter;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -41,6 +44,7 @@ import org.cast.cwm.data.Response;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
 import org.cast.cwm.service.HighlightService.HighlightType;
+import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.cwm.xml.transform.FilterElements;
 import org.cast.isi.ISISession;
@@ -63,39 +67,42 @@ import com.google.inject.Inject;
  * @author bgoldowsky
  *
  */
-public class HighlightController extends Panel {
+public class HighlightController extends Panel implements IHeaderContributor {
 
-	@Inject
-	protected IISIResponseService responseService;
-	
+	private static final long serialVersionUID = 1L;
+
 	// Target user to display (current user or student that teacher is viewing)
 	private IModel<User> targetUser;
 	
 	private boolean isTeacher;
 
 	private HighlightType type;
-
-	private ContentLoc loc;
 	
 	// The name for this highlighter set by the user, if any
 	private boolean editing = false; // Are we editing the label for the editable highlighter?
 	@Getter private String editedName;
 	
 	private boolean hasHint = false;
+	
+	@Setter private boolean highlightOn = false; // set the highlighter initial state
 
-	private static final long serialVersionUID = 1L;
+	@Inject
+	protected IISIResponseService responseService;
+	
+	@Inject
+	protected IUserPreferenceService preferenceService;
+	
 
 	public HighlightController(String id, HighlightType type, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
 		this.type = type;
-		this.loc = loc;
 		setOutputMarkupId(true);
 		if (!type.isOn())
 			setVisible(false);
 		
 		targetUser = ISISession.get().getTargetUserModel();
 		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
-		
+				
 		String color = type.getColor().toString().toLowerCase();
 		
 		WebMarkupContainer labelContainer = new WebMarkupContainer("labelContainer");
@@ -103,7 +110,7 @@ public class HighlightController extends Panel {
 		add(labelContainer);
 		
 		WebMarkupContainer link = new WebMarkupContainer("highlightLink");
-		link.add(new SimpleAttributeModifier("onclick", String.format("$().CAST_Highlighter('modify', '%c');return false;", type.getColor())));
+		link.add(new AttributeModifier("onclick", String.format("$().CAST_Highlighter('modify', '%c');return false;", type.getColor())));
 		labelContainer.add(link);
 
 		// The label may be editable, or may be retrieved from the properties file.
@@ -134,6 +141,11 @@ public class HighlightController extends Panel {
 			hintContainer.setVisibilityAllowed(false);
 	}
 
+	public void renderHead(final IHeaderResponse response) {
+		if (highlightOn) {
+			response.renderOnLoadJavaScript(String.format("$().CAST_Highlighter('modifyWithoutSave', '%c');return false;", type.getColor()));
+		}
+	}
 
 	/**
 	 * The highlighter has either an editable or non-editable label.  The non-editable label is found in the properties file.
@@ -146,7 +158,7 @@ public class HighlightController extends Panel {
 		if (type.isEditable()) {
 			String color = type.getColor().toString().toLowerCase();
 	
-			IModel<Prompt> mPrompt = responseService.getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, loc, color);
+			IModel<Prompt> mPrompt = responseService.getOrCreateHighlightPrompt(PromptType.HIGHLIGHTLABEL, color);
 	
 			EditHighlightLabelForm editHighlightLabelForm = new EditHighlightLabelForm("editHighlightNameForm", 
 					responseService.getResponseForPrompt(mPrompt, targetUser), 
@@ -168,7 +180,7 @@ public class HighlightController extends Panel {
 			
 			public void onClick(AjaxRequestTarget target) {
 				editing = true;
-				target.addComponent(container);
+				target.add(container);
 			}
 		};
 		editButton.setVisibilityAllowed(type.isEditable());
@@ -250,7 +262,7 @@ public class HighlightController extends Panel {
 				public boolean isVisible() {
 					return editing;
 				}				
-			}.setRequired(true).add(new SimpleAttributeModifier("maxlength", "32")).setOutputMarkupPlaceholderTag(true));
+			}.setRequired(true).add(new AttributeModifier("maxlength", "32")).setOutputMarkupPlaceholderTag(true));
 			
 			editContainer.add (new AjaxButton("save") {
 				private static final long serialVersionUID = 1L;
@@ -264,8 +276,7 @@ public class HighlightController extends Panel {
 				protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 					editing = false;
 					if (target != null) {
-						target.addComponent(container);
-						target.appendJavascript("showIndicators();");
+						target.add(container);
 					}
 				}
 				
@@ -290,4 +301,11 @@ public class HighlightController extends Panel {
 	}
 
 
+	@Override
+	protected void detachModel() {
+		if (targetUser != null) {
+			targetUser.detach();
+		}
+		super.detachModel();
+	}
 }

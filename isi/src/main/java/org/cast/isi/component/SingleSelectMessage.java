@@ -46,21 +46,14 @@ public class SingleSelectMessage extends WebMarkupContainer {
 		this.itemId = itemId;
 	}
 
-	@Override
-	protected void onBeforeRender() {
-		Component item =  getParent().get(itemId);
-		if (item == null || !(item instanceof SingleSelectItem))
-			throw new IllegalArgumentException("'for' attribute of SingleSelectMessage '" + itemId
-					+ "' doesn't correspond to a SingleSelectItem; it is " + item);
+    @Override
+    protected void onConfigure() {
+        super.onConfigure();
+        Component item =  getParent().get(itemId);
+        if (item == null || !(item instanceof SingleSelectItem))
+            throw new IllegalArgumentException("'for' attribute of SingleSelectMessage '" + itemId
+                    + "' doesn't correspond to a SingleSelectItem; it is " + item);
 
-		setVisible(((SingleSelectItem)item).isSelected());
-		super.onBeforeRender();
-	}
-
-	@Override
-	// Required in order to set visibility in onBeforeRender
-	protected boolean callOnBeforeRenderIfNotVisible() {
-	   return true;
-	}	
-	
+        setVisible(((SingleSelectItem)item).isSelected());
+    }
 }
