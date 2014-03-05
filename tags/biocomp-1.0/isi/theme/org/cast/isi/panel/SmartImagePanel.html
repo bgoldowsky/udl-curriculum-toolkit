@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+</head>
+<body>
+<wicket:panel>
+ 	<div class="image imgcaption">
+ 		<div class="navBar">
+ 			<div wicket:id="title" class="title">Title</div>
+ 			<div class="navItems">
+ 				<a wicket:id="previous" href="#" class="button">Previous</a>
+ 				<span wicket:id="titleNav">
+ 					<a href="#" wicket:id="link" class="button">
+ 						<span wicket:id="title" />
+ 					</a>
+ 				</span>
+ 				<wicket:remove>				
+	 				<a href="#">1970</a>
+					<a class="current" href="#">1980</a>
+					<a href="#">1990</a>
+				</wicket:remove>
+				<a wicket:id="next" href="#" class="button">Next</a>
+ 			</div>
+ 		</div>
+ 		<span class="overlayParent">
+ 			<span wicket:id="overlay" class="overlayBar">
+ 				Labels: 
+ 				<a wicket:id="show" href="#">show</a> 
+ 				| 
+ 				<a wicket:id="hide" href="#">hide</a>
+ 			</span>
+ 			<img wicket:id="imageTarget" />
+ 		</span>
+ 		<div wicket:id="caption" class="caption">
+ 		</div>
+ 	</div>
+</wicket:panel>
+</body>
+</html>

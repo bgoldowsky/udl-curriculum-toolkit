@@ -1,0 +1,27 @@
+<wicket:panel>
+   <h2>My Definition</h2>
+   <div class="entryBox">
+       <div class="responseBar">
+           <div wicket:id="responseButtons" class="responseLeft"></div>
+           <br />
+           <wicket:remove>       
+           <div class="responseLeft">
+               <a href="#" class="button response"><img src="../img/icons/respond_write.png" width="23" height="16" alt="Write" title="Write"/></a>
+               <a href="#" class="button response"><img src="../img/icons/respond_draw.png" width="23" height="16" alt="Draw" title="Draw"/></a>
+               <a href="#" class="button response"><img src="../img/icons/respond_record.png" width="23" height="16" alt="Record" title="Record"/></a>
+               <a href="#" class="button response"><img src="../img/icons/respond_upload.png" width="23" height="16" alt="Upload" title="Upload"/></a>
+           </div>
+           </wicket:remove>
+           <div class="responseRight">
+           </div>
+       </div>
+	   <div wicket:id="responseList"></div>
+       <wicket:remove>
+       <div class="responseItem">
+           <p class="responseDirections">
+               To add your own understanding of this word, click the Write, Draw, Record, or Upload button above.
+           </p>
+       </div>
+       </wicket:remove>
+   </div>
+</wicket:panel>
