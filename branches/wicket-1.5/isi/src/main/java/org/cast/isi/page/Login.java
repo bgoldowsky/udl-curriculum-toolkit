@@ -19,10 +19,10 @@
  */
 package org.cast.isi.page;
 
-import com.google.inject.Inject;
 import net.databinder.auth.AuthApplication;
 import net.databinder.auth.hib.AuthDataSession;
 import net.databinder.models.hib.HibernateObjectModel;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.authorization.UnauthorizedInstantiationException;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -37,9 +37,11 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.cast.cwm.components.ShyLabel;
 import org.cast.cwm.data.Period;
 import org.cast.cwm.data.Site;
 import org.cast.cwm.data.User;
@@ -49,6 +51,8 @@ import org.cast.isi.ISIApplication;
 import org.cast.isi.ISISession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 public class Login extends ISIBasePage implements IHeaderContributor {
 	private static final long serialVersionUID = 1L;
@@ -65,6 +69,8 @@ public class Login extends ISIBasePage implements IHeaderContributor {
 		pageTitle = (new StringResourceModel("Login.pageTitle", this, null, "Login").getString());
 		setPageTitle(pageTitle);
 		add(new Label("pageTitle", pageTitle));
+		add(new ShyLabel("loginMessage", new ResourceModel("Login.message", "")));
+		add (new BookmarkablePageLink<Void>("home", ISIApplication.get().getHomePage()).setVisible(ISIApplication.get().isGuestAccessAllowed()));
 		
 		addApplicationTitles();
 
