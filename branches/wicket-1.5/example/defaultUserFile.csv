@@ -1,13 +1,11 @@
 username,password,type,firstname,lastname,period,site,permission
-teacher1 ,123456,teacher,Teacher1,Lastname1,Period_One,ABC,TRUE
-student1 ,123456,student,Student1,Lastname1,Period_One,ABC,TRUE
-student2 ,123456,student,Student2,Lastname2,Period_One,ABC,TRUE
-student3 ,123456,student,Student3,Lastname3,Period_One,ABC,TRUE
-student4 ,123456,student,Student4,Lastname4,Period_One,ABC,TRUE
-student5 ,123456,student,Student5,Lastname5,Period_One,ABC,TRUE
-teacher2 ,123456,teacher,Teacher2,Lastname2,Period_Two,ABC,TRUE
-student6 ,123456,student,Student6,Lastname6,Period_Two,ABC,TRUE
-student7 ,123456,student,Student7,Lastname7,Period_Two,ABC,TRUE
-student8 ,123456,student,Student8,Lastname8,Period_Two,ABC,TRUE
-student9 ,123456,student,Student9,Lastname9,Period_Two,ABC,TRUE
-student10 ,123456,student,Student10,Lastname10,Period_Two,ABC,TRUE
+teacher1 ,guest,teacher,Teacher1,Lastname1,Period_One,ABC,TRUE
+student1 ,guest,student,Student1,Lastname1,Period_One,ABC,TRUE
+student2 ,guest,student,Student2,Lastname2,Period_One,ABC,TRUE
+student3 ,guest,student,Student3,Lastname3,Period_One,ABC,TRUE
+student4 ,guest,student,Student4,Lastname4,Period_One,ABC,TRUE
+student5 ,guest,student,Student5,Lastname5,Period_One,ABC,TRUE
+student6 ,guest,student,Student6,Lastname6,Period_One,ABC,TRUE
+student7 ,guest,student,Student7,Lastname7,Period_One,ABC,TRUE
+student8 ,guest,student,Student8,Lastname8,Period_One,ABC,TRUE
+student9 ,guest,student,Student9,Lastname9,Period_One,ABC,TRUE
