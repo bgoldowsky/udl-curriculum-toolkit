@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+<title>Product Name</title>
+</head>
+<body>
+<wicket:extend>
+    <div id="mainWrapperWide">
+        <div id="mainContent">
+            <div id="mainContentLeft">
+                <!-- BEGIN - Main Content -->
+                <div class="leftContainer">
+
+                    <p>
+                        <a href="javascript:expandAll('.tocList');">Expand All</a> | <a href="javascript:collapseAll('.tocList');">Collapse All</a>
+                    </p>
+
+                    <ul class="tocList">
+                        <li wicket:id="chapterRepeater" class="collapseBox">
+                            <h2><span wicket:id="title">Lesson 1:</span><span wicket:id="subtitle">Something</span></h2>
+                            <div class="collapseBody">
+		                        <p class="legend">
+		                            <span class="legendItem"><img src="img/icons/status_incomplete.png" width="17" height="15" alt="Incomplete" title="Incomplete" /> Incomplete</span>
+		                            <span class="legendItem"><img src="img/icons/status_ready.png" width="17" height="15" alt="Ready for Review" title="Ready for Review" /> Ready for Review</span>
+		                            <span class="legendItem"><img src="img/icons/status_reviewed.png" width="17" height="15" alt="Reviewed" title="Reviewed" /> Reviewed</span>
+		                            <span class="legendItem"><img src="img/icons/status_message.png" width="17" height="15" alt="New Feedback from Student" title="New Feedback from Student" /> New Feedback from Student</span>
+		                        </p>
+                                <table wicket:id="periodTable" class="tocTable">
+                                    <thead>
+                                        <tr>
+                                            <th wicket:id="periodName" rowspan="2" class="big">Period A</th>
+                                            <th wicket:id="superSectionRepeater"><span wicket:id="superSectionTitle">Overview</span></th>
+                                            <th rowspan="2"><span class="hidden">Teacher Notes</span></th>
+                                        </tr>
+                                        <tr>
+                                            <th wicket:id="sectionList">
+                                                <a wicket:id="sectionLink" href="#" class="button icon">
+                                                  <img wicket:id="icon" src="../img/icons/activity_overview.png" width="15" height="15" alt="Overview" title="Overview" />
+                                                </a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr wicket:id="student">
+                                            <td>
+				                            	<span wicket:id="flagPanel"></span>
+ 				                            	<wicket:container wicket:id="studentName">Lastname, Firstname</wicket:container>                                                
+                                            </td>
+                                            <td wicket:id="statusCell">
+                                                <a wicket:id="link" href="#" class="button icon">
+                                                <img wicket:id="icon" src="../img/icons/check_done.png" width="15" height="15" alt="Done" title="Done" /></a>
+                                            </td>
+                                            <td>
+                                                <a wicket:id="teacherNotesLink" href="#">Teacher Notes</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+               <!-- END - Main Content -->
+            </div>
+        </div>
+        <div id="mainContentRight">
+            <!-- BEGIN - Support Content -->
+            <!-- END - Support Content -->
+        </div>
+    </div>
+</wicket:extend>
+</body>
+</html>
