@@ -4,7 +4,7 @@
 	<name>Common code for UDL Curriculum Toolkit projects</name>
 	<groupId>org.cast</groupId>
 	<artifactId>isi</artifactId>
-	<version>2.2</version>
+	<version>2.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
     <url>http://code.google.com/p/udl-curriculum-toolkit</url>
@@ -32,9 +32,9 @@
     </issueManagement>
     
     <scm>
-      <url>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-2.2</url>
-      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-2.2</connection>
-      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/tags/isi-2.2</developerConnection>
+      <url>http://code.google.com/p/udl-curriculum-toolkit/source</url>
+      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/trunk/isi</connection>
+      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/trunk/isi</developerConnection>
     </scm>
 
     <distributionManagement>
