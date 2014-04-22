@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+<title wicket:id="pageTitle">Product Name</title>
+<wicket:link>
+<link type="text/css" rel="stylesheet" media="screen" href="../css/main.css" />
+<!--[if lt IE 7]>
+<link type="text/css" rel="stylesheet" media="screen" href="../css/ie6.css" />
+<![endif]-->
+<link type="text/css" rel="stylesheet" media="screen" href="../css/buttons.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/boxes.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/highlight.css" />
+<link type="text/css" rel="stylesheet" media="screen" href="../css/toolbar.css" />
+
+<script type="text/javascript" src="./js/less/less-1.0.41.min.js"></script>
+<script type="text/javascript" src="./js/jquery/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="./js/lang/en.js"></script>
+<script type="text/javascript" src="./js/functions.js"></script>
+<!--
+<script type="text/javascript" src="http://portal.texthelp.com/EmbeddedBrowsealoud/v163/obfBATH.js"></script>
+<script type="text/javascript" src="./js/toolbar.js"></script>
+-->
+</wicket:link>
+</head>
+<body>
+<wicket:extend>
+
+
+<div id="wrapper">
+    <div id="topnav">
+    </div>
+
+    <div id="myWrapper">
+        <div id="myContent">
+            <div id="myContentLeft">
+	            <wicket:remove>
+	                <p class="tagStarsCloud">
+	                    <a href="#"><img src="../img/icons/star_3.png" width="42" height="13" alt="3 Stars" /></a>
+	                    <a href="#"><img src="../img/icons/star_2.png" width="27" height="13" alt="2 Stars" /></a>
+	                    <a href="#"><img src="../img/icons/star_1.png" width="13" height="13" alt="1 Star" /></a>
+	                </p>
+	            </wicket:remove>
+	            <div wicket:id="tagCloud">
+	                <p class="tagCloud">
+	                    <a href="#" class="s1">rules</a>
+	                    <a href="#" class="s2">my_words</a>
+	                    <a href="#" class="s3">big_ideas</a>
+	                </p>
+
+	                <h6>Tag Options</h6>
+	                <ul class="tagOptions">
+	                    <li>view as: <strong>cloud</strong> | <a href="#">list</a></li>
+	                    <li>sort by: <strong>alph</strong> | <a href="#">frequency</a></li>
+	                </ul>
+	            </div>
+            </div>
+
+
+            <div id="myContentRight">
+                <div class="rightContainer">
+                    <!-- BEGIN MAIN CONTENT -->
+
+ 					<h1 wicket:id="noTagSelected">Click a tag in the Tag Cloud to view pages with that tag.</h1>
+ 	               	<h1 wicket:id="noStudentSelected">No Student selected.</h1>
+					<wicket:enclosure>
+                    	<h1>Pages tagged "<span wicket:id="titletag">"something"</span>"</h1>
+                    </wicket:enclosure>
+                    <br />
+
+					<div wicket:id="items">
+					    <h4 wicket:id="crumbTrail">Lesson 2: Suspendisse magna dui; fermentum non lacinia ut, iaculis et sem</h4>
+	                    <div class="responseBox">
+	                        <div class="responseIcon">
+	                            <a wicket:id="iconLink" href="#" class="button icon"><img wicket:id="icon" src="../img/icons/activity_question.png" width="15" height="15" alt="Question" title="Question" /></a>
+	                        </div>
+	                        <div class="responseContent">
+	                            <div class="responseSection">
+	                                <a wicket:id="titleLink" href="#"><span wicket:id="title">Some link item</span></a>
+	                            </div>
+	                            <strong>My Tags:</strong>
+
+<!--	                            <a href="#"></a>-->
+	                            <span wicket:id="tags">TagItem</span>
+	                        </div>
+	                    </div>
+	               </div>
+
+					<wicket:remove>
+                    <div class="responseBox">
+                        <div class="responseIcon">
+                            <a href="#" class="button icon"><img src="../img/icons/activity_question.png" width="15" height="15" alt="Question" title="Question" /></a>
+                        </div>
+                        <div class="responseContent">
+                            <div class="responseSection">
+                                <a href="#">Some link item</a>
+                            </div>
+                            <strong>My Tags:</strong> <a href="#">TagItem</a>
+                        </div>
+                    </div>
+                    </wicket:remove>
+
+                    <!-- END MAIN CONTENT -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<wicket:remove>
+<div id="tht" class="thtFull">
+    <ul id="thtActions">
+        <li>
+            <span>listen</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_play(); return false;" id="thtPlay" title="Play"><span>Play</span></a></li>
+                <li><a href="#" onclick="$rw_event_pause(); return false;" id="thtPause" title="Pause"><span>Pause</span></a></li>
+                <li><a href="#" onclick="$rw_stopSpeech(); return false;" id="thtStop" title="Stop"><span>Stop</span></a></li>
+            </ul>
+        </li>
+        <li>
+            <span>lookup</span>
+            <ul>
+                <li><a href="#" onclick="$rw_event_dict(); return false;" id="thtDictionary" title="Dictionary"><span>Dictionary</span></a></li>
+                <li><a href="#" onclick="$rw_event_trans(); return false;" id="thtTranslate" title="Translate"><span>Translate</span></a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+</wicket:remove>
+</wicket:extend>
+</body>
+</html>

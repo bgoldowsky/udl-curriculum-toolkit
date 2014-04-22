@@ -1,0 +1,62 @@
+This file lists known issues:
+(fixed issues moved to end of doc)
+
+=======================
+1. Student:
+
+Content Tab does not work:
+
+FIXED page 5, 23, 30, 62, 65: Agent Link  Unable to find component with id 'link' in [AgentLink [Component id = agent_]] Expected: 'xmlContent:agent_.link'. Found with similar names: 'xmlContent:teacherBar_:feedbackButton_:link', xmlContent:agent_:contentContainer:agent__body:link', xmlContent:agent_1:contentContainer:agent_1_body:link', xmlContent:feedbackButton_:link', tagBox:tagPanel:taglist:tag:1:link', tagBox:tagPanel:taglist:tag:2:link', tagBox:tagPanel:taglist:tag:3:link', tagBox:tagPanel:taglist:tag:4:link', questionBox:questionBox_body:questionContainer:question:0:link', navbar:quickFlipForm:goLink' MarkupStream: [markup = D:\tmp\theme\org\cast\isi\panel\AgentLink.html
+Possibly to do with discontinued support for dialogBorder.setTransparentResolver(true);
+FIXED page 26: Expandable Information Areas - Example toggle area is not opening/closing
+FIXED Toggle Areas not working - right sidebar
+FIXED page 11: Package Resource Guard - fileLink related
+FIXED page 60: Package Resource Guard - ?
+FIXED page 64: Package Resource Guard - videoplayer related
+
+Highlighter needs css
+
+=======================
+Mostly FIXED 6. Teacher:
+
+ManageClasses page does not work: - Now Working
+
+org.apache.wicket.markup.MarkupNotFoundException: No Markup found for Fragment displayRowFragment in providing markup container [Page class = org.cast.isi.page.ManageClasses, id = 8, render count = 1]
+
+However, the markup is in the HTML. I suspect this is a manifestation of unresolved Wicket bug https://issues.apache.org/jira/browse/WICKET-4545.
+Will try the suggested workaround.
+
+
+=======================
+FIXED: 2. Student:
+
+Collections tab does not work:
+
+org.apache.wicket.WicketRuntimeException: Can't instantiate page using constructor 'public org.cast.isi.page.ResponseCollections(org.apache.wicket.request.mapper.parameter.PageParameters)' and argument ''. Might be it doesn't exist, may be it is not visible (public).
+
+org.hibernate.QueryException: could not resolve property: responses of: org.cast.isi.data.ISIPrompt [select distinct(p.collectionName) from org.cast.isi.data.ISIPrompt p join p.responses r where p.collectionName is not null and r.valid='true' and r.user.id=:userId]
+
+=======================
+FIXED: 3. Student:
+
+MyQuestions->what is germany doing?
+
+org.apache.wicket.request.resource.PackageResource$PackageResourceBlockedException: Access denied to (static) package resource org/cast/cwm/components/audioapplet. See IPackageResourceGuard
+
+=======================
+FIXED: 4. Student:
+
+MyQuestions->New Question->Save
+
+org.apache.wicket.WicketRuntimeException: Exception 'null passed to Session.evict()' occurred during validation org.cast.isi.validator.QuestionNameValidator on component 11:newQuestion:text
+
+=======================
+FIXED: 5. Teacher:
+
+Login
+
+org.apache.wicket.WicketRuntimeException: Error attaching this container for rendering: [WebMarkupContainer [Component id = periodTable]]
+
+org.hibernate.QueryException: could not resolve property: responses of: org.cast.isi.data.ISIPrompt
+
+Same problem as 2)
