@@ -12,7 +12,7 @@ function logJsEvent(detail, page, type) {
 
 	// logJsEventCallbackUrl is a global js var defined in java.  The value is callback URL for the component
 	// the event behavior is attached to.
-	wicketAjaxGet(logJsEventCallbackUrl + '&eventDetail=' + detail + '&eventPage=' + page + '&eventType=' + type , function() {}, function() {});
+	wicketAjaxGet(logJsEventCallbackUrl + '&eventDetail=' + escape(detail) + '&eventPage=' + escape(page) + '&eventType=' + escape(type) , function() {}, function() {});
 
 }
 
