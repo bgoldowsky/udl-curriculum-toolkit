@@ -118,8 +118,10 @@ public class TeacherReading extends Reading implements IHeaderContributor {
 		questionContainer.add(questionList);
 		questionContainer.add(new WebMarkupContainer("qButtonVisible").setVisible(false));
 				
-		// teachers can't add new Qs
+		// teachers can't add new Qs or be guests
 		add(new WebMarkupContainer("newQuestion").setVisible(false));
+		questionContainer.add(new WebMarkupContainer("guestMessage").setVisible(false));
+
 	}
 	
 	// Differs from superclass version in that it may omit the panel (if no student selected),
