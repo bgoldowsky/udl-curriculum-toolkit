@@ -214,7 +214,7 @@
 	</build>
 
   <properties>
-      <cwm.version>2.2</cwm.version>
+      <cwm.version>2.3-SNAPSHOT</cwm.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
   </properties>

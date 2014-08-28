@@ -20,7 +20,6 @@
 package org.cast.isi.panel;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -29,7 +28,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -83,8 +81,6 @@ public class HighlightController extends Panel implements IHeaderContributor {
 	@Getter private String editedName;
 	
 	private boolean hasHint = false;
-	
-	@Setter private boolean highlightOn = false; // set the highlighter initial state
 
 	@Inject
 	protected IISIResponseService responseService;
@@ -139,12 +135,6 @@ public class HighlightController extends Panel implements IHeaderContributor {
 			makeHint(hintContainer, mSection);
 		else
 			hintContainer.setVisibilityAllowed(false);
-	}
-
-	public void renderHead(final IHeaderResponse response) {
-		if (highlightOn) {
-			response.renderOnLoadJavaScript(String.format("$().CAST_Highlighter('modifyWithoutSave', '%c');return false;", type.getColor()));
-		}
 	}
 
 	/**

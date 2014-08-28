@@ -22,15 +22,11 @@ package org.cast.isi.panel;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
-import org.cast.cwm.data.User;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
 import org.cast.cwm.service.HighlightService.HighlightType;
-import org.cast.cwm.service.ICwmSessionService;
 import org.cast.cwm.service.IHighlightService;
-import org.cast.cwm.service.IUserPreferenceService;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.behavior.HighlightStateChangeBehavior;
 import org.cast.isi.data.ContentLoc;
@@ -59,34 +55,15 @@ public class HighlightControlPanel extends Panel {
 	@Inject
 	protected IHighlightService highlightService;
 
-	@Inject
-	protected IUserPreferenceService preferenceService;
-	
-	@Inject
-	protected ICwmSessionService cwmSessionService;
-
 	public HighlightControlPanel(String id, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
 		setMarkupId(IHighlightService.GLOBAL_CONTROL_ID);
 		setOutputMarkupId(true);
 		
-		IModel<User> mUser = cwmSessionService.getUserModel();
-		Boolean prefValue = preferenceService.getUserPreferenceBoolean(mUser, "highlightOn");
-		boolean highlightOn = (prefValue==null) ? false : prefValue;		
-		String highlightColor = "";
-		
-		// determine if any highlighter is on  - pass ON state into the correct controller below
-		if (highlightOn) {
-			highlightColor = preferenceService.getUserPreferenceString(mUser, "highlightColor");
-		}
-
 		HighlightController highlightController;
 		for (HighlightType type : highlightService.getHighlighters()) {
 			highlightController = new HighlightController(type.getColor().toString(), type, loc, mSection);
 			add(highlightController);
-			if (highlightOn && highlightColor.equals(Character.toString(type.getColor()))) {
-				highlightController.setHighlightOn(true);
-			}
 		}
 		
 		// add the behavior that will track js side changes to the highlight state
