@@ -880,7 +880,7 @@ hr {
 }
 
 .pullQuote blockquote {
-    background: transparent url("../img/icons/openquote.png") left top no-repeat;
+    background: transparent url("../img/icons/openquote_grey.png") left top no-repeat;
 	color: #364A77;
     font-size: 1.1em;
     font-style: italic;
