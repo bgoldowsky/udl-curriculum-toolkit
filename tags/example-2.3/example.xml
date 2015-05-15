@@ -1,0 +1,4 @@
+<Context path="/example" reloadable="false">
+   <Parameter name="propertiesFile" override="false" value="/opt/example/example.config"/>
+   <Parameter name="wicket.configuration" override="false" value="deployment"/>
+</Context>
