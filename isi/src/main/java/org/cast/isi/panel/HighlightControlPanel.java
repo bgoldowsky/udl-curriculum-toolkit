@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -19,16 +19,19 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.cast.cwm.data.Role;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.data.component.highlight.HighlightDisplayPanel;
-import org.cast.cwm.service.HighlightService;
 import org.cast.cwm.service.HighlightService.HighlightType;
+import org.cast.cwm.service.IHighlightService;
 import org.cast.cwm.xml.XmlSectionModel;
-import org.cast.isi.ISISession;
+import org.cast.isi.behavior.HighlightStateChangeBehavior;
 import org.cast.isi.data.ContentLoc;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * A page-level control panel for highlights.  The basic controls are handled
@@ -44,42 +47,45 @@ import org.slf4j.LoggerFactory;
  * @author jbrookover
  *
  */
+@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", roles={"STUDENT"})})
 public class HighlightControlPanel extends Panel {
 	
-	protected static final Logger log = LoggerFactory.getLogger(HighlightControlPanel.class);
 	private static final long serialVersionUID = 1L;
-	protected boolean isTeacher;
-	protected ContentLoc loc;
-	
+
+	@Inject
+	protected IHighlightService highlightService;
+
 	public HighlightControlPanel(String id, ContentLoc loc, XmlSectionModel mSection) {
 		super(id);
-		this.loc = loc;
-		setMarkupId(HighlightService.GLOBAL_CONTROL_ID);
+		setMarkupId(IHighlightService.GLOBAL_CONTROL_ID);
 		setOutputMarkupId(true);
-
-		isTeacher = ISISession.get().getUser().getRole().subsumes(Role.TEACHER);
-
-		for (HighlightType type : HighlightService.get().getHighlighters()) {
-			add(new HighlightController(type.getColor().toString(), type, loc, mSection));
+		
+		HighlightController highlightController;
+		for (HighlightType type : highlightService.getHighlighters()) {
+			highlightController = new HighlightController(type.getColor().toString(), type, loc, mSection);
+			add(highlightController);
 		}
+		
+		// add the behavior that will track js side changes to the highlight state
+		add(new HighlightStateChangeBehavior());
 	}
 	
 	@Override
 	protected void onBeforeRender() {
-		Object hdpFound = getPage().visitChildren(HighlightDisplayPanel.class, new IVisitor<HighlightDisplayPanel>() {
-			public Object component(HighlightDisplayPanel component) {
-				return IVisitor.STOP_TRAVERSAL;
-			}
-		});
+		Object hdpFound = getPage().visitChildren(HighlightDisplayPanel.class, new IVisitor<HighlightDisplayPanel, Object>() {
+            public void component(HighlightDisplayPanel object, IVisit<Object> visit) {
+                visit.stop(object);
+            }
+        });
 		
 		if (hdpFound == null)
 			throw new IllegalStateException("HighlightControlPanel must be on the same page as a HighlightDisplayPanel.");
 		
-		Object nhpFound = getPage().visitChildren(NoHighlightModal.class, new IVisitor<NoHighlightModal>() {
-			public Object component(NoHighlightModal component) {
-				return IVisitor.STOP_TRAVERSAL;
-			}
-		});
+		Object nhpFound = getPage().visitChildren(NoHighlightModal.class, new IVisitor<NoHighlightModal, Object>() {
+            public void component(NoHighlightModal object, IVisit<Object> visit) {
+                visit.stop(object);
+            }
+        });
 
 		if (nhpFound == null)
 			throw new IllegalStateException("HighlightControlPanel must be on the same page as a NoHighlightModal.");

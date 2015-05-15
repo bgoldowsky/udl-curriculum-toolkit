@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -44,7 +44,7 @@ public class AgentLink extends SidebarDialog {
 		WebMarkupContainer link = new WebMarkupContainer("link");
 		link.add(this.getClickToOpenBehavior());
 		link.setOutputMarkupId(true);
-		add(link);
+		addToBorder(link);
 		this.setVerticalReferencePointId(link.getMarkupId()); // Make dialog come up alongside the button.
 		
 		link.add (new Label("title", title));

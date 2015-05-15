@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -20,6 +20,8 @@
 package org.cast.isi.panel;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.ResponseMetadata;
@@ -31,6 +33,7 @@ import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
 
+@AuthorizeActions(actions = { @AuthorizeAction(action="ENABLE", roles={"STUDENT"})})
 public class LockingResponseButtons extends ResponseButtons implements ISectionStatusChangeListener {
 
 	private static final long serialVersionUID = 1L;
@@ -55,7 +58,7 @@ public class LockingResponseButtons extends ResponseButtons implements ISectionS
 
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		if (location.equals(getLocation()))
-			target.addComponent(this);
+			target.add(this);
 	}
 	
 	public String getLocation() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -38,7 +38,7 @@ public class PageNumberLink extends BookmarkablePageLink<Void> {
 		super(id, ISIApplication.get().getReadingPageClass());
 		ISIXmlSection target = ISIApplication.get().getPageNum(targetPageNum);
 		if (target!=null)
-			setParameter("loc", target.getContentLoc().getLocation());
+			getPageParameters().add("loc", target.getContentLoc().getLocation());
 		else {
 			setEnabled(false);
 			this.add(new ClassAttributeModifier("off"));

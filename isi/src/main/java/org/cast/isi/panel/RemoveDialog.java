@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -19,7 +19,7 @@
  */
 package org.cast.isi.panel;
 
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -52,11 +52,11 @@ public abstract class RemoveDialog extends Panel {
 		});
 	}
 	
-	public IBehavior getClickToOpenBehavior() {
+	public Behavior getClickToOpenBehavior() {
 		return db.getClickToOpenBehavior();
 	}
 	
-	public IBehavior getClickToCloseBehavior() {
+	public Behavior getClickToCloseBehavior() {
 		return db.getClickToCloseBehavior();
 	}
 

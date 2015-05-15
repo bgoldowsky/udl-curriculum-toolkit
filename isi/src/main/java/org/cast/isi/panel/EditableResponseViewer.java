@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -133,7 +133,7 @@ public class EditableResponseViewer extends Panel {
 	private void setVisibility(AjaxRequestTarget target) {
 		editContainer.setVisible(editing);
 		viewContainer.setVisible(!editing);
-		target.addComponent(this);
+		target.add(this);
 	}
 
 	protected void addResponseViewActions(WebMarkupContainer container) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -44,8 +44,8 @@ public class GlossaryLink extends BookmarkablePageLink<String> {
 	protected void onBeforeRender() {
 		super.onBeforeRender();
 		if (!Strings.isEmpty(getModelObject())) {
-			setParameter("word", getModelObject());
-			setParameter("link", "mini");
+			getPageParameters().add("word", getModelObject());
+			getPageParameters().add("link", "mini");
 		}
 	}
 

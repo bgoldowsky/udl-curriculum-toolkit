@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -19,16 +19,15 @@
  */
 package org.cast.isi.data;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-
 import lombok.Getter;
 import lombok.Setter;
-
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.cast.cwm.data.Event;
 import org.cast.cwm.data.User;
 import org.cast.isi.ISISession;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /** ISI application's generic Event type.
  * Adds a "target" field to the basic Event, to record which student's data a teacher was looking at.

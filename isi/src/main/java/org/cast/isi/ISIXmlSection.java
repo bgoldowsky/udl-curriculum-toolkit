@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -338,11 +338,14 @@ public class ISIXmlSection extends XmlSection {
 		String crumbTrail = new String();
 		List<XmlSectionModel> breadCrumbList = this.getBreadcrumbs(stripStart, stripEnd);
 		for (XmlSectionModel sec : breadCrumbList) {
-			// if you are at the end, don't add the arrow
-			if (sec.equals(breadCrumbList.get(breadCrumbList.size()-1))) {
-				crumbTrail = crumbTrail + sec.getObject().getTitle();
-			} else {
-				crumbTrail = crumbTrail + sec.getObject().getTitle() + " > " ;
+			// Don't display titles that are unknown or empty
+			if (!sec.getObject().getTitle().equals("Title Unknown") || sec.getObject().getTitle().isEmpty()) {				
+				// if you are at the end, don't add the arrow
+				if (sec.equals(breadCrumbList.get(breadCrumbList.size()-1))) {
+					crumbTrail = crumbTrail + sec.getObject().getTitle();
+				} else {
+					crumbTrail = crumbTrail + sec.getObject().getTitle() + " > " ;
+				}
 			}
 		}
 

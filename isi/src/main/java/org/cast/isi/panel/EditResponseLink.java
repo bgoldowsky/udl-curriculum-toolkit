@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -46,8 +46,7 @@ public class EditResponseLink extends AjaxLink<Response> {
 	public void onClick(final AjaxRequestTarget target) {
 		ResponseEditor editor = new ResponseEditor(placeholder.getId(), getModel(), metadata, loc);
 		placeholder.replaceWith(editor);
-		target.addComponent(editor);
-		System.out.println("ONCLICK ERL");
+		target.add(editor);
 	}
 
 }

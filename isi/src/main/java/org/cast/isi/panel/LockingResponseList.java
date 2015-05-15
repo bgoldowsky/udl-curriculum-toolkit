@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -25,18 +25,22 @@ import org.cast.cwm.data.Prompt;
 import org.cast.cwm.data.ResponseMetadata;
 import org.cast.cwm.data.Role;
 import org.cast.cwm.data.User;
+import org.cast.cwm.service.ICwmSessionService;
 import org.cast.isi.ISIXmlSection;
 import org.cast.isi.data.ContentLoc;
 import org.cast.isi.service.ISectionService;
 
 import com.google.inject.Inject;
-
 public class LockingResponseList extends ResponseList implements ISectionStatusChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private ISectionService sectionService;
+	
+	@Inject 
+	private ICwmSessionService sessionService;
+
 
 	public LockingResponseList(String wicketId, IModel<Prompt> mPrompt, ResponseMetadata metadata, ContentLoc loc, IModel<User> mUser) {
 		super(wicketId, mPrompt, metadata, loc, mUser);
@@ -50,7 +54,7 @@ public class LockingResponseList extends ResponseList implements ISectionStatusC
 
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		if (location.equals(getLocation()))
-			target.addComponent(this);
+			target.add(this);
 	}
 	
 	private String getLocation() {
@@ -65,7 +69,7 @@ public class LockingResponseList extends ResponseList implements ISectionStatusC
 	}
 
 	private boolean isTeacher() {
-		User user = getUser();
+		User user = sessionService.getUser();
 		return (user != null) && user.getRole().subsumes(Role.TEACHER);
 	}
 

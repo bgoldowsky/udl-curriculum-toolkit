@@ -5,7 +5,7 @@
     <name>UDL Curriculum Toolkit Example Application</name>
 	<groupId>org.cast</groupId>
 	<artifactId>example</artifactId>
-	<version>1.5-SNAPSHOT</version>
+	<version>2.4-SNAPSHOT</version>
 	<packaging>war</packaging>
 
     <url>http://code.google.com/p/udl-curriculum-toolkit</url>
@@ -33,9 +33,9 @@
     </issueManagement>
     
     <scm>
-      <url>http://code.google.com/p/udl-curriculum-toolkit/source</url>
-      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/trunk/example</connection>
-      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/trunk/example</developerConnection>
+      <url>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/example</url>
+      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/example</connection>
+      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/example</developerConnection>
     </scm>
 
     <distributionManagement>
@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>org.cast</groupId>
 			<artifactId>isi</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -92,7 +92,7 @@
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
                     <properties>
-                        <year>${project.inceptionYear}</year>
+                        <year>${project.inceptionYear}-${copyright.year}</year>
                     </properties>
                 </configuration>
                 <executions>
@@ -136,6 +136,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
+        <copyright.year>2015</copyright.year>
     </properties>
 
 </project>

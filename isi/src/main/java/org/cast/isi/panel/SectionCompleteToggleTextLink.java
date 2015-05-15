@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -30,8 +30,7 @@ import org.cast.isi.service.IFeatureService;
 
 import com.google.inject.Inject;
 
-public abstract class SectionCompleteToggleTextLink extends
-		SectionCompleteToggleLink {
+public abstract class SectionCompleteToggleTextLink extends	SectionCompleteToggleLink {
 
 	private static final long serialVersionUID = 1L;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -19,16 +19,18 @@
  */
 package org.cast.isi.panel;
 
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeActions;
 import org.cast.cwm.tag.ITagLinkBuilder;
 import org.cast.cwm.tag.component.TagCloudPanel;
 
+@AuthorizeActions(actions = { @AuthorizeAction(action="RENDER", roles={"STUDENT"})})
 public class TagCloudTocPanel extends TagCloudPanel {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	public TagCloudTocPanel(String id, ITagLinkBuilder linkBuilder) {
 		super(id, linkBuilder);
-		// TODO Auto-generated constructor stub
 	}
 
 }

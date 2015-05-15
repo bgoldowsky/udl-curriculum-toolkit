@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -44,7 +44,7 @@ public class TagsMiniPanel extends TagPanel {
 			public void onClick(AjaxRequestTarget target) {
 				if (target!=null) {
 					for (Component c : updatingComponents)
-						target.addComponent(c);
+						target.add(c);
 				}
 			}
 			

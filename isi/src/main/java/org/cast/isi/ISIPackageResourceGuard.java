@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -21,6 +21,9 @@ package org.cast.isi;
 
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 
+/**
+ * TODO heikki: merge this class to CwmPackageResourceGuard.
+ */
 public class ISIPackageResourceGuard extends SecurePackageResourceGuard {
 
 		public ISIPackageResourceGuard() {
@@ -28,7 +31,9 @@ public class ISIPackageResourceGuard extends SecurePackageResourceGuard {
 			addPattern("+*.pdf");
 			addPattern("+*.json");
 			addPattern("+*.svg");
-			addPattern("+*.htm");
+            addPattern("+*.htm");
+            addPattern("+*.csv");
+            addPattern("+**/audioapplet");
 			addPattern("+**/mediaplayer/skins/**/*.xml");
 		}
 

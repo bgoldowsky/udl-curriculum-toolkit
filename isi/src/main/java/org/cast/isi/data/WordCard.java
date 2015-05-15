@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -30,7 +30,6 @@ import javax.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.wicket.util.string.Strings;
 import org.cast.cwm.data.PersistedObject;
 import org.cast.cwm.data.User;
 import org.cast.cwm.glossary.IGlossaryEntry;
@@ -90,7 +89,7 @@ public class WordCard extends PersistedObject implements IGlossaryEntry {
 	public static String normalizeWord (String text) {
 		if (text == null)
 			return null;
-		return Strings.capitalize(text.replaceAll("\\s+", " ").trim());
+		return text.replaceAll("\\s+", " ").trim();
 	}
 	
 	/** Make a sort key for the word - all lowercase for ease of searching and sorting */

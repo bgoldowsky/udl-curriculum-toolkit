@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -75,7 +75,7 @@ public class AlternateNavBar1 extends AbstractNavBar<XmlSection> implements ISec
 
 	public void onSectionCompleteChange(AjaxRequestTarget target, String location) {
 		// refresh on section complete change for any section
-		target.addComponent(this);
+		target.add(this);
 	}
 	
 	private ISIXmlSection getCurrentSection() {

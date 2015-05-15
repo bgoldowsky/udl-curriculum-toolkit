@@ -4,7 +4,7 @@
 	<name>Common code for UDL Curriculum Toolkit projects</name>
 	<groupId>org.cast</groupId>
 	<artifactId>isi</artifactId>
-	<version>1.5-SNAPSHOT</version>
+	<version>2.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
     <url>http://code.google.com/p/udl-curriculum-toolkit</url>
@@ -33,8 +33,8 @@
     
     <scm>
       <url>http://code.google.com/p/udl-curriculum-toolkit/source</url>
-      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/trunk/isi</connection>
-      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/trunk/isi</developerConnection>
+      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/isi</connection>
+      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/isi</developerConnection>
     </scm>
 
     <distributionManagement>
@@ -42,7 +42,7 @@
         <id>CAST</id>
         <url>scpexe://comp.cast.org/var/www/html/maven2</url>
       </repository>
-      <!-- todo: site  -->
+      <!-- todo: site -->
     </distributionManagement>
 
 	<repositories>
@@ -72,6 +72,16 @@
 			<groupId>org.cast.cwm</groupId>
 			<artifactId>cwm-dav</artifactId>
 			<version>${cwm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cast.cwm</groupId>
+			<artifactId>cwm-wami</artifactId>
+			<version>${cwm.version}</version>
+		</dependency>
+				<dependency>
+		    <groupId>com.aplombee</groupId>
+	        <artifactId>wicket-quickview</artifactId>
+	        <version>1.5.9</version>
 		</dependency>
 		<dependency>
 			<groupId>rhino</groupId>
@@ -107,7 +117,7 @@
 		  <version>1.9.0</version>
 		  <scope>test</scope>
 		</dependency>
-	</dependencies>
+    </dependencies>
 	
 	<build>
 		<plugins>
@@ -134,7 +144,7 @@
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
                     <properties>
-                        <year>${project.inceptionYear}</year>
+                        <year>${project.inceptionYear}-${copyright.year}</year>
                     </properties>
                 </configuration>
                 <executions>
@@ -204,9 +214,10 @@
 	</build>
 
   <properties>
-      <cwm.version>1.5-SNAPSHOT</cwm.version>
+      <cwm.version>2.3</cwm.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
+      <copyright.year>2015</copyright.year>
   </properties>
   
 </project>

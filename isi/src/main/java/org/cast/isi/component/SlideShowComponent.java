@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -22,6 +22,7 @@ package org.cast.isi.component;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.cast.cwm.JQueryHeaderContributor;
 import org.cast.isi.page.ISIBasePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +52,12 @@ public class SlideShowComponent extends WebMarkupContainer implements IHeaderCon
 	}
 
 	public void renderHead(IHeaderResponse response) {
-		// FIXME: this is dependent on the named CSS file being supplied by the application in the expected location.
+        new JQueryHeaderContributor().renderHead(response);
+
 		ISIBasePage.renderThemeJS(response, "js/jquery/jquery.seqSlideshow.js");
 		ISIBasePage.renderThemeCSS(response, "css/slideshow.css");
 
 		// The js call that will set up the slideshow component.
-		response.renderOnLoadJavascript("{$(\"#" + slideShowId + "\").seqSlideshow();}");
+		response.renderOnLoadJavaScript("{$(\"#" + slideShowId + "\").seqSlideshow();}");
 	}
 }

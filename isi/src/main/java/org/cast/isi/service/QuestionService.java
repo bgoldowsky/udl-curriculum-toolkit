@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -19,13 +19,9 @@
  */
 package org.cast.isi.service;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.google.inject.Inject;
 import net.databinder.hib.Databinder;
 import net.databinder.models.hib.HibernateObjectModel;
-
 import org.apache.wicket.model.IModel;
 import org.cast.cwm.data.User;
 import org.cast.cwm.data.models.UserModel;
@@ -35,9 +31,11 @@ import org.cast.isi.data.ISIPrompt;
 import org.cast.isi.data.PromptType;
 import org.cast.isi.data.Question;
 import org.hibernate.Query;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
 
-import com.google.inject.Inject;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class QuestionService implements IQuestionService {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -20,9 +20,8 @@
 package org.cast.isi.component;
 
 import lombok.Setter;
-
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.xml.XmlSectionModel;
 import org.cast.isi.ISIApplication;
 import org.cast.isi.page.AuthoredPopup;

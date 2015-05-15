@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -19,14 +19,15 @@
  */
 package org.cast.isi.page;
 
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.cast.cwm.admin.EventLog;
 
 @AuthorizeInstantiation("RESEARCHER")
-
 public class ISIEventLog extends EventLog {
 	
+	private static final long serialVersionUID = 1L;
+
 	public ISIEventLog(final PageParameters params) {
 		super(params);	
 	}

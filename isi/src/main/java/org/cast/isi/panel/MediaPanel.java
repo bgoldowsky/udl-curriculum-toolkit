@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -20,8 +20,9 @@
 package org.cast.isi.panel;
 
 import lombok.Getter;
-
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.cast.cwm.mediaplayer.MediaPlayerPanel;
 /**
  * Modal popup window for displaying videos
@@ -62,7 +63,7 @@ public class MediaPanel extends SidebarDialog {
 	/**
 	 * Visits video children and create a stop command for each
 	 */
-	public class MediaVisitor implements IVisitor<MediaPlayerPanel> {
+	public class MediaVisitor implements IVisitor<MediaPlayerPanel, Void> {
 		public StringBuffer stopMediaString;
 		@Getter private int count = 0;
 		
@@ -70,9 +71,8 @@ public class MediaPanel extends SidebarDialog {
 			this.stopMediaString = stopMediaDetails;
 		}
 
-		public Object component(MediaPlayerPanel component) {			
-			stopMediaString.append(component.getStopString());
-			return CONTINUE_TRAVERSAL;
-		} 		
-	}
+        public void component(MediaPlayerPanel object, IVisit visit) {
+            stopMediaString.append(object.getStopString());
+        }
+    }
 }
