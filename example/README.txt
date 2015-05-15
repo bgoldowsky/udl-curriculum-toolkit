@@ -8,7 +8,7 @@ under another NSF grant.  For more details see http://udl-toolkit.cast.org .
 QUICK INSTALLATION INSTRUCTIONS
 
 If you do not intend to change the Java code, you may want to follow the
-simple installation instructions at [TBD] http://code.google.com/p/udl-curriculum-toolkit
+simple installation instructions at http://udl-toolkit.cast.org/p/docs
 
 GETTING SET UP TO EDIT / DEVELOP THIS CODE
 
@@ -18,8 +18,7 @@ and build them with Maven.
 If using Eclipse, use 'Check out as Maven Project' via the Maven2 Eclipse plugin.
 
 Then, check out the source code for the ISI module and Example Application from:
-	http://udl-curriculum-toolkit.googlecode.com/svn/trunk/isi
-	http://udl-curriculum-toolkit.googlecode.com/svn/trunk/example
+	http://github.com/cast-org/udl-curriculum-toolkit
 and build these with Maven.
 
 The result should be an example.war file that you can install into a Java webapp server.
@@ -48,7 +47,7 @@ To configure and run project:
     Set isi.contentDir to the full path name of the directory where your
     XML content can be found. To use the sample content included with this
     application, point this to the "content" directory which is
-    in the same directory as this README file.  [FIXME: Not uploaded to Google Code yet]
+    in the same directory as this README file.
 
     Set isi.skinDir to the theme directory to use; the one to start with
     is also in the directory of this README.
