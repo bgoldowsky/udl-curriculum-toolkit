@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org/" lang="en">
+<head></head>
+<body>
+<wicket:panel>
+	<div wicket:id="promptResponseRepeater">
+		<h4 wicket:id="responseHeader">Lesson 2</h4>
+		<div class="responseBox">
+			<div class="responseIcon">
+				<a href="#" class="button icon"><img wicket:id="icon" src="img/icons/activity_question.png" width="15" height="15" alt="Question" title="Question" /></a>
+			</div>
+			<div class="responseContent">
+				<div class="responseSection">
+					<a wicket:id="contentLink" href="#"><span wicket:id="contentLinkTitle">Section name</span></a>
+				</div>
+				<div class="entryBox">
+					<div class="responseQuestion">
+						<span wicket:id="question">Question text</span>
+						<span wicket:id="responseScore">[score icon]</span>
+					</div>
+					<div class="responseItem">
+						<div wicket:id="responseList">
+							<p wicket:id="response"></p>
+							<p class="responseActions">
+								<a wicket:id="editLink" href="#">View/Edit</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</wicket:panel>
+</body>
+</html>
