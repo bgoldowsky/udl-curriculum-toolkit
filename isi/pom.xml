@@ -7,7 +7,7 @@
 	<version>2.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-    <url>http://code.google.com/p/udl-curriculum-toolkit</url>
+    <url>http://udl-toolkit.cast.org</url>
     <description>The UDL Curriculum Toolkit allows for the easy creation of
     web interfaces to curricular content, with supports and student-teacher
     interaction.</description>
@@ -27,15 +27,15 @@
     </licenses>
     
     <issueManagement>
-        <system>Google Code</system>
-        <url>http://code.google.com/p/udl-curriculum-toolkit/issues</url>
+        <system>Github</system>
+        <url>https://github.com/cast-org/udl-curriculum-toolkit/issues</url>
     </issueManagement>
     
     <scm>
-      <url>http://code.google.com/p/udl-curriculum-toolkit/source</url>
-      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/isi</connection>
-      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/isi</developerConnection>
-    </scm>
+		<url>https://github.com/cast-org/udl-curriculum-toolkit</url>
+		<connection>scm:git:https://github.com/cast-org/udl-curriculum-toolkit.git</connection>
+		<developerConnection>scm:git:https://github.com/cast-org/udl-curriculum-toolkit.git</developerConnection>
+	</scm>
 
     <distributionManagement>
       <repository>
@@ -157,9 +157,11 @@
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
+				<!-- Need to experiment with maven-release-plugin on Github to determine correct configuration
                 <configuration>
                     <tagBase>https://udl-curriculum-toolkit.googlecode.com/svn/tags</tagBase>
                 </configuration>
+				-->
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
@@ -173,7 +175,7 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.5</version>
             </plugin>
-		</plugins>
+        </plugins>
 
         <extensions>
             <extension>
@@ -181,37 +183,37 @@
                 <artifactId>wagon-ssh-external</artifactId>
                 <version>1.0</version>
             </extension>
-        </extensions> 
+        </extensions>
 
-		<resources>
-			<resource>
+        <resources>
+            <resource>
                 <filtering>false</filtering>
-				<directory>src/main/resources</directory>
-			</resource>
-			<resource>
-				<filtering>false</filtering>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**</include>
-				</includes>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<filtering>false</filtering>
-				<directory>src/test/java</directory>
-				<includes>
-					<include>**</include>
-				</includes>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</testResource>
-		</testResources>
-	</build>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <filtering>false</filtering>
+                <directory>src/test/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+    </build>
 
   <properties>
       <cwm.version>2.3</cwm.version>

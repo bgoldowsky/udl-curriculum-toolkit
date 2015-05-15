@@ -35,7 +35,7 @@ svnup: $(patsubst %, %-svnup, $(MODULES))
 
 CONF_FILES = example.xml example.config example-hibernate.xml example-logback.xml 
 
-## Make a distribution bundle (for posting on Google Code site)
+## Make a distribution bundle (for posting on Github site)
 toolkit-bundle.zip:
 	if [ -e toolkit-bundle ]; then rm -rf toolkit-bundle; fi
 	mkdir toolkit-bundle
@@ -45,7 +45,7 @@ toolkit-bundle.zip:
 	cp target/$(APP)-$(VERSION).war toolkit-bundle/$(APP).war
 	chmod -R u+rwX toolkit-bundle
 	zip -r toolkit-bundle.zip toolkit-bundle
-	@echo "Bundle file created.  Remember to RENAME it before uploading to Google Code - the download name must be unique"
+	@echo "Bundle file created.  Remember to RENAME it before uploading to Github"
 .PHONY: toolkit-bundle.zip
 
 ## Command line for copying WAR file to server

@@ -8,7 +8,7 @@
 	<version>2.4-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-    <url>http://code.google.com/p/udl-curriculum-toolkit</url>
+    <url>http://udl-toolkit.cast.org/</url>
     <description>The UDL Curriculum Toolkit allows for the easy creation of
     web interfaces to curricular content, with supports and student-teacher
     interaction. This project builds the deployable web archive (.war) file.</description>
@@ -16,7 +16,7 @@
 
 	<organization>
 		<name>CAST, Inc.</name>
-        <url>http://cast.org</url>
+        <url>http://www.cast.org</url>
 	</organization>
 
     <licenses>
@@ -28,14 +28,14 @@
     </licenses>
     
     <issueManagement>
-        <system>Google Code</system>
-        <url>http://code.google.com/p/udl-curriculum-toolkit/issues</url>
+        <system>Github</system>
+        <url>http://github.com/cast-org/udl-curriculum-toolkit/issues</url>
     </issueManagement>
     
     <scm>
-      <url>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/example</url>
-      <connection>scm:svn:http://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/example</connection>
-      <developerConnection>scm:svn:https://udl-curriculum-toolkit.googlecode.com/svn/branches/wicket-1.5/example</developerConnection>
+      <url>https://github.com/cast-org/udl-curriculum-toolkit</url>
+      <connection>scm:git:https://github.com/cast-org/udl-curriculum-toolkit.git</connection>
+      <developerConnection>scm:git:https://github.com/cast-org/udl-curriculum-toolkit.git</developerConnection>
     </scm>
 
     <distributionManagement>
@@ -105,9 +105,11 @@
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
+                <!-- Need to experiment with maven-release-plugin on Github to determine correct configuration
                 <configuration>
                     <tagBase>https://udl-curriculum-toolkit.googlecode.com/svn/tags</tagBase>
                 </configuration>
+                -->
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
