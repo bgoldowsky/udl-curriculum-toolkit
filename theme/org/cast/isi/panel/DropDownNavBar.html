@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org" lang="en" xml:lang="en">
+<wicket:panel>
+<div class="dropdownNavBar">
+	<ul class="navMenu">
+		<li>
+			<h2>
+				<a href="#">
+					<wicket:container wicket:id="chapterTitle">Chapter X: Chapter Title</wicket:container> &gt; 
+					<wicket:container wicket:id="sectionTitle">Section Title</wicket:container>
+				</a>
+			</h2>
+			<ul ignore="true">
+				<li wicket:id="chapter">
+					<a href="#"><wicket:container wicket:id="title">Chapter title here</wicket:container></a>
+		            <ul>
+						<li wicket:id="section">
+							<a wicket:id="link" href="#">
+<!-- 								<span class="section">
+									<img src="img/icons/activity_overview.png" width="15" height="15" alt="Overview" title="Overview" />
+								</span>
+ -->
+								<wicket:container wicket:id="title">Section title</wicket:container>
+							</a>
+							<ul>
+								<li>
+									<span class="menuPageList" wicket:id="pageLinks"></span>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	
+	<div class="pageJump">
+		<a wicket:id="prevLink" class="button icon"><img src="img/icons/page_prev.png" width="15" height="15" alt="Previous Page" title="Previous Page" /></a>
+		<form wicket:id="quickFlipForm" action="#">
+			<label wicket:id="numberFieldLabel"><strong>Quick Flip:</strong></label>
+			<input wicket:id="numberField" type="text" class="pageJumpVal" />
+			of <wicket:container wicket:id="pageCount">##</wicket:container>
+			<a wicket:id="goLink" href="#" class="button">Go</a>
+		</form>
+		<a wicket:id="nextLink" class="button icon"><img src="img/icons/page_next.png" width="15" height="15" alt="Next Page" title="Next Page" /></a>
+	</div>
+	
+</div>
+    
+</wicket:panel>
+</html>

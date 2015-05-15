@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org" lang="en" xml:lang="en">
+<wicket:panel>
+    <div wicket:id="messageViewer">
+    	<p>
+    	<span wicket:id="message">Dont' forget...</span>
+    	<br />
+    	<em><span wicket:id="defaultIndicator">(default message)</span></em>
+    	</p>
+     	<a href="#" wicket:id="edit" class="button">Edit</a>
+    </div>
+    <form wicket:id="messageForm">
+    	<div>
+            <div class="error" style="position:relative;left:-10px" wicket:id="feedback" />
+    		<textarea wicket:id="message" rows="5" cols="25"></textarea><br />
+    		<a href="#" wicket:id="save" class="button">Save</a>
+            <a href="#" wicket:id="cancel" class="button">Cancel</a>
+    	</div>
+    </form>
+</wicket:panel>
+</html>

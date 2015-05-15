@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/" lang="en" xml:lang="en">
+<head>
+	<title wicket:id="pageTitle"></title>
+	<link wicket:id="favicon" rel="icon" type="image/png" href="#"/>
+</head>
+<body class="themeWindow">
+	
+	<div id="header">
+	    <div id="logo">
+	        <span wicket:id="popupTitle"></span>
+	    </div>
+	    <div id="close">
+	        <a href="javascript:window.print();" class="button"><img src="img/icons/print.png" width="15" height="15" alt="" /> Print Page</a>
+	        <a href="javascript:window.close();" class="button icon"><img src="img/icons/close.png" width="15" height="15" alt="Close Window" title="Close Window" /></a>
+	    </div>
+	</div>
+	
+	<div id="maincol" class="hasnav">
+	    <div class="content">
+			<div wicket:id="xmlContent"></div>
+	    </div>
+	</div>
+	<div id="tht" wicket:id="tht" class="thtWindow"></div>
+
+</body>
+</html>
