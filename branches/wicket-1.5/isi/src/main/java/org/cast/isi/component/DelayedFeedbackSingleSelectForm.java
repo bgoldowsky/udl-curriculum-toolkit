@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 CAST, Inc.
+ * Copyright 2011-2015 CAST, Inc.
  *
  * This file is part of the UDL Curriculum Toolkit:
  * see <http://code.google.com/p/udl-curriculum-toolkit>.
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.cast.isi.component;
 
 import com.google.inject.Inject;
