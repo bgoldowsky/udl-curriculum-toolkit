@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>org.cast</groupId>
 			<artifactId>isi</artifactId>
-			<version>2.3-SNAPSHOT</version>
+			<version>2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -92,7 +92,7 @@
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
                     <properties>
-                        <year>${project.inceptionYear}</year>
+                        <year>${project.inceptionYear}-${copyright.year}</year>
                     </properties>
                 </configuration>
                 <executions>
@@ -136,6 +136,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
+        <copyright.year>2015</copyright.year>
     </properties>
 
 </project>
