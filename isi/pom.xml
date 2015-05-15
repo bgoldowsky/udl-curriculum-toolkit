@@ -144,7 +144,7 @@
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
                     <properties>
-                        <year>${project.inceptionYear}</year>
+                        <year>${project.inceptionYear}-${copyright.year}</year>
                     </properties>
                 </configuration>
                 <executions>
@@ -214,9 +214,10 @@
 	</build>
 
   <properties>
-      <cwm.version>2.3-SNAPSHOT</cwm.version>
+      <cwm.version>2.3</cwm.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.test.sourceEncoding>UTF-8</project.test.sourceEncoding>
+      <copyright.year>2015</copyright.year>
   </properties>
   
 </project>
