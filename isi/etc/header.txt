@@ -1,7 +1,7 @@
 Copyright ${year} CAST, Inc.
  
 This file is part of the UDL Curriculum Toolkit:
-see <http://code.google.com/p/udl-curriculum-toolkit>.
+see <http://udl-toolkit.cast.org>.
 
 The UDL Curriculum Toolkit is free software: you can redistribute and/or 
 modify it under the terms of the GNU Affero General Public License as
