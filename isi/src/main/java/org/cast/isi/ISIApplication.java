@@ -1181,6 +1181,11 @@ public abstract class ISIApplication extends CwmApplication {
 	 * @return an image component
 	 */
 	public Icon makeIcon (String wicketId, String sectionClass) {
+		// deal with whitespace or multi-word classes
+		sectionClass = sectionClass.trim();
+		int space = sectionClass.indexOf(' ');
+		if (space > 0)
+			sectionClass = sectionClass.substring(0, space);
 		return new Icon(wicketId, iconPathForSectionClassName(sectionClass));
 	}
 	
