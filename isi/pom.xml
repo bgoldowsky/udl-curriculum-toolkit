@@ -78,7 +78,12 @@
 			<artifactId>cwm-wami</artifactId>
 			<version>${cwm.version}</version>
 		</dependency>
-				<dependency>
+        <dependency>
+            <groupId>org.cast.cwm</groupId>
+            <artifactId>cwm-drawtool</artifactId>
+            <version>2.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
 		    <groupId>com.aplombee</groupId>
 	        <artifactId>wicket-quickview</artifactId>
 	        <version>1.5.9</version>
