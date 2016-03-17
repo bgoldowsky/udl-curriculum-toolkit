@@ -646,7 +646,7 @@ public class ISIXmlComponent extends XmlComponent {
 
 		} else if (wicketId.startsWith("period_responseList_")) {
 			if (isGuest)
-				return new EmptyPanel(wicketId);
+				return new MessageBox(wicketId, "guestResponseArea");
 			ContentLoc loc = new ContentLoc(getModel().getObject());
 			String responseGroupId = elt.getAttribute("rgid");
 			ResponseMetadata metadata = getResponseMetadata(responseGroupId);

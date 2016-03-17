@@ -1182,7 +1182,7 @@ public abstract class ISIApplication extends CwmApplication {
 	 */
 	public Icon makeIcon (String wicketId, String sectionClass) {
 		// deal with whitespace or multi-word classes
-		sectionClass = sectionClass.trim();
+		sectionClass = sectionClass==null ? "" : sectionClass.trim();
 		int space = sectionClass.indexOf(' ');
 		if (space > 0)
 			sectionClass = sectionClass.substring(0, space);
