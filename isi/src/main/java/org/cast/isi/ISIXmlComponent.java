@@ -874,8 +874,12 @@ public class ISIXmlComponent extends XmlComponent {
 	}
 	
 	private boolean pageHasMiniGlossary() {
-		ISIBasePage page = (ISIBasePage) getPage();
-		return page.hasMiniGlossary();
+    	if (getPage() instanceof ISIBasePage) {
+			ISIBasePage page = (ISIBasePage) getPage();
+			return page.hasMiniGlossary();
+		} else {
+    		return false;
+		}
 	}
 	
 	private String getResponseListContext(boolean isDiscussion) {
